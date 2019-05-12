@@ -44,36 +44,42 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="toTemp1"
+                android:clickable="true"
                 android:padding="10dp"
                 android:text="temp1" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="toTemp2"
+                android:clickable="true"
                 android:padding="10dp"
                 android:text="temp2" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="toTemp3"
+                android:clickable="true"
                 android:padding="10dp"
                 android:text="temp3" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="toTemp4"
+                android:clickable="true"
                 android:padding="10dp"
                 android:text="temp4" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="toTemp5"
+                android:clickable="true"
                 android:padding="10dp"
                 android:text="temp5" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="toTemp6"
+                android:clickable="true"
                 android:padding="10dp"
                 android:text="temp6" />
         </LinearLayout>

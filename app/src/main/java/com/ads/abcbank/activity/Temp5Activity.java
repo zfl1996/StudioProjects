@@ -15,18 +15,31 @@
 package com.ads.abcbank.activity;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
+import com.ads.abcbank.utils.SystemUtil;
 import com.ads.abcbank.view.TempView;
 
 public class Temp5Activity extends BaseActivity implements TempView {
     private TempPresenter presenter;
+    private TextView sys_info;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp5);
-
+        sys_info = findViewById(R.id.sys_info);
+        sys_info.setText("是否TV：" + SystemUtil.isTv(this) +
+                "\n是否手机：" + !SystemUtil.isPad(this) +
+                "\n是否平板：" + SystemUtil.isPad(this) +
+                "\n系统版本号：" + SystemUtil.getSystemVersion() +
+                "\n手机型号：" + SystemUtil.getSystemModel() +
+                "\n手机厂商：" + SystemUtil.getDeviceBrand() +
+                "\n屏幕DPI：" + SystemUtil.getDensity(this) +
+                "\n像素宽：" + SystemUtil.getScreenWidth(this) +
+                "\n像素高：" + SystemUtil.getScreenHeight(this)
+        );
     }
 }

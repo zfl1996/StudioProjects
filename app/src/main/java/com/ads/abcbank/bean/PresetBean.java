@@ -68,7 +68,7 @@ public class PresetBean {
         public static class BIAOFEItem {
             public String no;
             public String placeholder;
-            public String item;
+            public String currCName;
             public String buyPrice;
             public String sellPrice;
             public String cashPrice;

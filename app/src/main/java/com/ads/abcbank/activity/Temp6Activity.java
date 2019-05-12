@@ -19,14 +19,37 @@ import android.os.Bundle;
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.view.TempView;
+import com.bumptech.glide.Glide;
+
+import cn.jzvd.Jzvd;
+import cn.jzvd.JzvdStd;
+
 
 public class Temp6Activity extends BaseActivity implements TempView {
     private TempPresenter presenter;
-
+    private JzvdStd videoplayer;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp6);
+        videoplayer = findViewById(R.id.videoplayer);
+        videoplayer.setUp("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+                , "", JzvdStd.SCREEN_NORMAL);
+        Glide.with(this).load(R.drawable.app_icon_your_company).into(videoplayer.thumbImageView);
 
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Jzvd.resetAllVideos();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (Jzvd.backPress()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+
 }

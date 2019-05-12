@@ -96,6 +96,8 @@
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:onClick="gotoTab"
+                        android:tag="1"
                         android:layout_weight="1">
 
                         <TextView
@@ -111,6 +113,7 @@
                             android:textSize="@dimen/text_normal" />
 
                         <View
+                            android:id="@+id/v_tab1"
                             android:layout_width="wrap_content"
                             android:layout_height="3dp"
                             android:layout_alignBottom="@id/tv_tab1"
@@ -124,6 +127,8 @@
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:onClick="gotoTab"
+                        android:tag="2"
                         android:layout_weight="1">
 
                         <TextView
@@ -139,6 +144,7 @@
                             android:textSize="@dimen/text_normal" />
 
                         <View
+                            android:id="@+id/v_tab2"
                             android:layout_width="wrap_content"
                             android:layout_height="3dp"
                             android:layout_alignBottom="@id/tv_tab2"
@@ -151,6 +157,8 @@
                     <RelativeLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:onClick="gotoTab"
+                        android:tag="3"
                         android:layout_weight="1">
 
                         <TextView
@@ -166,6 +174,7 @@
                             android:textSize="@dimen/text_normal" />
 
                         <View
+                            android:id="@+id/v_tab3"
                             android:layout_width="wrap_content"
                             android:layout_height="3dp"
                             android:layout_alignBottom="@id/tv_tab3"
@@ -189,6 +198,7 @@
                     android:layout_marginBottom="10dp">
 
                     <TextView
+                        android:id="@+id/tv_item_name"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="#08ffffff"
@@ -203,6 +213,7 @@
                         android:layout_height="1dp" />
 
                     <TextView
+                        android:id="@+id/tv_item_name2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="#08ffffff"

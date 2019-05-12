@@ -57,6 +57,7 @@
         <activity
             android:name=".activity.Temp6Activity"
             android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="landscape" />
     </application>
 

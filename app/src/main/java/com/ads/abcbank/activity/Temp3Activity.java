@@ -14,10 +14,15 @@
 
 package com.ads.abcbank.activity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
+import com.ads.abcbank.utils.QRCodeUtil;
 import com.ads.abcbank.view.TempView;
 
 public class Temp3Activity extends BaseActivity implements TempView {
@@ -28,5 +33,15 @@ public class Temp3Activity extends BaseActivity implements TempView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp3);
 
+        initQRCode();
+    }
+
+    private void initQRCode() {
+        ImageView iv = (ImageView) findViewById(R.id.iv);
+        Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.movie);
+        Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap("http://www.abchina.com/cn/", 480,
+                "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
+                null, logoBitmap, 0.2F);
+        iv.setImageBitmap(qrCodeBitmap);
     }
 }
