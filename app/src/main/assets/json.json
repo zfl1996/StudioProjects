@@ -1,0 +1,317 @@
+{
+	"appId": "BDC201801_0302",
+	"trCode": "preset",
+	"trVersion": "v1",
+	"resCode": "0",
+	"resMessage": " ",
+	"terminalId ": "42 FAE ",
+	"timestamp": 1484560403300,
+	"uniqueId": "62FAEC6168D113FCE0539F39E80A55A9",
+	"flowNum": 1,
+	"data": {
+		"saveRate": {
+			"title": "人民币存款利率",
+			"enable": true,
+			"lastModified": "20181228 15:58:43",
+			"rem": "本表利率自2015年10月24日起执行",
+			"startDate": "20151024",
+			"entry": [{
+				"no": "1",
+				"placeholder": "",
+				"item": "一、城乡居民及单位存款",
+				"saveRate": "",
+				"saveCode": "",
+				"saveCodeDep": ""
+			},
+				{
+					"no": "1.1",
+					"placeholder": "\t",
+					"item": "（一）活期",
+					"saveRate": "0.30",
+					"saveCode": "2000",
+					"saveCodeDep": "活期存款"
+				},
+				{
+					"no": "1.2",
+					"placeholder": "\t",
+					"item": "（二）定期",
+					"saveRate": "",
+					"saveCode": "",
+					"saveCodeDep": ""
+				},
+				{
+					"no": "1.2.1",
+					"placeholder": "\t\t",
+					"item": "1.整存整取",
+					"saveRate": "",
+					"saveCode": "",
+					"saveCodeDep": ""
+				},
+				{
+					"no": "1.2.1.1",
+					"placeholder": "\t\t\t",
+					"item": "三个月",
+					"saveRate": "1.35",
+					"saveCode": "2102",
+					"saveCodeDep": "整存整取-三个月"
+				},
+				{
+					"no": "1.2.1.2",
+					"placeholder": "\t\t\t",
+					"item": "半年",
+					"saveRate": "1.55",
+					"saveCode": "2103",
+					"saveCodeDep": "整存整取-六个月"
+				},
+				{
+					"no": "1.2.1.3",
+					"placeholder": "\t\t\t",
+					"item": "一年",
+					"saveRate": "1.75",
+					"saveCode": "2105",
+					"saveCodeDep": "整存整取-一年"
+				},
+				{
+					"no": "1.2.1.4",
+					"placeholder": "\t\t\t",
+					"item": "两年",
+					"saveRate": "2.25",
+					"saveCode": "2106",
+					"saveCodeDep": "整存整取-二年"
+				},
+				{
+					"no": "1.2.1.5",
+					"placeholder": "\t\t\t",
+					"item": "三年",
+					"saveRate": "2.75",
+					"saveCode": "2107",
+					"saveCodeDep": "整存整取-三年"
+				},
+				{
+					"no": "1.2.1.6",
+					"placeholder": "\t\t\t",
+					"item": "五年",
+					"saveRate": "2.75",
+					"saveCode": "2108",
+					"saveCodeDep": "整存整取-五年"
+				},
+				{
+					"no": "1.2.2",
+					"placeholder": "\t\t",
+					"item": "2.零存整取、整存零取、存本取息",
+					"saveRate": "",
+					"saveCode": "",
+					"saveCodeDep": ""
+				},
+				{
+					"no": "1.2.2.1",
+					"placeholder": "\t\t\t",
+					"item": "一年",
+					"saveRate": "1.35",
+					"saveCode": "2125",
+					"saveCodeDep": "零存整取-一年"
+				},
+				{
+					"no": "1.2.2.2",
+					"placeholder": "\t\t\t",
+					"item": "三年",
+					"saveRate": "1.55",
+					"saveCode": "2127",
+					"saveCodeDep": "零存整取-一年"
+				},
+				{
+					"no": "1.2.2.3",
+					"placeholder": "\t\t\t",
+					"item": "五年",
+					"saveRate": "1.55",
+					"saveCode": "2128",
+					"saveCodeDep": "零存整取-一年"
+				},
+				{
+					"no": "1.2.3",
+					"placeholder": "\t\t",
+					"item": "3.定活两便",
+					"saveRate": "按一年以内定期整存整取同档次利率打6折",
+					"saveCode": "",
+					"saveCodeDep": ""
+				},
+				{
+					"no": "2",
+					"placeholder": "",
+					"item": "二、协定存款",
+					"saveRate": "1.00",
+					"saveCode": "2160",
+					"saveCodeDep": "协定存款"
+				},
+				{
+					"no": "3",
+					"placeholder": "",
+					"item": "三、通知存款",
+					"saveRate": "",
+					"saveCode": "",
+					"saveCodeDep": ""
+				},
+				{
+					"no": "3.1",
+					"placeholder": "\t",
+					"item": "一天",
+					"saveRate": "0.55",
+					"saveCode": "215I",
+					"saveCodeDep": "通知存款-一天 "
+				},
+				{
+					"no": "3.2",
+					"placeholder": "\t",
+					"item": "七天",
+					"saveRate": "1.10",
+					"saveCode": "2150",
+					"saveCodeDep": "通知存款-七天 "
+				}
+			]
+		},
+		"loanRate": {
+			"title": "人民币贷款利率",
+			"enable": false,
+			"lastModified": "20181228 15:58:43",
+			"rem": "本表利率自2015年10月24日起执行",
+			"startDate": "20151024",
+			"entry": [{
+				"no": "1",
+				"placeholder": "",
+				"item": "一、短期贷款",
+				"loanRate": "",
+				"loanCode": "",
+				"loanCodeDep": ""
+			},
+				{
+					"no": "1.1",
+					"placeholder": "\t",
+					"item": "一年以内（含一年）",
+					"loanRate": "4.35",
+					"loanCode": "1100",
+					"loanCodeDep": "短期贷款"
+				},
+				{
+					"no": "2",
+					"placeholder": "",
+					"item": "二、中长期贷款",
+					"loanRate": "",
+					"loanCode": "",
+					"loanCodeDep": ""
+				},
+				{
+					"no": "2.1",
+					"placeholder": "\t",
+					"item": "一至五年（含五年）",
+					"loanRate": "4.75",
+					"loanCode": "1112",
+					"loanCodeDep": "中长期贷款-一至三年(含)"
+				},
+				{
+					"no": "2.2",
+					"placeholder": "\t",
+					"item": "五年以上",
+					"loanRate": "4.90",
+					"loanCode": "1114",
+					"loanCodeDep": "中长期贷款-五年以上"
+				},
+				{
+					"no": "3",
+					"placeholder": "",
+					"item": "三、个人住房公积金贷款",
+					"loanRate": "",
+					"loanCode": "",
+					"loanCodeDep": ""
+				},
+				{
+					"no": "3.1",
+					"placeholder": "\t",
+					"item": "五年（含）以下",
+					"loanRate": "2.75",
+					"loanCode": "11Z6",
+					"loanCodeDep": "住房公积金贷款五年以下(含)"
+				},
+				{
+					"no": "3.2",
+					"placeholder": "\t",
+					"item": "五年以上",
+					"loanRate": "3.25",
+					"loanCode": "11Z4",
+					"loanCodeDep": "住房公积金贷款五年以上"
+				},
+				{
+					"no": "4",
+					"placeholder": "",
+					"item": "四、民族贸易及民族用品生产贷款",
+					"loanRate": "1.47",
+					"loanCode": "11D9",
+					"loanCodeDep": "民族贸易及民族用品生产贷款"
+				}
+			]
+		},
+		"buyInAndOutForeignExchange": {
+			"title": "结售汇牌价",
+			"enable": true,
+			"lastModified": "20181228 18:58:43",
+			"rem": "结售汇牌价更新时间",
+			"ValidDate": "20181228 17:19:04",
+			"entry": [{
+				"no": "1",
+				"currCode": "HKD",
+				"currCName": "港币",
+				"buyPrice": "88.66",
+				"sellPrice": "89.02",
+				"cashPrice": "87.95"
+			},
+				{
+					"no": "2",
+					"currCode": "CAD",
+					"currCName": "加拿大元",
+					"buyPrice": "520.59",
+					"sellPrice": "524.77",
+					"cashPrice": "503.86"
+				},
+				{
+					"no": "3",
+					"currCode": "USD",
+					"currCName": "美元",
+					"buyPrice": "694.01",
+					"sellPrice": "696.79",
+					"cashPrice": "688.45"
+				},
+				{
+					"no": "4",
+					"currCode": "EUR",
+					"currCName": "欧元",
+					"buyPrice": "782.46",
+					"sellPrice": "787.96",
+					"cashPrice": "756.94"
+				},
+				{
+					"no": "5",
+					"currCode": "GBP",
+					"currCName": "英镑",
+					"buyPrice": "883.04",
+					"sellPrice": "889.25",
+					"cashPrice": "854.24"
+				},
+				{
+					"no": "6",
+					"currCode": "JPY",
+					"currCName": "日元",
+					"buyPrice": "6.09",
+					"sellPrice": "6.13",
+					"cashPrice": "5.90"
+				},
+				{
+					"no": "7",
+					"currCode": "THB",
+					"currCName": "泰铢",
+					"buyPrice": "20.97",
+					"sellPrice": "21.14",
+					"cashPrice": "20.29"
+				}
+			]
+		}
+	}
+}

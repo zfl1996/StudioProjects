@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="@style/Theme.Leanback"></style>
+
+    <style name="row_left">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/input_height</item>
+        <item name="android:textColor">#333</item>
+        <item name="android:textSize">@dimen/text_normal</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginRight">@dimen/space_height</item>
+        <item name="android:layout_marginTop">@dimen/space_height</item>
+    </style>
+
+    <style name="row_right">
+        <item name="android:layout_width">@dimen/input_width</item>
+        <item name="android:layout_height">@dimen/input_height</item>
+        <item name="android:textColor">#333</item>
+        <item name="android:textSize">@dimen/text_normal</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginTop">@dimen/space_height</item>
+        <item name="android:background">@drawable/edit_background</item>
+    </style>
+
+    <style name="row_right_spinner">
+        <item name="android:layout_width">@dimen/input_width</item>
+        <item name="android:dropDownWidth">@dimen/input_width</item>
+        <item name="android:layout_height">@dimen/input_height</item>
+        <item name="android:textColor">#333</item>
+        <item name="android:textSize">@dimen/text_normal</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginTop">@dimen/space_height</item>
+        <item name="android:spinnerMode">dropdown</item>
+        <item name="android:padding">0dp</item> 
+        <item name="android:spinnerStyle">?android:attr/dropDownSpinnerStyle</item>
+    </style>
+
+</resources>

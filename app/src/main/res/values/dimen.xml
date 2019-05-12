@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--注册页-->
+    <dimen name="text_big">32sp</dimen>
+    <dimen name="text_big_super">50sp</dimen>
+    <dimen name="text_normal">22sp</dimen>
+    <dimen name="text_small">16sp</dimen>
+
+    <dimen name="input_height">32dp</dimen>
+    <dimen name="input_height2">35dp</dimen>
+    <dimen name="input_width">200dp</dimen>
+    <dimen name="space_height">10dp</dimen>
+
+    <dimen name="padding_left">130dp</dimen>
+    <dimen name="padding_top">80dp</dimen>
+    <dimen name="padding_right">200dp</dimen>
+    <dimen name="padding_bottom">80dp</dimen>
+    <dimen name="RoundedAmplitude">4dp</dimen>
+    <!--模板1-->
+    <dimen name="top_height">110</dimen>
+    <dimen name="top_width">1440</dimen>
+    <dimen name="top_width_right">480</dimen>
+    <dimen name="top_main_height">810</dimen>
+    <dimen name="bottom_height">160</dimen>
+    <dimen name="bottom_padding">50dp</dimen>
+    <dimen name="logo_width">304dp</dimen>
+    <dimen name="logo_height">61dp</dimen>
+    <dimen name="logo_padding">40dp</dimen>
+    <!--模板2-->
+    <dimen name="top_height_2">1760</dimen>
+    <dimen name="bottom_padding2">30dp</dimen>
+
+</resources>
