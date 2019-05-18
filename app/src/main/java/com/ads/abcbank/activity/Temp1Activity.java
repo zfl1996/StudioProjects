@@ -1,5 +1,6 @@
 package com.ads.abcbank.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSON;
+import com.xiaweizi.marquee.MarqueeTextView;
 
 public class Temp1Activity extends BaseActivity implements TempView {
     private TableLayout tlTab1;
@@ -25,6 +27,7 @@ public class Temp1Activity extends BaseActivity implements TempView {
     private View v_tab1, v_tab2, v_tab3;
     private TextView tv_item_name, tv_item_name2;
     private TempPresenter presenter;
+    private MarqueeTextView marqueeTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,33 @@ public class Temp1Activity extends BaseActivity implements TempView {
         v_tab3 = findViewById(R.id.v_tab3);
         tv_item_name = findViewById(R.id.tv_item_name);
         tv_item_name2 = findViewById(R.id.tv_item_name2);
+        marqueeTextView = findViewById(R.id.marqueeTextView);
+        marqueeTextView.invalidate();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        marqueeTextView.pauseScroll();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        marqueeTextView.startScroll();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        marqueeTextView.resumeScroll();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        marqueeTextView.stopScroll();
     }
 
     public void gotoTab(View view) {
