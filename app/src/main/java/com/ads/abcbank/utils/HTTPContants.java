@@ -13,5 +13,5 @@ public class HTTPContants {
     public static final String CODE_PLAYLIST = SERVICE + "/playlist.json";//播放列表
     public static final String CODE_CMDPOLL = SERVICE + "/cmdpoll.json";//修改密码
     public static final String CODE_CMDRESULT = SERVICE + "/cmdresult.json";//忘记密码
-    public static final String CODE_PRESET = SERVICE + "/preset.json";//用户信息查询
+    public static final String CODE_PRESET = SERVICE + "/preset.json";//汇率信息查询
 }

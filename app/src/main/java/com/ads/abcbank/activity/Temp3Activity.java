@@ -23,9 +23,11 @@ import android.widget.ImageView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.utils.QRCodeUtil;
-import com.ads.abcbank.view.TempView;
+import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.view.IView;
+import com.alibaba.fastjson.JSONObject;
 
-public class Temp3Activity extends BaseActivity implements TempView {
+public class Temp3Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
 
     @Override
@@ -43,5 +45,20 @@ public class Temp3Activity extends BaseActivity implements TempView {
                 "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
                 null, logoBitmap, 0.2F);
         iv.setImageBitmap(qrCodeBitmap);
+    }
+
+    @Override
+    public void updateMainDate(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void updateBottomDate(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void updatePresetDate(JSONObject jsonObject) {
+
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.view.BaseActivity;
 
 public class MainActivity extends BaseActivity {
 

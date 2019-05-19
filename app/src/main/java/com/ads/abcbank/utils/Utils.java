@@ -16,8 +16,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 
 /**
- * @author ynet
- * @brief
  * @date 2019/5/4
  */
 
@@ -25,6 +23,10 @@ public class Utils {
     public static final String WEBURL = "WEBURL";
     public static final String USER_INFO = "userInfo";//xml文件名称，记录主要内容
     public static ProgressDialog mProgressDialog;
+
+    public static final String KEY_PLAY_LIST = "playList";
+    public static final String KEY_PRESET = "preset";
+
     public static final void showProgressDialog(Context context) {
         if (mProgressDialog != null)
             mProgressDialog.dismiss();

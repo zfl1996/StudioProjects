@@ -20,9 +20,11 @@ import android.widget.TextView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.utils.SystemUtil;
-import com.ads.abcbank.view.TempView;
+import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.view.IView;
+import com.alibaba.fastjson.JSONObject;
 
-public class Temp5Activity extends BaseActivity implements TempView {
+public class Temp5Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
     private TextView sys_info;
 
@@ -41,5 +43,20 @@ public class Temp5Activity extends BaseActivity implements TempView {
                 "\n像素宽：" + SystemUtil.getScreenWidth(this) +
                 "\n像素高：" + SystemUtil.getScreenHeight(this)
         );
+    }
+
+    @Override
+    public void updateMainDate(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void updateBottomDate(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void updatePresetDate(JSONObject jsonObject) {
+
     }
 }

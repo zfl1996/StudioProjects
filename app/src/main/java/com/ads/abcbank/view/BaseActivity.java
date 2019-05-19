@@ -1,4 +1,4 @@
-package com.ads.abcbank.activity;
+package com.ads.abcbank.view;
 
 
 import android.app.Activity;
@@ -9,11 +9,12 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.ads.abcbank.utils.Utils;
 
-public class BaseActivity extends Activity {
+public class BaseActivity extends AppCompatActivity {
     private final String CONNECTIVITY_CHANGE_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
     private NetChangeReceiver netChangeReceiver;//网络状态
     private int netType = -1;

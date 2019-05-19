@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.utils.Utils;
+import com.ads.abcbank.view.BaseActivity;
 
 public class WebViewActivity extends BaseActivity {
     private ProgressBar progressBar;

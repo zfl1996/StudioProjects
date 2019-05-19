@@ -4,7 +4,8 @@
     <dimen name="text_big">32sp</dimen>
     <dimen name="text_big_super">50sp</dimen>
     <dimen name="text_normal">22sp</dimen>
-    <dimen name="text_small">16sp</dimen>
+    <dimen name="text_small">15sp</dimen>
+    <dimen name="tab_text">20sp</dimen>
 
     <dimen name="input_height">32dp</dimen>
     <dimen name="input_height2">35dp</dimen>
@@ -22,7 +23,7 @@
     <dimen name="top_width_right">480</dimen>
     <dimen name="top_main_height">810</dimen>
     <dimen name="bottom_height">160</dimen>
-    <dimen name="bottom_padding">50dp</dimen>
+    <dimen name="bottom_padding">30dp</dimen>
     <dimen name="logo_width">304dp</dimen>
     <dimen name="logo_height">61dp</dimen>
     <dimen name="logo_padding">40dp</dimen>

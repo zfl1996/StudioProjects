@@ -1,17 +1,13 @@
 package com.ads.abcbank.utils;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.ads.abcbank.MyApplication;
-
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -33,11 +29,6 @@ public class AsyncThread {
 
     public void httpService(String url, final JSONObject jsonString, final Handler handler, final int wath) {
         try {
-            Date date = new Date();
-            jsonString.put("reqDate", dateFormat.format(date));
-            jsonString.put("reqTime", timeFormat.format(date));
-            jsonString.put("channel", "01");
-            jsonString.put("busCode", url);
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(ConnectTimeout, TimeUnit.SECONDS)
                     .readTimeout(ConnectReadTimeout, TimeUnit.SECONDS).build();//创建OkHttpClient对象。
