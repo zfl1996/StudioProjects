@@ -33,4 +33,5 @@ public class MainActivity extends BaseActivity {
     public void toTemp6(View view) {
         startActivity(new Intent(this, Temp6Activity.class));
     }
+
 }

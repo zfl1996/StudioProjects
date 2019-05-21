@@ -23,7 +23,7 @@
 
     <string-array name="dev_type">
         <item>TV</item>
-        <item>AD</item>
+        <item>平板</item>
     </string-array>
     <string-array name="dev_dire">
         <item>横版</item>

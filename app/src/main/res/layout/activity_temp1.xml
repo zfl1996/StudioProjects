@@ -70,7 +70,10 @@
             android:layout_weight="@dimen/top_width"
             android:background="#fff"
             android:orientation="vertical">
-
+            <com.ads.abcbank.view.AutoVideoPlayer
+                android:id="@+id/videoplayer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </LinearLayout>
 
         <com.ads.abcbank.view.PresetView

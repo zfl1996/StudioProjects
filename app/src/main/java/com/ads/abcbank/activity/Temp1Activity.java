@@ -1,7 +1,9 @@
 package com.ads.abcbank.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
@@ -11,11 +13,15 @@ import com.ads.abcbank.view.MarqueeTextView;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.PresetView;
 import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
+import cn.jzvd.Jzvd;
+import cn.jzvd.JzvdStd;
 
 public class Temp1Activity extends BaseActivity implements IView {
     private MarqueeTextView marqueeTextView;
@@ -28,6 +34,8 @@ public class Temp1Activity extends BaseActivity implements IView {
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private PresetView presetView;
+
+    private JzvdStd videoplayer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,17 +90,26 @@ public class Temp1Activity extends BaseActivity implements IView {
         presetView = findViewById(R.id.pv_preset);
         tvTime = findViewById(R.id.tv_time);
         tvDate = findViewById(R.id.tv_date);
+        videoplayer = findViewById(R.id.videoplayer);
+
+        videoplayer.setUp("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+                , "", JzvdStd.SCREEN_NORMAL);
+        Glide.with(this).load(R.drawable.app_icon_your_company).into(videoplayer.thumbImageView);
 
         marqueeTextView.invalidate();
         handler.post(timeRunnable);
 
         tempPresenter = new TempPresenter(this, this);
         tempPresenter.getPreset();
+
+        videoplayer.startVideo();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+//        Jzvd.resetAllVideos();
+        JzvdStd.goOnPlayOnPause();
         marqueeTextView.pauseScroll();
     }
 
@@ -106,12 +123,21 @@ public class Temp1Activity extends BaseActivity implements IView {
     protected void onResume() {
         super.onResume();
         marqueeTextView.resumeScroll();
+        JzvdStd.goOnPlayOnResume();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         marqueeTextView.stopScroll();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (Jzvd.backPress()) {
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -127,5 +153,22 @@ public class Temp1Activity extends BaseActivity implements IView {
     @Override
     public void updatePresetDate(JSONObject jsonObject) {
         presetView.updatePresetDate();
+    }
+
+
+    public class JZVideoPlayerStandardLoopVideo extends JzvdStd {
+        public JZVideoPlayerStandardLoopVideo(Context context) {
+            super(context);
+        }
+
+        public JZVideoPlayerStandardLoopVideo(Context context, AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        @Override
+        public void onAutoCompletion() {
+            super.onAutoCompletion();
+            startVideo();
+        }
     }
 }

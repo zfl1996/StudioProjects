@@ -14,12 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:layout_marginBottom="10dp"
-        android:background="#80000000"
+        android:background="@mipmap/preset_top"
         android:paddingTop="5dp"
         app:tabGravity="fill"
         app:tabIndicatorColor="#087366"
         app:tabIndicatorHeight="5dp"
         app:tabMode="fixed"
+        app:tabBackground="#80000000"
         app:tabSelectedTextColor="#FFFFFF"
         app:tabTextAppearance="@style/TabLayoutTextSize"
         app:tabTextColor="#FFFFFF" />
@@ -29,6 +30,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@android:color/transparent" />
+        android:background="@mipmap/preset_bottom" />
 
 </LinearLayout>
