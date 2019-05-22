@@ -83,7 +83,6 @@
             android:layout_weight="@dimen/top_width_right"
             android:background="#202932"
             android:orientation="vertical">
-
         </com.ads.abcbank.view.PresetView>
     </LinearLayout>
 
@@ -96,10 +95,10 @@
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/bottom_padding"
         android:paddingRight="@dimen/bottom_padding"
-        android:text="文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字"
+        android:text="    中国农业银行欢迎您！               中国农业银行欢迎您！               中国农业银行欢迎您！    "
         android:textColor="#fff"
         android:textSize="@dimen/text_big"
         app:scroll_first_delay="0"
-        app:scroll_interval="5000"
+        app:scroll_interval="50000"
         app:scroll_mode="mode_forever" />
 </LinearLayout>

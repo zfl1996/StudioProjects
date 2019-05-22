@@ -2,6 +2,7 @@ package com.ads.abcbank.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.widget.TextView;
@@ -9,17 +10,24 @@ import android.widget.TextView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.view.JZMediaSystemAssertFolder;
 import com.ads.abcbank.view.MarqueeTextView;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.PresetView;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import cn.jzvd.JZDataSource;
+import cn.jzvd.JZUtils;
 import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
 
@@ -91,11 +99,19 @@ public class Temp1Activity extends BaseActivity implements IView {
         tvTime = findViewById(R.id.tv_time);
         tvDate = findViewById(R.id.tv_date);
         videoplayer = findViewById(R.id.videoplayer);
+//        cpAssertVideoToLocalPath();
+        JZDataSource jzDataSource = null;
+        try {
+            jzDataSource = new JZDataSource(getAssets().openFd("local_video.mp4"));
+            jzDataSource.title = "";
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        videoplayer.setUp("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
-                , "", JzvdStd.SCREEN_NORMAL);
+        videoplayer.setUp(jzDataSource
+                , JzvdStd.SCREEN_NORMAL);
         Glide.with(this).load(R.drawable.app_icon_your_company).into(videoplayer.thumbImageView);
-
+        videoplayer.setMediaInterface(new JZMediaSystemAssertFolder(videoplayer));
         marqueeTextView.invalidate();
         handler.post(timeRunnable);
 
@@ -148,6 +164,27 @@ public class Temp1Activity extends BaseActivity implements IView {
     @Override
     public void updateBottomDate(JSONObject jsonObject) {
 
+    }
+
+    public void cpAssertVideoToLocalPath() {
+        JZUtils.verifyStoragePermissions(this);
+        try {
+            InputStream myInput;
+            OutputStream myOutput = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/Camera/local_video.mp4");
+            myInput = this.getAssets().open("local_video.mp4");
+            byte[] buffer = new byte[1024];
+            int length = myInput.read(buffer);
+            while (length > 0) {
+                myOutput.write(buffer, 0, length);
+                length = myInput.read(buffer);
+            }
+
+            myOutput.flush();
+            myInput.close();
+            myOutput.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
