@@ -16,45 +16,13 @@ import android.widget.Toast;
 
 import com.ads.abcbank.R;
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseTabFragment extends Fragment {
     public Activity mActivity;
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mActivity = getActivity();
-    }
-
-    public void toastShow(int resId) {
-        Toast.makeText(mActivity, resId, Toast.LENGTH_SHORT).show();
-    }
-
-    public void toastShow(String resId) {
-        Toast.makeText(mActivity, resId, Toast.LENGTH_SHORT).show();
-    }
-
-    public ProgressDialog progressDialog;
-
-    public ProgressDialog showProgressDialog() {
-        progressDialog = new ProgressDialog(mActivity);
-        progressDialog.setMessage("加载中");
-        progressDialog.show();
-        return progressDialog;
-    }
-
-    public ProgressDialog showProgressDialog(CharSequence message) {
-        progressDialog = new ProgressDialog(mActivity);
-        progressDialog.setMessage(message);
-        progressDialog.show();
-        return progressDialog;
-    }
-
-    public void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            // progressDialog.hide();会导致android.view.WindowLeaked
-            progressDialog.dismiss();
-        }
     }
 
     //根部view
@@ -64,9 +32,9 @@ public abstract class BaseFragment extends Fragment {
     private boolean isVisiable;
 
 
-    private TableLayout tlTab1;
-    private TableLayout tlBottom1;
-    private ScrollView svTab1;
+    public TableLayout tlTab1;
+    public TableLayout tlBottom1;
+    public ScrollView svTab1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,7 +76,7 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 子类实现初始化View操作
      */
-    protected abstract View initView(LayoutInflater inflater);
+    public abstract View initView(LayoutInflater inflater);
 
     /**
      * 子类实现初始化数据操作(子类自己调用)

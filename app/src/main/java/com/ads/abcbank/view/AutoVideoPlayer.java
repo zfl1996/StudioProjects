@@ -18,9 +18,18 @@ public class AutoVideoPlayer extends JzvdStd {
         super(context, attrs);
     }
 
+    private TempView tempView;
+
+    public void setTempView(TempView tempView) {
+        this.tempView = tempView;
+    }
+
     @Override
     public void onAutoCompletion() {
         super.onAutoCompletion();
-        startVideo();
+        if (tempView != null) {
+            tempView.nextPlay();
+        }
+//        startVideo();
     }
 }

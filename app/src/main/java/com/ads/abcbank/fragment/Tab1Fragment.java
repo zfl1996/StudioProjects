@@ -11,29 +11,25 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
-import com.ads.abcbank.view.BaseFragment;
+import com.ads.abcbank.view.BaseTabFragment;
 
-public class Tab1Fragment extends BaseFragment {
+public class Tab1Fragment extends BaseTabFragment {
     private View view;
     private PresetBean.SaveRate bean;
-    private TableLayout tlTab1;
-    private TableLayout tlBottom1;
 
     @Override
-    protected View initView(LayoutInflater inflater) {
+    public View initView(LayoutInflater inflater) {
         view = inflater.inflate(R.layout.fragment_tab1, null);
-        getViews();
+        tlTab1 = view.findViewById(R.id.tl_tab1);
+        tlBottom1 = view.findViewById(R.id.tl_bottom1);
+        svTab1 = view.findViewById(R.id.sv_tab1);
         return view;
     }
 
-    private void getViews() {
-        tlTab1 = view.findViewById(R.id.tl_tab1);
-        tlBottom1 = view.findViewById(R.id.tl_bottom1);
-    }
 
     @Override
     public void initData() {
-        if (tlTab1 == null) return;
+        if (tlTab1 == null || mActivity == null) return;
         tlTab1.removeAllViews();
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.SaveRate.SaveRateItem item = bean.entry.get(i);

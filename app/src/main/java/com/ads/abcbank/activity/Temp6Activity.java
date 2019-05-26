@@ -20,6 +20,7 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
+import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 
@@ -29,29 +30,13 @@ import cn.jzvd.JzvdStd;
 
 public class Temp6Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
-    private JzvdStd videoplayer;
+    private TempView tvTemp;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp6);
-        videoplayer = findViewById(R.id.videoplayer);
-        videoplayer.setUp("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
-                , "", JzvdStd.SCREEN_NORMAL);
-        Glide.with(this).load(R.drawable.app_icon_your_company).into(videoplayer.thumbImageView);
-
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Jzvd.resetAllVideos();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (Jzvd.backPress()) {
-            return;
-        }
-        super.onBackPressed();
+        tvTemp = findViewById(R.id.tv_temp);
+        tvTemp.setType("T");
     }
 
     @Override

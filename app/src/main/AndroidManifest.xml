@@ -3,9 +3,11 @@
     package="com.ads.abcbank">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <uses-feature
@@ -38,8 +40,8 @@
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:logo="@drawable/app_icon_your_company" />
+            android:logo="@drawable/app_icon_your_company"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".activity.Temp1Activity"
             android:launchMode="singleTop"
@@ -65,6 +67,10 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.WebViewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>

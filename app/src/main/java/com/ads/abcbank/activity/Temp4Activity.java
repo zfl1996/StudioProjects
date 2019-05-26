@@ -20,16 +20,22 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
+import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
 
 public class Temp4Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
+    private TempView tvTemp;
+    private TempView tvTemp2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp4);
-
+        tvTemp = findViewById(R.id.tv_temp);
+        tvTemp2 = findViewById(R.id.tv_temp2);
+        tvTemp.setType("H,L");
+        tvTemp2.setType("N");
     }
 
     @Override

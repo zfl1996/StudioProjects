@@ -39,8 +39,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -106,6 +106,7 @@
                 android:text="应用ID:" />
 
             <TextView
+                android:id="@+id/appId"
                 style="@style/row_right"
                 android:background="@null"
                 android:text="BDC201801_0302" />
@@ -118,7 +119,7 @@
                 android:text="省号:" />
 
             <EditText
-                android:id="@+id/et_pro"
+                android:id="@+id/cityCode"
                 style="@style/row_right" />
         </TableRow>
 
@@ -129,7 +130,7 @@
                 android:text="省号+行号:" />
 
             <EditText
-                android:id="@+id/et_bank"
+                android:id="@+id/brchCode"
                 style="@style/row_right" />
         </TableRow>
 
@@ -140,7 +141,7 @@
                 android:text="设备版本号:" />
 
             <EditText
-                android:id="@+id/et_lvl"
+                android:id="@+id/clientVersion"
                 style="@style/row_right" />
         </TableRow>
 
@@ -151,9 +152,8 @@
                 android:text="设备类型:" />
 
             <Spinner
-                android:id="@+id/sp_type"
-                style="@style/row_right_spinner"
-                android:entries="@array/dev_type" />
+                android:id="@+id/terminalType"
+                style="@style/row_right_spinner" />
         </TableRow>
 
         <TableRow>
@@ -163,9 +163,8 @@
                 android:text="屏幕方向:" />
 
             <Spinner
-                android:id="@+id/sp_dire"
-                style="@style/row_right_spinner"
-                android:entries="@array/dev_dire" />
+                android:id="@+id/screenDirection"
+                style="@style/row_right_spinner" />
         </TableRow>
 
         <TableRow>
@@ -175,9 +174,18 @@
                 android:text="节目模板:" />
 
             <Spinner
-                android:id="@+id/sp_temp"
-                style="@style/row_right_spinner"
-                android:entries="@array/dev_temp" />
+                android:id="@+id/frameSetNo"
+                style="@style/row_right_spinner" />
+        </TableRow>
+        <TableRow>
+
+            <TextView
+                style="@style/row_left"
+                android:text="产品类型:" />
+
+            <Spinner
+                android:id="@+id/contentType"
+                style="@style/row_right_spinner" />
         </TableRow>
 
         <TableRow>
@@ -187,7 +195,7 @@
                 android:text="客户端IP:" />
 
             <EditText
-                android:id="@+id/et_ip"
+                android:id="@+id/appIdAddress"
                 style="@style/row_right" />
         </TableRow>
 
@@ -198,7 +206,7 @@
                 android:text="服务器地址:" />
 
             <EditText
-                android:id="@+id/et_service"
+                android:id="@+id/server"
                 style="@style/row_right" />
         </TableRow>
 
@@ -209,7 +217,18 @@
                 android:text="数据缓存地址:" />
 
             <EditText
-                android:id="@+id/et_cache"
+                android:id="@+id/cdn"
+                style="@style/row_right" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/row_left"
+                android:text="金融小店ID:" />
+
+            <EditText
+                android:id="@+id/storeId"
                 style="@style/row_right" />
         </TableRow>
 
@@ -228,7 +247,7 @@
                 android:layout_marginRight="20dp"
                 android:background="@drawable/btn_background"
                 android:gravity="center"
-                android:onClick="toTemp1"
+                android:onClick="onRegister"
                 android:text="注册" />
         </TableRow>
 

@@ -6,15 +6,11 @@
     android:background="#2c3844"
     android:orientation="horizontal">
 
-    <LinearLayout
+    <com.ads.abcbank.view.TempView
+        android:id="@+id/tv_temp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#fff"
-        android:orientation="horizontal">
-        <cn.jzvd.JzvdStd
-            android:id="@+id/videoplayer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+        android:orientation="horizontal"/>
 
 </LinearLayout>

@@ -14,6 +14,7 @@ import com.ads.abcbank.view.JZMediaSystemAssertFolder;
 import com.ads.abcbank.view.MarqueeTextView;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.PresetView;
+import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 
@@ -43,7 +44,7 @@ public class Temp1Activity extends BaseActivity implements IView {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private PresetView presetView;
 
-    private JzvdStd videoplayer;
+    private TempView tvTemp;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,33 +99,34 @@ public class Temp1Activity extends BaseActivity implements IView {
         presetView = findViewById(R.id.pv_preset);
         tvTime = findViewById(R.id.tv_time);
         tvDate = findViewById(R.id.tv_date);
-        videoplayer = findViewById(R.id.videoplayer);
+        tvTemp = findViewById(R.id.tv_temp);
+//        videoplayer = findViewById(R.id.videoplayer);
 //        cpAssertVideoToLocalPath();
-        JZDataSource jzDataSource = null;
-        try {
-            jzDataSource = new JZDataSource(getAssets().openFd("local_video.mp4"));
-            jzDataSource.title = "";
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        videoplayer.setUp(jzDataSource
-                , JzvdStd.SCREEN_NORMAL);
-        Glide.with(this).load(R.drawable.app_icon_your_company).into(videoplayer.thumbImageView);
-        videoplayer.setMediaInterface(new JZMediaSystemAssertFolder(videoplayer));
+//        JZDataSource jzDataSource = null;
+//        try {
+//            jzDataSource = new JZDataSource(getAssets().openFd("local_video.mp4"));
+//            jzDataSource.title = "";
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        videoplayer.setUp(jzDataSource
+//                , JzvdStd.SCREEN_NORMAL);
+//        Glide.with(this).load(R.drawable.app_icon_your_company).into(videoplayer.thumbImageView);
+//        videoplayer.setMediaInterface(new JZMediaSystemAssertFolder(videoplayer));
         marqueeTextView.invalidate();
         handler.post(timeRunnable);
+        tvTemp.setType("M,H,P,N,E,L,R");
 
         tempPresenter = new TempPresenter(this, this);
         tempPresenter.getPreset();
 
-        videoplayer.startVideo();
+//        videoplayer.startVideo();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        Jzvd.resetAllVideos();
         JzvdStd.goOnPlayOnPause();
         marqueeTextView.pauseScroll();
     }
@@ -139,7 +141,6 @@ public class Temp1Activity extends BaseActivity implements IView {
     protected void onResume() {
         super.onResume();
         marqueeTextView.resumeScroll();
-        JzvdStd.goOnPlayOnResume();
     }
 
     @Override
@@ -150,9 +151,6 @@ public class Temp1Activity extends BaseActivity implements IView {
 
     @Override
     public void onBackPressed() {
-        if (Jzvd.backPress()) {
-            return;
-        }
         super.onBackPressed();
     }
 

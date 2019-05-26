@@ -6,22 +6,20 @@
     android:background="#2c3844"
     android:orientation="horizontal">
 
-    <LinearLayout
+    <com.ads.abcbank.view.TempView
+        android:id="@+id/tv_temp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="#fff"
-        android:orientation="horizontal">
+        android:orientation="horizontal" />
 
-    </LinearLayout>
-
-    <LinearLayout
+    <com.ads.abcbank.view.TempView
+        android:id="@+id/tv_temp2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="#fff"
-        android:orientation="horizontal">
-
-    </LinearLayout>
+        android:orientation="horizontal" />
 
 </LinearLayout>

@@ -25,27 +25,29 @@ import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.utils.QRCodeUtil;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
+import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
 
 public class Temp3Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
-
+    private TempView tvTemp;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp3);
-
-        initQRCode();
+        tvTemp = findViewById(R.id.tv_temp);
+        tvTemp.setType("M,H,P,N,E,L,R");
+//        initQRCode();
     }
 
-    private void initQRCode() {
-        ImageView iv = (ImageView) findViewById(R.id.iv);
-        Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.movie);
-        Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap("http://www.abchina.com/cn/", 480,
-                "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
-                null, logoBitmap, 0.2F);
-        iv.setImageBitmap(qrCodeBitmap);
-    }
+//    private void initQRCode() {
+//        ImageView iv = (ImageView) findViewById(R.id.iv);
+//        Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.movie);
+//        Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap("http://www.abchina.com/cn/", 480,
+//                "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
+//                null, logoBitmap, 0.2F);
+//        iv.setImageBitmap(qrCodeBitmap);
+//    }
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {

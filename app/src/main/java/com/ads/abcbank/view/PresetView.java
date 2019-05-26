@@ -68,18 +68,9 @@ public class PresetView extends LinearLayout {
         tab2Fragment = new Tab2Fragment();
         tab3Fragment = new Tab3Fragment();
 
-        fragmentList = new ArrayList<>();
-        list_Title = new ArrayList<>();
-        fragmentList.add(tab1Fragment);
-        fragmentList.add(tab2Fragment);
-        fragmentList.add(tab3Fragment);
-        list_Title.add("人民币\n存款利率");
-        list_Title.add("人民币\n贷款利率");
-        list_Title.add("结售汇\n牌价");
-        viewpager.setAdapter(new MyPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), context, fragmentList, list_Title));
-        tablayout.setupWithViewPager(viewpager);//此方法就是让tablayout和ViewPager联动
-        setTabWidth(tablayout);
-        handler.postDelayed(runnable, delayTime);
+        tab1Fragment.initView(LayoutInflater.from(context));
+        tab2Fragment.initView(LayoutInflater.from(context));
+        tab3Fragment.initView(LayoutInflater.from(context));
 
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
         if (TextUtils.isEmpty(json)) {
@@ -90,6 +81,20 @@ public class PresetView extends LinearLayout {
         tab2Fragment.setBean(bean.data.loanRate);
         tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
 
+        fragmentList = new ArrayList<>();
+        list_Title = new ArrayList<>();
+        fragmentList.add(tab1Fragment);
+        fragmentList.add(tab2Fragment);
+        fragmentList.add(tab3Fragment);
+        list_Title.add("人民币\n存款利率");
+        list_Title.add("人民币\n贷款利率");
+        list_Title.add("结售汇\n牌价");
+
+        setTabWidth(tablayout);
+        handler.postDelayed(runnable, delayTime);
+
+
+
         for (int i = 0; i < tablayout.getTabCount(); i++) {
             TabLayout.Tab tab = tablayout.getTabAt(i);
             if (tab != null) {
@@ -97,6 +102,9 @@ public class PresetView extends LinearLayout {
             }
         }
         addView(view);
+        viewpager.setAdapter(new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager()));
+        tablayout.setupWithViewPager(viewpager);//此方法就是让tablayout和ViewPager联动
+        viewpager.setCurrentItem(0);
     }
 
     public void updatePresetDate() {
@@ -131,16 +139,10 @@ public class PresetView extends LinearLayout {
         return view;
     }
 
-    public class MyPagerAdapter extends FragmentPagerAdapter {
-        private Context context;
-        private List<Fragment> fragmentList;
-        private List<String> list_Title;
+    public class PresetPagerAdapter extends FragmentPagerAdapter {
 
-        public MyPagerAdapter(FragmentManager fm, Context context, List<Fragment> fragmentList, List<String> list_Title) {
+        public PresetPagerAdapter(FragmentManager fm) {
             super(fm);
-            this.context = context;
-            this.fragmentList = fragmentList;
-            this.list_Title = list_Title;
         }
 
         @Override

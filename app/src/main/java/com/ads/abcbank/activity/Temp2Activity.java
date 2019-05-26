@@ -12,19 +12,22 @@ import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.MarqueeVerticalTextView;
 import com.ads.abcbank.view.MarqueeVerticalTextViewClickListener;
+import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
 
 public class Temp2Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
     private MarqueeVerticalTextView marqueeTv;
-    private String[] textArrays = new String[]{"this is content No.1", "this is content No.2", "this is content No.3"};
-
+    private String [] textArrays = new String[]{"this is content No.1","this is content No.2","this is content No.3"};
+    private TempView tvTemp;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp2);
         marqueeTv = (MarqueeVerticalTextView) findViewById(R.id.marqueeTv);
+        tvTemp = findViewById(R.id.tv_temp);
 
+        tvTemp.setType("M,H,P,N,E,L,R");
         marqueeTv.setTextArraysAndClickListener(textArrays, new MarqueeVerticalTextViewClickListener() {
                     @Override
                     public void onItemClick(int position, TextView view) {
