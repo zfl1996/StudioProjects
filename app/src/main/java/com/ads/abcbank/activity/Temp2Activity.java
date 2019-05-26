@@ -3,9 +3,11 @@ package com.ads.abcbank.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
+import com.ads.abcbank.utils.ZipUtil;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.MarqueeVerticalTextView;
@@ -15,7 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 public class Temp2Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
     private MarqueeVerticalTextView marqueeTv;
-    private String [] textArrays = new String[]{"this is content No.1","this is content No.2","this is content No.3"};
+    private String[] textArrays = new String[]{"this is content No.1", "this is content No.2", "this is content No.3"};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,12 +26,19 @@ public class Temp2Activity extends BaseActivity implements IView {
         marqueeTv = (MarqueeVerticalTextView) findViewById(R.id.marqueeTv);
 
         marqueeTv.setTextArraysAndClickListener(textArrays, new MarqueeVerticalTextViewClickListener() {
-            @Override
-            public void onClick(View view) {
+                    @Override
+                    public void onItemClick(int position, TextView view) {
 
-            }
-        });
+                    }
+                }
+        );
 
+//        ZipUtil.copyDbFile(this, "a.jpg");
+//        ZipUtil.copyDbFile(this, "b.jpg");
+//        ZipUtil.copyDbFile(this, "c.jpg");
+//        ZipUtil.copyDbFile(this, "audio.wav");
+//        ZipUtil.compressFile(marqueeTv.getRootView());
+//        ZipUtil.unZip(marqueeTv.getRootView());
     }
 
     @Override

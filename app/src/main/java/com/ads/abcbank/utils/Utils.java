@@ -155,7 +155,11 @@ public class Utils {
             editor.commit();
         }
     }
-
+    // 将px值转换为sp值
+    public static int px2sp(Context context, float pxValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+    }
     /**
      * 关闭软键盘
      */

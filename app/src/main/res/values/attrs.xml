@@ -12,4 +12,15 @@
             <enum name="direction_ver" value="2"/>
         </attr>
     </declare-styleable>
+    <declare-styleable name="MarqueeVerticalTextViewStyle">
+        <attr name="mvTextSize" format="dimension|reference"/>
+        <attr name="mvTextColor" format="color|reference"/>
+        <attr name="mvSingleLine" format="boolean"/>
+        <attr name="mvFont" format="reference"/>
+        <attr name="mvGravity">
+            <enum name="left" value="0"/>
+            <enum name="center" value="1"/>
+            <enum name="right" value="2"/>
+        </attr>
+    </declare-styleable>
 </resources>
