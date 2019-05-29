@@ -228,11 +228,13 @@ public abstract class BaseTempFragment extends Fragment {
             TextView tips = view.findViewById(R.id.tips);
 
             Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.movie);
-            Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink.replace("$storeId", Utils.getRegisterBean(context).data.storeId)
-                            .replace("$terminalId", Utils.getRegisterBean(context).terminalId), 480,
-                    "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
-                    null, logoBitmap, 0.2F);
-            iv.setImageBitmap(qrCodeBitmap);
+           if(Utils.getRegisterBean(context)!=null){
+               Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink.replace("$storeId", Utils.getRegisterBean(context).data.storeId)
+                               .replace("$terminalId", Utils.getRegisterBean(context).terminalId), 480,
+                       "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
+                       null, logoBitmap, 0.2F);
+               iv.setImageBitmap(qrCodeBitmap);
+           }
             tips.setText(qr.QRTip);
             qrLayout.addView(view);
         }

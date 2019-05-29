@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ll_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,12 +21,9 @@
         android:layout_height="0dp"
         android:layout_weight="@dimen/bottom_height"
         android:background="@mipmap/icon_bottom2"
-        android:gravity="center_vertical"
-        android:maxLines="1"
         android:paddingLeft="@dimen/bottom_padding2"
         android:paddingRight="@dimen/bottom_padding2"
-        android:text="    中国农业银行欢迎您！               中国农业银行欢迎您！               中国农业银行欢迎您！    "
-        android:textColor="#fff"
-        android:textSize="@dimen/text_big" />
+        app:mvTextSize="@dimen/text_big"
+        app:mvTextColor="#fff"        />
 
 </LinearLayout>

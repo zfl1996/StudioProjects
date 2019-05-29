@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,6 +44,8 @@ public class PresetView extends LinearLayout {
     private Tab2Fragment tab2Fragment;
     private Tab3Fragment tab3Fragment;
     private int delayTime = 10 * 1000;
+    private int downX = -1;
+    private int downY = -1;
     private Context context;
 
     public PresetView(Context context) {
@@ -215,4 +218,28 @@ public class PresetView extends LinearLayout {
         });
 
     }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // 让当前viewpager的父控件不去拦截touch事件
+                getParent().requestDisallowInterceptTouchEvent(true);
+                downX = (int) ev.getX();
+                downY = (int) ev.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int moveX = (int) ev.getX();
+                int moveY = (int) ev.getY();
+                if (Math.abs(moveX - downX) >= Math.abs(moveY - downY)) {
+                    // 滑动轮播图
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                } else {
+                    // 刷新listview
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                }
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
 }

@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,7 +38,8 @@ public class TempView extends LinearLayout {
     private List<Fragment> fragmentList = new ArrayList<>();
     private PlaylistResultBean playlistBean;
     private ImageView image;
-
+    private int downX = -1;
+    private int downY = -1;
     public TempView(Context context) {
         this(context, null);
     }
@@ -175,4 +177,27 @@ public class TempView extends LinearLayout {
             viewpager.setCurrentItem(0);
         }
     }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // 让当前viewpager的父控件不去拦截touch事件
+                getParent().requestDisallowInterceptTouchEvent(true);
+                downX = (int) ev.getX();
+                downY = (int) ev.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                int moveX = (int) ev.getX();
+                int moveY = (int) ev.getY();
+                if (Math.abs(moveX - downX) >= Math.abs(moveY - downY)) {
+                    // 滑动轮播图
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                } else {
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                }
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
 }
