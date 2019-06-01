@@ -18,6 +18,9 @@ import android.widget.Toast;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.fragment.ImageFragment;
+import com.ads.abcbank.fragment.VideoFragment;
+import com.ads.abcbank.fragment.WebFragment;
 import com.ads.abcbank.utils.QRCodeUtil;
 import com.ads.abcbank.utils.Utils;
 
@@ -35,7 +38,7 @@ public abstract class BaseTempFragment extends Fragment {
     private LinearLayout llQr7;
     private LinearLayout llQr8;
     private LinearLayout llQr9;
-    public TempView tempView;
+    public static TempView tempView;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -43,42 +46,11 @@ public abstract class BaseTempFragment extends Fragment {
         mActivity = getActivity();
     }
 
-    public void toastShow(int resId) {
-        Toast.makeText(mActivity, resId, Toast.LENGTH_SHORT).show();
-    }
-
-    public void toastShow(String resId) {
-        Toast.makeText(mActivity, resId, Toast.LENGTH_SHORT).show();
-    }
-
-    public ProgressDialog progressDialog;
-
-    public ProgressDialog showProgressDialog() {
-        progressDialog = new ProgressDialog(mActivity);
-        progressDialog.setMessage("加载中");
-        progressDialog.show();
-        return progressDialog;
-    }
-
-    public ProgressDialog showProgressDialog(CharSequence message) {
-        progressDialog = new ProgressDialog(mActivity);
-        progressDialog.setMessage(message);
-        progressDialog.show();
-        return progressDialog;
-    }
-
-    public void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            // progressDialog.hide();会导致android.view.WindowLeaked
-            progressDialog.dismiss();
-        }
-    }
-
     //根部view
     private View rootView;
     protected Context context;
     private Boolean hasInitData = false;
-    private boolean isVisiable;
+    public boolean isVisiable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,6 +111,8 @@ public abstract class BaseTempFragment extends Fragment {
      * 子类实现赋值数据操作(子类自己调用)
      */
     public abstract void setBean(PlaylistBodyBean bean);
+
+    public abstract PlaylistBodyBean getBean();
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -221,6 +195,7 @@ public abstract class BaseTempFragment extends Fragment {
     }
 
     private void addQRs(LinearLayout qrLayout, List<PlaylistBodyBean.QR> qrs) {
+        qrLayout.removeAllViews();
         for (int i = 0; i < qrs.size(); i++) {
             PlaylistBodyBean.QR qr = qrs.get(i);
             View view = LayoutInflater.from(context).inflate(R.layout.item_qr, null);
@@ -228,19 +203,45 @@ public abstract class BaseTempFragment extends Fragment {
             TextView tips = view.findViewById(R.id.tips);
 
             Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.movie);
-           if(Utils.getRegisterBean(context)!=null){
-               Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink.replace("$storeId", Utils.getRegisterBean(context).data.storeId)
-                               .replace("$terminalId", Utils.getRegisterBean(context).terminalId), 480,
-                       "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
-                       null, logoBitmap, 0.2F);
-               iv.setImageBitmap(qrCodeBitmap);
-           }
+            if (Utils.getRegisterBean(context) != null) {
+                Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink.replace("$storeId", Utils.getRegisterBean(context).data.storeId)
+                                .replace("$terminalId", Utils.getRegisterBean(context).terminalId), 100,
+                        "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
+                        null, logoBitmap, 0.2F);
+                iv.setImageBitmap(qrCodeBitmap);
+            } else {
+                Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink, 100,
+                        "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
+                        null, logoBitmap, 0.2F);
+                iv.setImageBitmap(qrCodeBitmap);
+            }
             tips.setText(qr.QRTip);
-            qrLayout.addView(view);
+            LinearLayout layout = new LinearLayout(context);
+            layout.addView(view);
+            qrLayout.addView(layout);
         }
     }
 
     public void setTempView(TempView tempView) {
         this.tempView = tempView;
+    }
+
+    public static BaseTempFragment newInstance(BaseTempFragment baseTempFragment) {
+        if (baseTempFragment instanceof ImageFragment) {
+            ImageFragment fragment = new ImageFragment();
+            fragment.setBean(baseTempFragment.getBean());
+            return fragment;
+        } else if (baseTempFragment instanceof WebFragment) {
+            WebFragment fragment = new WebFragment();
+            fragment.setBean(baseTempFragment.getBean());
+            return fragment;
+        } else if (baseTempFragment instanceof VideoFragment) {
+            VideoFragment fragment = new VideoFragment();
+            fragment.setBean(baseTempFragment.getBean());
+            return fragment;
+        }
+        WebFragment fragment = new WebFragment();
+        fragment.setBean(baseTempFragment.getBean());
+        return fragment;
     }
 }

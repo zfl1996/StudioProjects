@@ -15,6 +15,9 @@ import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.fragment.Tab1Fragment;
+import com.ads.abcbank.fragment.Tab2Fragment;
+import com.ads.abcbank.fragment.Tab3Fragment;
 
 public abstract class BaseTabFragment extends Fragment {
     public Activity mActivity;
@@ -88,6 +91,8 @@ public abstract class BaseTabFragment extends Fragment {
      */
     public abstract void setBean(Object bean);
 
+    public abstract Object getBean();
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -112,5 +117,21 @@ public abstract class BaseTabFragment extends Fragment {
         layoutParams.height = bHeight;
         tlBottom1.setLayoutParams(layoutParams);
         tlTab1.getViewTreeObserver().removeOnPreDrawListener(preDrawListener);
+    }
+
+    public static BaseTabFragment newInstance(BaseTabFragment baseTabFragment) {
+        if (baseTabFragment instanceof Tab1Fragment) {
+            Tab1Fragment fragment = new Tab1Fragment();
+            fragment.setBean(baseTabFragment.getBean());
+            return fragment;
+        } else if (baseTabFragment instanceof Tab2Fragment) {
+            Tab2Fragment fragment = new Tab2Fragment();
+            fragment.setBean(baseTabFragment.getBean());
+            return fragment;
+        } else {
+            Tab3Fragment fragment = new Tab3Fragment();
+            fragment.setBean(baseTabFragment.getBean());
+            return fragment;
+        }
     }
 }

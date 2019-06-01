@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -16,19 +17,15 @@ import com.ads.abcbank.view.BaseTabFragment;
 public class Tab2Fragment extends BaseTabFragment {
     private View view;
     private PresetBean.LoanRate bean;
-
     @Override
     public View initView(LayoutInflater inflater) {
         view = inflater.inflate(R.layout.fragment_tab1, null);
-        tlTab1 = view.findViewById(R.id.tl_tab1);
-        tlBottom1 = view.findViewById(R.id.tl_bottom1);
-        svTab1 = view.findViewById(R.id.sv_tab1);
         return view;
     }
 
     @Override
     public void initData() {
-        if (tlTab1 == null || mActivity == null) return;
+        if (tlTab1 == null || mActivity == null|| bean == null|| bean.entry == null) return;
         tlTab1.removeAllViews();
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.LoanRate.LoanRateItem item = bean.entry.get(i);
@@ -69,6 +66,19 @@ public class Tab2Fragment extends BaseTabFragment {
             this.bean = (PresetBean.LoanRate) bean;
             initData();
         }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            initData();
+        }
+    }
+
+    @Override
+    public Object getBean() {
+        return bean;
     }
 }
 

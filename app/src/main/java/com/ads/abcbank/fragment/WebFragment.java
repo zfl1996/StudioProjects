@@ -27,7 +27,7 @@ import cn.jzvd.JzvdStd;
 public class WebFragment extends BaseTempFragment {
     private View view;
     private WebView content;
-    private PlaylistBodyBean bean;
+    private static PlaylistBodyBean bean;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -102,10 +102,20 @@ public class WebFragment extends BaseTempFragment {
             content.loadUrl(bean.downloadLink);
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
-        handler.postDelayed(runnable, delayTime);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            handler.postDelayed(runnable, delayTime);
+        } else {
+            handler.removeCallbacks(runnable);
+        }
     }
 
     private long delayTime = 5000;
@@ -113,7 +123,7 @@ public class WebFragment extends BaseTempFragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (tempView != null)
+            if (tempView != null && isVisiable)
                 tempView.nextPlay();
         }
     };
@@ -123,5 +133,10 @@ public class WebFragment extends BaseTempFragment {
         this.bean = bean;
         initData();
         showQRs(bean);
+    }
+
+    @Override
+    public PlaylistBodyBean getBean() {
+        return bean;
     }
 }

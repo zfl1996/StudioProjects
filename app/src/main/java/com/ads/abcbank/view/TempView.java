@@ -4,13 +4,16 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -23,6 +26,7 @@ import com.ads.abcbank.fragment.WebFragment;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,11 +39,10 @@ public class TempView extends LinearLayout {
     private String type;
     private ViewPager viewpager;
     private ViewPager viewpagerHot;
-    private List<Fragment> fragmentList = new ArrayList<>();
+    private List<BaseTempFragment> fragmentList = new ArrayList<>();
     private PlaylistResultBean playlistBean;
     private ImageView image;
-    private int downX = -1;
-    private int downY = -1;
+
     public TempView(Context context) {
         this(context, null);
     }
@@ -76,7 +79,8 @@ public class TempView extends LinearLayout {
     public void setType(String type) {
         this.type = type;
         addTempViewList();
-        viewpager.setAdapter(new MyPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager()));
+//        viewpager.setAdapter(new MyPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager()));
+        viewpager.setAdapter(new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList));
         viewpager.setCurrentItem(0);
     }
 
@@ -151,24 +155,6 @@ public class TempView extends LinearLayout {
         }
     }
 
-    public class MyPagerAdapter extends FragmentPagerAdapter {
-
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return fragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return fragmentList.size();
-        }
-
-    }
-
     public void nextPlay() {
         int current = viewpager.getCurrentItem();
         if (current < fragmentList.size() - 1) {
@@ -177,27 +163,74 @@ public class TempView extends LinearLayout {
             viewpager.setCurrentItem(0);
         }
     }
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                // 让当前viewpager的父控件不去拦截touch事件
-                getParent().requestDisallowInterceptTouchEvent(true);
-                downX = (int) ev.getX();
-                downY = (int) ev.getY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int moveX = (int) ev.getX();
-                int moveY = (int) ev.getY();
-                if (Math.abs(moveX - downX) >= Math.abs(moveY - downY)) {
-                    // 滑动轮播图
-                    getParent().requestDisallowInterceptTouchEvent(true);
-                } else {
-                    getParent().requestDisallowInterceptTouchEvent(false);
-                }
-                break;
-        }
-        return super.dispatchTouchEvent(ev);
-    }
 
+    public class WillPagerAdapter extends FragmentPagerAdapter {
+        // SparseArray是Hashmap的改良品，其核心是折半查找函数（binarySearch）
+        SparseArray<WeakReference<Fragment>> registeredFragments = new SparseArray<WeakReference<Fragment>>();
+        private List<BaseTempFragment> mList;
+
+
+        public WillPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        public WillPagerAdapter(FragmentManager fm, List<BaseTempFragment> list) {
+            this(fm);
+            // TODO Auto-generated constructor stub
+            mList = list;
+        }
+
+        /*
+         * 生成新的 Fragment 对象。 .instantiateItem() 在大多数情况下，都将调用 getItem() 来生成新的对象
+         */
+        @Override
+        public Fragment getItem(int position) {
+            // TODO Auto-generated method stub
+            BaseTempFragment fragment = BaseTempFragment.newInstance(mList.get(position));
+            return fragment;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            // TODO Auto-generated method stub
+            // 得到缓存的fragment
+            BaseTempFragment fragment = (BaseTempFragment) super.instantiateItem(container,
+                    position);
+            WeakReference<Fragment> weak = new WeakReference<Fragment>(fragment);
+            registeredFragments.put(position, weak);
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return mList.size();
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            // TODO Auto-generated method stub
+            registeredFragments.remove(position);
+
+            super.destroyItem(container, position, object);
+
+        }
+
+        /**
+         * 要求getItemPosition、FragmentStatePagerAdapter
+         */
+        public void remove(int position) {
+            mList.remove(position);
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+
+        public BaseTempFragment getRegisteredFragment(int position) {
+            return (BaseTempFragment) registeredFragments.get(position).get();
+        }
+    }
 }

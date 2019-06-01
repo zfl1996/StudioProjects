@@ -16,7 +16,7 @@ import com.ads.abcbank.view.BaseTempFragment;
 public class ImageFragment extends BaseTempFragment implements View.OnClickListener {
     private View view;
     private ImageView content;
-    private PlaylistBodyBean bean;
+    private static PlaylistBodyBean bean;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -31,7 +31,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
 
     @Override
     public void initData() {
-        if (bean != null && view != null) {
+        if (bean != null && view != null && isVisiable) {
             Utils.loadImage(content, bean.downloadLink);
             if (!TextUtils.isEmpty(bean.onClickLink)) {
                 view.setOnClickListener(this);
@@ -44,7 +44,16 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        handler.postDelayed(runnable, delayTime);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            handler.postDelayed(runnable, delayTime);
+        } else {
+            handler.removeCallbacks(runnable);
+        }
     }
 
     private long delayTime = 5000;
@@ -52,7 +61,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (tempView != null)
+            if (tempView != null && isVisiable)
                 tempView.nextPlay();
         }
     };
@@ -62,6 +71,11 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
         this.bean = bean;
         initData();
         showQRs(bean);
+    }
+
+    @Override
+    public PlaylistBodyBean getBean() {
+        return bean;
     }
 
     @Override

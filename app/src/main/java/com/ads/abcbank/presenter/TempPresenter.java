@@ -44,6 +44,8 @@ public class TempPresenter {
                     if (msg.obj != null) {
                         Utils.put(context, Utils.KEY_PRESET, msg.obj);
                         tempView.updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+                    }else{
+                        tempView.updatePresetDate(null);
                     }
                     break;
             }

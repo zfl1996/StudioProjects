@@ -22,15 +22,11 @@ import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
-import com.bumptech.glide.Glide;
-
-import cn.jzvd.Jzvd;
-import cn.jzvd.JzvdStd;
-
 
 public class Temp6Activity extends BaseActivity implements IView {
-    private TempPresenter presenter;
+    private TempPresenter tempPresenter;
     private TempView tvTemp;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

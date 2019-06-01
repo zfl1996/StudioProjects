@@ -19,7 +19,7 @@ import cn.jzvd.JzvdStd;
 public class VideoFragment extends BaseTempFragment {
     private View view;
     private AutoVideoPlayer content;
-    private PlaylistBodyBean bean;
+    private static PlaylistBodyBean bean;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -42,13 +42,13 @@ public class VideoFragment extends BaseTempFragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            content.setTempView(tempView);
 
             content.setUp(jzDataSource
                     , JzvdStd.SCREEN_NORMAL);
             Glide.with(this).load(R.drawable.app_icon_your_company).into(content.thumbImageView);
             content.setMediaInterface(new JZMediaSystemAssertFolder(content));
             content.startVideo();
-            content.setTempView(tempView);
         }
     }
 
@@ -60,10 +60,36 @@ public class VideoFragment extends BaseTempFragment {
     }
 
     @Override
+    public PlaylistBodyBean getBean() {
+        return bean;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        if (content != null)
+        if (content != null && isVisiable)
             content.startVideo();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden){
+            if (content != null && isVisiable)
+                content.startVideo();
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+            if (content != null)
+                content.startVideo();
+        }else{
+            if (content != null)
+                content.goOnPlayOnPause();
+        }
     }
 
     @Override

@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -20,16 +19,13 @@ public class Tab1Fragment extends BaseTabFragment {
     @Override
     public View initView(LayoutInflater inflater) {
         view = inflater.inflate(R.layout.fragment_tab1, null);
-        tlTab1 = view.findViewById(R.id.tl_tab1);
-        tlBottom1 = view.findViewById(R.id.tl_bottom1);
-        svTab1 = view.findViewById(R.id.sv_tab1);
         return view;
     }
 
 
     @Override
     public void initData() {
-        if (tlTab1 == null || mActivity == null) return;
+        if (tlTab1 == null || mActivity == null || bean == null || bean.entry == null) return;
         tlTab1.removeAllViews();
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.SaveRate.SaveRateItem item = bean.entry.get(i);
@@ -62,13 +58,13 @@ public class Tab1Fragment extends BaseTabFragment {
                 }
             });
         }
-        tlTab1.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                setBottomHeight(this);
-                return false;
-            }
-        });
+//        tlTab1.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+//            @Override
+//            public boolean onPreDraw() {
+//                setBottomHeight(this);
+//                return false;
+//            }
+//        });
     }
 
     @Override
@@ -77,5 +73,18 @@ public class Tab1Fragment extends BaseTabFragment {
             this.bean = (PresetBean.SaveRate) bean;
             initData();
         }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            initData();
+        }
+    }
+
+    @Override
+    public Object getBean() {
+        return bean;
     }
 }

@@ -1,6 +1,5 @@
 package com.ads.abcbank.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -12,13 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
-import com.ads.abcbank.activity.Temp1Activity;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.fragment.Tab1Fragment;
 import com.ads.abcbank.fragment.Tab2Fragment;
@@ -44,8 +41,6 @@ public class PresetView extends LinearLayout {
     private Tab2Fragment tab2Fragment;
     private Tab3Fragment tab3Fragment;
     private int delayTime = 10 * 1000;
-    private int downX = -1;
-    private int downY = -1;
     private Context context;
 
     public PresetView(Context context) {
@@ -64,25 +59,12 @@ public class PresetView extends LinearLayout {
 
     private void initView() {
         View view = LayoutInflater.from(context).inflate(R.layout.view_preset, null);
-        viewpager = view.findViewById(R.id.viewpager);
+        viewpager = view.findViewById(R.id.viewpager_preset);
         tablayout = view.findViewById(R.id.tablayout);
 
         tab1Fragment = new Tab1Fragment();
         tab2Fragment = new Tab2Fragment();
         tab3Fragment = new Tab3Fragment();
-
-        tab1Fragment.initView(LayoutInflater.from(context));
-        tab2Fragment.initView(LayoutInflater.from(context));
-        tab3Fragment.initView(LayoutInflater.from(context));
-
-        String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
-        if (TextUtils.isEmpty(json)) {
-            json = Utils.getStringFromAssets("json.json", context);
-        }
-        PresetBean bean = JSON.parseObject(json, PresetBean.class);
-        tab1Fragment.setBean(bean.data.saveRate);
-        tab2Fragment.setBean(bean.data.loanRate);
-        tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
 
         fragmentList = new ArrayList<>();
         list_Title = new ArrayList<>();
@@ -93,9 +75,18 @@ public class PresetView extends LinearLayout {
         list_Title.add("人民币\n贷款利率");
         list_Title.add("结售汇\n牌价");
 
+        String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
+        if (TextUtils.isEmpty(json)) {
+            json = Utils.getStringFromAssets("json.json", context);
+        }
+        PresetBean bean = JSON.parseObject(json, PresetBean.class);
+        tab1Fragment.setBean(bean.data.saveRate);
+        tab2Fragment.setBean(bean.data.loanRate);
+        tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+
+
         setTabWidth(tablayout);
         handler.postDelayed(runnable, delayTime);
-
 
 
         for (int i = 0; i < tablayout.getTabCount(); i++) {
@@ -108,6 +99,7 @@ public class PresetView extends LinearLayout {
         viewpager.setAdapter(new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager()));
         tablayout.setupWithViewPager(viewpager);//此方法就是让tablayout和ViewPager联动
         viewpager.setCurrentItem(0);
+        viewpager.setOffscreenPageLimit(3);
     }
 
     public void updatePresetDate() {
@@ -143,9 +135,11 @@ public class PresetView extends LinearLayout {
     }
 
     public class PresetPagerAdapter extends FragmentPagerAdapter {
+        FragmentManager fm;
 
         public PresetPagerAdapter(FragmentManager fm) {
             super(fm);
+            this.fm = fm;
         }
 
         @Override
@@ -168,6 +162,12 @@ public class PresetView extends LinearLayout {
         public CharSequence getPageTitle(int position) {
             return list_Title.get(position);
         }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+
     }
 
     public static void setTabWidth(final TabLayout tabLayout) {
@@ -217,29 +217,6 @@ public class PresetView extends LinearLayout {
             }
         });
 
-    }
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                // 让当前viewpager的父控件不去拦截touch事件
-                getParent().requestDisallowInterceptTouchEvent(true);
-                downX = (int) ev.getX();
-                downY = (int) ev.getY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int moveX = (int) ev.getX();
-                int moveY = (int) ev.getY();
-                if (Math.abs(moveX - downX) >= Math.abs(moveY - downY)) {
-                    // 滑动轮播图
-                    getParent().requestDisallowInterceptTouchEvent(true);
-                } else {
-                    // 刷新listview
-                    getParent().requestDisallowInterceptTouchEvent(false);
-                }
-                break;
-        }
-        return super.dispatchTouchEvent(ev);
     }
 
 }
