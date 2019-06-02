@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
+    android:paddingTop="8px"
+    android:paddingBottom="8px"
     android:orientation="horizontal">
 
     <ViewFlipper
@@ -12,6 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:flipInterval="5000"
-        android:padding="8dp">
+        android:padding="8px">
     </ViewFlipper>
 </LinearLayout>

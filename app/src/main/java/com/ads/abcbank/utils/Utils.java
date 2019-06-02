@@ -26,9 +26,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.Reader;
@@ -194,11 +200,13 @@ public class Utils {
             editor.commit();
         }
     }
+
     // 将px值转换为sp值
     public static int px2sp(Context context, float pxValue) {
         final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
         return (int) (pxValue / fontScale + 0.5f);
     }
+
     /**
      * 关闭软键盘
      */
@@ -412,5 +420,157 @@ public class Utils {
             e.printStackTrace();
         }
         return token;
+    }
+
+    public static String getTxtString(Context context,String fileName) throws IOException {// 转码
+        File file = new File(context.getCacheDir(), fileName);
+        if (!file.exists()) {
+            InputStream asset = context.getAssets().open(fileName);
+            FileOutputStream output = new FileOutputStream(file);
+            final byte[] buffer = new byte[1024];
+            int size;
+            while ((size = asset.read(buffer)) != -1) {
+                output.write(buffer, 0, size);
+            }
+            asset.close();
+            output.close();
+        }
+        BufferedReader reader;
+        String text = "";
+//        try {
+//            // FileReader f_reader = new FileReader(file);
+//            // BufferedReader reader = new BufferedReader(f_reader);
+//            FileInputStream fis = new FileInputStream(file);
+//            BufferedInputStream in = new BufferedInputStream(fis);
+//            in.mark(4);
+//            byte[] first3bytes = new byte[3];
+//            in.read(first3bytes);//找到文档的前三个字节并自动判断文档类型。
+//            in.reset();
+//            if (first3bytes[0] == (byte) 0xEF && first3bytes[1] == (byte) 0xBB
+//                    && first3bytes[2] == (byte) 0xBF) {// utf-8
+//
+//                reader = new BufferedReader(new InputStreamReader(in, "utf-8"));
+//
+//            } else if (first3bytes[0] == (byte) 0xFF
+//                    && first3bytes[1] == (byte) 0xFE) {
+//
+//                reader = new BufferedReader(
+//                        new InputStreamReader(in, "unicode"));
+//            } else if (first3bytes[0] == (byte) 0xFE
+//                    && first3bytes[1] == (byte) 0xFF) {
+//
+//                reader = new BufferedReader(new InputStreamReader(in,
+//                        "utf-16be"));
+//            } else if (first3bytes[0] == (byte) 0xFF
+//                    && first3bytes[1] == (byte) 0xFF) {
+//
+//                reader = new BufferedReader(new InputStreamReader(in,
+//                        "utf-16le"));
+//            } else {
+//
+//                reader = new BufferedReader(new InputStreamReader(in, "GBK"));
+//            }
+//            String str = reader.readLine();
+//
+//            while (str != null) {
+//                text = text + str + "/n";
+//                str = reader.readLine();
+//
+//            }
+//            reader.close();
+//
+//        } catch (FileNotFoundException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        StringBuilder builder = new StringBuilder();
+        String encoding=getFilecharset(file);
+        InputStreamReader read = new InputStreamReader(
+                new FileInputStream(file),encoding);//考虑到编码格式
+        BufferedReader bufferedReader = new BufferedReader(read);
+        String lineTxt = null;
+        while((lineTxt = bufferedReader.readLine()) != null){
+            boolean previousWasASpace = false;
+            for (char c : (lineTxt+"\n").toCharArray()) {
+                if (c == ' ') {
+                    if (previousWasASpace) {
+                        builder.append(" ");
+                        previousWasASpace = false;
+                        continue;
+                    }
+                    previousWasASpace = true;
+                } else {
+                    previousWasASpace = false;
+                }
+                builder.append(c);
+            }
+        }
+        read.close();
+        return builder.toString();
+    }
+
+    //判断编码格式方法
+    private static  String getFilecharset(File sourceFile) {
+        String charset = "GBK";
+        byte[] first3Bytes = new byte[3];
+        try {
+            boolean checked = false;
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(sourceFile));
+            bis.mark(0);
+            int read = bis.read(first3Bytes, 0, 3);
+            if (read == -1) {
+                return charset; //文件编码为 ANSI
+            } else if (first3Bytes[0] == (byte) 0xFF
+                    && first3Bytes[1] == (byte) 0xFE) {
+                charset = "UTF-16LE"; //文件编码为 Unicode
+                checked = true;
+            } else if (first3Bytes[0] == (byte) 0xFE
+                    && first3Bytes[1] == (byte) 0xFF) {
+                charset = "UTF-16BE"; //文件编码为 Unicode big endian
+                checked = true;
+            } else if (first3Bytes[0] == (byte) 0xEF
+                    && first3Bytes[1] == (byte) 0xBB
+                    && first3Bytes[2] == (byte) 0xBF) {
+                charset = "UTF-8"; //文件编码为 UTF-8
+                checked = true;
+            }
+            bis.reset();
+            if (!checked) {
+                int loc = 0;
+                while ((read = bis.read()) != -1) {
+                    loc++;
+                    if (read >= 0xF0)
+                        break;
+                    if (0x80 <= read && read <= 0xBF) // 单独出现BF以下的，也算是GBK
+                        break;
+                    if (0xC0 <= read && read <= 0xDF) {
+                        read = bis.read();
+                        if (0x80 <= read && read <= 0xBF) // 双字节 (0xC0 - 0xDF)
+                            // (0x80
+                            // - 0xBF),也可能在GB编码内
+                            continue;
+                        else
+                            break;
+                    } else if (0xE0 <= read && read <= 0xEF) {// 也有可能出错，但是几率较小
+                        read = bis.read();
+                        if (0x80 <= read && read <= 0xBF) {
+                            read = bis.read();
+                            if (0x80 <= read && read <= 0xBF) {
+                                charset = "UTF-8";
+                                break;
+                            } else
+                                break;
+                        } else
+                            break;
+                    }
+                }
+            }
+            bis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return charset;
     }
 }

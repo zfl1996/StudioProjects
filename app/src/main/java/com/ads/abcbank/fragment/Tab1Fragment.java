@@ -1,6 +1,7 @@
 package com.ads.abcbank.fragment;
 
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -33,6 +34,7 @@ public class Tab1Fragment extends BaseTabFragment {
             final TextView pre = rowView.findViewById(R.id.tv_pre);
             final TextView key = rowView.findViewById(R.id.tv_key);
             final TextView value = rowView.findViewById(R.id.tv_value);
+            final View v_empty = rowView.findViewById(R.id.v_empty);
             if (!TextUtils.isEmpty(item.placeholder)) {
                 pre.setText(item.placeholder);
             }
@@ -51,6 +53,9 @@ public class Tab1Fragment extends BaseTabFragment {
                     TableRow.LayoutParams layoutParams2 = (TableRow.LayoutParams) value.getLayoutParams();
                     layoutParams2.height = height;
                     value.setLayoutParams(layoutParams2);
+                    LinearLayout.LayoutParams layoutParams4 = (LinearLayout.LayoutParams) pre.getLayoutParams();
+                    layoutParams4.height = height;
+                    pre.setLayoutParams(layoutParams4);
                     key.getViewTreeObserver().removeOnPreDrawListener(this);
 
                     setBottomHeight(this);

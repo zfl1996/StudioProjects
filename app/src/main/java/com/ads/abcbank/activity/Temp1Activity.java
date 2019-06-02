@@ -51,7 +51,13 @@ public class Temp1Activity extends BaseActivity implements IView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp1);
 
-        initViews();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initViews();
+            }
+        }, 100);
+//        initViews();
     }
 
     private Handler handler = new Handler();
@@ -122,31 +128,37 @@ public class Temp1Activity extends BaseActivity implements IView {
         tempPresenter.getPreset();
 
 //        videoplayer.startVideo();
+        if (marqueeTextView != null)
+            marqueeTextView.startScroll();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         JzvdStd.goOnPlayOnPause();
-        marqueeTextView.pauseScroll();
+        if (marqueeTextView != null)
+            marqueeTextView.pauseScroll();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        marqueeTextView.startScroll();
+        if (marqueeTextView != null)
+            marqueeTextView.startScroll();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        marqueeTextView.resumeScroll();
+        if (marqueeTextView != null)
+            marqueeTextView.resumeScroll();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        marqueeTextView.stopScroll();
+        if (marqueeTextView != null)
+            marqueeTextView.stopScroll();
     }
 
     @Override

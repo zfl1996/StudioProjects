@@ -8,7 +8,7 @@
 
     <com.ads.abcbank.view.TempView
         android:id="@+id/tv_temp"
-        android:layout_width="0dp"
+        android:layout_width="0px"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="#fff"
@@ -16,7 +16,7 @@
 
     <com.ads.abcbank.view.TempView
         android:id="@+id/tv_temp2"
-        android:layout_width="0dp"
+        android:layout_width="0px"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="#fff"

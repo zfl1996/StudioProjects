@@ -8,7 +8,7 @@
     </style>
 
     <style name="TabLayoutTextSize" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">18dp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 

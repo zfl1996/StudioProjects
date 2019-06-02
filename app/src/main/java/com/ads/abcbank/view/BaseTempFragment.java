@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import android.widget.Toast;
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.fragment.ImageFragment;
+import com.ads.abcbank.fragment.PdfFragment;
+import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
 import com.ads.abcbank.utils.QRCodeUtil;
@@ -205,19 +208,20 @@ public abstract class BaseTempFragment extends Fragment {
             Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.movie);
             if (Utils.getRegisterBean(context) != null) {
                 Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink.replace("$storeId", Utils.getRegisterBean(context).data.storeId)
-                                .replace("$terminalId", Utils.getRegisterBean(context).terminalId), 100,
-                        "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
+                                .replace("$terminalId", Utils.getRegisterBean(context).terminalId), 130,
+                        "UTF-8", "H", "0", Color.BLACK, Color.WHITE,
                         null, logoBitmap, 0.2F);
                 iv.setImageBitmap(qrCodeBitmap);
             } else {
-                Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink, 100,
-                        "UTF-8", "H", "4", Color.BLACK, Color.WHITE,
+                Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink, 130,
+                        "UTF-8", "H", "0", Color.BLACK, Color.WHITE,
                         null, logoBitmap, 0.2F);
                 iv.setImageBitmap(qrCodeBitmap);
             }
             tips.setText(qr.QRTip);
             LinearLayout layout = new LinearLayout(context);
             layout.addView(view);
+
             qrLayout.addView(layout);
         }
     }
@@ -237,6 +241,14 @@ public abstract class BaseTempFragment extends Fragment {
             return fragment;
         } else if (baseTempFragment instanceof VideoFragment) {
             VideoFragment fragment = new VideoFragment();
+            fragment.setBean(baseTempFragment.getBean());
+            return fragment;
+        } else if (baseTempFragment instanceof PdfFragment) {
+            PdfFragment fragment = new PdfFragment();
+            fragment.setBean(baseTempFragment.getBean());
+            return fragment;
+        } else if (baseTempFragment instanceof TxtFragment) {
+            TxtFragment fragment = new TxtFragment();
             fragment.setBean(baseTempFragment.getBean());
             return fragment;
         }

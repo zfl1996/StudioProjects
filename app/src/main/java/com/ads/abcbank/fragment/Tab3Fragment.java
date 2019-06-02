@@ -1,6 +1,7 @@
 package com.ads.abcbank.fragment;
 
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;

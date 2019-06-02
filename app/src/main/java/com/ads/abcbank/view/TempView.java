@@ -21,6 +21,8 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.fragment.ImageFragment;
+import com.ads.abcbank.fragment.PdfFragment;
+import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
 import com.ads.abcbank.utils.Utils;
@@ -104,20 +106,24 @@ public class TempView extends LinearLayout {
                         case "avi":
                         case "rmvb":
                             fragment = new VideoFragment();
-                            fragment.setBean(bodyBean);
                             break;
                         case "jpg":
                         case "png":
                         case "bmp":
                         case "jpeg":
                             fragment = new ImageFragment();
-                            fragment.setBean(bodyBean);
+                            break;
+                        case "pdf":
+                            fragment = new PdfFragment();
+                            break;
+                        case "txt":
+                            fragment = new TxtFragment();
                             break;
                         default:
                             fragment = new WebFragment();
-                            fragment.setBean(bodyBean);
                             break;
                     }
+                    fragment.setBean(bodyBean);
                     fragment.setTempView(this);
                     fragmentList.add(fragment);
                 }
@@ -134,20 +140,24 @@ public class TempView extends LinearLayout {
                         case "avi":
                         case "rmvb":
                             fragment = new VideoFragment();
-                            fragment.setBean(bodyBean);
                             break;
                         case "jpg":
                         case "png":
                         case "bmp":
                         case "jpeg":
                             fragment = new ImageFragment();
-                            fragment.setBean(bodyBean);
+                            break;
+                        case "pdf":
+                            fragment = new PdfFragment();
+                            break;
+                        case "txt":
+                            fragment = new TxtFragment();
                             break;
                         default:
                             fragment = new WebFragment();
-                            fragment.setBean(bodyBean);
                             break;
                     }
+                    fragment.setBean(bodyBean);
                     fragment.setTempView(this);
                     fragmentList.add(fragment);
                 }

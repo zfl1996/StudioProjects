@@ -5,68 +5,68 @@
 
     <TextView
         android:id="@+id/tv_key"
-        android:layout_width="0dp"
+        android:layout_width="0px"
         android:layout_height="wrap_content"
         android:background="#08ffffff"
         android:gravity="top|left"
-        android:lineSpacingExtra="2dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
+        android:lineSpacingExtra="2px"
+        android:paddingBottom="5px"
+        android:paddingLeft="5px"
+        android:paddingRight="5px"
         android:text="项目"
         android:textColor="#fff"
         android:textSize="@dimen/text_small" />
 
     <View
-        android:layout_width="10dp"
-        android:layout_height="1dp"
+        android:layout_width="10px"
+        android:layout_height="1px"
         android:background="#00ffffff" />
 
     <TextView
         android:id="@+id/tv_value"
-        android:layout_width="0dp"
+        android:layout_width="0px"
         android:layout_height="wrap_content"
         android:background="#08ffffff"
         android:gravity="top|left"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
+        android:paddingBottom="5px"
+        android:paddingLeft="5px"
+        android:paddingRight="5px"
         android:text="年利率（%）"
         android:textColor="#fff"
         android:textSize="@dimen/text_small" />
 
     <View
-        android:layout_width="10dp"
-        android:layout_height="1dp"
+        android:layout_width="10px"
+        android:layout_height="1px"
         android:background="#00ffffff" />
 
     <TextView
         android:id="@+id/tv_value2"
-        android:layout_width="0dp"
+        android:layout_width="0px"
         android:layout_height="wrap_content"
         android:background="#08ffffff"
         android:gravity="top|left"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
+        android:paddingBottom="5px"
+        android:paddingLeft="5px"
+        android:paddingRight="5px"
         android:text="年利率（%）"
         android:textColor="#fff"
         android:textSize="@dimen/text_small" />
 
     <View
-        android:layout_width="10dp"
-        android:layout_height="1dp"
+        android:layout_width="10px"
+        android:layout_height="1px"
         android:background="#00ffffff" />
 
     <TextView
         android:id="@+id/tv_value3"
-        android:layout_width="0dp"
+        android:layout_width="0px"
         android:layout_height="wrap_content"
         android:background="#08ffffff"
         android:gravity="top|left"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
+        android:paddingBottom="5px"
+        android:paddingLeft="5px"
+        android:paddingRight="5px"
         android:text="年利率（%）"
         android:textColor="#fff"
         android:textSize="@dimen/text_small" />

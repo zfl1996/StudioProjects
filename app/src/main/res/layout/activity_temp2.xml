@@ -10,7 +10,7 @@
     <com.ads.abcbank.view.TempView
         android:id="@+id/tv_temp"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="0px"
         android:layout_weight="@dimen/top_height_2"
         android:background="#fff"
         android:orientation="horizontal"/>
@@ -18,7 +18,7 @@
     <com.ads.abcbank.view.MarqueeVerticalTextView
         android:id="@+id/marqueeTv"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="0px"
         android:layout_weight="@dimen/bottom_height"
         android:background="@mipmap/icon_bottom2"
         android:paddingLeft="@dimen/bottom_padding2"
