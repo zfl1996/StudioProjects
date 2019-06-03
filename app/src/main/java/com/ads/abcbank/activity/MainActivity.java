@@ -1,8 +1,12 @@
 package com.ads.abcbank.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -34,7 +38,7 @@ public class MainActivity extends BaseActivity {
     private EditText storeId;
     private TextView tvSubmit;
 
-    private ArrayAdapter<String> tAdapter, sAdapter, fAdapter, cAdapter;
+    private TestArrayAdapter tAdapter, sAdapter, fAdapter, cAdapter;
     private String[] terminals = {"TV", "poster", "led", "smartDev"};
     private String[] screens = {"水平", "垂直"};
     private String[][] frames = {{"模板1", "模板4", "模板5", "模板6"}, {"模板2", "模板3"}};
@@ -80,16 +84,14 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initDatas() {
-        tAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, terminals);
-        sAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, screens);
-        fAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        cAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        fAdapter.addAll(frames[0]);
-        tAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        fAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        cAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        cAdapter.addAll(contents[0][0]);
+        tAdapter = new TestArrayAdapter(this, terminals);
+        sAdapter = new TestArrayAdapter(this, screens);
+        fAdapter = new TestArrayAdapter(this, frames[0]);
+        ;
+        cAdapter = new TestArrayAdapter(this, contents[0][0]);
+        ;
+//        fAdapter.addAll(frames[0]);
+//        cAdapter.addAll(contents[0][0]);
         terminalType.setAdapter(tAdapter);
         screenDirection.setAdapter(sAdapter);
         frameSetNo.setAdapter(fAdapter);
@@ -109,10 +111,12 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                fAdapter.clear();
-                fAdapter.addAll(frames[position]);
+                fAdapter.clearData();
+                fAdapter.addData(frames[position]);
+                fAdapter.notifyDataSetChanged();
                 frameSetNo.setSelection(0);
                 sPosition = position;
+
             }
 
             @Override
@@ -123,8 +127,9 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                cAdapter.clear();
-                cAdapter.addAll(contents[sPosition][position]);
+                cAdapter.clearData();
+                cAdapter.addData(contents[sPosition][position]);
+                cAdapter.notifyDataSetChanged();
                 contentType.setSelection(0);
                 fPosition = position;
                 ivTemp.setImageResource(tempImages[sPosition][fPosition]);
@@ -259,4 +264,62 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(this, Temp6Activity.class));
     }
 
+    class TestArrayAdapter extends ArrayAdapter<String> {
+        private Context mContext;
+        private String[] mStringArray;
+
+        public TestArrayAdapter(Context context, String[] stringArray) {
+            super(context, android.R.layout.simple_spinner_item, stringArray);
+            mContext = context;
+            mStringArray = stringArray;
+        }
+
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                convertView = inflater.inflate(R.layout.item_spinner_dropdown, parent, false);
+            }
+
+            TextView tv = (TextView) convertView.findViewById(R.id.sp_drop_text);
+            if (mStringArray != null && position < mStringArray.length) {
+                try {
+                    tv.setText(mStringArray[position]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return convertView;
+
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                convertView = inflater.inflate(R.layout.item_spinner, parent, false);
+            }
+
+            //此处text1是Spinner默认的用来显示文字的TextView
+            TextView tv = (TextView) convertView.findViewById(R.id.sp_text);
+            if (mStringArray != null && position < mStringArray.length) {
+                try {
+                    tv.setText(mStringArray[position]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return convertView;
+        }
+
+        public void clearData() {
+            mStringArray = null;
+        }
+
+        public void addData(String[] items) {
+            mStringArray = items;
+        }
+    }
 }

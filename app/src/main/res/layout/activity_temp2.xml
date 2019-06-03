@@ -20,6 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_weight="@dimen/bottom_height"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
         android:background="@mipmap/icon_bottom2"
         android:paddingLeft="@dimen/bottom_padding2"
         android:paddingRight="@dimen/bottom_padding2"
