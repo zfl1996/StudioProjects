@@ -11,5 +11,5 @@
         android:adjustViewBounds="true"
         android:maxWidth="2000dp"
         android:scaleType="centerCrop"
-        android:src="@mipmap/v_grzyhb" />
+        android:src="@mipmap/bg_port" />
 </LinearLayout>

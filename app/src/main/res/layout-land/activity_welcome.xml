@@ -9,5 +9,5 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        android:src="@mipmap/h_zsyhxc" />
+        android:src="@mipmap/bg_land" />
 </LinearLayout>
