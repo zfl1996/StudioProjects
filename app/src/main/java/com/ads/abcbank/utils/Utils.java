@@ -250,10 +250,13 @@ public class Utils {
     }
 
     public static void loadImage(ImageView imageView, String url) {
+        int[] srcId = {R.mipmap.h_zsyhxc, R.mipmap.h_jjdt};
+        int index = (int) (Math.random() * srcId.length);
+        int random = srcId[index];
         if (imageView != null) {
-            int placeholderId = R.mipmap.bg_land;
+            int placeholderId = random;
             if (getContentTypeMiddle(imageView.getContext()).equals("V")) {
-                placeholderId = R.mipmap.bg_port;
+                placeholderId = R.mipmap.v_grzyhb;
             }
             WeakReference<ImageView> reference = new WeakReference(imageView);
             ImageView target = (ImageView) reference.get();
@@ -422,7 +425,7 @@ public class Utils {
         return token;
     }
 
-    public static String getTxtString(Context context,String fileName) throws IOException {// 转码
+    public static String getTxtString(Context context, String fileName) throws IOException {// 转码
         File file = new File(context.getCacheDir(), fileName);
         if (!file.exists()) {
             InputStream asset = context.getAssets().open(fileName);
@@ -486,14 +489,14 @@ public class Utils {
 //            e.printStackTrace();
 //        }
         StringBuilder builder = new StringBuilder();
-        String encoding=getFilecharset(file);
+        String encoding = getFilecharset(file);
         InputStreamReader read = new InputStreamReader(
-                new FileInputStream(file),encoding);//考虑到编码格式
+                new FileInputStream(file), encoding);//考虑到编码格式
         BufferedReader bufferedReader = new BufferedReader(read);
         String lineTxt = null;
-        while((lineTxt = bufferedReader.readLine()) != null){
+        while ((lineTxt = bufferedReader.readLine()) != null) {
             boolean previousWasASpace = false;
-            for (char c : (lineTxt+"\n").toCharArray()) {
+            for (char c : (lineTxt + "\n").toCharArray()) {
                 if (c == ' ') {
                     if (previousWasASpace) {
                         builder.append(" ");
@@ -512,7 +515,7 @@ public class Utils {
     }
 
     //判断编码格式方法
-    private static  String getFilecharset(File sourceFile) {
+    private static String getFilecharset(File sourceFile) {
         String charset = "GBK";
         byte[] first3Bytes = new byte[3];
         try {

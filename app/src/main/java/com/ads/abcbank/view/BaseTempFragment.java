@@ -218,6 +218,12 @@ public abstract class BaseTempFragment extends Fragment {
                         null, logoBitmap, 0.2F);
                 iv.setImageBitmap(qrCodeBitmap);
             }
+
+            if (i==0) {
+                iv.setImageResource(R.mipmap.abcqrcode);
+            } else  if (i==1){
+                iv.setImageResource(R.mipmap.abcqrcode1);
+            }
             tips.setText(qr.QRTip);
             LinearLayout layout = new LinearLayout(context);
             layout.addView(view);

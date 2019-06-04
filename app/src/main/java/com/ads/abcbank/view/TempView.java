@@ -70,12 +70,16 @@ public class TempView extends LinearLayout {
         viewpager = view.findViewById(R.id.viewpager);
         viewpagerHot = view.findViewById(R.id.viewpager_hot);
 
-        int src = R.mipmap.bg_land;
+        int src = R.mipmap.h_zsyhxc;
         if (Utils.getContentTypeMiddle(context).equals("V")) {
-            src = R.mipmap.bg_port;
+            src = R.mipmap.v_sxdhb;
         }
-        image.setImageResource(src);
+        setImageSrc(src);
         addView(view);
+    }
+
+    public void setImageSrc(int src) {
+        image.setImageResource(src);
     }
 
     public void setType(String type) {

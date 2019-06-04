@@ -33,6 +33,7 @@ public class Temp6Activity extends BaseActivity implements IView {
         setContentView(R.layout.activity_temp6);
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp.setType("T");
+        tvTemp.setImageSrc(R.mipmap.h_zyxykfq);
     }
 
     @Override

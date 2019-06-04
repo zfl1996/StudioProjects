@@ -18,7 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 public class Temp2Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
     private MarqueeVerticalTextView marqueeTv;
-    private String [] textArrays = new String[]{"this is content No.1","this is content No.2","this is content No.3"};
+    private String [] textArrays = new String[]{"中国农业银行欢迎您！","中国农业银行欢迎您！","中国农业银行欢迎您！"};
     private TempView tvTemp;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,7 @@ public class Temp2Activity extends BaseActivity implements IView {
         tvTemp = findViewById(R.id.tv_temp);
 
         tvTemp.setType("M,H,P,N,E,L,R");
+        tvTemp.setImageSrc(R.mipmap.v_zysys);
         marqueeTv.setTextArraysAndClickListener(textArrays, new MarqueeVerticalTextViewClickListener() {
                     @Override
                     public void onItemClick(int position, TextView view) {

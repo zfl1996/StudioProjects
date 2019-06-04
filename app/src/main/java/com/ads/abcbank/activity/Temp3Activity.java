@@ -37,6 +37,7 @@ public class Temp3Activity extends BaseActivity implements IView {
         setContentView(R.layout.activity_temp3);
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp.setType("M,H,P,N,E,L,R");
+        tvTemp.setImageSrc(R.mipmap.v_sxdhb);
 //        initQRCode();
     }
 

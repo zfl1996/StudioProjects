@@ -111,9 +111,8 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                fAdapter.clearData();
-                fAdapter.addData(frames[position]);
-                fAdapter.notifyDataSetChanged();
+                fAdapter = new TestArrayAdapter(MainActivity.this, frames[position]);
+                frameSetNo.setAdapter(fAdapter);
                 frameSetNo.setSelection(0);
                 sPosition = position;
 
@@ -127,12 +126,14 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                cAdapter.clearData();
-                cAdapter.addData(contents[sPosition][position]);
-                cAdapter.notifyDataSetChanged();
-                contentType.setSelection(0);
-                fPosition = position;
-                ivTemp.setImageResource(tempImages[sPosition][fPosition]);
+                try {
+                    cAdapter = new TestArrayAdapter(MainActivity.this, contents[sPosition][position]);
+                    contentType.setAdapter(cAdapter);
+                    contentType.setSelection(0);
+                    fPosition = position;
+                    ivTemp.setImageResource(tempImages[sPosition][fPosition]);
+                } catch (Exception e) {
+                }
             }
 
             @Override
@@ -282,7 +283,7 @@ public class MainActivity extends BaseActivity {
                 convertView = inflater.inflate(R.layout.item_spinner_dropdown, parent, false);
             }
 
-            TextView tv = (TextView) convertView.findViewById(R.id.sp_drop_text);
+            TextView tv = (TextView) convertView.findViewById(android.R.id.text1);
             if (mStringArray != null && position < mStringArray.length) {
                 try {
                     tv.setText(mStringArray[position]);
@@ -302,7 +303,7 @@ public class MainActivity extends BaseActivity {
             }
 
             //此处text1是Spinner默认的用来显示文字的TextView
-            TextView tv = (TextView) convertView.findViewById(R.id.sp_text);
+            TextView tv = (TextView) convertView.findViewById(android.R.id.text1);
             if (mStringArray != null && position < mStringArray.length) {
                 try {
                     tv.setText(mStringArray[position]);
