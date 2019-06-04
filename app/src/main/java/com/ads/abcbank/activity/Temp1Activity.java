@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
@@ -123,7 +124,7 @@ public class Temp1Activity extends BaseActivity implements IView {
         marqueeTextView.invalidate();
         handler.post(timeRunnable);
         tvTemp.setType("M,H,P,N,E,L,R");
-
+        tvTemp.getImage().setVisibility(View.GONE);
         tempPresenter = new TempPresenter(this, this);
         tempPresenter.getPreset();
 

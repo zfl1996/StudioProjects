@@ -15,8 +15,8 @@
 
     <TextView
         android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120px"
+        android:layout_height="80px"
         android:layout_marginLeft="20px"
         android:layout_marginTop="20px"
         android:gravity="center_vertical"
@@ -24,6 +24,9 @@
         android:paddingLeft="10px"
         android:paddingRight="10px"
         android:paddingTop="5px"
+        android:background="@drawable/corner_view"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_big_super"
         android:text="@string/s_back" />
 
     <ProgressBar
