@@ -4,14 +4,12 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,7 +34,7 @@ import java.util.List;
  * @date 2019/5/19
  */
 
-public class TempView extends LinearLayout {
+public class TempView2 extends LinearLayout {
     private Context context;
     private String type;
     private ViewPager viewpager;
@@ -55,15 +53,15 @@ public class TempView extends LinearLayout {
         this.showStaticData = showStaticData;
     }
 
-    public TempView(Context context) {
+    public TempView2(Context context) {
         this(context, null);
     }
 
-    public TempView(Context context, AttributeSet attrs) {
+    public TempView2(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public TempView(Context context, AttributeSet attrs, int defStyle) {
+    public TempView2(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.context = context;
         initView();
@@ -75,9 +73,9 @@ public class TempView extends LinearLayout {
             json = Utils.getStringFromAssets("playlist.json", context);
         }
         playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
-        View view = LayoutInflater.from(context).inflate(R.layout.view_temp, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.view_temp2, null);
         image = view.findViewById(R.id.image);
-        viewpager = view.findViewById(R.id.viewpager);
+        viewpager = view.findViewById(R.id.viewpager_temp);
         viewpagerHot = view.findViewById(R.id.viewpager_hot);
 
         int src = R.mipmap.h_zsyhxc;
@@ -113,7 +111,7 @@ public class TempView extends LinearLayout {
             BaseTempFragment fragment = null;
             fragment = new ImageFragment();
             fragment.setBean(bodyBean);
-            fragment.setTempView(this);
+            fragment.setTempView2(this);
             fragmentList.add(fragment);
         }
     }
@@ -156,7 +154,7 @@ public class TempView extends LinearLayout {
                             break;
                     }
                     fragment.setBean(bodyBean);
-                    fragment.setTempView(this);
+                    fragment.setTempView2(this);
                     fragmentList.add(fragment);
                 }
             } else {
@@ -190,7 +188,7 @@ public class TempView extends LinearLayout {
                             break;
                     }
                     fragment.setBean(bodyBean);
-                    fragment.setTempView(this);
+                    fragment.setTempView2(this);
                     fragmentList.add(fragment);
                 }
             }

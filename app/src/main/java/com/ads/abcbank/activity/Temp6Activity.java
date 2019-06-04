@@ -15,6 +15,7 @@
 package com.ads.abcbank.activity;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
@@ -32,8 +33,11 @@ public class Temp6Activity extends BaseActivity implements IView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp6);
         tvTemp = findViewById(R.id.tv_temp);
+        tvTemp.setShowStaticData(true);
         tvTemp.setType("T");
-        tvTemp.setImageSrc(R.mipmap.h_zyxykfq);
+        tvTemp.getImage().setVisibility(View.GONE);
+//        tvTemp.setImageSrc(R.mipmap.h_zyxykfq);
+
     }
 
     @Override

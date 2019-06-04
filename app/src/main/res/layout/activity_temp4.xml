@@ -14,7 +14,7 @@
         android:background="#fff"
         android:orientation="horizontal" />
 
-    <com.ads.abcbank.view.TempView
+    <com.ads.abcbank.view.TempView2
         android:id="@+id/tv_temp2"
         android:layout_width="0px"
         android:layout_height="match_parent"

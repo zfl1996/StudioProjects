@@ -18,6 +18,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.ads.abcbank.R;
@@ -36,8 +37,10 @@ public class Temp3Activity extends BaseActivity implements IView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp3);
         tvTemp = findViewById(R.id.tv_temp);
+        tvTemp.setShowStaticData(true);
         tvTemp.setType("M,H,P,N,E,L,R");
-        tvTemp.setImageSrc(R.mipmap.v_sxdhb);
+        tvTemp.getImage().setVisibility(View.GONE);
+//        tvTemp.setImageSrc(R.mipmap.v_sxdhb);
 //        initQRCode();
     }
 

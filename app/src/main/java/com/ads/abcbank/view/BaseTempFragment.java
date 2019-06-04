@@ -42,6 +42,7 @@ public abstract class BaseTempFragment extends Fragment {
     private LinearLayout llQr8;
     private LinearLayout llQr9;
     public static TempView tempView;
+    public static TempView2 tempView2;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -235,7 +236,9 @@ public abstract class BaseTempFragment extends Fragment {
     public void setTempView(TempView tempView) {
         this.tempView = tempView;
     }
-
+    public void setTempView2(TempView2 tempView) {
+        this.tempView2 = tempView;
+    }
     public static BaseTempFragment newInstance(BaseTempFragment baseTempFragment) {
         if (baseTempFragment instanceof ImageFragment) {
             ImageFragment fragment = new ImageFragment();

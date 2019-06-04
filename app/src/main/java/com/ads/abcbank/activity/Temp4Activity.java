@@ -15,18 +15,20 @@
 package com.ads.abcbank.activity;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.TempView;
+import com.ads.abcbank.view.TempView2;
 import com.alibaba.fastjson.JSONObject;
 
 public class Temp4Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
     private TempView tvTemp;
-    private TempView tvTemp2;
+    private TempView2 tvTemp2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,8 +36,15 @@ public class Temp4Activity extends BaseActivity implements IView {
         setContentView(R.layout.activity_temp4);
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp2 = findViewById(R.id.tv_temp2);
+
+        tvTemp.setShowStaticData(true);
+        tvTemp2.setShowStaticData(true);
+
         tvTemp.setType("H,L");
         tvTemp2.setType("N");
+
+        tvTemp.getImage().setVisibility(View.GONE);
+        tvTemp2.getImage().setVisibility(View.GONE);
         tvTemp.setImageSrc(R.mipmap.v_wkqk);
         tvTemp2.setImageSrc(R.mipmap.v_zysys);
     }

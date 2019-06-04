@@ -250,13 +250,19 @@ public class Utils {
     }
 
     public static void loadImage(ImageView imageView, String url) {
-        int[] srcId = {R.mipmap.h_zsyhxc, R.mipmap.h_jjdt};
-        int index = (int) (Math.random() * srcId.length);
-        int random = srcId[index];
+        int[] vIds = {R.mipmap.v_grzyhb, R.mipmap.v_sxdhb, R.mipmap.v_wkqk, R.mipmap.v_zysys};
+        int[] hIds = {R.mipmap.h_jjdt, R.mipmap.h_zyxykfq, R.mipmap.h_zsyhxc};
+        int index = (int) (Math.random() * hIds.length);
+        int index2 = (int) (Math.random() * vIds.length);
+        int random = hIds[index];
+        int random2 = vIds[index2];
         if (imageView != null) {
             int placeholderId = random;
-            if (getContentTypeMiddle(imageView.getContext()).equals("V")) {
-                placeholderId = R.mipmap.v_grzyhb;
+            if (getContentTypeMiddle(imageView.getContext()).equals("V")
+                    || getContentTypeStart(imageView.getContext()).equals("H,L")
+                    || getContentTypeStart(imageView.getContext()).equals("N")
+            ) {
+                placeholderId = random2;
             }
             WeakReference<ImageView> reference = new WeakReference(imageView);
             ImageView target = (ImageView) reference.get();
