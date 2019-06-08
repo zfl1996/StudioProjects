@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@mipmap/ic_port"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/padding_top"
+        android:paddingLeft="50px"
+        android:paddingRight="50px"
+        android:paddingTop="@dimen/padding_top">
+
+        <RelativeLayout
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:keepScreenOn="true"
+            android:paddingLeft="30px">
+
+            <TextView
+                android:id="@+id/tv_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="10px"
+                android:text="模板预览："
+                android:textColor="#fff"
+                android:textSize="@dimen/text_big" />
+
+            <ImageView
+                android:id="@+id/iv_temp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_temp"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="30px"
+                android:layout_marginRight="10px"
+                android:adjustViewBounds="true"
+                android:src="@mipmap/icon_temp1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="toTemp1"
+                    android:padding="10px"
+                    android:text="temp1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="toTemp2"
+                    android:padding="10px"
+                    android:text="temp2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="toTemp3"
+                    android:padding="10px"
+                    android:text="temp3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="toTemp4"
+                    android:padding="10px"
+                    android:text="temp4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="toTemp5"
+                    android:padding="10px"
+                    android:text="temp5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="toTemp6"
+                    android:padding="10px"
+                    android:text="temp6" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <TableLayout
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="2.5"
+            android:paddingRight="80px"
+            android:stretchColumns="0">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="应用ID:" />
+
+                <TextView
+                    android:id="@+id/appId"
+                    style="@style/row_right"
+                    android:background="@null"
+                    android:text="BDC201801_0302" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="省号:" />
+
+                <EditText
+                    android:id="@+id/cityCode"
+                    style="@style/row_right" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="省号+行号:" />
+
+                <EditText
+                    android:id="@+id/brchCode"
+                    style="@style/row_right" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="设备版本号:" />
+
+                <EditText
+                    android:id="@+id/clientVersion"
+                    style="@style/row_right" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="设备类型:" />
+
+                <Spinner
+                    android:id="@+id/terminalType"
+                    style="@style/row_right_spinner" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="屏幕方向:" />
+
+                <Spinner
+                    android:id="@+id/screenDirection"
+                    style="@style/row_right_spinner" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="节目模板:" />
+
+                <Spinner
+                    android:id="@+id/frameSetNo"
+                    style="@style/row_right_spinner" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="产品类型:" />
+
+                <Spinner
+                    android:id="@+id/contentType"
+                    style="@style/row_right_spinner" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="客户端IP:" />
+
+                <EditText
+                    android:id="@+id/appIdAddress"
+                    style="@style/row_right" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="服务器地址:" />
+
+                <EditText
+                    android:id="@+id/server"
+                    style="@style/row_right" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="数据缓存地址:" />
+
+                <EditText
+                    android:id="@+id/cdn"
+                    style="@style/row_right" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="金融小店ID:" />
+
+                <EditText
+                    android:id="@+id/storeId"
+                    style="@style/row_right" />
+            </TableRow>
+
+            <TableRow android:layout_marginTop="50px">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="20px" />
+
+                <TextView
+                    android:id="@+id/tv_submit"
+                    style="@style/row_left"
+                    android:layout_width="match_parent"
+                    android:layout_height="40px"
+                    android:layout_marginLeft="20px"
+                    android:layout_marginRight="20px"
+                    android:background="@drawable/btn_background"
+                    android:gravity="center"
+                    android:onClick="onRegister"
+                    android:layout_marginBottom="5px"
+                    android:text="注册" />
+            </TableRow>
+
+
+        </TableLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_set"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:layout_gravity="top|right"
+        android:onClick="toSetView" />
+
+    <TextView
+        android:id="@+id/back"
+        android:layout_width="120px"
+        android:layout_height="80px"
+        android:layout_marginLeft="20px"
+        android:layout_marginTop="20px"
+        android:background="@drawable/corner_view"
+        android:gravity="center_vertical"
+        android:paddingBottom="5px"
+        android:paddingLeft="10px"
+        android:visibility="gone"
+        android:paddingRight="10px"
+        android:paddingTop="5px"
+        android:text="@string/s_back"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_big_super" />
+</FrameLayout>

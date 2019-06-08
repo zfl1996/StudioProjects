@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@mipmap/ic_port"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/padding_bottom"
+        android:paddingLeft="@dimen/padding_left"
+        android:paddingRight="@dimen/padding_right"
+        android:paddingTop="@dimen/padding_top">
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="获取轮询命令频率(分钟):" />
+
+                <EditText
+                    android:id="@+id/et_cmd"
+                    style="@style/row_right"
+                    android:background="@drawable/edit_background"
+                    android:inputType="number" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="获取最新汇率频率(分钟):" />
+
+                <EditText
+                    android:id="@+id/et_preset"
+                    style="@style/row_right"
+                    android:background="@drawable/edit_background"
+                    android:inputType="number" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="获取播放列表频率(分钟):" />
+
+                <EditText
+                    android:id="@+id/et_playlist"
+                    style="@style/row_right"
+                    android:background="@drawable/edit_background"
+                    android:inputType="number" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="图片类型切换频率(秒):" />
+
+                <EditText
+                    android:id="@+id/et_tab_img"
+                    style="@style/row_right"
+                    android:background="@drawable/edit_background"
+                    android:inputType="number" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="汇率频道切换频率(秒):" />
+
+                <EditText
+                    android:id="@+id/et_tab_preset"
+                    style="@style/row_right"
+                    android:background="@drawable/edit_background"
+                    android:inputType="number" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="PDF文件切换频率(秒):" />
+
+                <EditText
+                    android:id="@+id/et_pdf"
+                    style="@style/row_right"
+                    android:background="@drawable/edit_background"
+                    android:inputType="number" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="过期文件保存期限(天):" />
+
+                <EditText
+                    android:id="@+id/et_file"
+                    style="@style/row_right"
+                    android:inputType="number" />
+            </TableRow>
+
+
+            <TableRow android:layout_marginTop="50px">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="20px" />
+
+                <TextView
+                    android:id="@+id/tv_submit"
+                    style="@style/row_left"
+                    android:layout_width="200px"
+                    android:layout_height="40px"
+                    android:layout_marginBottom="5px"
+                    android:layout_marginLeft="20px"
+                    android:layout_marginRight="20px"
+                    android:background="@drawable/btn_background"
+                    android:gravity="center"
+                    android:onClick="onRegister"
+                    android:text="保存" />
+            </TableRow>
+
+        </TableLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/back"
+        android:layout_width="120px"
+        android:layout_height="80px"
+        android:layout_marginLeft="20px"
+        android:layout_marginTop="20px"
+        android:gravity="center_vertical"
+        android:paddingBottom="5px"
+        android:paddingLeft="10px"
+        android:paddingRight="10px"
+        android:paddingTop="5px"
+        android:background="@drawable/corner_view"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_big_super"
+        android:text="@string/s_back" />
+</FrameLayout>

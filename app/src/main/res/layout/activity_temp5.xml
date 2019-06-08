@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_root"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#2c3844"
-    android:orientation="horizontal">
+    android:layout_height="match_parent">
 
-    <com.ads.abcbank.view.TempView
-        android:id="@+id/tv_temp"
+    <LinearLayout
+        android:id="@+id/ll_root"
         android:layout_width="match_parent"
+        android:keepScreenOn="true"
         android:layout_height="match_parent"
-        android:background="#fff"
-        android:orientation="horizontal" />
+        android:background="#2c3844"
+        android:orientation="horizontal">
 
-</LinearLayout>
+        <com.ads.abcbank.view.TempView
+            android:id="@+id/tv_temp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_set"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:layout_gravity="top|left" />
+</FrameLayout>

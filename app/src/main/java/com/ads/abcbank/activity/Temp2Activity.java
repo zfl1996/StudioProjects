@@ -48,6 +48,8 @@ public class Temp2Activity extends BaseActivity implements IView {
 //        ZipUtil.copyDbFile(this, "audio.wav");
 //        ZipUtil.compressFile(marqueeTv.getRootView());
 //        ZipUtil.unZip(marqueeTv.getRootView());
+        setiView(this);
+        startServices();
     }
 
     @Override

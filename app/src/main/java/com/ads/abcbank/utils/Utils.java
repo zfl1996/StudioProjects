@@ -20,6 +20,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -30,20 +32,21 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.Reader;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.net.NetworkInterface;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -56,11 +59,32 @@ public class Utils {
     public static ProgressDialog mProgressDialog;
 
     public static final String KEY_PLAY_LIST = "playList";
+    public static final String KEY_PLAY_LIST_DOWNLOAD = "playListDownload";
+    public static final String KEY_PLAY_LIST_ALL = "playListAll";
     public static final String KEY_PRESET = "preset";
     public static final String KEY_CONTENT_TYPE_START = "contentTypeStart";
     public static final String KEY_CONTENT_TYPE_MIDDLE = "contentTypeMiddle";
     public static final String KEY_CONTENT_TYPE_END = "contentTypeEnd";
     public static final String KEY_REGISTER_BEAN = "registerBean";
+    public static final String KEY_CMD_POLL = "cmdPoll";
+
+    public static final String KEY_TIME_CMD = "timeCmd";//记录获取cmd命令的分钟数
+    public static final String KEY_TIME_PRESET = "timePreset";//记录获取汇率的分钟数
+    public static final String KEY_TIME_PLAYLIST = "timePlaylist";//记录获取播放列表的分钟数
+
+    public static final String KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
+    public static final String KEY_TIME_CURRENT_PRESET = "timeCurrentPreset";//记录当前获取汇率的分钟数
+    public static final String KEY_TIME_CURRENT_PLAYLIST = "timeCurrentPlaylist";//记录当前获取播放列表的分钟数
+
+    public static final String KEY_TIME_TAB_PRESET = "timeTabPreset";//记录切换汇率tab的秒数
+    public static final String KEY_TIME_TAB_IMG = "timeTabImg";//记录切换图片tab的秒数
+    public static final String KEY_TIME_TAB_PDF = "timeTabPdf";//记录切换pdf文件的秒数
+    public static final String KEY_TIME_FILE = "timeFile";//记录切换pdf文件的秒数
+
+    public static String TIME_PLAYLIST;
+    public static String TIME_PRESET;
+    public static String TIME_CMD;
+    private static AsyncThread asyncThread;
 
     public static void setRegisterBean(Context context, RegisterBean bean) {
         put(context, KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
@@ -261,7 +285,7 @@ public class Utils {
             if (getContentTypeMiddle(imageView.getContext()).equals("V")
                     || getContentTypeStart(imageView.getContext()).equals("H,L")
                     || getContentTypeStart(imageView.getContext()).equals("N")
-            ) {
+                    ) {
                 placeholderId = random2;
             }
             WeakReference<ImageView> reference = new WeakReference(imageView);
@@ -446,54 +470,6 @@ public class Utils {
         }
         BufferedReader reader;
         String text = "";
-//        try {
-//            // FileReader f_reader = new FileReader(file);
-//            // BufferedReader reader = new BufferedReader(f_reader);
-//            FileInputStream fis = new FileInputStream(file);
-//            BufferedInputStream in = new BufferedInputStream(fis);
-//            in.mark(4);
-//            byte[] first3bytes = new byte[3];
-//            in.read(first3bytes);//找到文档的前三个字节并自动判断文档类型。
-//            in.reset();
-//            if (first3bytes[0] == (byte) 0xEF && first3bytes[1] == (byte) 0xBB
-//                    && first3bytes[2] == (byte) 0xBF) {// utf-8
-//
-//                reader = new BufferedReader(new InputStreamReader(in, "utf-8"));
-//
-//            } else if (first3bytes[0] == (byte) 0xFF
-//                    && first3bytes[1] == (byte) 0xFE) {
-//
-//                reader = new BufferedReader(
-//                        new InputStreamReader(in, "unicode"));
-//            } else if (first3bytes[0] == (byte) 0xFE
-//                    && first3bytes[1] == (byte) 0xFF) {
-//
-//                reader = new BufferedReader(new InputStreamReader(in,
-//                        "utf-16be"));
-//            } else if (first3bytes[0] == (byte) 0xFF
-//                    && first3bytes[1] == (byte) 0xFF) {
-//
-//                reader = new BufferedReader(new InputStreamReader(in,
-//                        "utf-16le"));
-//            } else {
-//
-//                reader = new BufferedReader(new InputStreamReader(in, "GBK"));
-//            }
-//            String str = reader.readLine();
-//
-//            while (str != null) {
-//                text = text + str + "/n";
-//                str = reader.readLine();
-//
-//            }
-//            reader.close();
-//
-//        } catch (FileNotFoundException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         StringBuilder builder = new StringBuilder();
         String encoding = getFilecharset(file);
         InputStreamReader read = new InputStreamReader(
@@ -581,5 +557,199 @@ public class Utils {
             e.printStackTrace();
         }
         return charset;
+    }
+
+    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
+    private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+    public static boolean isInDownloadTime(PlaylistBodyBean bean) {
+        String downloadTimeslice = bean.downloadTimeslice;
+        if (TextUtils.isEmpty(downloadTimeslice)) {
+            return true;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        String[] strs = downloadTimeslice.split("-");
+        int _week = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (_week < 0)
+            _week = 0;
+        if (_week == 0) _week = 7;
+        if (("," + strs[0] + ",").indexOf("," + _week + ",") >= 0) {
+            //判断当前时间是否在工作时间段内
+            Date startDt = null;
+            Date endDt = null;
+            Date nowDt = new Date();
+            try {
+                startDt = timeFormat.parse(strs[1]);
+                Calendar ca = Calendar.getInstance();
+                ca.setTime(startDt);
+                ca.add(Calendar.MINUTE, Integer.parseInt(strs[2]));
+                endDt = ca.getTime();
+
+                if (timeFormat.format(nowDt).compareTo(timeFormat.format(startDt)) >= 0
+                        && timeFormat.format(nowDt).compareTo(timeFormat.format(endDt)) <= 0) {
+                    return true;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isInPlayTime(PlaylistBodyBean bean) {
+        String currentDate = simpleDateFormat.format(new Date());
+        if (!TextUtils.isEmpty(bean.playDate) && !TextUtils.isEmpty(bean.stopDate)
+                && currentDate.compareTo(bean.playDate) >= 0 && currentDate.compareTo(bean.stopDate) < 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isNeedDel(Context context, PlaylistBodyBean bean) {
+        int timeFile = Integer.parseInt(get(context, KEY_TIME_FILE, "30").toString());
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.add(Calendar.DATE, -1 * timeFile);
+        Date m = c.getTime();
+        String mon = simpleDateFormat.format(m);
+        if (mon.compareTo(bean.stopDate) <= 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static long getTimePlaylist() {
+        try {
+            return Long.parseLong(TIME_PLAYLIST);
+        } catch (Exception e) {
+            return 20 * 60 * 1000;
+        }
+    }
+
+    public static void setTimePlaylist(String timePlaylist) {
+        TIME_PLAYLIST = timePlaylist;
+    }
+
+    public static long getTimePreset() {
+        try {
+            return Long.parseLong(TIME_PRESET);
+        } catch (Exception e) {
+            return 30 * 60 * 1000;
+        }
+    }
+
+    public static void setTimePreset(String timePreset) {
+        TIME_PRESET = timePreset;
+    }
+
+    public static long getTimeCmd() {
+        try {
+            return Long.parseLong(TIME_CMD);
+        } catch (Exception e) {
+            return 5 * 60 * 1000;
+        }
+    }
+
+    public static void setTimeCmd(String timeCmd) {
+        TIME_CMD = timeCmd;
+    }
+
+    public static AsyncThread getAsyncThread() {
+        if (asyncThread == null) {
+            synchronized (AsyncThread.class) {
+                if (asyncThread == null) {
+                    asyncThread = new AsyncThread();
+                }
+            }
+        }
+        return asyncThread;
+    }
+
+    public static void delOneAllBean(Context context, PlaylistBodyBean bean) {
+        String allBeanStr = get(context, KEY_PLAY_LIST_ALL, "").toString();
+        if (TextUtils.isEmpty(allBeanStr)) return;
+        PlaylistResultBean allBean = JSON.parseObject(allBeanStr, PlaylistResultBean.class);
+        List<PlaylistBodyBean> allList = allBean.data.items;
+        for (int i = 0; i < allList.size(); i++) {
+            if (containSame(allList, bean)) {
+                allList.remove(i);
+                allBeanStr = JSONObject.toJSONString(allBean);
+                put(context, KEY_PLAY_LIST_ALL, allBeanStr);
+                return;
+            }
+        }
+    }
+
+
+    public static void delOneDownloadBean(Context context, PlaylistBodyBean bean) {
+        String allBeanStr = get(context, KEY_PLAY_LIST_DOWNLOAD, "").toString();
+        if (TextUtils.isEmpty(allBeanStr)) return;
+        PlaylistResultBean allBean = JSON.parseObject(allBeanStr, PlaylistResultBean.class);
+        List<PlaylistBodyBean> allList = allBean.data.items;
+        for (int i = 0; i < allList.size(); i++) {
+            if (containSame(allList, bean)) {
+                allList.remove(i);
+                allBeanStr = JSONObject.toJSONString(allBean);
+                put(context, KEY_PLAY_LIST_DOWNLOAD, allBeanStr);
+                return;
+            }
+        }
+    }
+
+    public static void megerAllBean(Context context, String jsonStr) {
+        if (TextUtils.isEmpty(jsonStr)) return;
+        String allBeanStr = get(context, KEY_PLAY_LIST_ALL, "").toString();
+        if (TextUtils.isEmpty(allBeanStr)) {
+            allBeanStr = jsonStr;
+        } else {
+            PlaylistResultBean allBean = JSON.parseObject(allBeanStr, PlaylistResultBean.class);
+            PlaylistResultBean addBean = JSON.parseObject(jsonStr, PlaylistResultBean.class);
+            List<PlaylistBodyBean> allList = allBean.data.items;
+            List<PlaylistBodyBean> addList = addBean.data.items;
+            for (int i = 0; i < addList.size(); i++) {
+                if (!containSame(allList, addList.get(i))) {
+                    allList.add(addList.get(i));
+                }
+            }
+            allBeanStr = JSONObject.toJSONString(allBean);
+        }
+        put(context, KEY_PLAY_LIST_ALL, allBeanStr);
+    }
+
+    private static boolean containSame(List<PlaylistBodyBean> allList, PlaylistBodyBean bean) {
+        for (int i = 0; i < allList.size(); i++) {
+            PlaylistBodyBean bodyBean = allList.get(i);
+            if (bodyBean.id.equals(bean.id) && bodyBean.name.equals(bean.name)) {
+                if (bodyBean.lastModified.equals(bean.lastModified)) {
+                    return true;
+                } else {
+                    allList.remove(bodyBean);
+                    allList.add(i, bean);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static void megerDownloadBean(Context context, String jsonStr) {
+        if (TextUtils.isEmpty(jsonStr)) return;
+        String allBeanStr = get(context, KEY_PLAY_LIST_DOWNLOAD, "").toString();
+        if (TextUtils.isEmpty(allBeanStr)) {
+            allBeanStr = jsonStr;
+        } else {
+            PlaylistResultBean allBean = JSON.parseObject(allBeanStr, PlaylistResultBean.class);
+            PlaylistResultBean addBean = JSON.parseObject(jsonStr, PlaylistResultBean.class);
+            List<PlaylistBodyBean> allList = allBean.data.items;
+            List<PlaylistBodyBean> addList = addBean.data.items;
+            for (int i = 0; i < addList.size(); i++) {
+                if (!containSame(allList, addList.get(i))) {
+                    allList.add(addList.get(i));
+                }
+            }
+            allBeanStr = JSONObject.toJSONString(allBean);
+        }
+        put(context, KEY_PLAY_LIST_DOWNLOAD, allBeanStr);
     }
 }

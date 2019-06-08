@@ -7,9 +7,9 @@
     <dimen name="text_small">15px</dimen>
     <dimen name="tab_text">20px</dimen>
 
-    <dimen name="input_height">32px</dimen>
-    <dimen name="input_height2">35px</dimen>
-    <dimen name="input_width">200px</dimen>
+    <dimen name="input_height">40px</dimen>
+    <dimen name="input_height2">42px</dimen>
+    <dimen name="input_width">300px</dimen>
     <dimen name="space_height">10px</dimen>
 
     <dimen name="padding_left">130px</dimen>

@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_root"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#2c3844"
-    android:orientation="horizontal">
+    android:layout_height="match_parent">
 
-    <com.ads.abcbank.view.TempView
-        android:id="@+id/tv_temp"
-        android:layout_width="0px"
+    <LinearLayout
+        android:id="@+id/ll_root"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="#fff"
-        android:orientation="horizontal" />
+        android:background="#2c3844"
+        android:keepScreenOn="true"
+        android:orientation="horizontal">
 
-    <com.ads.abcbank.view.TempView2
-        android:id="@+id/tv_temp2"
-        android:layout_width="0px"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="#fff"
-        android:orientation="horizontal" />
+        <com.ads.abcbank.view.TempView
+            android:id="@+id/tv_temp"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#fff"
+            android:orientation="horizontal" />
 
-</LinearLayout>
+        <com.ads.abcbank.view.TempView2
+            android:id="@+id/tv_temp2"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#fff"
+            android:orientation="horizontal" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_set"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:layout_gravity="top|left" />
+</FrameLayout>

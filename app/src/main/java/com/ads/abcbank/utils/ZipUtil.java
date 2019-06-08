@@ -145,15 +145,15 @@ public class ZipUtil {
         while (zList.hasMoreElements()) {
             ze = (ZipEntry) zList.nextElement();
             if (ze.isDirectory()) {
-                Log.d(TAG, "ze.getName() = " + ze.getName());
+                Log.e(TAG, "ze.getName() = " + ze.getName());
                 String dirstr = folderPath + ze.getName();
                 dirstr = new String(dirstr.getBytes("8859_1"), "GB2312");
-                Log.d(TAG, "str = " + dirstr);
+                Log.e(TAG, "str = " + dirstr);
                 File f = new File(dirstr);
                 f.mkdir();
                 continue;
             }
-            Log.d(TAG, "ze.getName() = " + ze.getName());
+            Log.e(TAG, "ze.getName() = " + ze.getName());
             OutputStream os = new BufferedOutputStream(new FileOutputStream(getRealFileName(folderPath, ze.getName())));
             InputStream is = new BufferedInputStream(zfile.getInputStream(ze));
             int readLen = 0;
@@ -187,18 +187,18 @@ public class ZipUtil {
                 ret = new File(ret, substr);
 
             }
-            Log.d(TAG, "1ret = " + ret);
+            Log.e(TAG, "1ret = " + ret);
             if (!ret.exists())
                 ret.mkdirs();
             substr = dirs[dirs.length - 1];
             try {
                 substr = new String(substr.getBytes("8859_1"), "GB2312");
-                Log.d(TAG, "substr = " + substr);
+                Log.e(TAG, "substr = " + substr);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
             ret = new File(ret, substr);
-            Log.d(TAG, "2ret = " + ret);
+            Log.e(TAG, "2ret = " + ret);
             return ret;
         }
         return ret;

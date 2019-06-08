@@ -59,6 +59,8 @@ public class Temp1Activity extends BaseActivity implements IView {
             }
         }, 100);
 //        initViews();
+        setiView(this);
+        startServices();
     }
 
     private Handler handler = new Handler();

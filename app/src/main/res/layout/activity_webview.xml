@@ -8,6 +8,7 @@
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
+        android:keepScreenOn="true"
         android:fadingEdge="none"
         android:fadingEdgeLength="0px"
         android:focusable="false"

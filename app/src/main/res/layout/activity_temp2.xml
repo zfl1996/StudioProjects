@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ll_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#2c3844"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <com.ads.abcbank.view.TempView
-        android:id="@+id/tv_temp"
+    <LinearLayout
+        android:id="@+id/ll_root"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="@dimen/top_height_2"
-        android:background="#fff"
-        android:orientation="horizontal"/>
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"
+        android:background="#2c3844"
+        android:orientation="vertical">
 
-    <com.ads.abcbank.view.MarqueeVerticalTextView
-        android:id="@+id/marqueeTv"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="@dimen/bottom_height"
-        android:layout_gravity="center_vertical"
-        android:gravity="center_vertical"
-        android:background="@mipmap/icon_bottom2"
-        android:paddingLeft="@dimen/bottom_padding2"
-        android:paddingRight="@dimen/bottom_padding2"
-        app:mvTextSize="@dimen/text_big"
-        app:mvTextColor="#fff"        />
+        <com.ads.abcbank.view.TempView
+            android:id="@+id/tv_temp"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="@dimen/top_height_2"
+            android:background="#fff"
+            android:orientation="horizontal" />
 
-</LinearLayout>
+        <com.ads.abcbank.view.MarqueeVerticalTextView
+            android:id="@+id/marqueeTv"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="@dimen/bottom_height"
+            android:background="@mipmap/icon_bottom2"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/bottom_padding2"
+            android:paddingRight="@dimen/bottom_padding2"
+            app:mvTextColor="#fff"
+            app:mvTextSize="@dimen/text_big" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_set"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:layout_gravity="top|left" />
+</FrameLayout>

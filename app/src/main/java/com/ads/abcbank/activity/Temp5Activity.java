@@ -49,6 +49,8 @@ public class Temp5Activity extends BaseActivity implements IView {
 
         tvTemp.setType("M,H,P,N,E,L,R");
         tvTemp.getImage().setVisibility(View.GONE);
+        setiView(this);
+        startServices();
     }
 
     @Override

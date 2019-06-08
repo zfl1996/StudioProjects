@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ads.abcbank">
+    package="com.ads.abcbank"
+    android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -9,6 +10,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -30,15 +33,21 @@
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.MainActivity"
             android:launchMode="singleTask"
-            android:logo="@drawable/app_icon_your_company"
-            android:screenOrientation="landscape" />
+            android:logo="@drawable/app_icon_your_company" />
+        <activity
+            android:name=".activity.SettingActivity"
+            android:launchMode="singleTop"
+            android:logo="@drawable/app_icon_your_company" />
+        <activity
+            android:name=".activity.ReInitActivity"
+            android:launchMode="singleTop"
+            android:logo="@drawable/app_icon_your_company" />
         <activity
             android:name=".activity.Temp1Activity"
             android:launchMode="singleTop"
@@ -67,6 +76,43 @@
             android:name=".activity.WebViewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop" />
+
+        <service
+            android:name=".service.CmdService"
+            android:exported="false"/>
+        <service
+            android:name=".service.TimeCmdService"
+            android:exported="false"/>
+        <service
+            android:name=".service.ProtectCmdService"
+            android:exported="false"/>
+        <service
+            android:name=".service.PlaylistService"
+            android:exported="false"/>
+        <service
+            android:name=".service.TimePlaylistService"
+            android:exported="false"/>
+        <service
+            android:name=".service.ProtectPlaylistService"
+            android:exported="false"/>
+        <service
+            android:name=".service.PresetService"
+            android:exported="false"/>
+        <service
+            android:name=".service.TimePresetService"
+            android:exported="false"/>
+        <service
+            android:name=".service.ProtectPresetService"
+            android:exported="false"/>
+
+        <receiver
+            android:name=".service.CompReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

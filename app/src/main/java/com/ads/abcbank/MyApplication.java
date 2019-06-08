@@ -3,6 +3,7 @@ package com.ads.abcbank;
 import android.app.Application;
 import android.content.Context;
 
+import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.ScreenAdaptation;
 
 public class MyApplication extends Application {
@@ -13,6 +14,7 @@ public class MyApplication extends Application {
         super.onCreate();
         new ScreenAdaptation(this, 1080, 1920).register();
         context = this;
+        registerActivityLifecycleCallbacks(ActivityManager.getInstance());
     }
 
     public Context getContext() {

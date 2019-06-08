@@ -2,9 +2,8 @@ package com.ads.abcbank.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +16,14 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.RegisterBean;
-import com.ads.abcbank.service.TimePlaylistService;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
+import com.alibaba.fastjson.JSON;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends BaseActivity {
+public class ReInitActivity extends BaseActivity implements View.OnClickListener {
     private ImageView ivTemp;
     private TextView appId;
     private EditText cityCode;
@@ -39,6 +38,7 @@ public class MainActivity extends BaseActivity {
     private EditText cdn;
     private EditText storeId;
     private TextView tvSubmit;
+    private TextView back;
 
     private TestArrayAdapter tAdapter, sAdapter, fAdapter, cAdapter;
     private String[] terminals = {"TV", "poster", "led", "smartDev"};
@@ -83,17 +83,16 @@ public class MainActivity extends BaseActivity {
         cdn = (EditText) findViewById(R.id.cdn);
         storeId = (EditText) findViewById(R.id.storeId);
         tvSubmit = (TextView) findViewById(R.id.tv_submit);
+        back = (TextView) findViewById(R.id.back);
     }
 
     private void initDatas() {
+        back.setVisibility(View.VISIBLE);
+        back.setOnClickListener(this);
         tAdapter = new TestArrayAdapter(this, terminals);
         sAdapter = new TestArrayAdapter(this, screens);
         fAdapter = new TestArrayAdapter(this, frames[0]);
-        ;
         cAdapter = new TestArrayAdapter(this, contents[0][0]);
-        ;
-//        fAdapter.addAll(frames[0]);
-//        cAdapter.addAll(contents[0][0]);
         terminalType.setAdapter(tAdapter);
         screenDirection.setAdapter(sAdapter);
         frameSetNo.setAdapter(fAdapter);
@@ -113,7 +112,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                fAdapter = new TestArrayAdapter(MainActivity.this, frames[position]);
+                fAdapter = new TestArrayAdapter(ReInitActivity.this, frames[position]);
                 frameSetNo.setAdapter(fAdapter);
                 frameSetNo.setSelection(0);
                 sPosition = position;
@@ -129,7 +128,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 try {
-                    cAdapter = new TestArrayAdapter(MainActivity.this, contents[sPosition][position]);
+                    cAdapter = new TestArrayAdapter(ReInitActivity.this, contents[sPosition][position]);
                     contentType.setAdapter(cAdapter);
                     contentType.setSelection(0);
                     fPosition = position;
@@ -153,6 +152,25 @@ public class MainActivity extends BaseActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        String beanStr = Utils.get(this, Utils.KEY_REGISTER_BEAN, "").toString();
+        if (!TextUtils.isEmpty(beanStr)) {
+            RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+            cityCode.setText(bean.cityCode);
+            brchCode.setText(bean.brchCode);
+            clientVersion.setText(bean.clientVersion);
+            int tPosition = tAdapter.getPosition(bean.data.terminalType);
+            terminalType.setSelection(tPosition);
+            int sPosition = sAdapter.getPosition(bean.data.screenDirection);
+            screenDirection.setSelection(sPosition);
+            int fPosition = fAdapter.getPosition(bean.data.frameSetNo);
+            frameSetNo.setSelection(fPosition);
+//            int cPosition = cAdapter.getPosition(bean.data.cdn);
+//            contentType.setSelection(cPosition);
+            appIdAddress.setText(bean.data.appIpAddress);
+            server.setText(bean.data.server);
+            cdn.setText(bean.data.cdn);
+            storeId.setText(bean.data.storeId);
+        }
     }
 
     public void onRegister(View view) {
@@ -267,6 +285,15 @@ public class MainActivity extends BaseActivity {
 
     public void toTemp6(View view) {
         startActivity(new Intent(this, Temp6Activity.class));
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.back:
+                finish();
+                break;
+        }
     }
 
     class TestArrayAdapter extends ArrayAdapter<String> {
