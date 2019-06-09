@@ -20,7 +20,7 @@ public class TempPresenter {
     private static final long presetTime = 30 * 60 * 1000;
 
     public TempPresenter(Context context, IView tempView) {
-        asyncThread = new AsyncThread();
+        asyncThread = Utils.getAsyncThread();
         this.context = context;
         this.tempView = tempView;
     }

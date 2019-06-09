@@ -1,5 +1,6 @@
 package com.ads.abcbank.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,10 +20,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.activity.Temp2Activity;
+import com.ads.abcbank.activity.Temp3Activity;
+import com.ads.abcbank.activity.Temp5Activity;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
+import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.fragment.ImageFragment;
 import com.ads.abcbank.fragment.PdfFragment;
+import com.ads.abcbank.fragment.Tab1Fragment;
+import com.ads.abcbank.fragment.Tab2Fragment;
+import com.ads.abcbank.fragment.Tab3Fragment;
 import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
@@ -41,7 +50,7 @@ public class TempView extends LinearLayout {
     private String type;
     private ViewPager viewpager;
     private ViewPager viewpagerHot;
-    private List<BaseTempFragment> fragmentList = new ArrayList<>();
+    private List<Fragment> fragmentList = new ArrayList<>();
     private PlaylistResultBean playlistBean;
     private ImageView image;
 
@@ -99,7 +108,36 @@ public class TempView extends LinearLayout {
         } else {
             addTempViewList();
         }
-//        viewpager.setAdapter(new MyPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager()));
+        Activity activity = (Activity) getContext();
+        if (activity != null) {
+            if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
+                    || activity instanceof Temp5Activity) {
+                Tab1Fragment tab1Fragment = new Tab1Fragment();
+                Tab2Fragment tab2Fragment = new Tab2Fragment();
+                Tab3Fragment tab3Fragment = new Tab3Fragment();
+                String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
+                if (TextUtils.isEmpty(json)) {
+                    json = Utils.getStringFromAssets("json.json", context);
+                }
+                PresetBean bean = JSON.parseObject(json, PresetBean.class);
+                tab1Fragment.setBean(bean.data.saveRate);
+                tab2Fragment.setBean(bean.data.loanRate);
+                tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+                if (bean.data.saveRate.enable) {
+                    tab1Fragment.setTempView(this);
+                    fragmentList.add(tab1Fragment);
+                }
+                if (bean.data.loanRate.enable) {
+                    tab2Fragment.setTempView(this);
+                    fragmentList.add(tab2Fragment);
+                }
+                if (bean.data.buyInAndOutForeignExchange.enable) {
+                    tab3Fragment.setTempView(this);
+                    fragmentList.add(tab3Fragment);
+                }
+            }
+        }
+        //        viewpager.setAdapter(new MyPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager()));
         viewpager.setAdapter(new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList));
         viewpager.setCurrentItem(0);
     }
@@ -209,14 +247,14 @@ public class TempView extends LinearLayout {
     public class WillPagerAdapter extends FragmentPagerAdapter {
         // SparseArray是Hashmap的改良品，其核心是折半查找函数（binarySearch）
         SparseArray<WeakReference<Fragment>> registeredFragments = new SparseArray<WeakReference<Fragment>>();
-        private List<BaseTempFragment> mList;
+        private List<Fragment> mList;
 
 
         public WillPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        public WillPagerAdapter(FragmentManager fm, List<BaseTempFragment> list) {
+        public WillPagerAdapter(FragmentManager fm, List<Fragment> list) {
             this(fm);
             // TODO Auto-generated constructor stub
             mList = list;
@@ -228,7 +266,12 @@ public class TempView extends LinearLayout {
         @Override
         public Fragment getItem(int position) {
             // TODO Auto-generated method stub
-            BaseTempFragment fragment = BaseTempFragment.newInstance(mList.get(position));
+            Fragment fragment = new Fragment();
+            if (mList.get(position) instanceof BaseTempFragment) {
+                fragment = BaseTempFragment.newInstance((BaseTempFragment) mList.get(position));
+            } else if (mList.get(position) instanceof BaseTabFragment) {
+                fragment = BaseTabFragment.newInstance((BaseTabFragment) mList.get(position));
+            }
             return fragment;
         }
 
@@ -236,7 +279,7 @@ public class TempView extends LinearLayout {
         public Object instantiateItem(ViewGroup container, int position) {
             // TODO Auto-generated method stub
             // 得到缓存的fragment
-            BaseTempFragment fragment = (BaseTempFragment) super.instantiateItem(container,
+            Fragment fragment = (Fragment) super.instantiateItem(container,
                     position);
             WeakReference<Fragment> weak = new WeakReference<Fragment>(fragment);
             registeredFragments.put(position, weak);
@@ -271,8 +314,8 @@ public class TempView extends LinearLayout {
             return POSITION_NONE;
         }
 
-        public BaseTempFragment getRegisteredFragment(int position) {
-            return (BaseTempFragment) registeredFragments.get(position).get();
+        public Fragment getRegisteredFragment(int position) {
+            return (Fragment) registeredFragments.get(position).get();
         }
     }
 }

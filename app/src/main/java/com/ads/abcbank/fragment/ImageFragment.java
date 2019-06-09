@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.activity.WebViewActivity;
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.bumptech.glide.Glide;
@@ -66,9 +67,11 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (tempView != null && isVisiable)
+            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
                 tempView.nextPlay();
-            if (tempView2 != null && isVisiable)
+            else
+                handler.postDelayed(runnable, delayTime);
+            if (tempView2 != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
                 tempView2.nextPlay();
         }
     };
@@ -88,8 +91,11 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(context, WebViewActivity.class);
-        intent.putExtra(Utils.WEBURL, bean.onClickLink);
-        startActivity(intent);
+        if (!TextUtils.isEmpty(bean.onClickLink)) {
+            Intent intent = new Intent(context, WebViewActivity.class);
+            intent.putExtra(Utils.WEBURL, bean.onClickLink);
+            startActivity(intent);
+        }
     }
+
 }

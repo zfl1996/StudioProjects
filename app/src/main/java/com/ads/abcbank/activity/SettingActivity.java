@@ -56,6 +56,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         etTabPreset.setText(Utils.get(this, Utils.KEY_TIME_TAB_PRESET, "5").toString());
         etPdf.setText(Utils.get(this, Utils.KEY_TIME_TAB_PDF, "5").toString());
         etFile.setText(Utils.get(this, Utils.KEY_TIME_FILE, "30").toString());
+        etCmd.setSelection(etCmd.getText().toString().length());
     }
 
     @Override

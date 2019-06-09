@@ -1,8 +1,5 @@
 package com.ads.abcbank.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RegisterBean extends RequestBean {
     public Data data = new Data();
 

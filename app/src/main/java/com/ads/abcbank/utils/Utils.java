@@ -8,13 +8,18 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -30,6 +35,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -559,8 +566,8 @@ public class Utils {
         return charset;
     }
 
-    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
-    private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+    private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
     public static boolean isInDownloadTime(PlaylistBodyBean bean) {
         String downloadTimeslice = bean.downloadTimeslice;
@@ -752,4 +759,136 @@ public class Utils {
         }
         put(context, KEY_PLAY_LIST_DOWNLOAD, allBeanStr);
     }
+
+    public static String viewSaveToImage(View view, String child) {
+        /**
+         * View组件显示的内容可以通过cache机制保存为bitmap
+         * 我们要获取它的cache先要通过setDrawingCacheEnable方法把cache开启，
+         * 然后再调用getDrawingCache方法就可 以获得view的cache图片了
+         * 。buildDrawingCache方法可以不用调用，因为调用getDrawingCache方法时，
+         * 若果 cache没有建立，系统会自动调用buildDrawingCache方法生成cache。
+         * 若果要更新cache, 必须要调用destoryDrawingCache方法把旧的cache销毁，才能建立新的。
+         */
+
+        // 把一个View转换成图片
+        Bitmap cachebmp = loadBitmapFromView(view);
+
+        cachebmp = compressBitmap(cachebmp, 50);
+        return bitmap2String(cachebmp);
+    }
+
+    private static Bitmap loadBitmapFromView(View v) {
+        int w = v.getMeasuredWidth();
+        int h = v.getMeasuredHeight();
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+
+        /** 如果不设置canvas画布为白色，则生成透明 */
+//        c.drawColor(Color.WHITE);
+
+        v.layout(0, v.getTop(), w, v.getTop() + h);
+        v.draw(c);
+
+        return bmp;
+    }
+
+    /**
+     * @param activity
+     * @return
+     * @brief 截屏
+     */
+    public static String screenShot(Activity activity) {
+        // 获取屏幕
+        View dView = activity.getWindow().getDecorView();
+        dView.setDrawingCacheEnabled(true);
+        dView.buildDrawingCache();
+        Bitmap bmp = dView.getDrawingCache();
+        if (bmp != null) {
+            try {
+                bmp = Utils.compressBitmap(bmp, 50);
+                // 向后台传递识别数据
+                return Utils.bitmap2String(bmp);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
+
+    // 压缩图片到指定大小以下
+    public static Bitmap compressBitmap(Bitmap bitmap, int size) {
+        Bitmap newBitmap = null;
+        if (bitmap != null) {
+            InputStream is = null;
+            try {
+                BitmapFactory.Options opt = new BitmapFactory.Options();
+                opt.inDither = false;
+                opt.inPreferredConfig = Bitmap.Config.RGB_565;
+                opt.inSampleSize = 1;
+                float bitmapSize = Utils.getSizeOfBitmap(bitmap);
+                // 压缩图片到指定大小
+//                while (bitmapSize > (size + size / 3)) {
+                while (bitmapSize > size) {
+                    opt.inSampleSize = opt.inSampleSize + 1;
+                    is = Bitmap2IS(bitmap);
+                    if (is != null) {
+                        bitmap = BitmapFactory.decodeStream(is, null, opt);
+                        bitmapSize = Utils.getSizeOfBitmap(bitmap);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (RuntimeException rethrown) {
+                        throw rethrown;
+                    } catch (Exception ignored) {
+                    }
+                }
+            }
+            newBitmap = bitmap;
+        }
+        return newBitmap;
+    }
+
+    // 获取图片大小
+    public static float getSizeOfBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        long length = baos.toByteArray().length / 1024;
+        return length;
+    }
+
+    private static InputStream Bitmap2IS(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        InputStream stream = null;
+        try {
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            stream = new ByteArrayInputStream(baos.toByteArray());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return stream;
+    }
+
+    // 图片转换成base64字符串
+    public static String bitmap2String(Bitmap bitmap) {
+        String string = null;
+        try {
+            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bStream);
+            byte[] bytes = bStream.toByteArray();
+            string = Base64.encodeToString(bytes, Base64.DEFAULT);
+            bStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (null == string) {
+            string = "";
+        }
+        return string;
+    }
+
 }

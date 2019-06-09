@@ -15,6 +15,7 @@ import android.webkit.WebViewClient;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.JZMediaSystemAssertFolder;
 import com.bumptech.glide.Glide;
@@ -123,8 +124,10 @@ public class WebFragment extends BaseTempFragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (tempView != null && isVisiable)
+            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
                 tempView.nextPlay();
+            else
+                handler.postDelayed(runnable, delayTime);
         }
     };
 
@@ -139,4 +142,5 @@ public class WebFragment extends BaseTempFragment {
     public PlaylistBodyBean getBean() {
         return bean;
     }
+
 }

@@ -8,8 +8,8 @@
         android:id="@+id/ll_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:keepScreenOn="true"
         android:background="#2c3844"
+        android:keepScreenOn="true"
         android:orientation="vertical">
 
         <com.ads.abcbank.view.TempView
@@ -39,5 +39,6 @@
         android:id="@+id/v_set"
         android:layout_width="100px"
         android:layout_height="100px"
-        android:layout_gravity="top|left" />
+        android:layout_gravity="left|bottom"
+        android:onClick="toMainView" />
 </FrameLayout>

@@ -123,15 +123,26 @@ public abstract class BaseTabFragment extends Fragment {
         if (baseTabFragment instanceof Tab1Fragment) {
             Tab1Fragment fragment = new Tab1Fragment();
             fragment.setBean(baseTabFragment.getBean());
+            fragment.setTempView(((Tab1Fragment) baseTabFragment).getTempView());
+            fragment.setHandler(((Tab1Fragment) baseTabFragment).getHandler());
+            fragment.setRunnable(((Tab1Fragment) baseTabFragment).getRunnable());
             return fragment;
         } else if (baseTabFragment instanceof Tab2Fragment) {
             Tab2Fragment fragment = new Tab2Fragment();
             fragment.setBean(baseTabFragment.getBean());
+            fragment.setTempView(((Tab2Fragment) baseTabFragment).getTempView());
+            fragment.setHandler(((Tab2Fragment) baseTabFragment).getHandler());
+            fragment.setRunnable(((Tab2Fragment) baseTabFragment).getRunnable());
             return fragment;
-        } else {
+        } else if (baseTabFragment instanceof Tab3Fragment) {
             Tab3Fragment fragment = new Tab3Fragment();
             fragment.setBean(baseTabFragment.getBean());
+            fragment.setTempView(((Tab3Fragment) baseTabFragment).getTempView());
+            fragment.setHandler(((Tab3Fragment) baseTabFragment).getHandler());
+            fragment.setRunnable(((Tab3Fragment) baseTabFragment).getRunnable());
             return fragment;
         }
+        return null;
     }
+
 }

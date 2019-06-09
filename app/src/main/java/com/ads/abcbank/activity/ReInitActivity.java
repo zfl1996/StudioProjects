@@ -16,14 +16,18 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.RegisterBean;
+import com.ads.abcbank.presenter.MainPresenter;
+import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.view.IMainView;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReInitActivity extends BaseActivity implements View.OnClickListener {
+public class ReInitActivity extends BaseActivity implements IMainView, View.OnClickListener {
     private ImageView ivTemp;
     private TextView appId;
     private EditText cityCode;
@@ -53,6 +57,9 @@ public class ReInitActivity extends BaseActivity implements View.OnClickListener
     private int tPosition, sPosition, fPosition, cPosition;
     private Map<String, String> conMap = new HashMap<>();
 
+    private MainPresenter mainPresenter;
+    private RegisterBean bean;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +71,7 @@ public class ReInitActivity extends BaseActivity implements View.OnClickListener
         conMap.put("贵金属", "G");
         conMap.put("理财", "M");
         conMap.put("基金", "F");
+
         initViews();
         initDatas();
     }
@@ -87,6 +95,7 @@ public class ReInitActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void initDatas() {
+        mainPresenter = new MainPresenter(this, this);
         back.setVisibility(View.VISIBLE);
         back.setOnClickListener(this);
         tAdapter = new TestArrayAdapter(this, terminals);
@@ -114,7 +123,12 @@ public class ReInitActivity extends BaseActivity implements View.OnClickListener
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 fAdapter = new TestArrayAdapter(ReInitActivity.this, frames[position]);
                 frameSetNo.setAdapter(fAdapter);
-                frameSetNo.setSelection(0);
+                if (fToPosition != -1) {
+                    frameSetNo.setSelection(fToPosition);
+                    fToPosition = -1;
+                } else {
+                    frameSetNo.setSelection(0);
+                }
                 sPosition = position;
 
             }
@@ -130,7 +144,16 @@ public class ReInitActivity extends BaseActivity implements View.OnClickListener
                 try {
                     cAdapter = new TestArrayAdapter(ReInitActivity.this, contents[sPosition][position]);
                     contentType.setAdapter(cAdapter);
-                    contentType.setSelection(0);
+                    if (cToPosition != -1) {
+                        if (!cToPositioned) {
+                            cToPositioned = true;
+                        } else {
+                            contentType.setSelection(cToPosition);
+                            cToPosition = -1;
+                        }
+                    } else {
+                        contentType.setSelection(0);
+                    }
                     fPosition = position;
                     ivTemp.setImageResource(tempImages[sPosition][fPosition]);
                 } catch (Exception e) {
@@ -160,26 +183,90 @@ public class ReInitActivity extends BaseActivity implements View.OnClickListener
             clientVersion.setText(bean.clientVersion);
             int tPosition = tAdapter.getPosition(bean.data.terminalType);
             terminalType.setSelection(tPosition);
-            int sPosition = sAdapter.getPosition(bean.data.screenDirection);
-            screenDirection.setSelection(sPosition);
-            int fPosition = fAdapter.getPosition(bean.data.frameSetNo);
-            frameSetNo.setSelection(fPosition);
-//            int cPosition = cAdapter.getPosition(bean.data.cdn);
-//            contentType.setSelection(cPosition);
+
+            int sToPosition = bean.data.screenDirection.equals("H") ? 0 : 1;
+            screenDirection.setSelection(sToPosition);
+
+            switch (bean.data.frameSetNo) {
+                case "1":
+                case "2":
+                    fToPosition = 0;
+                    break;
+                case "4":
+                case "3":
+                    fToPosition = 1;
+                    break;
+                case "5":
+                    fToPosition = 2;
+                    break;
+                case "6":
+                    fToPosition = 3;
+                    break;
+            }
+            switch (Utils.getContentTypeEnd(this)) {
+                case "*":
+                    cToPosition = 0;
+                    break;
+                case "C":
+                    cToPosition = 1;
+                    break;
+                case "D":
+                    cToPosition = 2;
+                    break;
+                case "G":
+                    cToPosition = 3;
+                    break;
+                case "M":
+                    cToPosition = 4;
+                    break;
+                case "F":
+                    cToPosition = 5;
+                    break;
+            }
             appIdAddress.setText(bean.data.appIpAddress);
             server.setText(bean.data.server);
             cdn.setText(bean.data.cdn);
             storeId.setText(bean.data.storeId);
+
+            cityCode.setSelection(cityCode.getText().toString().length());
         }
     }
 
+    private int fToPosition = -1;
+    private int cToPosition = -1;
+    private boolean cToPositioned;
+
     public void onRegister(View view) {
-        RegisterBean bean = new RegisterBean();
+        if (TextUtils.isEmpty(cityCode.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(brchCode.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(appIdAddress.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(server.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(cdn.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(storeId.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        bean = new RegisterBean();
         bean.appId = appId.getText().toString();
         bean.trCode = "register";
         bean.cityCode = cityCode.getText().toString();
         bean.brchCode = brchCode.getText().toString();
-        bean.clientVersion = Utils.getVersionName(this);
+        bean.clientVersion = clientVersion.getText().toString();
         bean.terminalId = Utils.getMac(this).toLowerCase().replace("-", "")
                 .replace(":", "");
         bean.timestamp = System.currentTimeMillis();
@@ -193,31 +280,8 @@ public class ReInitActivity extends BaseActivity implements View.OnClickListener
         bean.data.server = server.getText().toString();
         bean.data.cdn = cdn.getText().toString();
         bean.data.storeId = storeId.getText().toString();
-//        Utils.put(this, Utils.KEY_REGISTER_BEAN, bean);
 
-        Intent intent = new Intent();
-        switch (getSelectFra()) {
-            case "1":
-                intent.setClass(this, Temp1Activity.class);
-                break;
-            case "2":
-                intent.setClass(this, Temp2Activity.class);
-                break;
-            case "3":
-                intent.setClass(this, Temp3Activity.class);
-                break;
-            case "4":
-                intent.setClass(this, Temp4Activity.class);
-                break;
-            case "5":
-                intent.setClass(this, Temp5Activity.class);
-                break;
-            case "6":
-                intent.setClass(this, Temp6Activity.class);
-                break;
-        }
-        startActivity(intent);
-//        finish();
+        mainPresenter.register(JSONObject.parseObject(JSONObject.toJSONString(bean)));
     }
 
     private String getSelectTer() {
@@ -263,30 +327,6 @@ public class ReInitActivity extends BaseActivity implements View.OnClickListener
         Utils.setContentTypeEnd(this, end);
     }
 
-    public void toTemp1(View view) {
-        startActivity(new Intent(this, Temp1Activity.class));
-    }
-
-    public void toTemp2(View view) {
-        startActivity(new Intent(this, Temp2Activity.class));
-    }
-
-    public void toTemp3(View view) {
-        startActivity(new Intent(this, Temp3Activity.class));
-    }
-
-    public void toTemp4(View view) {
-        startActivity(new Intent(this, Temp4Activity.class));
-    }
-
-    public void toTemp5(View view) {
-        startActivity(new Intent(this, Temp5Activity.class));
-    }
-
-    public void toTemp6(View view) {
-        startActivity(new Intent(this, Temp6Activity.class));
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -294,6 +334,42 @@ public class ReInitActivity extends BaseActivity implements View.OnClickListener
                 finish();
                 break;
         }
+    }
+
+    @Override
+    public void init(String jsonObject) {
+
+    }
+
+    @Override
+    public void register(String jsonObject) {
+        if (!TextUtils.isEmpty(jsonObject)) {
+            bean = JSON.parseObject(jsonObject, RegisterBean.class);
+        }
+        Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+        Intent intent = new Intent();
+        switch (bean.data.frameSetNo) {
+            case "1":
+                intent.setClass(this, Temp1Activity.class);
+                break;
+            case "2":
+                intent.setClass(this, Temp2Activity.class);
+                break;
+            case "3":
+                intent.setClass(this, Temp3Activity.class);
+                break;
+            case "4":
+                intent.setClass(this, Temp4Activity.class);
+                break;
+            case "5":
+                intent.setClass(this, Temp5Activity.class);
+                break;
+            case "6":
+                intent.setClass(this, Temp6Activity.class);
+                break;
+        }
+        startActivity(intent);
+        finish();
     }
 
     class TestArrayAdapter extends ArrayAdapter<String> {

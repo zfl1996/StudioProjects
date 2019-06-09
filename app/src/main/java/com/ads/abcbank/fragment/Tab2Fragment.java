@@ -1,5 +1,7 @@
 package com.ads.abcbank.fragment;
 
+import android.graphics.Color;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -13,20 +15,48 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
+import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.view.BaseTabFragment;
+import com.ads.abcbank.view.TempView;
 
 public class Tab2Fragment extends BaseTabFragment {
     private View view;
     private PresetBean.LoanRate bean;
+    private TempView tempView;
+
     @Override
     public View initView(LayoutInflater inflater) {
         view = inflater.inflate(R.layout.fragment_tab1, null);
         return view;
     }
 
+    public void setTempView(TempView tempView) {
+        this.tempView = tempView;
+    }
+
+    public TempView getTempView() {
+        return tempView;
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    public Runnable getRunnable() {
+        return runnable;
+    }
+
+    public void setRunnable(Runnable runnable) {
+        this.runnable = runnable;
+    }
+
     @Override
     public void initData() {
-        if (tlTab1 == null || mActivity == null|| bean == null|| bean.entry == null) return;
+        if (tlTab1 == null || mActivity == null || bean == null || bean.entry == null) return;
         tlTab1.removeAllViews();
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.LoanRate.LoanRateItem item = bean.entry.get(i);
@@ -77,9 +107,27 @@ public class Tab2Fragment extends BaseTabFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
+                view.findViewById(R.id.ll_root).setBackgroundColor(Color.parseColor("#212832"));
+            }
             initData();
+            handler.postDelayed(runnable, delayTime);
+        } else {
+            handler.removeCallbacks(runnable);
         }
     }
+
+    private long delayTime = 5000;
+    private Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
+                tempView.nextPlay();
+            else
+                handler.postDelayed(runnable, delayTime);
+        }
+    };
 
     @Override
     public Object getBean() {

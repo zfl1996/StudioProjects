@@ -10,8 +10,8 @@
         android:layout_gravity="center"
         android:background="@drawable/shape_toast_background"
         android:gravity="center_horizontal"
-        android:maxWidth="260px"
-        android:minWidth="160px"
+        android:maxWidth="860px"
+        android:minWidth="260px"
         android:orientation="vertical"
         android:paddingBottom="20px"
         android:paddingLeft="32px"
@@ -24,6 +24,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="#FFF"
-            android:textSize="14px" />
+            android:textSize="40px" />
     </LinearLayout>
 </FrameLayout>

@@ -68,12 +68,7 @@ public class PresetView extends LinearLayout {
 
         fragmentList = new ArrayList<>();
         list_Title = new ArrayList<>();
-        fragmentList.add(tab1Fragment);
-        fragmentList.add(tab2Fragment);
-        fragmentList.add(tab3Fragment);
-        list_Title.add("人民币\n存款利率");
-        list_Title.add("人民币\n贷款利率");
-        list_Title.add("结售汇\n牌价");
+
 
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
         if (TextUtils.isEmpty(json)) {
@@ -84,6 +79,24 @@ public class PresetView extends LinearLayout {
         tab2Fragment.setBean(bean.data.loanRate);
         tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
 
+        if(bean.data.saveRate.enable){
+            fragmentList.add(tab1Fragment);
+            StringBuffer stringBuffer=new StringBuffer(bean.data.saveRate.title);
+            stringBuffer.insert(3,"\n");
+            list_Title.add(stringBuffer.toString());
+        }
+        if(bean.data.loanRate.enable){
+            fragmentList.add(tab2Fragment);
+            StringBuffer stringBuffer=new StringBuffer(bean.data.loanRate.title);
+            stringBuffer.insert(3,"\n");
+            list_Title.add(stringBuffer.toString());
+        }
+        if(bean.data.buyInAndOutForeignExchange.enable){
+            fragmentList.add(tab3Fragment);
+            StringBuffer stringBuffer=new StringBuffer(bean.data.buyInAndOutForeignExchange.title);
+            stringBuffer.insert(3,"\n");
+            list_Title.add(stringBuffer.toString());
+        }
 
         setTabWidth(tablayout);
         handler.postDelayed(runnable, delayTime);

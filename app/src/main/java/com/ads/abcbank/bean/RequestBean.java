@@ -1,8 +1,5 @@
 package com.ads.abcbank.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RequestBean {
     public String appId;
     public String trCode;

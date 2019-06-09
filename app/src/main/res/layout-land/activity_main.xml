@@ -28,76 +28,22 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginBottom="10px"
                 android:layout_marginTop="60px"
                 android:text="模板预览："
-                android:layout_marginBottom="10px"
                 android:textColor="#fff"
                 android:textSize="@dimen/text_big" />
 
             <ImageView
                 android:id="@+id/iv_temp"
                 android:layout_width="480px"
-                android:layout_below="@id/tv_temp"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tv_temp"
                 android:layout_centerInParent="true"
                 android:adjustViewBounds="true"
                 android:maxWidth="480px"
                 android:src="@mipmap/icon_temp1" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:onClick="toTemp1"
-                    android:padding="10px"
-                    android:text="temp1" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:onClick="toTemp2"
-                    android:padding="10px"
-                    android:text="temp2" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:onClick="toTemp3"
-                    android:padding="10px"
-                    android:text="temp3" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:onClick="toTemp4"
-                    android:padding="10px"
-                    android:text="temp4" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:onClick="toTemp5"
-                    android:padding="10px"
-                    android:text="temp5" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:onClick="toTemp6"
-                    android:padding="10px"
-                    android:text="temp6" />
-            </LinearLayout>
         </RelativeLayout>
 
         <TableLayout
@@ -150,7 +96,8 @@
 
                 <EditText
                     android:id="@+id/clientVersion"
-                    style="@style/row_right" />
+                    style="@style/row_right"
+                    android:enabled="false" />
             </TableRow>
 
             <TableRow>
@@ -252,12 +199,12 @@
                     style="@style/row_left"
                     android:layout_width="match_parent"
                     android:layout_height="40px"
+                    android:layout_marginBottom="5px"
                     android:layout_marginLeft="20px"
                     android:layout_marginRight="20px"
                     android:background="@drawable/btn_background"
                     android:gravity="center"
                     android:onClick="onRegister"
-                    android:layout_marginBottom="5px"
                     android:text="注册" />
             </TableRow>
 
@@ -268,8 +215,9 @@
         android:id="@+id/v_set"
         android:layout_width="100px"
         android:layout_height="100px"
-        android:layout_gravity="top|right"
+        android:layout_gravity="left|bottom"
         android:onClick="toSetView" />
+
     <TextView
         android:id="@+id/back"
         android:layout_width="120px"
@@ -281,9 +229,9 @@
         android:paddingBottom="5px"
         android:paddingLeft="10px"
         android:paddingRight="10px"
-        android:visibility="gone"
         android:paddingTop="5px"
         android:text="@string/s_back"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/text_big_super" />
+        android:textSize="@dimen/text_big_super"
+        android:visibility="gone" />
 </FrameLayout>

@@ -120,8 +120,10 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(context, WebViewActivity.class);
-        intent.putExtra(Utils.WEBURL, bean.onClickLink);
-        startActivity(intent);
+        if (!TextUtils.isEmpty(bean.onClickLink)) {
+            Intent intent = new Intent(context, WebViewActivity.class);
+            intent.putExtra(Utils.WEBURL, bean.onClickLink);
+            startActivity(intent);
+        }
     }
 }

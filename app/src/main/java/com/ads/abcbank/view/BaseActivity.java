@@ -1,7 +1,5 @@
 package com.ads.abcbank.view;
 
-
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +7,23 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.ads.abcbank.activity.MainActivity;
+import com.ads.abcbank.activity.ReInitActivity;
+import com.ads.abcbank.bean.CmdpollResultBean;
+import com.ads.abcbank.bean.CmdresultBean;
 import com.ads.abcbank.service.TimeCmdService;
-import com.ads.abcbank.service.TimePlaylistService;
-import com.ads.abcbank.service.TimePresetService;
+import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.HTTPContants;
+import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Utils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 public class BaseActivity extends AppCompatActivity {
     private final String CONNECTIVITY_CHANGE_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
@@ -89,6 +94,10 @@ public class BaseActivity extends AppCompatActivity {
         Utils.changeIntent(this);
     }
 
+    @Override
+    public void onBackPressed() {
+    }
+
     public void setReInitRunnable(Runnable reInitRunnable) {
         this.reInitRunnable = reInitRunnable;
     }
@@ -113,8 +122,41 @@ public class BaseActivity extends AppCompatActivity {
                 clickTimes++;
             } else {
                 clickTimes = 0;
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(this, ReInitActivity.class));
             }
         }
     }
+
+    public void getCmdResult(CmdpollResultBean bean) {
+        if (bean != null) {
+            HandlerUtil.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (bean.data.cmd.equals("prtsc")) {
+                        CmdresultBean cmdresultBean = new CmdresultBean();
+                        cmdresultBean.data.cmd = bean.data.cmd;
+                        cmdresultBean.data.cmdresult = Utils.screenShot(BaseActivity.this);
+                        cmdresultBean.flowNum = (TextUtils.isEmpty(bean.flowNum) ? 1 : Integer.parseInt(bean.flowNum)) + 1;
+                        Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDRESULT,
+                                JSONObject.parseObject(JSONObject.toJSONString(cmdresultBean)), HandlerUtil.noCheckGet(), 0);
+                    } else if (!bean.data.cmd.equals("idle")) {
+                        CmdresultBean cmdresultBean = new CmdresultBean();
+                        cmdresultBean.data.cmd = bean.data.cmd;
+                        cmdresultBean.data.cmdresult = "";
+                        cmdresultBean.flowNum = (TextUtils.isEmpty(bean.flowNum) ? 1 : Integer.parseInt(bean.flowNum)) + 1;
+                        Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDRESULT,
+                                JSONObject.parseObject(JSONObject.toJSONString(cmdresultBean)), handler, 0);
+                    }
+                }
+            },500);
+        }
+    }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            ActivityManager.getInstance().finishAllActivity();
+            System.exit(0);
+        }
+    };
 }

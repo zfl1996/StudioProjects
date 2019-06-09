@@ -1,11 +1,13 @@
 package com.ads.abcbank.activity;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.webkit.JsResult;
@@ -113,6 +115,8 @@ public class WebViewActivity extends BaseActivity {
             }
         });
     }
+
+
 
     @Override
     public void onBackPressed() {

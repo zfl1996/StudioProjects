@@ -1,9 +1,13 @@
 package com.ads.abcbank.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +21,20 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.RegisterBean;
+import com.ads.abcbank.presenter.MainPresenter;
+import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.service.TimePlaylistService;
+import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.view.IMainView;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements IMainView {
     private ImageView ivTemp;
     private TextView appId;
     private EditText cityCode;
@@ -53,6 +63,9 @@ public class MainActivity extends BaseActivity {
     private int tPosition, sPosition, fPosition, cPosition;
     private Map<String, String> conMap = new HashMap<>();
 
+    private MainPresenter mainPresenter;
+    private RegisterBean bean;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +79,22 @@ public class MainActivity extends BaseActivity {
         conMap.put("基金", "F");
         initViews();
         initDatas();
+        checkPermission();
+    }
+
+    private void checkPermission() {
+        PackageManager pkgManager = getPackageManager();
+        boolean bootPermission =
+                pkgManager.checkPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED, getPackageName()) == PackageManager.PERMISSION_GRANTED;
+        if (!bootPermission) {
+            requestPermission();
+        }
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.RECEIVE_BOOT_COMPLETED},
+                100);
     }
 
     private void initViews() {
@@ -86,14 +115,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initDatas() {
+        mainPresenter = new MainPresenter(this, this);
         tAdapter = new TestArrayAdapter(this, terminals);
         sAdapter = new TestArrayAdapter(this, screens);
         fAdapter = new TestArrayAdapter(this, frames[0]);
-        ;
         cAdapter = new TestArrayAdapter(this, contents[0][0]);
-        ;
-//        fAdapter.addAll(frames[0]);
-//        cAdapter.addAll(contents[0][0]);
         terminalType.setAdapter(tAdapter);
         screenDirection.setAdapter(sAdapter);
         frameSetNo.setAdapter(fAdapter);
@@ -153,15 +179,41 @@ public class MainActivity extends BaseActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        clientVersion.setText(Utils.getVersionName(this));
     }
 
     public void onRegister(View view) {
-        RegisterBean bean = new RegisterBean();
+        if (TextUtils.isEmpty(cityCode.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(brchCode.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(appIdAddress.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(server.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(cdn.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        if (TextUtils.isEmpty(storeId.getText().toString())) {
+            ToastUtil.showToast(this, "数据不可为空");
+            return;
+        }
+        bean = new RegisterBean();
         bean.appId = appId.getText().toString();
         bean.trCode = "register";
         bean.cityCode = cityCode.getText().toString();
         bean.brchCode = brchCode.getText().toString();
-        bean.clientVersion = Utils.getVersionName(this);
+        bean.clientVersion = clientVersion.getText().toString();
         bean.terminalId = Utils.getMac(this).toLowerCase().replace("-", "")
                 .replace(":", "");
         bean.timestamp = System.currentTimeMillis();
@@ -175,31 +227,9 @@ public class MainActivity extends BaseActivity {
         bean.data.server = server.getText().toString();
         bean.data.cdn = cdn.getText().toString();
         bean.data.storeId = storeId.getText().toString();
-//        Utils.put(this, Utils.KEY_REGISTER_BEAN, bean);
 
-        Intent intent = new Intent();
-        switch (getSelectFra()) {
-            case "1":
-                intent.setClass(this, Temp1Activity.class);
-                break;
-            case "2":
-                intent.setClass(this, Temp2Activity.class);
-                break;
-            case "3":
-                intent.setClass(this, Temp3Activity.class);
-                break;
-            case "4":
-                intent.setClass(this, Temp4Activity.class);
-                break;
-            case "5":
-                intent.setClass(this, Temp5Activity.class);
-                break;
-            case "6":
-                intent.setClass(this, Temp6Activity.class);
-                break;
-        }
-        startActivity(intent);
-//        finish();
+        mainPresenter.register(JSONObject.parseObject(JSONObject.toJSONString(bean)));
+
     }
 
     private String getSelectTer() {
@@ -245,28 +275,40 @@ public class MainActivity extends BaseActivity {
         Utils.setContentTypeEnd(this, end);
     }
 
-    public void toTemp1(View view) {
-        startActivity(new Intent(this, Temp1Activity.class));
+    @Override
+    public void init(String jsonObject) {
+
     }
 
-    public void toTemp2(View view) {
-        startActivity(new Intent(this, Temp2Activity.class));
-    }
-
-    public void toTemp3(View view) {
-        startActivity(new Intent(this, Temp3Activity.class));
-    }
-
-    public void toTemp4(View view) {
-        startActivity(new Intent(this, Temp4Activity.class));
-    }
-
-    public void toTemp5(View view) {
-        startActivity(new Intent(this, Temp5Activity.class));
-    }
-
-    public void toTemp6(View view) {
-        startActivity(new Intent(this, Temp6Activity.class));
+    @Override
+    public void register(String jsonObject) {
+        if (!TextUtils.isEmpty(jsonObject)) {
+            bean = JSON.parseObject(jsonObject, RegisterBean.class);
+        }
+        Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+        Intent intent = new Intent();
+        switch (bean.data.frameSetNo) {
+            case "1":
+                intent.setClass(this, Temp1Activity.class);
+                break;
+            case "2":
+                intent.setClass(this, Temp2Activity.class);
+                break;
+            case "3":
+                intent.setClass(this, Temp3Activity.class);
+                break;
+            case "4":
+                intent.setClass(this, Temp4Activity.class);
+                break;
+            case "5":
+                intent.setClass(this, Temp5Activity.class);
+                break;
+            case "6":
+                intent.setClass(this, Temp6Activity.class);
+                break;
+        }
+        startActivity(intent);
+        finish();
     }
 
     class TestArrayAdapter extends ArrayAdapter<String> {
@@ -345,7 +387,4 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-    }
 }

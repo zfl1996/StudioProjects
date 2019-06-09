@@ -9,10 +9,12 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
+import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Date;
@@ -74,7 +76,7 @@ public class CmdService extends Service {
                         Utils.put(CmdService.this, Utils.KEY_CMD_POLL, msg.obj);
                         Activity activity = ActivityManager.getInstance().getTopActivity();
                         if (activity instanceof BaseActivity) {
-                            ((BaseActivity) activity).getiView().updateBottomDate(JSONObject.parseObject(msg.obj.toString()));
+                            ((BaseActivity) activity).getCmdResult(JSON.parseObject(msg.obj.toString(), CmdpollResultBean.class));
                         }
                     }
                     break;

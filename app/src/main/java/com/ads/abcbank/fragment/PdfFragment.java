@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.view.BaseTempFragment;
 
 import java.io.File;
@@ -139,7 +140,7 @@ public class PdfFragment extends BaseTempFragment {
                 handler.postDelayed(runnable, delayTime);
             } else {
                 pageNumber = 0;
-                if(getActivity() != null){
+                if (getActivity() != null) {
                     try {
                         openRenderer(getActivity());
                         showPage(pageNumber);
@@ -169,8 +170,10 @@ public class PdfFragment extends BaseTempFragment {
                 } catch (Exception e) {
                 }
                 pageTotal = -1;
-                if (tempView != null)
+                if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
                     tempView.nextPlay();
+                else
+                    handler.postDelayed(runnable, delayTime);
             }
         }
     };
