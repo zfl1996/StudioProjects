@@ -45,4 +45,8 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     implementation 'cn.jzvd:jiaozivideoplayer:7.0_preview'
     implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.3'
+
+    implementation   'com.liulishuo.okdownload:okdownload:1.0.2'
+    implementation  'com.liulishuo.okdownload:sqlite:1.0.2'
+    implementation   'com.liulishuo.okdownload:okhttp:1.0.2'
 }

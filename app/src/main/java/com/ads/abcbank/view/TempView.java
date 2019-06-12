@@ -34,6 +34,7 @@ import com.ads.abcbank.fragment.Tab3Fragment;
 import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
+import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
 
@@ -82,6 +83,7 @@ public class TempView extends LinearLayout {
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
         if (TextUtils.isEmpty(json)) {
             json = Utils.getStringFromAssets("playlist.json", context);
+            FileUtil.writeJsonToFile(json);
         }
         playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
         View view = LayoutInflater.from(context).inflate(R.layout.view_temp, null);

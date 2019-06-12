@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -104,6 +105,53 @@
         <service
             android:name=".service.ProtectPresetService"
             android:exported="false" />
+        <service android:name=".service.DownloadService">
+            <intent-filter>
+                <action android:name="com.ads.abcbank.downtaskadd" />
+                <action android:name="com.ads.abcbank.multidowntaskadd" />
+                <action android:name="com.ads.abcbank.removetask" />
+                <action android:name="com.ads.abcbank.cancelqueuetask" />
+                <action android:name="com.ads.abcbank.startqueuetask" />
+            </intent-filter>
+        </service>
+
+        <!-- 兼容Android7.0+禁止对外公开file://URI，应用间共享文件，应发送content://URI -->
+        <!--
+            name:可以直接使用默认的FileProvider，也可以继承做其它操作。
+            authorities:定义唯一一个authorities，和构建content://uri中的getUriForFile方法的authority参数一致
+            resource：指向保存位置path配置的xml文件。
+            其它都是固定的。
+        -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.ads.abcbank.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- 自动安装服务 -->
+        <!--
+            name:创建一个Service类继承AccessibilityService来处理接收到的事件
+            label:在系统设置辅助功能中显示的名称。
+            resource：指向配置的xml文件。
+            其它都是固定的。
+        -->
+        <service
+            android:name=".service.MyAccessibilityService"
+            android:label="自动安装服务测试"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service"
+                />
+        </service>
 
         <receiver
             android:name=".service.CompReceiver"

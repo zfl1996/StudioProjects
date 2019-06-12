@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--todo 这里是测试apk安装目录配置-->
+    <external-path name="CloudMusic_official_4.3.2.468990" path="abcdownload/temp"/>
+</paths>
+
+    <!--
+        <files-path/>代表的根目录： Context.getFilesDir()
+        <external-path/>代表的根目录: Environment.getExternalStorageDirectory() or
+        <cache-path/>代表的根目录: getCacheDir()
+        path：app要存储的位置，即Environment.getExternalStorageDirectory()根目录下的TestApk文件夹
+     -->

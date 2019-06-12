@@ -1,5 +1,6 @@
 package com.ads.abcbank.view;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import com.ads.abcbank.activity.MainActivity;
 import com.ads.abcbank.activity.ReInitActivity;
 import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.bean.CmdresultBean;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.service.TimeCmdService;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.HTTPContants;
@@ -33,11 +35,13 @@ public class BaseActivity extends AppCompatActivity {
     private boolean hasInit = false;
     private Runnable reInitRunnable;
     private IView iView;
+    public static Activity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         netChangeReceiver = new NetChangeReceiver();
+        mActivity=this;
         registerDateTransReceiver();
     }
 
@@ -52,6 +56,13 @@ public class BaseActivity extends AppCompatActivity {
         startService(new Intent(this, TimeCmdService.class));
 //        startService(new Intent(this, TimePlaylistService.class));
 //        startService(new Intent(this, TimePresetService.class));
+        Intent intent = new Intent();
+        intent.putExtra("name", "");
+        intent.putExtra("isUrg", "0");
+        intent.putExtra("url", "http://d1.music.126.net/dmusic/CloudMusic_official_4.3.2.468990.apk");
+        intent.setAction(DownloadService.ADD_DOWNTASK);
+        intent.setPackage(DownloadService.PACKAGE);
+        startService(intent);
     }
 
     private int getNetworkType() {
@@ -148,7 +159,7 @@ public class BaseActivity extends AppCompatActivity {
                                 JSONObject.parseObject(JSONObject.toJSONString(cmdresultBean)), handler, 0);
                     }
                 }
-            },500);
+            }, 500);
         }
     }
 

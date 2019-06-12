@@ -1,6 +1,7 @@
 package com.ads.abcbank.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.JZMediaSystemAssertFolder;
 import com.ads.abcbank.view.MarqueeTextView;
@@ -51,7 +53,6 @@ public class Temp1Activity extends BaseActivity implements IView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp1);
-
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -155,6 +156,14 @@ public class Temp1Activity extends BaseActivity implements IView {
         super.onResume();
         if (marqueeTextView != null)
             marqueeTextView.resumeScroll();
+        startDownloadService();
+    }
+
+    private void startDownloadService() {
+        Intent intent = new Intent();
+        intent.setAction(DownloadService.START_QUEUE_DOWNTASK);
+        intent.setPackage(DownloadService.PACKAGE);
+        startService(intent);
     }
 
     @Override
