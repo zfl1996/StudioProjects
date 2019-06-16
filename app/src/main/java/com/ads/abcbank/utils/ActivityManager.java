@@ -58,12 +58,12 @@ public class ActivityManager implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         try {
-            Log.e(TAG, activity.getLocalClassName());
+            Logger.e(TAG, activity.getLocalClassName());
             if (!activityStack.contains(activity)) {
                 activityStack.push(activity);
             }
         } catch (Throwable e) {
-            Log.e(TAG, e.toString());
+            Logger.e(TAG, e.toString());
         }
     }
 
@@ -87,7 +87,7 @@ public class ActivityManager implements Application.ActivityLifecycleCallbacks {
                 return;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString());
+            Logger.e(TAG, e.toString());
         }
     }
 
@@ -111,7 +111,7 @@ public class ActivityManager implements Application.ActivityLifecycleCallbacks {
         try {
             activityStack.remove(activity);
         } catch (Throwable e) {
-            Log.e(TAG, e.toString());
+            Logger.e(TAG, e.toString());
         }
     }
 
@@ -128,7 +128,7 @@ public class ActivityManager implements Application.ActivityLifecycleCallbacks {
                 pop = activityStack.pop();
             }
         } catch (Throwable e) {
-            Log.e(TAG, e.toString());
+            Logger.e(TAG, e.toString());
         }
     }
 

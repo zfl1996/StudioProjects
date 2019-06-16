@@ -43,7 +43,7 @@ public class Temp3Activity extends BaseActivity implements IView {
 //        tvTemp.setImageSrc(R.mipmap.v_sxdhb);
 //        initQRCode();
         setiView(this);
-        startServices();
+        startServices("M,H,P,N,E,L,R");
     }
 
 //    private void initQRCode() {

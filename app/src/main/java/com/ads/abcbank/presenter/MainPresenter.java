@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.ads.abcbank.utils.AsyncThread;
 import com.ads.abcbank.utils.HTTPContants;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.IMainView;
 import com.alibaba.fastjson.JSONObject;
@@ -32,7 +33,7 @@ public class MainPresenter {
             }
             switch (msg.what) {
                 case 0:
-                    Log.e("getPlayList", "====" + msg.obj);
+                    Logger.e("CODE_INIT", "====" + msg.obj);
                     if (msg.obj != null) {
                         mainView.init(msg.obj.toString());
                     }else{
@@ -40,7 +41,7 @@ public class MainPresenter {
                     }
                     break;
                 case 1:
-                    Log.e("register", "====" + msg.obj);
+                    Logger.e("register", "====" + msg.obj);
                     if (msg.obj != null) {
                         mainView.register(msg.obj.toString());
                     }else{

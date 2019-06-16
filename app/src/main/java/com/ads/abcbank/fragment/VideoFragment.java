@@ -1,15 +1,19 @@
 package com.ads.abcbank.fragment;
 
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.service.DownloadService;
+import com.ads.abcbank.utils.JZMediaIjk;
 import com.ads.abcbank.view.AutoVideoPlayer;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.JZMediaSystemAssertFolder;
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.io.IOException;
 
 import cn.jzvd.JZDataSource;
@@ -35,6 +39,7 @@ public class VideoFragment extends BaseTempFragment {
     @Override
     public void initData() {
         if (bean != null && content != null) {
+
             JZDataSource jzDataSource = null;
             try {
                 jzDataSource = new JZDataSource(context.getAssets().openFd("local_video.mp4"));
@@ -44,10 +49,17 @@ public class VideoFragment extends BaseTempFragment {
             }
             content.setTempView(tempView);
 
-            content.setUp(jzDataSource
-                    , JzvdStd.SCREEN_NORMAL);
+            File file = new File(DownloadService.downloadPath + bean.name);
+            if (!file.exists()) {
+                content.setUp(jzDataSource
+                        , JzvdStd.SCREEN_NORMAL);
+                content.setMediaInterface(new JZMediaSystemAssertFolder(content));
+            } else {
+                content.setUp(DownloadService.rootPath + bean.name
+                        , "", Jzvd.SCREEN_NORMAL);
+                content.setMediaInterface(new JZMediaIjk(content));
+            }
             Glide.with(this).load(R.drawable.app_icon_your_company).into(content.thumbImageView);
-            content.setMediaInterface(new JZMediaSystemAssertFolder(content));
             content.startVideo();
         }
     }
@@ -74,7 +86,7 @@ public class VideoFragment extends BaseTempFragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden){
+        if (!hidden) {
             if (content != null && isVisiable)
                 content.startVideo();
         }
@@ -83,10 +95,10 @@ public class VideoFragment extends BaseTempFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser){
+        if (isVisibleToUser) {
             if (content != null)
                 content.startVideo();
-        }else{
+        } else {
             if (content != null)
                 content.goOnPlayOnPause();
         }

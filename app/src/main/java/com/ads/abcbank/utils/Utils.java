@@ -79,7 +79,10 @@ public class Utils {
     public static final String KEY_TIME_PRESET = "timePreset";//记录获取汇率的分钟数
     public static final String KEY_TIME_PLAYLIST = "timePlaylist";//记录获取播放列表的分钟数
 
-    public static final String KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
+    public static final String
+
+
+            KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
     public static final String KEY_TIME_CURRENT_PRESET = "timeCurrentPreset";//记录当前获取汇率的分钟数
     public static final String KEY_TIME_CURRENT_PLAYLIST = "timeCurrentPlaylist";//记录当前获取播放列表的分钟数
 

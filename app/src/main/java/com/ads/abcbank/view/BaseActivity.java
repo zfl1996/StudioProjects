@@ -41,7 +41,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         netChangeReceiver = new NetChangeReceiver();
-        mActivity=this;
+        mActivity = this;
         registerDateTransReceiver();
     }
 
@@ -52,15 +52,21 @@ public class BaseActivity extends AppCompatActivity {
         registerReceiver(netChangeReceiver, filter);
     }
 
-    public void startServices() {
+    public void
+    startServices(String type) {
         startService(new Intent(this, TimeCmdService.class));
 //        startService(new Intent(this, TimePlaylistService.class));
 //        startService(new Intent(this, TimePresetService.class));
         Intent intent = new Intent();
-        intent.putExtra("name", "");
-        intent.putExtra("isUrg", "0");
-        intent.putExtra("url", "http://d1.music.126.net/dmusic/CloudMusic_official_4.3.2.468990.apk");
-        intent.setAction(DownloadService.ADD_DOWNTASK);
+        intent.putExtra("type", type);
+        intent.setAction(DownloadService.ADD_MULTI_DOWNTASK);
+        intent.setPackage(DownloadService.PACKAGE);
+        startService(intent);
+    }
+
+    private void startDownloadService() {
+        Intent intent = new Intent();
+        intent.setAction(DownloadService.START_QUEUE_DOWNTASK);
         intent.setPackage(DownloadService.PACKAGE);
         startService(intent);
     }
@@ -103,6 +109,12 @@ public class BaseActivity extends AppCompatActivity {
         super.onDestroy();
         unregisterReceiver(netChangeReceiver);
         Utils.changeIntent(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startDownloadService();
     }
 
     @Override

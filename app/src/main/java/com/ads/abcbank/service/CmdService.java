@@ -7,11 +7,12 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 
 import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.alibaba.fastjson.JSON;
@@ -45,21 +46,21 @@ public class CmdService extends Service {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, (Integer.parseInt(timeCurrentCmd) + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, "1");
-            Log.e("TAG", "启动获取轮询命令服务：" + new Date().toString());
+            Logger.e("TAG", "启动获取轮询命令服务：" + new Date().toString());
             Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, new JSONObject(), handler, 0);
         }
         if (timeCurrentPlaylist.compareTo(timePlaylist) != 0) {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, (Integer.parseInt(timeCurrentCmd) + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1");
-            Log.e("TAG", "启动获取轮询命令服务：" + new Date().toString());
+            Logger.e("TAG", "启动获取轮询命令服务：" + new Date().toString());
             Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, new JSONObject(), handler, 1);
         }
         if (timeCurrentPreset.compareTo(timePreset) != 0) {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, (Integer.parseInt(timeCurrentCmd) + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, "1");
-            Log.e("TAG", "启动获取汇率列表服务：" + new Date().toString());
+            Logger.e("TAG", "启动获取汇率列表服务：" + new Date().toString());
             Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, new JSONObject(), handler, 2);
         }
         return super.onStartCommand(intent, flags, startId);
@@ -71,7 +72,7 @@ public class CmdService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    Log.e("getCmdPoll", "====" + msg.obj);
+                    Logger.e("getCmdPoll", "====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(CmdService.this, Utils.KEY_CMD_POLL, msg.obj);
                         Activity activity = ActivityManager.getInstance().getTopActivity();
@@ -81,9 +82,10 @@ public class CmdService extends Service {
                     }
                     break;
                 case 1:
-                    Log.e("getPlayList", "====" + msg.obj);
+                    Logger.e("getPlayList", "====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(CmdService.this, Utils.KEY_PLAY_LIST, msg.obj);
+                        FileUtil.writeJsonToFile(msg.obj.toString());
                         Activity activity = ActivityManager.getInstance().getTopActivity();
                         if (activity instanceof BaseActivity) {
                             ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
@@ -91,7 +93,7 @@ public class CmdService extends Service {
                     }
                     break;
                 case 2:
-                    Log.e("getPreset", "====" + msg.obj);
+                    Logger.e("getPreset", "====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(CmdService.this, Utils.KEY_PRESET, msg.obj);
                         Activity activity = ActivityManager.getInstance().getTopActivity();

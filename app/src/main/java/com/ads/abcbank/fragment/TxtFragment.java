@@ -24,6 +24,7 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
     private TextView content;
     private AutoScrollView scrollView;
     private static PlaylistBodyBean bean;
+    private int rate = 30;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -41,10 +42,11 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
     public void initData() {
         if (bean != null && view != null && isVisiable && context != null) {
             try {
+                rate = Integer.parseInt(Utils.get(context, Utils.KEY_TIME_FILE, "30").toString());
                 content.setText(Utils.getTxtString(context, "aaa.txt"));
                 scrollView.setAutoToScroll(true);//设置可以自动滑动
                 scrollView.setFistTimeScroll(1000);//设置第一次自动滑动的时间
-                scrollView.setScrollRate(30);//设置滑动的速率
+                scrollView.setScrollRate(rate);//设置滑动的速率
                 scrollView.setScrollLoop(false);//设置是否循环滑动
                 scrollView.scrollTo(0, 0);
 
@@ -54,6 +56,7 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                rate = Integer.parseInt(Utils.get(context, Utils.KEY_TIME_FILE, "30").toString());
                                 scrollView.scrollTo(0, 0);
                                 if (tempView != null) {
                                     tempView.nextPlay();

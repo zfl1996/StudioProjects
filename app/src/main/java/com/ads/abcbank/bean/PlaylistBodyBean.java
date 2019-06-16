@@ -16,6 +16,7 @@ public class PlaylistBodyBean extends RequestBean {
     public String downloadTimeslice;
     public String contentType;
     public String md5;
+    public String isUrg;
     public String lastModified;
     public String downloadLink;
     public String onClickLink;

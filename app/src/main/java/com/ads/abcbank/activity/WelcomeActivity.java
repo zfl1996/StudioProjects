@@ -5,13 +5,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.InitResultBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.presenter.MainPresenter;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.PermissionHelper;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
@@ -34,22 +34,22 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
         mPermissionHelper.setOnApplyPermissionListener(new PermissionHelper.OnApplyPermissionListener() {
             @Override
             public void onAfterApplyAllPermission() {
-                Log.i(TAG, "All of requested permissions has been granted, so run app logic.");
+                Logger.i(TAG, "All of requested permissions has been granted, so run app logic.");
                 runApp();
             }
         });
         if (Build.VERSION.SDK_INT < 23) {
             // 如果系统版本低于23，直接跑应用的逻辑
-            Log.d(TAG, "The api level of system is lower than 23, so run app logic directly.");
+            Logger.d(TAG, "The api level of system is lower than 23, so run app logic directly.");
             runApp();
         } else {
             // 如果权限全部申请了，那就直接跑应用逻辑
             if (mPermissionHelper.isAllRequestedPermissionGranted()) {
-                Log.d(TAG, "All of requested permissions has been granted, so run app logic directly.");
+                Logger.d(TAG, "All of requested permissions has been granted, so run app logic directly.");
                 runApp();
             } else {
                 // 如果还有权限为申请，而且系统版本大于23，执行申请权限逻辑
-                Log.i(TAG, "Some of requested permissions hasn't been granted, so apply permissions first.");
+                Logger.i(TAG, "Some of requested permissions hasn't been granted, so apply permissions first.");
                 mPermissionHelper.applyPermissions();
             }
         }

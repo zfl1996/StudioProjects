@@ -42,10 +42,10 @@ public class SystemUtil {
         UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
         if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
             return true;
-//            Log.d(TAG, "Running on a TV Device")
+//            Logger.d(TAG, "Running on a TV Device")
         } else {
             return false;
-//            Log.d(TAG, "Running on a non-TV Device")
+//            Logger.d(TAG, "Running on a non-TV Device")
         }
     }
 

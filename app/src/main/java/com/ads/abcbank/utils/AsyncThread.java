@@ -50,7 +50,7 @@ public class AsyncThread {
                     Message msg = handler.obtainMessage(wath);
                     msg.obj = null;
                     handler.sendMessage(msg);
-                    Log.e("数据交互出错", e.toString());
+                    Logger.e("数据交互出错", e.toString());
                 }
 
                 @Override
@@ -63,13 +63,13 @@ public class AsyncThread {
                         } catch (Exception e) {
                             msg.obj = null;
                             handler.sendMessage(msg);
-                            Log.e("数据交互出错", e.toString());
+                            Logger.e("数据交互出错", e.toString());
                         }
                     }
                 }
             });//此处省略回调方法。
         } catch (Exception e) {
-            Log.e("数据交互出错", e.toString());
+            Logger.e("数据交互出错", e.toString());
         }
     }
 }

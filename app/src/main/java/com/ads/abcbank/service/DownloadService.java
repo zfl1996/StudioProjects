@@ -1,7 +1,6 @@
 package com.ads.abcbank.service;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -14,28 +13,37 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 
+import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.utils.FileUtil;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.TaskTagUtil;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.view.BaseTempFragment;
+import com.alibaba.fastjson.JSON;
 import com.liulishuo.okdownload.DownloadContext;
 import com.liulishuo.okdownload.DownloadContextListener;
 import com.liulishuo.okdownload.DownloadListener;
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.OkDownload;
 import com.liulishuo.okdownload.StatusUtil;
-import com.liulishuo.okdownload.UnifiedListenerManager;
 import com.liulishuo.okdownload.core.cause.EndCause;
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
 import com.liulishuo.okdownload.core.listener.DownloadListener1;
-import com.liulishuo.okdownload.core.listener.DownloadListener2;
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,13 +59,18 @@ public class DownloadService extends Service {
 
 
     private static final String TAG = "DownloadService";
-    private String downloadPath;
+    public static String downloadPath;
+    public static String rootPath;
+
+    private String type;
     private static List<DownloadTask> taskList = new ArrayList<>();
     private DownloadContext context;
     private final DownloadContextListener contextListener = new DownloadContextListener() {
         @Override
         public void taskEnd(@NonNull DownloadContext context, @NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, int remainCount) {
             String status = cause.toString();
+            Logger.e(TAG, task.getFilename() + "下载结束，状态：" + status +
+                    ">>>downloadLink=" + task.getUrl());
             /*if (cause.equals(EndCause.COMPLETED)) {
                 File downloadFile = new File(downloadPath + task.getFilename());
                 if (!downloadFile.exists()) {
@@ -84,6 +97,7 @@ public class DownloadService extends Service {
         @Override
         public void taskStart(@NonNull DownloadTask task, @NonNull Listener1Assist.Listener1Model model) {
             TaskTagUtil.saveStatus(task, "taskStart");
+            Logger.e(TAG, task.getFilename() + "开始下载");
         }
 
         @Override
@@ -109,7 +123,7 @@ public class DownloadService extends Service {
             if (cause == EndCause.COMPLETED) {
                 final String realMd5 = FileUtil.fileToMD5(task.getFile().getAbsolutePath());
                 if (!realMd5.equalsIgnoreCase(TaskTagUtil.getMd5(task))) {
-                    Log.e(TAG, "file is wrong because of md5 is wrong " + realMd5);
+                    Logger.e(TAG, "file is wrong because of md5 is wrong " + realMd5);
                     FileUtil.deleteFile(downloadPath + task.getFilename());
                 }
             }*/
@@ -119,19 +133,20 @@ public class DownloadService extends Service {
                     startTasks(true);
                 } else {
 
-                    TimerTask timerTask = new TimerTask() {
+                  /*  TimerTask timerTask = new TimerTask() {
                         @Override
                         public void run() {
                             openAndroidFile(downloadPath + task.getFilename());
                         }
                     };
                     Timer timer = new Timer();
-                    timer.schedule(timerTask, 3000);
+                    timer.schedule(timerTask, 3000);*/
 
                 }
             }
         }
     };
+    private PlaylistResultBean playlistBean;
 
 
     public static ArrayList<DownloadTask> getPrepareTasks() {
@@ -156,13 +171,15 @@ public class DownloadService extends Service {
 
 
     private void createFilePath() {
-        FileUtil.mkDir(getDownSave() + "/files/");
-        FileUtil.mkDir(getDownSave() + "/conf/");
-        FileUtil.mkDir(getDownSave() + "/zip/");
-        FileUtil.mkDir(getDownSave() + "/temp/");
-        FileUtil.mkDir(getDownSave() + "/screen/");
-        FileUtil.createNewFile(getDownSave() + "playlist.json");
-        downloadPath = getDownSave() + "/temp/";
+        rootPath = getDownSave();
+        downloadPath = rootPath + "/temp/";
+        FileUtil.mkDir(rootPath + "/files/");
+        FileUtil.mkDir(rootPath + "/conf/");
+        FileUtil.mkDir(rootPath + "/zip/");
+        FileUtil.mkDir(rootPath + "/temp/");
+        FileUtil.mkDir(rootPath + "/screen/");
+        FileUtil.createNewFile(rootPath + "playlist.json");
+
 
     }
 
@@ -189,8 +206,8 @@ public class DownloadService extends Service {
                 break;
             case ADD_MULTI_DOWNTASK:
                 //Todo 根据json添加下载任务，处理相关逻辑
-                ArrayList<String> urls = intent.getStringArrayListExtra("urls");
-                addDownloadTask( urls);
+                type = intent.getStringExtra("type");
+                addDownloadTasks();
                 startTasks(true);
                 break;
 
@@ -254,8 +271,87 @@ public class DownloadService extends Service {
         }
     }
 
-    private void addDownloadTask( ArrayList<String> urls) {
+    private void addDownloadTasks() {
+        String playlistJson = FileUtil.readTextFile("playlist.json");
+        if (TextUtils.isEmpty(playlistJson)) {
+            playlistJson = Utils.getStringFromAssets("playlist.json", mContext);
+        }
+         playlistBean = JSON.parseObject(playlistJson, PlaylistResultBean.class);
+        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null)
+            return;
+        for (int i = 0; i < playlistBean.data.items.size(); i++) {
+            PlaylistBodyBean bodyBean = playlistBean.data.items.get(i);
+            String contentTypeMiddle = Utils.getContentTypeMiddle(mContext);
+            String contentTypeEnd = Utils.getContentTypeEnd(mContext);
+//            todo 只下载对应type下的 文件
+            if (!TextUtils.isEmpty(bodyBean.downloadLink)) {
+                if (isDownTime(bodyBean.downloadTimeslice)) {
+                    if (isNoPlayTime(bodyBean.stopDate)) {
+                        addDownloadTask(bodyBean.name, bodyBean.downloadLink, bodyBean.isUrg);
+                    } else {
+                        Logger.e(TAG, "文件" + bodyBean.name + "超过播放时间");
 
+                    }
+                } else {
+                    Logger.e(TAG, "文件" + bodyBean.name + "不在下载时间内");
+                }
+            } else {
+                Logger.e(TAG, "文件" + bodyBean.name + "下载链接为空");
+
+            }
+
+            if (contentTypeEnd.equals("*")) {
+                if (bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                        type.contains(bodyBean.contentType.substring(0, 1))) {
+                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                    BaseTempFragment fragment = null;
+                    switch (suffix) {
+                        case "mp4":
+                        case "mkv":
+                        case "wmv":
+                        case "avi":
+                        case "rmvb":
+                            break;
+                        case "jpg":
+                        case "png":
+                        case "bmp":
+                        case "jpeg":
+                            break;
+                        case "pdf":
+                            break;
+                        case "txt":
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } else {
+                if (bodyBean.contentType.endsWith(contentTypeEnd) &&
+                        bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                        type.contains(bodyBean.contentType.substring(0, 1))) {
+                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                    switch (suffix) {
+                        case "mp4":
+                        case "mkv":
+                        case "wmv":
+                        case "avi":
+                        case "rmvb":
+                            break;
+                        case "jpg":
+                        case "png":
+                        case "bmp":
+                        case "jpeg":
+                            break;
+                        case "pdf":
+                            break;
+                        case "txt":
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }
 
 
@@ -282,6 +378,7 @@ public class DownloadService extends Service {
     public void stopTasks() {
         if (this.context.isStarted()) {
             this.context.stop();
+
         }
     }
 
@@ -309,31 +406,16 @@ public class DownloadService extends Service {
         File parentFile = new File(downloadPath);
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority("1".equals(isUrg) ? 10 : 0)
-//                .setFlushBufferSize(10)//下载限速
-//                .setReadBufferSize(10)
+                .setFilename(filename)
+                .setFlushBufferSize(10)//下载限速60kb
+                .setReadBufferSize(10)
                 .build();
         builder.bindSetTask(task);
-        manager.attachListener(task, downloadListener);
         this.context = builder.build();
         taskList = Arrays.asList(this.context.getTasks());
         return task;
     }
 
-    // all attach or detach is based on the id of Task in fact.
-    UnifiedListenerManager manager = new UnifiedListenerManager();
-    DownloadListener downloadListener = new DownloadListener2() {
-        @Override
-        public void taskStart(@NonNull DownloadTask task) {
-
-        }
-
-        @Override
-        public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause) {
-            if (cause.equals(EndCause.COMPLETED)) {
-                openAndroidFile(downloadPath + task.getFilename());
-            }
-        }
-    };
 
     private void openAndroidFile(String filepath) {
         Intent intent = new Intent();
@@ -393,4 +475,86 @@ public class DownloadService extends Service {
         taskList = Arrays.asList(this.context.getTasks());
     }
 
+    private boolean isDownTime(String downloadTimeslice) {
+
+        try {
+            if (TextUtils.isEmpty(downloadTimeslice))
+                return true;
+            else {
+                String[] strs = downloadTimeslice.split("-");
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+                int _week = 7;
+                _week = w;
+                Logger.e(("," + strs[0] + ",").indexOf("," + _week + ",") + "");
+                if (strs[0].indexOf(_week + "") != -1) {
+//                    开始时间
+                    int strDateBeginH = Integer.parseInt(strs[1].substring(0, 2));
+                    int strDateBeginM = Integer.parseInt(strs[1].substring(3, 5));
+                    // 截取结束时间时分
+                    int strDateEndH = strDateBeginH + (strDateBeginM + Integer.parseInt(strs[2])) / 60;
+                    int strDateEndM = (strDateBeginM + Integer.parseInt(strs[2])) % 60;
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String strDate = sdf.format(new Date());
+                    // 截取当前时间时分秒
+                    int strDateH = Integer.parseInt(strDate.substring(11, 13));
+                    int strDateM = Integer.parseInt(strDate.substring(14, 16));
+                    if ((strDateH >= strDateBeginH && strDateH <= strDateEndH)) {
+                        // 当前时间小时数在开始时间和结束时间小时数之间
+                        if (strDateH > strDateBeginH && strDateH < strDateEndH) {
+                            return true;
+                            // 当前时间小时数等于开始时间小时数，分钟数在开始和结束之间
+                        } else if (strDateH == strDateBeginH && strDateM >= strDateBeginM
+                                && strDateM <= strDateEndM) {
+                            return true;
+                        }
+                        // 当前时间小时数大等于开始时间小时数，等于结束时间小时数，分钟数小等于结束时间分钟数
+                        else if (strDateH >= strDateBeginH && strDateH == strDateEndH
+                                && strDateM <= strDateEndM) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+//                    DateTime startDt = DateTime.Parse(strs[1]);
+//                    DateTime endDt = startDt.AddMinutes(int.Parse(strs[2]));
+//                    if ((DateTime.Now > startDt) && (DateTime.Now < endDt))
+//                        return false;
+//                    else
+//                        return true;
+                } else {
+                    return false;
+                }
+            }
+
+        } catch (Exception e) {
+            Logger.e(TAG, e.toString());
+        }
+        return false;
+    }
+
+    private boolean isNoPlayTime(String strDateEnd) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm");
+            Date stopDate = sdf.parse(strDateEnd);
+            Date now = new Date();
+            if (stopDate.after(now)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            Logger.e(TAG, e.toString());
+            return false;
+        }
+    }
+
+    public void clear12(String path) {
+
+
+    }
 }

@@ -79,22 +79,22 @@ public class PresetView extends LinearLayout {
         tab2Fragment.setBean(bean.data.loanRate);
         tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
 
-        if(bean.data.saveRate.enable){
+        if (bean.data.saveRate.enable) {
             fragmentList.add(tab1Fragment);
-            StringBuffer stringBuffer=new StringBuffer(bean.data.saveRate.title);
-            stringBuffer.insert(3,"\n");
+            StringBuffer stringBuffer = new StringBuffer(bean.data.saveRate.title);
+            stringBuffer.insert(3, "\n");
             list_Title.add(stringBuffer.toString());
         }
-        if(bean.data.loanRate.enable){
+        if (bean.data.loanRate.enable) {
             fragmentList.add(tab2Fragment);
-            StringBuffer stringBuffer=new StringBuffer(bean.data.loanRate.title);
-            stringBuffer.insert(3,"\n");
+            StringBuffer stringBuffer = new StringBuffer(bean.data.loanRate.title);
+            stringBuffer.insert(3, "\n");
             list_Title.add(stringBuffer.toString());
         }
-        if(bean.data.buyInAndOutForeignExchange.enable){
+        if (bean.data.buyInAndOutForeignExchange.enable) {
             fragmentList.add(tab3Fragment);
-            StringBuffer stringBuffer=new StringBuffer(bean.data.buyInAndOutForeignExchange.title);
-            stringBuffer.insert(3,"\n");
+            StringBuffer stringBuffer = new StringBuffer(bean.data.buyInAndOutForeignExchange.title);
+            stringBuffer.insert(3, "\n");
             list_Title.add(stringBuffer.toString());
         }
 
@@ -130,6 +130,13 @@ public class PresetView extends LinearLayout {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            try {
+                delayTime = Integer.parseInt(
+                        Utils.get(context, Utils.KEY_TIME_TAB_PRESET, "5")
+                                .toString()) * 1000;
+            } catch (Exception e) {
+            }
+
             int item = viewpager.getCurrentItem();
             if (item < list_Title.size() - 1) {
                 viewpager.setCurrentItem(item + 1);

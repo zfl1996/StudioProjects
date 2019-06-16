@@ -61,7 +61,7 @@ public class Temp1Activity extends BaseActivity implements IView {
         }, 100);
 //        initViews();
         setiView(this);
-        startServices();
+        startServices("M,H,P,N,E,L,R");
     }
 
     private Handler handler = new Handler();
@@ -130,6 +130,7 @@ public class Temp1Activity extends BaseActivity implements IView {
         tvTemp.getImage().setVisibility(View.GONE);
         tempPresenter = new TempPresenter(this, this);
         tempPresenter.getPreset();
+        tempPresenter.getPlayList();
 
 //        videoplayer.startVideo();
         if (marqueeTextView != null)
@@ -156,15 +157,9 @@ public class Temp1Activity extends BaseActivity implements IView {
         super.onResume();
         if (marqueeTextView != null)
             marqueeTextView.resumeScroll();
-        startDownloadService();
     }
 
-    private void startDownloadService() {
-        Intent intent = new Intent();
-        intent.setAction(DownloadService.START_QUEUE_DOWNTASK);
-        intent.setPackage(DownloadService.PACKAGE);
-        startService(intent);
-    }
+
 
     @Override
     protected void onStop() {

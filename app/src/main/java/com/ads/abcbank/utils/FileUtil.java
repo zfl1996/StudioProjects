@@ -2,23 +2,18 @@ package com.ads.abcbank.utils;
 
 
 import android.os.Environment;
-import android.util.Log;
-import android.widget.Toast;
-
-import com.ads.abcbank.service.DownloadService;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -43,7 +38,7 @@ public class FileUtil {
                 myFolderPath.mkdir();
             }
         } catch (Exception e) {
-            Log.e(TAG, "新建目录操作出错");
+            Logger.e(TAG, "新建目录操作出错");
             e.printStackTrace();
         }
     }
@@ -60,7 +55,7 @@ public class FileUtil {
                 myFilePath.createNewFile();
             }
         } catch (Exception e) {
-            Log.e(TAG, "新建文件操作出错");
+            Logger.e(TAG, "新建文件操作出错");
             e.printStackTrace();
         }
     }
@@ -154,7 +149,54 @@ public class FileUtil {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "删除文件失败");
+            Logger.e(TAG, "删除文件失败");
+        }
+    }
+
+    /**
+     * 递归删除超过12个月文件或者目录
+     */
+
+    public static void deleteFile12(File file) {
+        try {
+            //计算时间
+            long day = 365;
+            long hour = 24;
+            long minute = 60;
+            long second = 60;
+            long mmcond = 1000;
+            long currTime = System.currentTimeMillis();   //当前时间
+
+            if (file.exists() == false) {
+                return;
+            } else {
+                long lastTime = file.lastModified();     //文件被最后一次修改的时间
+                //时间差
+                long diffen = currTime - lastTime;
+
+                long thDay = day * hour * minute * second * mmcond;
+
+                if (diffen >= thDay) {
+                    if (file.isFile()) {
+                        file.delete();
+                        return;
+                    }
+                    if (file.isDirectory()) {
+                        File[] childFile = file.listFiles();
+                        if (childFile == null || childFile.length == 0) {
+                            file.delete();
+                            return;
+                        }
+                        for (File f : childFile) {
+                            deleteFile(f);
+                        }
+                        file.delete();
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            Logger.e(TAG, "删除超过12个月文件失败");
         }
     }
 
@@ -187,7 +229,7 @@ public class FileUtil {
                 try {
                     inputStream.close();
                 } catch (Exception e) {
-                    Log.e(TAG, "file to md5 failed", e);
+                    Logger.e(TAG, "file to md5 failed");
                 }
             }
         }
@@ -195,12 +237,12 @@ public class FileUtil {
 
     public static void writeJsonToFile(String json) {
         try {
-            FileWriter fw = new FileWriter(new File(getDownSave() + "playlist.json"));
-            BufferedWriter bw = new BufferedWriter(fw);
+            String filePath = getDownSave() + "playlist.json";
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true), "UTF-8"));
             bw.write(json);
             bw.flush();
         } catch (IOException e) {
-            Log.e(TAG, "write json to file failed", e);
+            Logger.e(TAG, "write json to file failed");
         }
     }
 
@@ -213,13 +255,16 @@ public class FileUtil {
             File file = new File(getDownSave() + filePath);
             InputStream in = null;
             in = new FileInputStream(file);
-            int tempbyte;
-            while ((tempbyte = in.read()) != -1) {
-                sb.append((char) tempbyte);
+            InputStreamReader isr = new InputStreamReader(in, "UTF-8");
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+                sb.append("\r\n");
             }
             in.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(TAG, e.toString());
         }
         return sb.toString();
     }

@@ -48,7 +48,7 @@ public class Temp4Activity extends BaseActivity implements IView {
         tvTemp.setImageSrc(R.mipmap.v_wkqk);
         tvTemp2.setImageSrc(R.mipmap.v_zysys);
         setiView(this);
-        startServices();
+        startServices("H,L,N");
     }
 
     @Override

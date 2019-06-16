@@ -4,10 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.ads.abcbank.utils.AsyncThread;
 import com.ads.abcbank.utils.HTTPContants;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.IView;
 import com.alibaba.fastjson.JSONObject;
@@ -17,7 +17,7 @@ public class TempPresenter {
     private IView tempView;
     private AsyncThread asyncThread;
 
-    private static final long presetTime = 30 * 60 * 1000;
+    private  long presetTime = 30 * 60 * 1000;
 
     public TempPresenter(Context context, IView tempView) {
         asyncThread = Utils.getAsyncThread();
@@ -34,17 +34,17 @@ public class TempPresenter {
             }
             switch (msg.what) {
                 case 2:
-                    Log.e("getPlayList", "====" + msg.obj);
+                    Logger.e("getPlayList", "====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(context, Utils.KEY_PLAY_LIST, msg.obj);
                     }
                     break;
                 case 5:
-                    Log.e("getPreset", "====" + msg.obj);
+                    Logger.e("getPreset", "====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(context, Utils.KEY_PRESET, msg.obj);
                         tempView.updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
-                    }else{
+                    } else {
                         tempView.updatePresetDate(null);
                     }
                     break;
@@ -76,6 +76,10 @@ public class TempPresenter {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            presetTime = Integer.
+                    parseInt(Utils.
+                            get(context, Utils.KEY_TIME_PRESET, "30")
+                            .toString()) * 1000;
             getPreset();
         }
     };

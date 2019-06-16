@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTempFragment;
 
 import java.io.File;
@@ -160,6 +161,13 @@ public class PdfFragment extends BaseTempFragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            try {
+                delayTime = Integer.
+                        parseInt(Utils.
+                                get(getActivity(), Utils.KEY_TIME_TAB_PDF, "5")
+                                .toString()) * 1000;
+            } catch (Exception e) {
+            }
             if (pageNumber < pageTotal - 1) {
                 showPage(pageNumber + 1);
                 handler.postDelayed(runnable, delayTime);

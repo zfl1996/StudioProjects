@@ -49,7 +49,7 @@ public class Temp2Activity extends BaseActivity implements IView {
 //        ZipUtil.compressFile(marqueeTv.getRootView());
 //        ZipUtil.unZip(marqueeTv.getRootView());
         setiView(this);
-        startServices();
+        startServices("M,H,P,N,E,L,R");
     }
 
     @Override

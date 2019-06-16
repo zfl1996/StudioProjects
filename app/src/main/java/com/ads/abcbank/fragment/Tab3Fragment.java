@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.Logger;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTabFragment;
 import com.ads.abcbank.view.TempView;
 
@@ -131,6 +133,14 @@ public class Tab3Fragment extends BaseTabFragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            try {
+                delayTime = Integer.
+                        parseInt(Utils.
+                                get(getActivity(), Utils.KEY_TIME_TAB_PRESET, "5")
+                                .toString()) * 1000;
+            } catch (Exception e) {
+                Logger.e("delayTime", e.toString());
+            }
             if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
                 tempView.nextPlay();
             else

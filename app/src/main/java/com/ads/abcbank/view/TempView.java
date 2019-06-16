@@ -83,7 +83,6 @@ public class TempView extends LinearLayout {
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
         if (TextUtils.isEmpty(json)) {
             json = Utils.getStringFromAssets("playlist.json", context);
-            FileUtil.writeJsonToFile(json);
         }
         playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
         View view = LayoutInflater.from(context).inflate(R.layout.view_temp, null);

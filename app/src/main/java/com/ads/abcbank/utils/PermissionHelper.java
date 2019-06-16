@@ -84,7 +84,7 @@ public class PermissionHelper {
 				mOnApplyPermissionListener.onAfterApplyAllPermission();
 			}
 		} catch (Throwable e) {
-			Log.e(TAG, "", e);
+			Logger.e(TAG, e.toString());
 		}
 	}
 
@@ -208,7 +208,7 @@ public class PermissionHelper {
 			mActivity.startActivityForResult(intent, requestCode);
 			return true;
 		} catch (Throwable e) {
-			Log.e(TAG, "", e);
+			Logger.e(TAG, e.toString());
 		}
 		return false;
 	}

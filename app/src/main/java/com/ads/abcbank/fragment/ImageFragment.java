@@ -12,6 +12,7 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.activity.WebViewActivity;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.bumptech.glide.Glide;
@@ -67,6 +68,14 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+
+            try {
+                delayTime = Integer.
+                        parseInt(Utils.
+                                get(context, Utils.KEY_TIME_TAB_IMG, "5")
+                                .toString()) * 1000;
+            } catch (Exception e) {
+            }
             if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
                 tempView.nextPlay();
             else

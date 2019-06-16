@@ -7,7 +7,10 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
-        versionName "2019060921"
+        versionName "2019061621"
+        ndk {
+            abiFilters "armeabi","armeabi-v7a","x86"
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

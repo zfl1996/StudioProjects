@@ -38,7 +38,7 @@ public class Temp6Activity extends BaseActivity implements IView {
         tvTemp.getImage().setVisibility(View.GONE);
 //        tvTemp.setImageSrc(R.mipmap.h_zyxykfq);
         setiView(this);
-        startServices();
+        startServices("T");
     }
 
     @Override

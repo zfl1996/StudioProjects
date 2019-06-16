@@ -13,6 +13,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.ads.abcbank.ProcessConnection;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 
 import java.util.Date;
@@ -37,7 +38,7 @@ public class ProtectPlaylistService extends Service {
     /*每次调用startService启动该服务都会执行*/
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.e("TAG", "启动获取下载列表服务_守护进程：" + new Date().toString());
+        Logger.e("TAG", "启动获取下载列表服务_守护进程：" + new Date().toString());
 
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
@@ -59,7 +60,7 @@ public class ProtectPlaylistService extends Service {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             //链接上
-            Log.e("test", "GuardService:建立链接");
+            Logger.e("test", "GuardService:建立链接");
         }
 
         @Override

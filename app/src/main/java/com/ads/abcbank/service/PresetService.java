@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.HTTPContants;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.alibaba.fastjson.JSONObject;
@@ -30,7 +31,7 @@ public class PresetService extends Service {
     /*每次调用startService启动该服务都会执行*/
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.e("TAG", "启动获取汇率列表服务：" + new Date().toString());
+        Logger.e("TAG", "启动获取汇率列表服务：" + new Date().toString());
         Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, new JSONObject(), handler, 0);
 
         return super.onStartCommand(intent, flags, startId);
@@ -42,7 +43,7 @@ public class PresetService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    Log.e("getPreset", "====" + msg.obj);
+                    Logger.e("getPreset", "====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(PresetService.this, Utils.KEY_PRESET, msg.obj);
                         Activity activity = ActivityManager.getInstance().getTopActivity();
