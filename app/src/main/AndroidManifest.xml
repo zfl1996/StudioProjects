@@ -112,6 +112,7 @@
                 <action android:name="com.ads.abcbank.removetask" />
                 <action android:name="com.ads.abcbank.cancelqueuetask" />
                 <action android:name="com.ads.abcbank.startqueuetask" />
+                <action android:name="com.ads.abcbank.deletefile12" />
             </intent-filter>
         </service>
 

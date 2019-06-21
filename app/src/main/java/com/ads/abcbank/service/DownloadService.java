@@ -55,6 +55,7 @@ public class DownloadService extends Service {
     public static final String REMOVE_DOWNTASK = "com.ads.abcbank.removetask";
     public static final String CANCEL_QUEUE_DOWNTASK = "com.ads.abcbank.cancelqueuetask";
     public static final String START_QUEUE_DOWNTASK = "com.ads.abcbank.startqueuetask";
+    public static final String DELETE_FILE_12 = "com.ads.abcbank.deletefile12";
     public static final String PACKAGE = "com.ads.abcbank";
 
 
@@ -218,6 +219,12 @@ public class DownloadService extends Service {
             case CANCEL_QUEUE_DOWNTASK:
                 stopTasks();
                 break;
+            case DELETE_FILE_12:
+                clear12(rootPath + "/files/");
+                clear12(rootPath + "/conf/");
+                clear12(rootPath + "/zip/");
+                clear12(rootPath + "/temp/");
+                break;
             case START_QUEUE_DOWNTASK:
                 boolean needStart = false;
                 for (DownloadTask task : taskList
@@ -276,9 +283,10 @@ public class DownloadService extends Service {
         if (TextUtils.isEmpty(playlistJson)) {
             playlistJson = Utils.getStringFromAssets("playlist.json", mContext);
         }
-         playlistBean = JSON.parseObject(playlistJson, PlaylistResultBean.class);
-        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null)
+        playlistBean = JSON.parseObject(playlistJson, PlaylistResultBean.class);
+        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null) {
             return;
+        }
         for (int i = 0; i < playlistBean.data.items.size(); i++) {
             PlaylistBodyBean bodyBean = playlistBean.data.items.get(i);
             String contentTypeMiddle = Utils.getContentTypeMiddle(mContext);
@@ -549,12 +557,38 @@ public class DownloadService extends Service {
             }
         } catch (Exception e) {
             Logger.e(TAG, e.toString());
+            Logger.e(TAG, "日期格式可能非\"yyyyMMdd HH:mm\"");
             return false;
         }
     }
 
+    public interface Clear12Listener {
+        boolean isFileUsed(String fileName);
+    }
+
+    /**
+     * 清除超过12个月不在播放列表的文件
+     *
+     * @param path
+     */
     public void clear12(String path) {
 
+        File file = new File(path);
+        FileUtil.deleteFile12(file, new Clear12Listener() {
+            @Override
+            public boolean isFileUsed(String fileName) {
+                if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null) {
+                    return false;
+                }
+                for (PlaylistBodyBean bodyBean :
+                        playlistBean.data.items) {
+                    if (bodyBean.name.equals(fileName)) {
+                        return true;
+                    }
 
+                }
+                return false;
+            }
+        });
     }
 }

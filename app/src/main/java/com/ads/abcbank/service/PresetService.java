@@ -43,7 +43,7 @@ public class PresetService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    Logger.e("getPreset", "====" + msg.obj);
+                    Logger.e("getPreset", "获取预设汇率列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(PresetService.this, Utils.KEY_PRESET, msg.obj);
                         Activity activity = ActivityManager.getInstance().getTopActivity();

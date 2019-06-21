@@ -3,13 +3,14 @@ package com.ads.abcbank.utils;
 
 import android.os.Environment;
 
+import com.ads.abcbank.service.DownloadService;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -157,7 +158,7 @@ public class FileUtil {
      * 递归删除超过12个月文件或者目录
      */
 
-    public static void deleteFile12(File file) {
+    public static void deleteFile12(File file, DownloadService.Clear12Listener listener) {
         try {
             //计算时间
             long day = 365;
@@ -177,7 +178,7 @@ public class FileUtil {
                 long thDay = day * hour * minute * second * mmcond;
 
                 if (diffen >= thDay) {
-                    if (file.isFile()) {
+                    if (file.isFile() && !listener.isFileUsed(file.getName())) {
                         file.delete();
                         return;
                     }
@@ -188,7 +189,7 @@ public class FileUtil {
                             return;
                         }
                         for (File f : childFile) {
-                            deleteFile(f);
+                            deleteFile12(f, listener);
                         }
                         file.delete();
                     }

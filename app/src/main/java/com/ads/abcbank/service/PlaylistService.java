@@ -44,7 +44,7 @@ public class PlaylistService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    Logger.e("getPlayList", "====" + msg.obj);
+                    Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(PlaylistService.this, Utils.KEY_PLAY_LIST, msg.obj);
                         FileUtil.writeJsonToFile(msg.obj.toString());

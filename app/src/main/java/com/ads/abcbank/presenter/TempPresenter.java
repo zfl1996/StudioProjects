@@ -34,13 +34,13 @@ public class TempPresenter {
             }
             switch (msg.what) {
                 case 2:
-                    Logger.e("getPlayList", "====" + msg.obj);
+                    Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(context, Utils.KEY_PLAY_LIST, msg.obj);
                     }
                     break;
                 case 5:
-                    Logger.e("getPreset", "====" + msg.obj);
+                    Logger.e("getPreset", "获取预设汇率信息返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(context, Utils.KEY_PRESET, msg.obj);
                         tempView.updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
@@ -54,6 +54,7 @@ public class TempPresenter {
 
 
     public void init() {
+
         asyncThread.httpService(HTTPContants.CODE_INIT, new JSONObject(), handler, 0);
     }
 
@@ -62,6 +63,7 @@ public class TempPresenter {
     }
 
     public void getPlayList() {
+        Logger.e(Utils.KEY_PLAY_LIST_ALL,"开始执行获取播放列表请求");
         asyncThread.httpService(HTTPContants.CODE_PLAYLIST, new JSONObject(), handler, 2);
     }
 
@@ -85,6 +87,7 @@ public class TempPresenter {
     };
 
     public void getPreset() {
+        Logger.e("getPreset","开始执行获取预设汇率信息请求");
         asyncThread.httpService(HTTPContants.CODE_PRESET, new JSONObject(), handler, 5);
         handler.postDelayed(runnable, presetTime);
     }

@@ -46,21 +46,21 @@ public class CmdService extends Service {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, (Integer.parseInt(timeCurrentCmd) + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, "1");
-            Logger.e("TAG", "启动获取轮询命令服务：" + new Date().toString());
+            Logger.e("TAG", "启动获取cmdpoll轮询命令服务：" + new Date().toString());
             Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, new JSONObject(), handler, 0);
         }
         if (timeCurrentPlaylist.compareTo(timePlaylist) != 0) {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, (Integer.parseInt(timeCurrentCmd) + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1");
-            Logger.e("TAG", "启动获取轮询命令服务：" + new Date().toString());
+            Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
             Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, new JSONObject(), handler, 1);
         }
         if (timeCurrentPreset.compareTo(timePreset) != 0) {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, (Integer.parseInt(timeCurrentCmd) + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, "1");
-            Logger.e("TAG", "启动获取汇率列表服务：" + new Date().toString());
+            Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());
             Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, new JSONObject(), handler, 2);
         }
         return super.onStartCommand(intent, flags, startId);
@@ -72,7 +72,7 @@ public class CmdService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    Logger.e("getCmdPoll", "====" + msg.obj);
+                    Logger.e("getCmdPoll", "获取cmdpoll轮询命令返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(CmdService.this, Utils.KEY_CMD_POLL, msg.obj);
                         Activity activity = ActivityManager.getInstance().getTopActivity();
@@ -82,7 +82,7 @@ public class CmdService extends Service {
                     }
                     break;
                 case 1:
-                    Logger.e("getPlayList", "====" + msg.obj);
+                    Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(CmdService.this, Utils.KEY_PLAY_LIST, msg.obj);
                         FileUtil.writeJsonToFile(msg.obj.toString());
@@ -93,7 +93,7 @@ public class CmdService extends Service {
                     }
                     break;
                 case 2:
-                    Logger.e("getPreset", "====" + msg.obj);
+                    Logger.e("getPreset", "获取预设汇率列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(CmdService.this, Utils.KEY_PRESET, msg.obj);
                         Activity activity = ActivityManager.getInstance().getTopActivity();
