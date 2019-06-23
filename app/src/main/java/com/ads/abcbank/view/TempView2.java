@@ -42,6 +42,15 @@ public class TempView2 extends LinearLayout {
     private List<BaseTempFragment> fragmentList = new ArrayList<>();
     private PlaylistResultBean playlistBean;
     private ImageView image;
+    private boolean needUpdate;
+
+    public boolean isNeedUpdate() {
+        return needUpdate;
+    }
+
+    public void setNeedUpdate(boolean needUpdate) {
+        this.needUpdate = needUpdate;
+    }
 
     public ImageView getImage() {
         return image;
@@ -116,12 +125,9 @@ public class TempView2 extends LinearLayout {
         }
     }
 
-    private void addTempViewList() {
-        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null)
-            return;
-        fragmentList.clear();
-        for (int i = 0; i < playlistBean.data.items.size(); i++) {
-            PlaylistBodyBean bodyBean = playlistBean.data.items.get(i);
+    private void addPlayList(List<PlaylistBodyBean> bodyBeans) {
+        for (int i = 0; i < bodyBeans.size(); i++) {
+            PlaylistBodyBean bodyBean = bodyBeans.get(i);
             String contentTypeMiddle = Utils.getContentTypeMiddle(context);
             String contentTypeEnd = Utils.getContentTypeEnd(context);
             if (contentTypeEnd.equals("*")) {
@@ -155,6 +161,7 @@ public class TempView2 extends LinearLayout {
                     }
                     fragment.setBean(bodyBean);
                     fragment.setTempView2(this);
+                    //TODO 此处需添加文件是否已下载完成的判断
                     fragmentList.add(fragment);
                 }
             } else {
@@ -189,18 +196,51 @@ public class TempView2 extends LinearLayout {
                     }
                     fragment.setBean(bodyBean);
                     fragment.setTempView2(this);
+                    //TODO 此处需添加文件是否已下载完成的判断
                     fragmentList.add(fragment);
                 }
             }
         }
     }
 
+    private void addTempViewList() {
+        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null)
+            return;
+        fragmentList.clear();
+
+        List<PlaylistBodyBean> hotLists = new ArrayList<>();
+        List<PlaylistBodyBean> normalLists = new ArrayList<>();
+        for (int i = 0; i < playlistBean.data.items.size(); i++) {
+            if ("1".equals(playlistBean.data.items.get(i).isUrg)) {
+                hotLists.add(playlistBean.data.items.get(i));
+            }
+        }
+        addPlayList(hotLists);
+        for (int i = 0; i < playlistBean.data.items.size(); i++) {
+            if (!"1".equals(playlistBean.data.items.get(i).isUrg)) {
+                normalLists.add(playlistBean.data.items.get(i));
+            }
+        }
+        addPlayList(normalLists);
+    }
+
     public void nextPlay() {
-        int current = viewpager.getCurrentItem();
-        if (current < fragmentList.size() - 1) {
-            viewpager.setCurrentItem(current + 1);
+        if (isNeedUpdate()) {
+            setNeedUpdate(false);
+            fragmentList.clear();
+            String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
+            if (TextUtils.isEmpty(json)) {
+                json = Utils.getStringFromAssets("playlist.json", context);
+            }
+            playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
+            setType(type);
         } else {
-            viewpager.setCurrentItem(0);
+            int current = viewpager.getCurrentItem();
+            if (current < fragmentList.size() - 1) {
+                viewpager.setCurrentItem(current + 1);
+            } else {
+                viewpager.setCurrentItem(0);
+            }
         }
     }
 
@@ -226,7 +266,11 @@ public class TempView2 extends LinearLayout {
         @Override
         public Fragment getItem(int position) {
             // TODO Auto-generated method stub
-            BaseTempFragment fragment = BaseTempFragment.newInstance(mList.get(position));
+            BaseTempFragment fragment = null;
+            try {
+                fragment = BaseTempFragment.newInstance(mList.get(position));
+            } catch (Exception e) {
+            }
             return fragment;
         }
 

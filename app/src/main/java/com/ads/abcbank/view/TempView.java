@@ -203,6 +203,7 @@ public class TempView extends LinearLayout {
                     }
                     fragment.setBean(bodyBean);
                     fragment.setTempView(this);
+                    //TODO 此处需添加文件是否已下载完成的判断
                     fragmentList.add(fragment);
                 }
             } else {
@@ -237,6 +238,7 @@ public class TempView extends LinearLayout {
                     }
                     fragment.setBean(bodyBean);
                     fragment.setTempView(this);
+                    //TODO 此处需添加文件是否已下载完成的判断
                     fragmentList.add(fragment);
                 }
             }
