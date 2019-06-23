@@ -13,7 +13,7 @@ public class PlaylistBean extends RequestBean {
     public Data data = new Data();
 
     public static class Data {
-        public List<String> items = new ArrayList<>();
+        public List<DownloadBean> items = new ArrayList<>();
     }
 
     public PlaylistBean(){

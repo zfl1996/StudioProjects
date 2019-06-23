@@ -24,8 +24,8 @@ public class AsyncThread {
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HHmmss");
 //	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public static final int ConnectTimeout = 3;
-    public static final int ConnectReadTimeout = 3;
+    public static final int ConnectTimeout = 10;
+    public static final int ConnectReadTimeout = 10;
 
     public void httpService(String url, final JSONObject jsonString, final Handler handler, final int wath) {
         try {

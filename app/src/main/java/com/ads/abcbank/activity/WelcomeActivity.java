@@ -11,13 +11,19 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.bean.InitResultBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.presenter.MainPresenter;
-import com.ads.abcbank.utils.Logger;
+import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.PermissionHelper;
+import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IMainView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class WelcomeActivity extends BaseActivity implements IMainView {
     private MainPresenter mainPresenter;
@@ -133,11 +139,36 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
     public void onBackPressed() {
     }
 
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+
     @Override
     public void init(String jsonObject) {
         if (!TextUtils.isEmpty(jsonObject)) {
             InitResultBean initResultBean = JSON.parseObject(jsonObject, InitResultBean.class);
             if (initResultBean.resCode.equals("0")) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                calendar.add(Calendar.MINUTE, -10);
+                String startTime = simpleDateFormat.format(calendar.getTime());
+
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTime(new Date());
+                calendar2.add(Calendar.MINUTE, 10);
+                String endTime = simpleDateFormat.format(calendar2.getTime());
+
+                if (startTime.compareTo(initResultBean.data.serverTime) < 0
+                        || endTime.compareTo(initResultBean.data.serverTime) > 0) {
+                    ToastUtil.showToastLong(this, "服务器时间与本地时间误差较大");
+                    HandlerUtil.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ActivityManager.getInstance().finishAllActivity();
+                            System.exit(0);
+                        }
+                    }, 1000);
+                    return;
+                }
+
                 String beanStr = Utils.get(WelcomeActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
                 Intent intent = new Intent();
                 if (TextUtils.isEmpty(beanStr)) {

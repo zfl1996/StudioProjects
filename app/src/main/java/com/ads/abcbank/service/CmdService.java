@@ -7,8 +7,13 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 
+import com.ads.abcbank.bean.CmdpollBean;
 import com.ads.abcbank.bean.CmdpollResultBean;
+import com.ads.abcbank.bean.PlaylistBean;
+import com.ads.abcbank.bean.RegisterBean;
+import com.ads.abcbank.bean.RequestBean;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
@@ -47,21 +52,42 @@ public class CmdService extends Service {
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, "1");
             Logger.e("TAG", "启动获取cmdpoll轮询命令服务：" + new Date().toString());
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, new JSONObject(), handler, 0);
+            CmdpollBean cmdpollBean = new CmdpollBean();
+            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(cmdpollBean)), handler, 0);
         }
         if (timeCurrentPlaylist.compareTo(timePlaylist) != 0) {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, (Integer.parseInt(timeCurrentCmd) + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1");
             Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, new JSONObject(), handler, 1);
+            PlaylistBean playlistBean = new PlaylistBean();
+//            {//TODO 此处要添加下载文件列表及其状态
+//                DownloadBean bean = new DownloadBean();
+//                playlistBean.data.items.add(bean);
+//            }
+            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), handler, 1);
         }
         if (timeCurrentPreset.compareTo(timePreset) != 0) {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, (Integer.parseInt(timeCurrentCmd) + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, "1");
             Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, new JSONObject(), handler, 2);
+            RequestBean requestBean = new RequestBean();
+            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
+            if (!TextUtils.isEmpty(beanStr)) {
+                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                requestBean.appId = bean.appId;
+                requestBean.trCode = bean.trCode;
+                requestBean.trVersion = bean.trVersion;
+                requestBean.cityCode = bean.cityCode;
+                requestBean.brchCode = bean.brchCode;
+                requestBean.clientVersion = bean.clientVersion;
+                requestBean.terminalId = bean.terminalId;
+                requestBean.uniqueId = bean.uniqueId;
+            }
+            requestBean.timestamp = System.currentTimeMillis();
+            requestBean.flowNum = 0;
+            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), handler, 2);
         }
         return super.onStartCommand(intent, flags, startId);
     }
