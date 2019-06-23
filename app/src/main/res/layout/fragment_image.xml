@@ -3,14 +3,15 @@
     android:id="@+id/ll_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00000000">
+    android:background="#ffffff">
 
     <ImageView
         android:id="@+id/content"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:layout_height="match_parent" />
+        android:maxWidth="90000px"
+        android:scaleType="centerInside" />
 
     <include layout="@layout/item_qrs_layout" />
 </FrameLayout>

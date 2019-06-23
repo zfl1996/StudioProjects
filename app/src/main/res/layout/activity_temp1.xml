@@ -89,15 +89,14 @@
         <com.ads.abcbank.view.MarqueeTextView
             android:id="@+id/marqueeTextView"
             android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="@dimen/bottom_height"
-            android:background="@mipmap/icon_bottom"
+            android:layout_height="wrap_content"
+            android:background="@drawable/icon_bottom"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/bottom_padding"
             android:paddingRight="@dimen/bottom_padding"
             android:text="    中国农业银行欢迎您！               中国农业银行欢迎您！               中国农业银行欢迎您！    "
             android:textColor="#fff"
-            android:textSize="@dimen/text_big"
+            android:textSize="@dimen/text_super_big"
             app:scroll_first_delay="0"
             app:scroll_interval="50000"
             app:scroll_mode="mode_forever" />

@@ -74,7 +74,8 @@
 
                 <EditText
                     android:id="@+id/cityCode"
-                    style="@style/row_right" />
+                    style="@style/row_right"
+                    android:inputType="number" />
             </TableRow>
 
             <TableRow>
@@ -85,7 +86,8 @@
 
                 <EditText
                     android:id="@+id/brchCode"
-                    style="@style/row_right" />
+                    style="@style/row_right"
+                    android:inputType="number" />
             </TableRow>
 
             <TableRow>

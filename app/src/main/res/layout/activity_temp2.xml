@@ -23,15 +23,14 @@
         <com.ads.abcbank.view.MarqueeVerticalTextView
             android:id="@+id/marqueeTv"
             android:layout_width="match_parent"
-            android:layout_height="0px"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="@dimen/bottom_height"
-            android:background="@mipmap/icon_bottom2"
+            android:background="@drawable/icon_bottom"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/bottom_padding2"
             android:paddingRight="@dimen/bottom_padding2"
             app:mvTextColor="#fff"
-            app:mvTextSize="@dimen/text_big" />
+            app:mvTextSize="@dimen/text_big_super" />
 
     </LinearLayout>
 

@@ -79,10 +79,7 @@ public class Utils {
     public static final String KEY_TIME_PRESET = "timePreset";//记录获取汇率的分钟数
     public static final String KEY_TIME_PLAYLIST = "timePlaylist";//记录获取播放列表的分钟数
 
-    public static final String
-
-
-            KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
+    public static final String KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
     public static final String KEY_TIME_CURRENT_PRESET = "timeCurrentPreset";//记录当前获取汇率的分钟数
     public static final String KEY_TIME_CURRENT_PLAYLIST = "timeCurrentPlaylist";//记录当前获取播放列表的分钟数
 
@@ -572,6 +569,7 @@ public class Utils {
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
     private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
+    //是否在允许下载的时间段内
     public static boolean isInDownloadTime(PlaylistBodyBean bean) {
         String downloadTimeslice = bean.downloadTimeslice;
         if (TextUtils.isEmpty(downloadTimeslice)) {
@@ -607,6 +605,7 @@ public class Utils {
         return false;
     }
 
+    //是否在播放时间段内
     public static boolean isInPlayTime(PlaylistBodyBean bean) {
         String currentDate = simpleDateFormat.format(new Date());
         if (!TextUtils.isEmpty(bean.playDate) && !TextUtils.isEmpty(bean.stopDate)
@@ -616,6 +615,7 @@ public class Utils {
         return false;
     }
 
+    //过期需要删除的文件
     public static boolean isNeedDel(Context context, PlaylistBodyBean bean) {
         int timeFile = Integer.parseInt(get(context, KEY_TIME_FILE, "30").toString());
         Calendar c = Calendar.getInstance();
@@ -676,6 +676,7 @@ public class Utils {
         return asyncThread;
     }
 
+    //删除播放文件列表中指定文件
     public static void delOneAllBean(Context context, PlaylistBodyBean bean) {
         String allBeanStr = get(context, KEY_PLAY_LIST_ALL, "").toString();
         if (TextUtils.isEmpty(allBeanStr)) return;
@@ -691,7 +692,7 @@ public class Utils {
         }
     }
 
-
+    //删除下载文件列表中指定文件
     public static void delOneDownloadBean(Context context, PlaylistBodyBean bean) {
         String allBeanStr = get(context, KEY_PLAY_LIST_DOWNLOAD, "").toString();
         if (TextUtils.isEmpty(allBeanStr)) return;
@@ -707,6 +708,7 @@ public class Utils {
         }
     }
 
+    //将新添加的播放文件添加到播放列表中
     public static void megerAllBean(Context context, String jsonStr) {
         if (TextUtils.isEmpty(jsonStr)) return;
         String allBeanStr = get(context, KEY_PLAY_LIST_ALL, "").toString();
@@ -743,6 +745,7 @@ public class Utils {
         return false;
     }
 
+    //将新添加的下载文件添加到下载列表中
     public static void megerDownloadBean(Context context, String jsonStr) {
         if (TextUtils.isEmpty(jsonStr)) return;
         String allBeanStr = get(context, KEY_PLAY_LIST_DOWNLOAD, "").toString();
@@ -894,4 +897,17 @@ public class Utils {
         return string;
     }
 
+    //判断播放文件类型是否为设备可播放文件
+    public static boolean isCanPlay(Context context, PlaylistBodyBean bodyBean) {
+        String start = Utils.getContentTypeStart(context);
+        String middle = Utils.getContentTypeMiddle(context);
+        String end = Utils.getContentTypeEnd(context);
+        String beanStart = bodyBean.contentType.substring(0, 1);
+        String beanMiddle = bodyBean.contentType.substring(1, 2);
+        String beanEnd = bodyBean.contentType.substring(2, 3);
+        if (start.contains(beanStart) && middle.equals(beanMiddle) && ((!end.equals("*") && end.equals(beanEnd)) || end.equals("*"))) {
+            return true;
+        }
+        return false;
+    }
 }
