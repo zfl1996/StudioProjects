@@ -55,7 +55,7 @@ public class Temp5Activity extends BaseActivity implements IView {
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
-
+        tvTemp.setNeedUpdate(true);
     }
 
     @Override
@@ -65,6 +65,6 @@ public class Temp5Activity extends BaseActivity implements IView {
 
     @Override
     public void updatePresetDate(JSONObject jsonObject) {
-
+        tvTemp.updatePreset();
     }
 }

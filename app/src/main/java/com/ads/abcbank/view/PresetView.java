@@ -124,6 +124,28 @@ public class PresetView extends LinearLayout {
         tab1Fragment.setBean(bean.data.saveRate);
         tab2Fragment.setBean(bean.data.loanRate);
         tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+
+        fragmentList.clear();
+        list_Title.clear();
+        if (bean.data.saveRate.enable) {
+            fragmentList.add(tab1Fragment);
+            StringBuffer stringBuffer = new StringBuffer(bean.data.saveRate.title);
+            stringBuffer.insert(3, "\n");
+            list_Title.add(stringBuffer.toString());
+        }
+        if (bean.data.loanRate.enable) {
+            fragmentList.add(tab2Fragment);
+            StringBuffer stringBuffer = new StringBuffer(bean.data.loanRate.title);
+            stringBuffer.insert(3, "\n");
+            list_Title.add(stringBuffer.toString());
+        }
+        if (bean.data.buyInAndOutForeignExchange.enable) {
+            fragmentList.add(tab3Fragment);
+            StringBuffer stringBuffer = new StringBuffer(bean.data.buyInAndOutForeignExchange.title);
+            stringBuffer.insert(3, "\n");
+            list_Title.add(stringBuffer.toString());
+        }
+
     }
 
     private Handler handler = new Handler();
@@ -137,11 +159,14 @@ public class PresetView extends LinearLayout {
             } catch (Exception e) {
             }
 
-            int item = viewpager.getCurrentItem();
-            if (item < list_Title.size() - 1) {
-                viewpager.setCurrentItem(item + 1);
-            } else {
-                viewpager.setCurrentItem(0);
+            try {
+                int item = viewpager.getCurrentItem();
+                if (item < list_Title.size() - 1) {
+                    viewpager.setCurrentItem(item + 1);
+                } else {
+                    viewpager.setCurrentItem(0);
+                }
+            } catch (Exception e) {
             }
             handler.postDelayed(runnable, delayTime);
         }
@@ -164,7 +189,11 @@ public class PresetView extends LinearLayout {
 
         @Override
         public Fragment getItem(int position) {
-            return fragmentList.get(position);
+            try {
+                return fragmentList.get(position);
+            } catch (Exception e) {
+                return new Fragment();
+            }
         }
 
         @Override

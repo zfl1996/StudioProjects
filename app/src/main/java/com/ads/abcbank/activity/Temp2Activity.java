@@ -18,12 +18,13 @@ import com.alibaba.fastjson.JSONObject;
 public class Temp2Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
     private MarqueeVerticalTextView marqueeTv;
-    private String [] textArrays = new String[]{
+    private String[] textArrays = new String[]{
             "中国农业银行欢迎您！    中国农业银行欢迎您！    中国农业银行欢迎您！",
             "中国农业银行欢迎您！    中国农业银行欢迎您！    中国农业银行欢迎您！",
             "中国农业银行欢迎您！    中国农业银行欢迎您！    中国农业银行欢迎您！"
     };
     private TempView tvTemp;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +55,7 @@ public class Temp2Activity extends BaseActivity implements IView {
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
-
+        tvTemp.setNeedUpdate(true);
     }
 
     @Override
@@ -64,6 +65,6 @@ public class Temp2Activity extends BaseActivity implements IView {
 
     @Override
     public void updatePresetDate(JSONObject jsonObject) {
-
+        tvTemp.updatePreset();
     }
 }

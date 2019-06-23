@@ -54,6 +54,15 @@ public class TempView extends LinearLayout {
     private List<Fragment> fragmentList = new ArrayList<>();
     private PlaylistResultBean playlistBean;
     private ImageView image;
+    private boolean needUpdate;
+
+    public boolean isNeedUpdate() {
+        return needUpdate;
+    }
+
+    public void setNeedUpdate(boolean needUpdate) {
+        this.needUpdate = needUpdate;
+    }
 
     public ImageView getImage() {
         return image;
@@ -157,12 +166,10 @@ public class TempView extends LinearLayout {
         }
     }
 
-    private void addTempViewList() {
-        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null)
-            return;
-        fragmentList.clear();
-        for (int i = 0; i < playlistBean.data.items.size(); i++) {
-            PlaylistBodyBean bodyBean = playlistBean.data.items.get(i);
+
+    private void addPlayList(List<PlaylistBodyBean> bodyBeans) {
+        for (int i = 0; i < bodyBeans.size(); i++) {
+            PlaylistBodyBean bodyBean = bodyBeans.get(i);
             String contentTypeMiddle = Utils.getContentTypeMiddle(context);
             String contentTypeEnd = Utils.getContentTypeEnd(context);
             if (contentTypeEnd.equals("*")) {
@@ -236,12 +243,44 @@ public class TempView extends LinearLayout {
         }
     }
 
+    private void addTempViewList() {
+        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null)
+            return;
+        fragmentList.clear();
+
+        List<PlaylistBodyBean> hotLists = new ArrayList<>();
+        List<PlaylistBodyBean> normalLists = new ArrayList<>();
+        for (int i = 0; i < playlistBean.data.items.size(); i++) {
+            if ("1".equals(playlistBean.data.items.get(i).isUrg)) {
+                hotLists.add(playlistBean.data.items.get(i));
+            }
+        }
+        addPlayList(hotLists);
+        for (int i = 0; i < playlistBean.data.items.size(); i++) {
+            if (!"1".equals(playlistBean.data.items.get(i).isUrg)) {
+                normalLists.add(playlistBean.data.items.get(i));
+            }
+        }
+        addPlayList(normalLists);
+    }
+
     public void nextPlay() {
-        int current = viewpager.getCurrentItem();
-        if (current < fragmentList.size() - 1) {
-            viewpager.setCurrentItem(current + 1);
+        if (isNeedUpdate()) {
+            setNeedUpdate(false);
+            fragmentList.clear();
+            String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
+            if (TextUtils.isEmpty(json)) {
+                json = Utils.getStringFromAssets("playlist.json", context);
+            }
+            playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
+            setType(type);
         } else {
-            viewpager.setCurrentItem(0);
+            int current = viewpager.getCurrentItem();
+            if (current < fragmentList.size() - 1) {
+                viewpager.setCurrentItem(current + 1);
+            } else {
+                viewpager.setCurrentItem(0);
+            }
         }
     }
 
@@ -267,11 +306,15 @@ public class TempView extends LinearLayout {
         @Override
         public Fragment getItem(int position) {
             // TODO Auto-generated method stub
-            Fragment fragment = new Fragment();
-            if (mList.get(position) instanceof BaseTempFragment) {
-                fragment = BaseTempFragment.newInstance((BaseTempFragment) mList.get(position));
-            } else if (mList.get(position) instanceof BaseTabFragment) {
-                fragment = BaseTabFragment.newInstance((BaseTabFragment) mList.get(position));
+            Fragment fragment = null;
+            try {
+                fragment = new Fragment();
+                if (mList.get(position) instanceof BaseTempFragment) {
+                    fragment = BaseTempFragment.newInstance((BaseTempFragment) mList.get(position));
+                } else if (mList.get(position) instanceof BaseTabFragment) {
+                    fragment = BaseTabFragment.newInstance((BaseTabFragment) mList.get(position));
+                }
+            } catch (Exception e) {
             }
             return fragment;
         }
@@ -317,6 +360,67 @@ public class TempView extends LinearLayout {
 
         public Fragment getRegisteredFragment(int position) {
             return (Fragment) registeredFragments.get(position).get();
+        }
+    }
+
+    public synchronized void updatePreset() {
+        Activity activity = (Activity) getContext();
+        if (activity != null) {
+            if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
+                    || activity instanceof Temp5Activity) {
+
+                Fragment oldTab1Fragment = null;
+                Fragment oldTab2Fragment = null;
+                Fragment oldTab3Fragment = null;
+                int tabSum = 0;
+                for (int i = 0; i < fragmentList.size(); i++) {
+                    if (fragmentList.get(i) instanceof Tab1Fragment) {
+                        oldTab1Fragment = fragmentList.get(i);
+                        tabSum++;
+                    } else if (fragmentList.get(i) instanceof Tab2Fragment) {
+                        oldTab2Fragment = fragmentList.get(i);
+                        tabSum++;
+                    } else if (fragmentList.get(i) instanceof Tab3Fragment) {
+                        oldTab3Fragment = fragmentList.get(i);
+                        tabSum++;
+                    }
+                }
+                if (tabSum > 0 && viewpager.getCurrentItem() >= fragmentList.size() - tabSum) {
+                    viewpager.setCurrentItem(0);
+                }
+                if (oldTab1Fragment != null) {
+                    fragmentList.remove(oldTab1Fragment);
+                }
+                if (oldTab2Fragment != null) {
+                    fragmentList.remove(oldTab2Fragment);
+                }
+                if (oldTab3Fragment != null) {
+                    fragmentList.remove(oldTab3Fragment);
+                }
+                Tab1Fragment tab1Fragment = new Tab1Fragment();
+                Tab2Fragment tab2Fragment = new Tab2Fragment();
+                Tab3Fragment tab3Fragment = new Tab3Fragment();
+                String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
+                if (TextUtils.isEmpty(json)) {
+                    json = Utils.getStringFromAssets("json.json", context);
+                }
+                PresetBean bean = JSON.parseObject(json, PresetBean.class);
+                tab1Fragment.setBean(bean.data.saveRate);
+                tab2Fragment.setBean(bean.data.loanRate);
+                tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+                if (bean.data.saveRate.enable) {
+                    tab1Fragment.setTempView(this);
+                    fragmentList.add(tab1Fragment);
+                }
+                if (bean.data.loanRate.enable) {
+                    tab2Fragment.setTempView(this);
+                    fragmentList.add(tab2Fragment);
+                }
+                if (bean.data.buyInAndOutForeignExchange.enable) {
+                    tab3Fragment.setTempView(this);
+                    fragmentList.add(tab3Fragment);
+                }
+            }
         }
     }
 }

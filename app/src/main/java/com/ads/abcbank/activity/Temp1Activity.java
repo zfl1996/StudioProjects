@@ -1,7 +1,6 @@
 package com.ads.abcbank.activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -11,15 +10,12 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
-import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.view.BaseActivity;
-import com.ads.abcbank.view.JZMediaSystemAssertFolder;
 import com.ads.abcbank.view.MarqueeTextView;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.PresetView;
 import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
-import com.bumptech.glide.Glide;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,9 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import cn.jzvd.JZDataSource;
 import cn.jzvd.JZUtils;
-import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
 
 public class Temp1Activity extends BaseActivity implements IView {
@@ -175,7 +169,7 @@ public class Temp1Activity extends BaseActivity implements IView {
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
-
+        tvTemp.setNeedUpdate(true);
     }
 
     @Override

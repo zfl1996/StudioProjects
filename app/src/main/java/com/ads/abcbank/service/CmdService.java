@@ -84,11 +84,13 @@ public class CmdService extends Service {
                 case 1:
                     Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
-                        Utils.put(CmdService.this, Utils.KEY_PLAY_LIST, msg.obj);
+//                        Utils.put(CmdService.this, Utils.KEY_PLAY_LIST, msg.obj);
                         FileUtil.writeJsonToFile(msg.obj.toString());
                         Activity activity = ActivityManager.getInstance().getTopActivity();
                         if (activity instanceof BaseActivity) {
-                            ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+                            if (Utils.getNewPlayList(activity, msg.obj.toString())) {
+                                ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+                            }
                         }
                     }
                     break;

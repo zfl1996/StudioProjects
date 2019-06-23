@@ -43,7 +43,7 @@ public class Temp6Activity extends BaseActivity implements IView {
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
-
+        tvTemp.setNeedUpdate(true);
     }
 
     @Override

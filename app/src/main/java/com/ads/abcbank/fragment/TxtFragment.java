@@ -42,7 +42,7 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
     public void initData() {
         if (bean != null && view != null && isVisiable && context != null) {
             try {
-                rate = Integer.parseInt(Utils.get(context, Utils.KEY_TIME_FILE, "30").toString());
+//                content.setText(Utils.getTxtString(context, bean.name));//TODO 此处要替换真实文件路径
                 content.setText(Utils.getTxtString(context, "aaa.txt"));
                 scrollView.setAutoToScroll(true);//设置可以自动滑动
                 scrollView.setFistTimeScroll(1000);//设置第一次自动滑动的时间
@@ -56,7 +56,6 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                rate = Integer.parseInt(Utils.get(context, Utils.KEY_TIME_FILE, "30").toString());
                                 scrollView.scrollTo(0, 0);
                                 if (tempView != null) {
                                     tempView.nextPlay();

@@ -25,10 +25,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.bean.PlaylistBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -86,7 +88,7 @@ public class Utils {
     public static final String KEY_TIME_TAB_PRESET = "timeTabPreset";//记录切换汇率tab的秒数
     public static final String KEY_TIME_TAB_IMG = "timeTabImg";//记录切换图片tab的秒数
     public static final String KEY_TIME_TAB_PDF = "timeTabPdf";//记录切换pdf文件的秒数
-    public static final String KEY_TIME_FILE = "timeFile";//记录切换pdf文件的秒数
+    public static final String KEY_TIME_FILE = "timeFile";//记录过期文件要手动删除的天数
 
     public static String TIME_PLAYLIST;
     public static String TIME_PRESET;
@@ -710,7 +712,9 @@ public class Utils {
 
     //将新添加的播放文件添加到播放列表中
     public static void megerAllBean(Context context, String jsonStr) {
-        if (TextUtils.isEmpty(jsonStr)) return;
+        if (TextUtils.isEmpty(jsonStr)) {
+            return;
+        }
         String allBeanStr = get(context, KEY_PLAY_LIST_ALL, "").toString();
         if (TextUtils.isEmpty(allBeanStr)) {
             allBeanStr = jsonStr;
@@ -724,6 +728,15 @@ public class Utils {
                     allList.add(addList.get(i));
                 }
             }
+            //删除过期文件
+            List<PlaylistBodyBean> delList = new ArrayList<>();
+            for (int i = 0; i < allBean.data.items.size(); i++) {
+                PlaylistBodyBean bodyBean = allBean.data.items.get(i);
+                if (isNeedDel(context, bodyBean)) {
+                    delList.add(bodyBean);
+                }
+            }
+            allBean.data.items.removeAll(delList);
             allBeanStr = JSONObject.toJSONString(allBean);
         }
         put(context, KEY_PLAY_LIST_ALL, allBeanStr);
@@ -909,5 +922,32 @@ public class Utils {
             return true;
         }
         return false;
+    }
+
+    //得到播放列表后的处理，返回是否需要更新播放列表
+    public static boolean getNewPlayList(Context context, String jsonString) {
+        if (TextUtils.isEmpty(jsonString)) {
+            return false;
+        }
+        PlaylistResultBean bean = JSON.parseObject(jsonString, PlaylistResultBean.class);
+        List<PlaylistBodyBean> bodyBeans = bean.data.items;
+        if(JSONObject.toJSONString(bodyBeans).equals(get(context,KEY_PLAY_LIST,""))){
+            return false;
+        }else{
+            List<PlaylistBodyBean> playLists = new ArrayList<>();
+            //将本设备不支持播放的内容过滤掉
+            for (int i = 0; i < bodyBeans.size(); i++) {
+                if (isCanPlay(context, bodyBeans.get(i))) {
+                    playLists.add(bodyBeans.get(i));
+                }
+            }
+            bean.data.items = playLists;
+            megerAllBean(context, JSONObject.toJSONString(bean));
+            //TODO 此处添加下载列表的相关处理并继续执行下载任务
+
+            put(context, KEY_PLAY_LIST, JSONObject.toJSONString(playLists));
+            return true;
+        }
+
     }
 }
