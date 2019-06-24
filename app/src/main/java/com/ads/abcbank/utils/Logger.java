@@ -720,6 +720,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             if (!mPhantomReference.isEnqueued()) return null;
 //            e("检测到GC");
 //            e("理论存活activity数：" + mList.size());
+
+
+
             StringBuilder stringBuilder = new StringBuilder();
             for (Activity activity : mMap.keySet()) {
                 int s = activity.hashCode();

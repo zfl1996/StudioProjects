@@ -31,7 +31,7 @@ public class Temp2Activity extends BaseActivity implements IView {
         setContentView(R.layout.activity_temp2);
         marqueeTv = (MarqueeVerticalTextView) findViewById(R.id.marqueeTv);
         tvTemp = findViewById(R.id.tv_temp);
-        tvTemp.setShowStaticData(true);
+//        tvTemp.setShowStaticData(true);
         tvTemp.setType("M,H,P,N,E,L,R");
 //        tvTemp.setImageSrc(R.mipmap.v_zysys);
         tvTemp.getImage().setVisibility(View.GONE);

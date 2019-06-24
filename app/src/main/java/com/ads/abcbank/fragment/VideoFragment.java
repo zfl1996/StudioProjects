@@ -55,7 +55,7 @@ public class VideoFragment extends BaseTempFragment {
                         , JzvdStd.SCREEN_NORMAL);
                 content.setMediaInterface(new JZMediaSystemAssertFolder(content));
             } else {
-                content.setUp(DownloadService.rootPath + bean.name
+                content.setUp(DownloadService.downloadPath + bean.name
                         , "", Jzvd.SCREEN_NORMAL);
                 content.setMediaInterface(new JZMediaIjk(content));
             }

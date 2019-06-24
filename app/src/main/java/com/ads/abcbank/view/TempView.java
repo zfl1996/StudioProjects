@@ -5,15 +5,12 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,6 +20,7 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.activity.Temp2Activity;
 import com.ads.abcbank.activity.Temp3Activity;
 import com.ads.abcbank.activity.Temp5Activity;
+import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.bean.PresetBean;
@@ -34,7 +32,7 @@ import com.ads.abcbank.fragment.Tab3Fragment;
 import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
-import com.ads.abcbank.utils.FileUtil;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
 
@@ -204,7 +202,9 @@ public class TempView extends LinearLayout {
                     fragment.setBean(bodyBean);
                     fragment.setTempView(this);
                     //TODO 此处需添加文件是否已下载完成的判断
-                    fragmentList.add(fragment);
+                    if (isDownloadFinished(bodyBean)) {
+                        fragmentList.add(fragment);
+                    }
                 }
             } else {
                 if (bodyBean.contentType.endsWith(contentTypeEnd) &&
@@ -239,10 +239,34 @@ public class TempView extends LinearLayout {
                     fragment.setBean(bodyBean);
                     fragment.setTempView(this);
                     //TODO 此处需添加文件是否已下载完成的判断
-                    fragmentList.add(fragment);
+                    if (isDownloadFinished(bodyBean)) {
+                        fragmentList.add(fragment);
+                    }
                 }
             }
         }
+        if (fragmentList.size() == 0) {
+            fragmentList.add(new ImageFragment());
+        }
+    }
+
+    private boolean isDownloadFinished(PlaylistBodyBean bodyBean) {
+        for (int j = 0; j < getDownloadItems().size(); j++) {
+            if (getDownloadItems().get(j).id.equals(bodyBean.id)) {
+                try {
+                    if (getDownloadItems().get(j).status.equals("finish")) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<DownloadBean> getDownloadItems() {
+        return DownloadService.getPlaylistBean().data.items;
     }
 
     private void addTempViewList() {

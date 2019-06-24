@@ -37,7 +37,7 @@ public class Temp3Activity extends BaseActivity implements IView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp3);
         tvTemp = findViewById(R.id.tv_temp);
-        tvTemp.setShowStaticData(true);
+//        tvTemp.setShowStaticData(true);
         tvTemp.setType("M,H,P,N,E,L,R");
         tvTemp.getImage().setVisibility(View.GONE);
 //        tvTemp.setImageSrc(R.mipmap.v_sxdhb);

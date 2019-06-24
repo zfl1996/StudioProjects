@@ -11,12 +11,14 @@ import android.widget.TextView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.activity.WebViewActivity;
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.AutoScrollView;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.MarqueeVerticalTextView;
 import com.ads.abcbank.view.MarqueeVerticalTextViewClickListener;
 
+import java.io.File;
 import java.io.IOException;
 
 public class TxtFragment extends BaseTempFragment implements View.OnClickListener {
@@ -43,7 +45,12 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
         if (bean != null && view != null && isVisiable && context != null) {
             try {
 //                content.setText(Utils.getTxtString(context, bean.name));//TODO 此处要替换真实文件路径
-                content.setText(Utils.getTxtString(context, "aaa.txt"));
+                File file = new File(DownloadService.downloadPath, bean.name);
+                if (file.exists()) {
+                    content.setText(Utils.getTxtString(context, bean.name));
+                } else {
+                    content.setText(Utils.getTxtString(context, "aaa.txt"));
+                }
                 scrollView.setAutoToScroll(true);//设置可以自动滑动
                 scrollView.setFistTimeScroll(1000);//设置第一次自动滑动的时间
                 scrollView.setScrollRate(rate);//设置滑动的速率

@@ -1,32 +1,40 @@
 package com.ads.abcbank.service;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 
+import com.ads.abcbank.bean.DownloadBean;
+import com.ads.abcbank.bean.PlaylistBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
+import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.utils.FileUtil;
+import com.ads.abcbank.utils.HTTPContants;
+import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.TaskTagUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
-import com.ads.abcbank.view.BaseTempFragment;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.liulishuo.okdownload.DownloadContext;
 import com.liulishuo.okdownload.DownloadContextListener;
 import com.liulishuo.okdownload.DownloadListener;
@@ -39,14 +47,15 @@ import com.liulishuo.okdownload.core.listener.DownloadListener1;
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class DownloadService extends Service {
@@ -57,6 +66,7 @@ public class DownloadService extends Service {
     public static final String START_QUEUE_DOWNTASK = "com.ads.abcbank.startqueuetask";
     public static final String DELETE_FILE_12 = "com.ads.abcbank.deletefile12";
     public static final String PACKAGE = "com.ads.abcbank";
+    public static final String TASKS_CHANGED = "com.ads.abcbank.taskchanged";
 
 
     private static final String TAG = "DownloadService";
@@ -70,8 +80,13 @@ public class DownloadService extends Service {
         @Override
         public void taskEnd(@NonNull DownloadContext context, @NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, int remainCount) {
             String status = cause.toString();
-            Logger.e(TAG, task.getFilename() + "下载结束，状态：" + status +
-                    ">>>downloadLink=" + task.getUrl());
+            if (cause.equals(EndCause.COMPLETED)) {
+                Logger.e(TAG, task.getFilename() + "下载完成");
+            } else {
+                Logger.e(TAG, task.getFilename() + "下载出错，状态：" + status +
+                        ">>>downloadLink=" + task.getUrl());
+            }
+
             /*if (cause.equals(EndCause.COMPLETED)) {
                 File downloadFile = new File(downloadPath + task.getFilename());
                 if (!downloadFile.exists()) {
@@ -95,25 +110,40 @@ public class DownloadService extends Service {
     private static ArrayList<DownloadTask> prepareTaskList = new ArrayList<>();
     private Context mContext;
     private final DownloadListener listener = new DownloadListener1() {
+        long startTime;
+        long endTime;
+
         @Override
         public void taskStart(@NonNull DownloadTask task, @NonNull Listener1Assist.Listener1Model model) {
             TaskTagUtil.saveStatus(task, "taskStart");
+            DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
+            downloadBean.started = dateToString();
+            downloadBean.status = "taskStart";
+            startTime = System.currentTimeMillis();
+            addDowloadBean(downloadBean);
             Logger.e(TAG, task.getFilename() + "开始下载");
         }
 
         @Override
         public void retry(@NonNull DownloadTask task, @NonNull ResumeFailedCause cause) {
+
             TaskTagUtil.saveStatus(task, "retry");
         }
 
         @Override
         public void connected(@NonNull DownloadTask task, int blockCount, long currentOffset, long totalLength) {
+            DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
+            downloadBean.status = "connected";
+            addDowloadBean(downloadBean);
             TaskTagUtil.saveStatus(task, "connected");
         }
 
         @Override
         public void progress(@NonNull DownloadTask task, long currentOffset, long totalLength) {
             TaskTagUtil.saveStatus(task, "progress");
+            DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
+            downloadBean.status = "progress";
+            addDowloadBean(downloadBean);
             TaskTagUtil.saveOffset(task, currentOffset);
             TaskTagUtil.saveTotal(task, totalLength);
         }
@@ -128,27 +158,47 @@ public class DownloadService extends Service {
                     FileUtil.deleteFile(downloadPath + task.getFilename());
                 }
             }*/
-            if (cause.equals(EndCause.COMPLETED)) {
-                File downloadFile = new File(downloadPath + task.getFilename());
-                if (!downloadFile.exists()) {
-                    startTasks(true);
-                } else {
+            endTime = System.currentTimeMillis();
+            try {
+                DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
+                Logger.i(task.getFilename() + "---index---" + TaskTagUtil.getDownloadBeanIndex(task));
+                downloadBean.status = cause.toString();
+                downloadBean.secUsed = String.valueOf((endTime - startTime) / 1000);
+                addDowloadBean(downloadBean);
+                if (cause.equals(EndCause.COMPLETED)) {
+                    File downloadFile = new File(downloadPath + task.getFilename());
+                    if (!downloadFile.exists()) {
+                        startTasks(true);
+                    } else {
+                        downloadBean.status = "finish";
+                        Logger.e(task.getFilename() + "--下载完成，通知服务端下载完成");
+                        Utils.getAsyncThread().httpService(HTTPContants.CODE_DOWNLOAD_FINISH, JSONObject.parseObject(JSONObject.toJSONString(downloadBean)), HandlerUtil.noCheckGet(), 1);
+                        //通知更新UI
+                        sendIntent(TASKS_CHANGED);
+                    }
+                }
+                Logger.e(task.getFilename() + "--下载开始时间:" + downloadBean.started);
+                Logger.e(task.getFilename() + "--下载状态:" + downloadBean.status);
+                Logger.e(task.getFilename() + "--下载用时:" + downloadBean.secUsed);
+            } catch (Exception e) {
+            }
+            Logger.e("--下载列表状态:" + JSONObject.toJSONString(getPlaylistBean()));
+        }
+    };
+    private PlaylistResultBean playlistResultBean;
+    private RegisterBean registerBean;
+    private volatile static PlaylistBean playlistBean = null;
 
-                  /*  TimerTask timerTask = new TimerTask() {
-                        @Override
-                        public void run() {
-                            openAndroidFile(downloadPath + task.getFilename());
-                        }
-                    };
-                    Timer timer = new Timer();
-                    timer.schedule(timerTask, 3000);*/
-
+    public static PlaylistBean getPlaylistBean() {
+        if (playlistBean == null) {
+            synchronized (PlaylistBean.class) {
+                if (playlistBean == null) {
+                    playlistBean = new PlaylistBean();
                 }
             }
         }
-    };
-    private PlaylistResultBean playlistBean;
-
+        return playlistBean;
+    }
 
     public static ArrayList<DownloadTask> getPrepareTasks() {
         for (DownloadTask task : taskList
@@ -159,6 +209,11 @@ public class DownloadService extends Service {
             }
         }
         return prepareTaskList;
+    }
+
+    private String dateToString() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        return simpleDateFormat.format(new Date());
     }
 
 
@@ -206,8 +261,12 @@ public class DownloadService extends Service {
                 startTasks(true);
                 break;
             case ADD_MULTI_DOWNTASK:
-                //Todo 根据json添加下载任务，处理相关逻辑
                 type = intent.getStringExtra("type");
+                String beanStr = Utils.get(this, Utils.KEY_REGISTER_BEAN, "").toString();
+                if (!TextUtils.isEmpty(beanStr)) {
+                    registerBean = JSON.parseObject(beanStr, RegisterBean.class);
+                }
+                getPlaylistBean();
                 addDownloadTasks();
                 startTasks(true);
                 break;
@@ -259,6 +318,37 @@ public class DownloadService extends Service {
         return null;
     }
 
+    /**
+     * @param domain 域名
+     * @param port   端口号
+     * @param url    url路径
+     * @return
+     */
+    public static String replaceDomainAndPort(String domain, String port, String url) {
+        String url_bak = "";
+        if (url.indexOf("//") != -1) {
+            String[] splitTemp = url.split("//");
+            url_bak = splitTemp[0] + "//";
+            if (port != null) {
+                url_bak = url_bak + domain + ":" + port;
+            } else {
+                url_bak = url_bak + domain;
+            }
+
+            if (splitTemp.length >= 1 && splitTemp[1].indexOf("/") != -1) {
+                String[] urlTemp2 = splitTemp[1].split("/");
+                if (urlTemp2.length > 1) {
+                    for (int i = 1; i < urlTemp2.length; i++) {
+                        url_bak = url_bak + "/" + urlTemp2[i];
+                    }
+                }
+                System.out.println("url_bak:" + url_bak);
+            } else {
+                System.out.println("url_bak:" + url_bak);
+            }
+        }
+        return url_bak;
+    }
 
     private String getDownSave() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -278,26 +368,44 @@ public class DownloadService extends Service {
         }
     }
 
+    private boolean isCanConnected = true;
+    private boolean isCanConnected2 = true;
+
     private void addDownloadTasks() {
-        String playlistJson = FileUtil.readTextFile("playlist.json");
-        if (TextUtils.isEmpty(playlistJson)) {
-            playlistJson = Utils.getStringFromAssets("playlist.json", mContext);
+        String json = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, "").toString();
+        if (TextUtils.isEmpty(json)) {
+            json = Utils.getStringFromAssets("playlist.json", mContext);
         }
-        playlistBean = JSON.parseObject(playlistJson, PlaylistResultBean.class);
-        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null) {
+        playlistResultBean = JSON.parseObject(json, PlaylistResultBean.class);
+        if (playlistResultBean == null || playlistResultBean.data == null || playlistResultBean.data.items == null) {
             return;
         }
-        for (int i = 0; i < playlistBean.data.items.size(); i++) {
-            PlaylistBodyBean bodyBean = playlistBean.data.items.get(i);
-            String contentTypeMiddle = Utils.getContentTypeMiddle(mContext);
-            String contentTypeEnd = Utils.getContentTypeEnd(mContext);
-//            todo 只下载对应type下的 文件
+        for (int i = 0; i < playlistResultBean.data.items.size(); i++) {
+            PlaylistBodyBean bodyBean = playlistResultBean.data.items.get(i);
             if (!TextUtils.isEmpty(bodyBean.downloadLink)) {
-                if (isDownTime(bodyBean.downloadTimeslice)) {
-                    if (isNoPlayTime(bodyBean.stopDate)) {
-                        addDownloadTask(bodyBean.name, bodyBean.downloadLink, bodyBean.isUrg);
+                if (Utils.isInDownloadTime(bodyBean)) {
+                    if (Utils.isInPlayTime(bodyBean)) {
+                        DownloadBean downloadBean = new DownloadBean();
+//                        existHttpPath(replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink));
+                        if (isCanConnected) {
+                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
+                            downloadBean.id = bodyBean.id;
+                            addDowloadBean(downloadBean);
+                            TaskTagUtil.saveDownloadId(task, bodyBean.id);
+                            TaskTagUtil.saveDownloadBeanIndex(task, i);
+                            TaskTagUtil.saveDownloadBean(task, downloadBean);
+                        }
+//                        existHttpPath(bodyBean.downloadLink);
+                        /*if (isCanConnected2) {
+                            DownloadTask task = addDownloadTask(bodyBean.name, bodyBean.downloadLink, bodyBean.isUrg);
+                            downloadBean.id = bodyBean.id;
+                            addDowloadBean(downloadBean);
+                            TaskTagUtil.saveDownloadId(task, bodyBean.id);
+                            TaskTagUtil.saveDownloadBeanIndex(task, i);
+                            TaskTagUtil.saveDownloadBean(task, downloadBean);
+                        }*/
                     } else {
-                        Logger.e(TAG, "文件" + bodyBean.name + "超过播放时间");
+                        Logger.e(TAG, "文件" + bodyBean.name + "不在播放时间内");
 
                     }
                 } else {
@@ -307,66 +415,84 @@ public class DownloadService extends Service {
                 Logger.e(TAG, "文件" + bodyBean.name + "下载链接为空");
 
             }
-
-            if (contentTypeEnd.equals("*")) {
-                if (bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
-                        type.contains(bodyBean.contentType.substring(0, 1))) {
-                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-                    BaseTempFragment fragment = null;
-                    switch (suffix) {
-                        case "mp4":
-                        case "mkv":
-                        case "wmv":
-                        case "avi":
-                        case "rmvb":
-                            break;
-                        case "jpg":
-                        case "png":
-                        case "bmp":
-                        case "jpeg":
-                            break;
-                        case "pdf":
-                            break;
-                        case "txt":
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            } else {
-                if (bodyBean.contentType.endsWith(contentTypeEnd) &&
-                        bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
-                        type.contains(bodyBean.contentType.substring(0, 1))) {
-                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-                    switch (suffix) {
-                        case "mp4":
-                        case "mkv":
-                        case "wmv":
-                        case "avi":
-                        case "rmvb":
-                            break;
-                        case "jpg":
-                        case "png":
-                        case "bmp":
-                        case "jpeg":
-                            break;
-                        case "pdf":
-                            break;
-                        case "txt":
-                            break;
-                        default:
-                            break;
-                    }
-                }
+            String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+            switch (suffix) {
+                case "mp4":
+                case "mkv":
+                case "wmv":
+                case "avi":
+                case "rmvb":
+                    break;
+                case "jpg":
+                case "png":
+                case "bmp":
+                case "jpeg":
+                    break;
+                case "pdf":
+                    break;
+                case "txt":
+                    break;
+                default:
+                    break;
             }
+
         }
     }
 
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    if (msg.obj != null) {
+                        isCanConnected = Boolean.valueOf(msg.obj.toString());
+                        isCanConnected2 = Boolean.valueOf(msg.obj.toString());
+                    }
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 判断url文件是否存在
+     *
+     * @param httpPath
+     * @return
+     */
+    private void existHttpPath(String httpPath) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                URL httpurl = null;
+                Message message = new Message();
+                try {
+                    Looper.prepare();
+
+                    message.what = 0;
+
+                    handler.sendMessage(message);
+                    Looper.loop();
+                    httpurl = new URL(new URI(httpPath).toASCIIString());
+                    URLConnection urlConnection = httpurl.openConnection();
+                    // urlConnection.getInputStream();
+                    Long TotalSize = Long.parseLong(urlConnection.getHeaderField("Content-Length"));
+                    if (TotalSize <= 0) {
+                        message.obj = false;
+                    }
+                    message.obj = true;
+                } catch (Exception e) {
+                    Logger.e(httpurl + "路径异常，文件不存在" + e.toString());
+                    message.obj = false;
+                }
+            }
+        }).start();
+
+    }
 
     public void initTasks(@NonNull Context context, @NonNull DownloadContextListener listener) {
         final DownloadContext.QueueSet set = new DownloadContext.QueueSet();
         final File parentFile = new File(downloadPath);
-
         set.setParentPathFile(parentFile);
         set.setMinIntervalMillisCallbackProcess(200);
         builder = set.commit();
@@ -411,12 +537,13 @@ public class DownloadService extends Service {
 
                 .setWifiRequired(boolean wifiRequired)//只允许wifi下载
                 .build();*/
+        isUrg = TextUtils.isEmpty(isUrg) ? "0" : isUrg;
         File parentFile = new File(downloadPath);
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority("1".equals(isUrg) ? 10 : 0)
                 .setFilename(filename)
-                .setFlushBufferSize(10)//下载限速60kb
-                .setReadBufferSize(10)
+//                .setFlushBufferSize(10)//下载限速60kb
+//                .setReadBufferSize(10)
                 .build();
         builder.bindSetTask(task);
         this.context = builder.build();
@@ -424,6 +551,15 @@ public class DownloadService extends Service {
         return task;
     }
 
+    public void addDowloadBean(@NonNull DownloadBean downloadBean) {
+        final int index = getPlaylistBean().data.items.indexOf(downloadBean);
+        if (index >= 0) {
+            // replace
+            getPlaylistBean().data.items.set(index, downloadBean);
+        } else {
+            getPlaylistBean().data.items.add(downloadBean);
+        }
+    }
 
     private void openAndroidFile(String filepath) {
         Intent intent = new Intent();
@@ -577,11 +713,11 @@ public class DownloadService extends Service {
         FileUtil.deleteFile12(file, new Clear12Listener() {
             @Override
             public boolean isFileUsed(String fileName) {
-                if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null) {
+                if (playlistResultBean == null || playlistResultBean.data == null || playlistResultBean.data.items == null) {
                     return false;
                 }
                 for (PlaylistBodyBean bodyBean :
-                        playlistBean.data.items) {
+                        playlistResultBean.data.items) {
                     if (bodyBean.name.equals(fileName)) {
                         return true;
                     }
@@ -590,5 +726,12 @@ public class DownloadService extends Service {
                 return false;
             }
         });
+    }
+
+    private void sendIntent(String action) {
+        Intent intent = new Intent();
+        intent.setAction(action);
+        intent.setPackage(PACKAGE);
+        sendBroadcast(intent);
     }
 }

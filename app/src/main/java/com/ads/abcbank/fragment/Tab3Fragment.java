@@ -139,7 +139,8 @@ public class Tab3Fragment extends BaseTabFragment {
                                 get(getActivity(), Utils.KEY_TIME_TAB_PRESET, "5")
                                 .toString()) * 1000;
             } catch (Exception e) {
-                Logger.e("delayTime", e.toString());
+                delayTime = 5000;
+//                Logger.e("delayTime", e.toString());
             }
             if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
                 tempView.nextPlay();

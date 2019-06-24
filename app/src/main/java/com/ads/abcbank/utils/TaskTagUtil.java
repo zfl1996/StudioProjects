@@ -18,6 +18,9 @@ package com.ads.abcbank.utils;
 
 import android.support.annotation.Nullable;
 
+import com.ads.abcbank.bean.DownloadBean;
+import com.ads.abcbank.bean.PlaylistBean;
+import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.liulishuo.okdownload.DownloadTask;
 
 public class TaskTagUtil {
@@ -31,6 +34,22 @@ public class TaskTagUtil {
     private static final int KEY_PLAYDATE = 7;
     private static final int KEY_STOPDATE = 8;
     private static final int KEY_MD5 = 9;
+    private static final int KEY_DOWNLOAD_BEAN_INDEX = 10;
+    private static final int KEY_DOWNLOAD_BEAN = 11;
+
+    public static DownloadBean getDownloadBean(DownloadTask task) {
+        final Object bean = task.getTag(KEY_DOWNLOAD_BEAN);
+        return bean != null ? (DownloadBean) bean : null;
+    }
+
+    public static int getDownloadBeanIndex(DownloadTask task) {
+        final Object beanIndex = task.getTag(KEY_DOWNLOAD_BEAN_INDEX);
+        return beanIndex != null ? (int) beanIndex : null;
+    }
+
+    public static void saveDownloadBean(DownloadTask task, DownloadBean downloadBean) {
+        task.addTag(KEY_DOWNLOAD_BEAN, downloadBean);
+    }
 
     public static String getDownloadId(DownloadTask task) {
         final Object downloadId = task.getTag(KEY_DOWNLOAD_ID);
@@ -59,6 +78,10 @@ public class TaskTagUtil {
 
     public static void saveDownloadId(DownloadTask task, String downloadId) {
         task.addTag(KEY_DOWNLOAD_ID, downloadId);
+    }
+
+    public static void saveDownloadBeanIndex(DownloadTask task, int downloadBeanIndex) {
+        task.addTag(KEY_DOWNLOAD_BEAN_INDEX, downloadBeanIndex);
     }
 
     public static void saveName(DownloadTask task, String name) {

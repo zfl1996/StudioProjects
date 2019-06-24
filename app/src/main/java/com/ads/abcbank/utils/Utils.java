@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -16,6 +17,9 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -25,10 +29,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.bean.PlaylistBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.bean.RegisterBean;
+import com.ads.abcbank.service.CmdService;
+import com.ads.abcbank.service.DownloadService;
+import com.ads.abcbank.view.BaseActivity;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -49,6 +57,9 @@ import java.io.LineNumberReader;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.net.NetworkInterface;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -294,7 +305,7 @@ public class Utils {
             if (getContentTypeMiddle(imageView.getContext()).equals("V")
                     || getContentTypeStart(imageView.getContext()).equals("H,L")
                     || getContentTypeStart(imageView.getContext()).equals("N")
-                    ) {
+            ) {
                 placeholderId = random2;
             }
             WeakReference<ImageView> reference = new WeakReference(imageView);
@@ -465,7 +476,8 @@ public class Utils {
     }
 
     public static String getTxtString(Context context, String fileName) throws IOException {// 转码
-        File file = new File(context.getCacheDir(), fileName);
+        File file = new File(DownloadService.downloadPath, fileName);
+//        File file = new File(context.getCacheDir(), fileName);
         if (!file.exists()) {
             InputStream asset = context.getAssets().open(fileName);
             FileOutputStream output = new FileOutputStream(file);
@@ -931,9 +943,9 @@ public class Utils {
         }
         PlaylistResultBean bean = JSON.parseObject(jsonString, PlaylistResultBean.class);
         List<PlaylistBodyBean> bodyBeans = bean.data.items;
-        if(JSONObject.toJSONString(bodyBeans).equals(get(context,KEY_PLAY_LIST,""))){
+        if (JSONObject.toJSONString(bodyBeans).equals(get(context, KEY_PLAY_LIST, ""))) {
             return false;
-        }else{
+        } else {
             List<PlaylistBodyBean> playLists = new ArrayList<>();
             //将本设备不支持播放的内容过滤掉
             for (int i = 0; i < bodyBeans.size(); i++) {
@@ -944,10 +956,20 @@ public class Utils {
             bean.data.items = playLists;
             megerAllBean(context, JSONObject.toJSONString(bean));
             //TODO 此处添加下载列表的相关处理并继续执行下载任务
-
+            megerDownloadBean(context, JSONObject.toJSONString(bean));
+            startDownload(context);
             put(context, KEY_PLAY_LIST, JSONObject.toJSONString(playLists));
             return true;
         }
 
     }
+
+    private static void startDownload(Context context) {
+        Intent intent = new Intent();
+        intent.putExtra("type", "");
+        intent.setAction(DownloadService.ADD_MULTI_DOWNTASK);
+        intent.setPackage(DownloadService.PACKAGE);
+        context.startService(intent);
+    }
+
 }

@@ -37,8 +37,8 @@ public class Temp4Activity extends BaseActivity implements IView {
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp2 = findViewById(R.id.tv_temp2);
 
-        tvTemp.setShowStaticData(true);
-        tvTemp2.setShowStaticData(true);
+//        tvTemp.setShowStaticData(true);
+//        tvTemp2.setShowStaticData(true);
 
         tvTemp.setType("H,L");
         tvTemp2.setType("N");

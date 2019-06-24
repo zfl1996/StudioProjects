@@ -14,4 +14,5 @@ public class HTTPContants {
     public static final String CODE_CMDPOLL = SERVICE + "/cmdpoll.json";//修改密码
     public static final String CODE_CMDRESULT = SERVICE + "/cmdresult.json";//忘记密码
     public static final String CODE_PRESET = SERVICE + "/preset.json";//汇率信息查询
+    public static final String CODE_DOWNLOAD_FINISH = SERVICE + "/downloadfinish.json";//下载成功
 }

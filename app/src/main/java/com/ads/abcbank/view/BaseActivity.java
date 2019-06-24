@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.ads.abcbank.activity.MainActivity;
 import com.ads.abcbank.activity.ReInitActivity;
 import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.bean.CmdresultBean;
@@ -23,8 +22,8 @@ import com.ads.abcbank.service.TimeCmdService;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.HandlerUtil;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 public class BaseActivity extends AppCompatActivity {
@@ -36,6 +35,7 @@ public class BaseActivity extends AppCompatActivity {
     private Runnable reInitRunnable;
     private IView iView;
     public static Activity mActivity;
+    private DownloadStatus downloadStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,14 @@ public class BaseActivity extends AppCompatActivity {
         netChangeReceiver = new NetChangeReceiver();
         mActivity = this;
         registerDateTransReceiver();
+        registerDowloadStatusReceiver();
+    }
+
+    private void registerDowloadStatusReceiver() {
+        downloadStatus = new DownloadStatus();
+        IntentFilter f = new IntentFilter();
+        f.addAction(DownloadService.TASKS_CHANGED);
+        registerReceiver(downloadStatus, new IntentFilter(f));
     }
 
     private void registerDateTransReceiver() {
@@ -108,6 +116,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(netChangeReceiver);
+        unregisterReceiver(downloadStatus);
         Utils.changeIntent(this);
     }
 
@@ -182,4 +191,23 @@ public class BaseActivity extends AppCompatActivity {
             System.exit(0);
         }
     };
+
+    private class DownloadStatus extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case DownloadService.TASKS_CHANGED:
+                    Logger.e("有文件下载完成播放列表即将更新"+getiView());
+                    if (getiView() != null) {
+                        Logger.e("有文件下载完成播放列表正在更新");
+                        getiView().updateMainDate(new JSONObject());
+                    }
+                    break;
+
+
+            }
+        }
+    }
 }

@@ -13,6 +13,7 @@ import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.presenter.MainPresenter;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.HandlerUtil;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.PermissionHelper;
 import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
@@ -198,8 +199,25 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                 }
                 startActivity(intent);
             } else if (initResultBean.resCode.equals("-1")) {
+                Logger.e("服务器主动拒绝");
                 finish();
             } else if (initResultBean.resCode.equals("1")) {
+                Logger.e("省号非法");
+                finish();
+            } else if (initResultBean.resCode.equals("2")) {
+                Logger.e("6位机构号非法");
+                finish();
+            } else if (initResultBean.resCode.equals("3")) {
+                Logger.e("同一机构内设备标识码冲突");
+                finish();
+            } else if (initResultBean.resCode.equals("4")) {
+                Logger.e("播控客户端ip非法");
+                finish();
+            } else if (initResultBean.resCode.equals("5")) {
+                Logger.e("服务器地址非法");
+                finish();
+            } else if (initResultBean.resCode.equals("6")) {
+                Logger.e("缓存地址非法");
                 finish();
             }
         } else {

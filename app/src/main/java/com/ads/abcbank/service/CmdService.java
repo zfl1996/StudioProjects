@@ -60,7 +60,8 @@ public class CmdService extends Service {
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1");
             Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
-            PlaylistBean playlistBean = new PlaylistBean();
+            PlaylistBean playlistBean = DownloadService.getPlaylistBean();
+            Logger.e("启动获取播放列表--下载列表状态:" + JSONObject.toJSONString(DownloadService.getPlaylistBean()));
 //            {//TODO 此处要添加下载文件列表及其状态
 //                DownloadBean bean = new DownloadBean();
 //                playlistBean.data.items.add(bean);

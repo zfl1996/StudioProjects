@@ -75,6 +75,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
                                 get(context, Utils.KEY_TIME_TAB_IMG, "5")
                                 .toString()) * 1000;
             } catch (Exception e) {
+                delayTime = 5000;
             }
             if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
                 tempView.nextPlay();

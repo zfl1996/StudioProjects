@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.fragment.ImageFragment;
@@ -23,6 +24,7 @@ import com.ads.abcbank.fragment.PdfFragment;
 import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
 
@@ -162,7 +164,9 @@ public class TempView2 extends LinearLayout {
                     fragment.setBean(bodyBean);
                     fragment.setTempView2(this);
                     //TODO 此处需添加文件是否已下载完成的判断
-                    fragmentList.add(fragment);
+                    if (isDownloadFinished(bodyBean)) {
+                        fragmentList.add(fragment);
+                    }
                 }
             } else {
                 if (bodyBean.contentType.endsWith(contentTypeEnd) &&
@@ -197,10 +201,30 @@ public class TempView2 extends LinearLayout {
                     fragment.setBean(bodyBean);
                     fragment.setTempView2(this);
                     //TODO 此处需添加文件是否已下载完成的判断
-                    fragmentList.add(fragment);
+                    if (isDownloadFinished(bodyBean)) {
+                        fragmentList.add(fragment);
+                    }
                 }
             }
         }
+        if (fragmentList.size() == 0) {
+            fragmentList.add(new ImageFragment());
+        }
+    }
+
+    private boolean isDownloadFinished(PlaylistBodyBean bodyBean) {
+        for (int j = 0; j < getDownloadItems().size(); j++) {
+            if (getDownloadItems().get(j).id.equals(bodyBean.id)) {
+                if (getDownloadItems().get(j).status.equals("finish")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<DownloadBean> getDownloadItems() {
+        return DownloadService.getPlaylistBean().data.items;
     }
 
     private void addTempViewList() {
