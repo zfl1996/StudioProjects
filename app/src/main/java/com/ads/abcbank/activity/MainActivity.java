@@ -52,6 +52,7 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     private TestArrayAdapter tAdapter, sAdapter, fAdapter, cAdapter;
     private String[] terminals = {"TV", "poster", "led", "smartDev"};
+    private String[] terminalsValue = {"电视机", "海报屏", "门楣屏", "互动屏"};
     private String[] screens = {"水平", "垂直"};
     private String[][] frames = {{"模板1", "模板4", "模板5", "模板6"}, {"模板2", "模板3"}};
     private String[][][] contents = {{{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}},
@@ -116,7 +117,7 @@ public class MainActivity extends BaseActivity implements IMainView {
 
     private void initDatas() {
         mainPresenter = new MainPresenter(this, this);
-        tAdapter = new TestArrayAdapter(this, terminals);
+        tAdapter = new TestArrayAdapter(this, terminalsValue);
         sAdapter = new TestArrayAdapter(this, screens);
         fAdapter = new TestArrayAdapter(this, frames[0]);
         cAdapter = new TestArrayAdapter(this, contents[0][0]);
@@ -129,6 +130,18 @@ public class MainActivity extends BaseActivity implements IMainView {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 tPosition = position;
+                if (position == 2) {
+                    screenDirection.setSelection(0);
+                    frameSetNo.setSelection(0);
+                    contentType.setSelection(0);
+                    screenDirection.setEnabled(false);
+                    frameSetNo.setEnabled(false);
+                    contentType.setEnabled(false);
+                } else {
+                    screenDirection.setEnabled(true);
+                    frameSetNo.setEnabled(true);
+                    contentType.setEnabled(true);
+                }
             }
 
             @Override
@@ -220,13 +233,29 @@ public class MainActivity extends BaseActivity implements IMainView {
         bean.uniqueId = Utils.getUUID(this);
         bean.flowNum = 0;
         bean.data.terminalType = getSelectTer();
-        bean.data.screenDirection = getSelectScr();
-        bean.data.frameSetNo = getSelectFra();
-        getSelectCon();
-        bean.data.appIpAddress = appIdAddress.getText().toString();
+//        bean.data.screenDirection = getSelectScr();
+//        bean.data.frameSetNo = getSelectFra();
+//        getSelectCon();
+//        bean.data.appIpAddress = appIdAddress.getText().toString();
+//        bean.data.server = server.getText().toString();
+//        bean.data.cdn = cdn.getText().toString();
+//        bean.data.storeId = storeId.getText().toString();
+
+        if (fPosition == 2) {
+            bean.data.screenDirection = "H";
+            bean.data.frameSetNo = "";
+            getSelectCon();
+            bean.data.appIpAddress = "";
+            bean.data.storeId = "";
+        } else {
+            bean.data.screenDirection = getSelectScr();
+            bean.data.frameSetNo = getSelectFra();
+            getSelectCon();
+            bean.data.appIpAddress = appIdAddress.getText().toString();
+            bean.data.storeId = storeId.getText().toString();
+        }
         bean.data.server = server.getText().toString();
         bean.data.cdn = cdn.getText().toString();
-        bean.data.storeId = storeId.getText().toString();
 
         mainPresenter.register(JSONObject.parseObject(JSONObject.toJSONString(bean)));
 
@@ -270,9 +299,15 @@ public class MainActivity extends BaseActivity implements IMainView {
                 start = "T";
                 break;
         }
-        Utils.setContentTypeStart(this, start);
-        Utils.setContentTypeMiddle(this, getSelectScr());
-        Utils.setContentTypeEnd(this, end);
+        if (fPosition != 2) {
+            Utils.setContentTypeStart(this, start);
+            Utils.setContentTypeMiddle(this, getSelectScr());
+            Utils.setContentTypeEnd(this, end);
+        } else {
+            Utils.setContentTypeStart(this, start);
+            Utils.setContentTypeMiddle(this, getSelectScr());
+            Utils.setContentTypeEnd(this, end);
+        }
     }
 
     @Override
