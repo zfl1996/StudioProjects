@@ -112,18 +112,18 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 tPosition = position;
-                if (position == 2) {
-                    screenDirection.setSelection(0);
-                    frameSetNo.setSelection(0);
-                    contentType.setSelection(0);
-                    screenDirection.setEnabled(false);
-                    frameSetNo.setEnabled(false);
-                    contentType.setEnabled(false);
-                } else {
-                    screenDirection.setEnabled(true);
-                    frameSetNo.setEnabled(true);
-                    contentType.setEnabled(true);
-                }
+//                if (position == 2) {
+//                    screenDirection.setSelection(0);
+//                    frameSetNo.setSelection(0);
+//                    contentType.setSelection(0);
+//                    screenDirection.setEnabled(false);
+//                    frameSetNo.setEnabled(false);
+//                    contentType.setEnabled(false);
+//                } else {
+//                    screenDirection.setEnabled(true);
+//                    frameSetNo.setEnabled(true);
+//                    contentType.setEnabled(true);
+//                }
             }
 
             @Override
@@ -294,19 +294,19 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
 //        bean.data.cdn = cdn.getText().toString();
 //        bean.data.storeId = storeId.getText().toString();
 
-        if (fPosition == 2) {
-            bean.data.screenDirection = "H";
-            bean.data.frameSetNo = "";
-            getSelectCon();
-            bean.data.appIpAddress = "";
-            bean.data.storeId = "";
-        } else {
+//        if (fPosition == 2) {
+//            bean.data.screenDirection = "H";
+//            bean.data.frameSetNo = "";
+//            getSelectCon();
+//            bean.data.appIpAddress = "";
+//            bean.data.storeId = "";
+//        } else {
             bean.data.screenDirection = getSelectScr();
             bean.data.frameSetNo = getSelectFra();
             getSelectCon();
             bean.data.appIpAddress = appIdAddress.getText().toString();
             bean.data.storeId = storeId.getText().toString();
-        }
+//        }
         bean.data.server = server.getText().toString();
         bean.data.cdn = cdn.getText().toString();
 
