@@ -7,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
-        versionName "2019061621"
+        versionName "2019062900"
         ndk {
             abiFilters "armeabi","armeabi-v7a","x86"
         }
@@ -21,12 +21,41 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
-    buildTypes {
+//    buildTypes {
+//        release {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
+//    }
+
+    signingConfigs {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            keyAlias project.key_alias
+            keyPassword project.key_password
+            storeFile file(project.key_file)
+            storePassword project.store_password
+        }
+        debug {
+            keyAlias project.key_alias
+            keyPassword project.key_password
+            storeFile file(project.key_file)
+            storePassword project.store_password
         }
     }
+    buildTypes {
+        release {
+            minifyEnabled true
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            zipAlignEnabled false
+            signingConfig signingConfigs.debug
+        }
+    }
+
     buildToolsVersion '26.0.2'
     lintOptions {
         checkReleaseBuilds false

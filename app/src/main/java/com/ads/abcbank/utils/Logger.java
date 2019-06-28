@@ -106,7 +106,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         super(context);
         mContext = context;
         tag = context.getApplicationInfo().packageName; //可以自定义
-        final float v = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 4, getResources().getDisplayMetrics());
+        final float v = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 18, getResources().getDisplayMetrics());
         //日志容器
         mLogContainer = new LinearLayout(context);
         mLogContainer.setOrientation(LinearLayout.VERTICAL);
@@ -118,7 +118,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         mLogContainer.setVisibility(GONE);
         //小窗口标题
         mTvTitle = new TextView(context);
-        mTvTitle.setTextSize(v * 1.5f);
+        mTvTitle.setTextSize(v);
         mTvTitle.setText("Logcat(此处可拖动)");
         mTvTitle.setTextColor(Color.WHITE);
         mTvTitle.setBackgroundColor(Color.argb(0x55, 0X00, 0x00, 0x00));

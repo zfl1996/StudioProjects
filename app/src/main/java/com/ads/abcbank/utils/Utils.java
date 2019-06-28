@@ -101,6 +101,8 @@ public class Utils {
     public static final String KEY_TIME_TAB_PDF = "timeTabPdf";//记录切换pdf文件的秒数
     public static final String KEY_TIME_FILE = "timeFile";//记录过期文件要手动删除的天数
 
+    public static final String KEY_FRAME_SET_NO = "frameSetNo";//记录模板
+
     public static String TIME_PLAYLIST;
     public static String TIME_PRESET;
     public static String TIME_CMD;

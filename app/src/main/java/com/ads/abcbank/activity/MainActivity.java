@@ -248,15 +248,16 @@ public class MainActivity extends BaseActivity implements IMainView {
 //            bean.data.appIpAddress = "";
 //            bean.data.storeId = "";
 //        } else {
-            bean.data.screenDirection = getSelectScr();
-            bean.data.frameSetNo = getSelectFra();
-            getSelectCon();
-            bean.data.appIpAddress = appIdAddress.getText().toString();
-            bean.data.storeId = storeId.getText().toString();
+        bean.data.screenDirection = getSelectScr();
+        bean.data.frameSetNo = getSelectFra();
+        getSelectCon();
+        bean.data.appIpAddress = appIdAddress.getText().toString();
+        bean.data.storeId = storeId.getText().toString();
 //        }
         bean.data.server = server.getText().toString();
         bean.data.cdn = cdn.getText().toString();
 
+        Utils.put(this, Utils.KEY_FRAME_SET_NO, bean.data.frameSetNo);
         mainPresenter.register(JSONObject.parseObject(JSONObject.toJSONString(bean)));
 
     }
@@ -304,9 +305,9 @@ public class MainActivity extends BaseActivity implements IMainView {
 //            Utils.setContentTypeMiddle(this, getSelectScr());
 //            Utils.setContentTypeEnd(this, end);
 //        } else {
-            Utils.setContentTypeStart(this, start);
-            Utils.setContentTypeMiddle(this, getSelectScr());
-            Utils.setContentTypeEnd(this, end);
+        Utils.setContentTypeStart(this, start);
+        Utils.setContentTypeMiddle(this, getSelectScr());
+        Utils.setContentTypeEnd(this, end);
 //        }
     }
 
@@ -319,6 +320,9 @@ public class MainActivity extends BaseActivity implements IMainView {
     public void register(String jsonObject) {
         if (!TextUtils.isEmpty(jsonObject)) {
             bean = JSON.parseObject(jsonObject, RegisterBean.class);
+        }
+        if (bean != null && TextUtils.isEmpty(bean.data.frameSetNo)) {
+            bean.data.frameSetNo = Utils.get(this, Utils.KEY_FRAME_SET_NO, "1").toString();
         }
         Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
         Intent intent = new Intent();
