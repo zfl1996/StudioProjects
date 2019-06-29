@@ -400,8 +400,8 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                 calendar2.add(Calendar.MINUTE, time);
                 String endTime = simpleDateFormat.format(calendar2.getTime());
 
-                if (startTime.compareTo(initResultBean.data.serverTime) < 0
-                        || endTime.compareTo(initResultBean.data.serverTime) > 0) {
+                if (startTime.compareTo(initResultBean.data.serverTime) > 0
+                        || endTime.compareTo(initResultBean.data.serverTime) < 0) {
                     ToastUtil.showToastLong(this, "请调整当前系统时间");
                     HandlerUtil.postDelayed(new Runnable() {
                         @Override
@@ -448,9 +448,9 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                 finish();
             } else if (initResultBean.resCode.equals("1")) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
-//                Utils.startUpdateDownloadTask(mActivity, "test.apk", "");
                 Logger.e("客户端版本过低");
-                finish();
+                Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
+//                finish();
             }
         }
     }
