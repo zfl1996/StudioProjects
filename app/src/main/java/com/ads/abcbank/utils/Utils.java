@@ -16,10 +16,6 @@ import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -29,16 +25,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.ads.abcbank.R;
-import com.ads.abcbank.bean.CmdpollResultBean;
-import com.ads.abcbank.bean.PlaylistBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.bean.RegisterBean;
-import com.ads.abcbank.service.CmdService;
 import com.ads.abcbank.service.DownloadService;
-import com.ads.abcbank.view.BaseActivity;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -57,9 +48,6 @@ import java.io.LineNumberReader;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.net.NetworkInterface;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -100,6 +88,8 @@ public class Utils {
     public static final String KEY_TIME_TAB_IMG = "timeTabImg";//记录切换图片tab的秒数
     public static final String KEY_TIME_TAB_PDF = "timeTabPdf";//记录切换pdf文件的秒数
     public static final String KEY_TIME_FILE = "timeFile";//记录过期文件要手动删除的天数
+
+    public static final String KEY_SPEED_DOWNLOAD = "speedDownload";//记录文件下载限制的速度
 
     public static final String KEY_FRAME_SET_NO = "frameSetNo";//记录模板
 
@@ -970,6 +960,15 @@ public class Utils {
         Intent intent = new Intent();
         intent.putExtra("type", "");
         intent.setAction(DownloadService.ADD_MULTI_DOWNTASK);
+        intent.setPackage(DownloadService.PACKAGE);
+        context.startService(intent);
+    }
+
+    public static void startUpdateDownloadTask(Context context, String fileName, String downloadLink) {
+        Intent intent = new Intent();
+        intent.putExtra("name", fileName);
+        intent.putExtra("url", downloadLink);
+        intent.setAction(DownloadService.ADD_UPDATE_DOWNTASK);
         intent.setPackage(DownloadService.PACKAGE);
         context.startService(intent);
     }

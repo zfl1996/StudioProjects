@@ -448,6 +448,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                 finish();
             } else if (initResultBean.resCode.equals("1")) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
+//                Utils.startUpdateDownloadTask(mActivity, "test.apk", "");
                 Logger.e("客户端版本过低");
                 finish();
             }

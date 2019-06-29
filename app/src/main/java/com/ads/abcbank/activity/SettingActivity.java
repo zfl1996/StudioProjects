@@ -1,5 +1,6 @@
 package com.ads.abcbank.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
@@ -21,6 +23,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private EditText etTabPreset;
     private EditText etPdf;
     private EditText etFile;
+    private EditText et_downloadspeed;
     private TextView tvSubmit;
     private TextView back;
 
@@ -42,6 +45,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         etTabPreset = (EditText) findViewById(R.id.et_tab_preset);
         etPdf = (EditText) findViewById(R.id.et_pdf);
         etFile = (EditText) findViewById(R.id.et_file);
+        et_downloadspeed = (EditText) findViewById(R.id.et_downloadspeed);
         tvSubmit = (TextView) findViewById(R.id.tv_submit);
         back = (TextView) findViewById(R.id.back);
     }
@@ -56,6 +60,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         etTabPreset.setText(Utils.get(this, Utils.KEY_TIME_TAB_PRESET, "5").toString());
         etPdf.setText(Utils.get(this, Utils.KEY_TIME_TAB_PDF, "5").toString());
         etFile.setText(Utils.get(this, Utils.KEY_TIME_FILE, "30").toString());
+        et_downloadspeed.setText(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
         etCmd.setSelection(etCmd.getText().toString().length());
     }
 
@@ -101,8 +106,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 } else {
                     ToastUtil.showToast(this, "数据不能为空");
                 }
+                if (!TextUtils.isEmpty(et_downloadspeed.getText().toString())) {
+                    Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, et_downloadspeed.getText().toString());
+                } else {
+                    ToastUtil.showToast(this, "数据不能为空");
+                }
                 finish();
                 break;
         }
     }
+
+
 }

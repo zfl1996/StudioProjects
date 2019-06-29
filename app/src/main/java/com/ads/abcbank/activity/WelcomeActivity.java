@@ -213,6 +213,7 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
             } else if (initResultBean.resCode.equals("1")) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("客户端版本过低");
+//                Utils.startUpdateDownloadTask(mActivity, "test.apk", "");
                 finish();
             }
         } else {

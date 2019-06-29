@@ -40,11 +40,19 @@ import com.liulishuo.okdownload.DownloadContextListener;
 import com.liulishuo.okdownload.DownloadListener;
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.OkDownload;
+import com.liulishuo.okdownload.SpeedCalculator;
 import com.liulishuo.okdownload.StatusUtil;
+import com.liulishuo.okdownload.core.Util;
+import com.liulishuo.okdownload.core.breakpoint.BlockInfo;
+import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo;
 import com.liulishuo.okdownload.core.cause.EndCause;
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
 import com.liulishuo.okdownload.core.listener.DownloadListener1;
+import com.liulishuo.okdownload.core.listener.DownloadListener2;
+import com.liulishuo.okdownload.core.listener.DownloadListener4WithSpeed;
+import com.liulishuo.okdownload.core.listener.DownloadListenerBunch;
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
+import com.liulishuo.okdownload.core.listener.assist.Listener4SpeedAssistExtend;
 
 import java.io.File;
 import java.net.URI;
@@ -56,10 +64,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 public class DownloadService extends Service {
-    public static final String ADD_DOWNTASK = "com.ads.abcbank.downtaskadd";
+    public static final String ADD_UPDATE_DOWNTASK = "com.ads.abcbank.downtaskadd";
     public static final String ADD_MULTI_DOWNTASK = "com.ads.abcbank.multidowntaskadd";
     public static final String REMOVE_DOWNTASK = "com.ads.abcbank.removetask";
     public static final String CANCEL_QUEUE_DOWNTASK = "com.ads.abcbank.cancelqueuetask";
@@ -185,8 +194,87 @@ public class DownloadService extends Service {
             Logger.e("--下载列表状态:" + JSONObject.toJSONString(getPlaylistBean()));
         }
     };
+    private DownloadListener downloadListener = new DownloadListener4WithSpeed() {
+
+        private long totalLength;
+        private String readableTotalLength;
+
+        @Override
+        public void taskStart(@NonNull DownloadTask task) {
+
+        }
+
+        @Override
+        public void connectStart(@NonNull DownloadTask task, int blockIndex, @NonNull Map<String, List<String>> requestHeaderFields) {
+
+        }
+
+        @Override
+        public void connectEnd(@NonNull DownloadTask task, int blockIndex, int responseCode, @NonNull Map<String, List<String>> responseHeaderFields) {
+
+        }
+
+        @Override
+        public void infoReady(@NonNull DownloadTask task, @NonNull BreakpointInfo info, boolean fromBreakpoint, @NonNull Listener4SpeedAssistExtend.Listener4SpeedModel model) {
+            totalLength = info.getTotalLength();
+            readableTotalLength = Util.humanReadableBytes(totalLength, true);
+        }
+
+        @Override
+        public void progressBlock(@NonNull DownloadTask task, int blockIndex, long currentBlockOffset, @NonNull SpeedCalculator blockSpeed) {
+
+        }
+
+        @Override
+        public void progress(@NonNull DownloadTask task, long currentOffset, @NonNull SpeedCalculator taskSpeed) {
+            final String readableOffset = Util.humanReadableBytes(currentOffset, true);
+            final String progressStatus = readableOffset + "/" + readableTotalLength;
+            final String speed = taskSpeed.speed();
+            final String progressStatusWithSpeed = progressStatus + "(" + speed + ")";
+
+            Logger.e("文件" + task.getFilename() + "---当前下载状态及速度---" + progressStatusWithSpeed);
+        }
+
+        @Override
+        public void blockEnd(@NonNull DownloadTask task, int blockIndex, BlockInfo info, @NonNull SpeedCalculator blockSpeed) {
+
+        }
+
+        @Override
+        public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, @NonNull SpeedCalculator taskSpeed) {
+
+        }
+    };
+    DownloadListener combinedListener = new DownloadListenerBunch.Builder()
+            .append(listener)
+            .append(downloadListener)
+            .build();
+    private DownloadListener updateListener = new DownloadListener2() {//更新下载apk
+        @Override
+        public void taskStart(@NonNull DownloadTask task) {
+            Logger.e(TAG, task.getFilename() + "开始下载");
+        }
+
+        @Override
+        public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause) {
+            if (cause.equals(EndCause.COMPLETED)) {
+                Logger.e(TAG, task.getFilename() + "下载完成");
+                File downloadFile = new File(downloadPath + task.getFilename());
+                if (!downloadFile.exists()) {
+                    addUpdateTask(updateFileName, updateUrl);
+                } else {
+                    openAndroidFile(downloadPath + task.getFilename());
+                }
+            } else {
+                Logger.e(TAG, task.getFilename() + "下载出错，状态：" + cause.toString() +
+                        ">>>downloadLink=" + task.getUrl());
+            }
+        }
+    };
     private PlaylistResultBean playlistResultBean;
     private RegisterBean registerBean;
+    private String updateUrl;
+    private String updateFileName;
     private volatile static PlaylistBean playlistBean = null;
 
     public static PlaylistBean getPlaylistBean() {
@@ -253,12 +341,10 @@ public class DownloadService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
         switch (action) {
-            case ADD_DOWNTASK:
-                String name = intent.getStringExtra("name");
-                String url = intent.getStringExtra("url");
-                String isUrg = intent.getStringExtra("isUrg");
-                addDownloadTask(name, url, isUrg);
-                startTasks(true);
+            case ADD_UPDATE_DOWNTASK:
+                updateFileName = intent.getStringExtra("name");
+                updateUrl = intent.getStringExtra("url");
+                addUpdateTask(updateFileName, updateUrl);
                 break;
             case ADD_MULTI_DOWNTASK:
                 type = intent.getStringExtra("type");
@@ -387,24 +473,23 @@ public class DownloadService extends Service {
                     if (Utils.isInPlayTime(bodyBean)) {
                         DownloadBean downloadBean = new DownloadBean();
 //                        existHttpPath(replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink));
-                        if (isCanConnected) {
-//                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
-                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink), bodyBean.isUrg);
-                            downloadBean.id = bodyBean.id;
-                            addDowloadBean(downloadBean);
-                            TaskTagUtil.saveDownloadId(task, bodyBean.id);
-                            TaskTagUtil.saveDownloadBeanIndex(task, i);
-                            TaskTagUtil.saveDownloadBean(task, downloadBean);
-                        }
-//                        existHttpPath(bodyBean.downloadLink);
-                        /*if (isCanConnected2) {
-                            DownloadTask task = addDownloadTask(bodyBean.name, bodyBean.downloadLink, bodyBean.isUrg);
+                    /*    if (isCanConnected) {
+                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
                             downloadBean.id = bodyBean.id;
                             addDowloadBean(downloadBean);
                             TaskTagUtil.saveDownloadId(task, bodyBean.id);
                             TaskTagUtil.saveDownloadBeanIndex(task, i);
                             TaskTagUtil.saveDownloadBean(task, downloadBean);
                         }*/
+//                        existHttpPath(bodyBean.downloadLink);
+                        if (isCanConnected2) {
+                            DownloadTask task = addDownloadTask(bodyBean.name, bodyBean.downloadLink, bodyBean.isUrg);
+                            downloadBean.id = bodyBean.id;
+                            addDowloadBean(downloadBean);
+                            TaskTagUtil.saveDownloadId(task, bodyBean.id);
+                            TaskTagUtil.saveDownloadBeanIndex(task, i);
+                            TaskTagUtil.saveDownloadBean(task, downloadBean);
+                        }
                     } else {
                         Logger.e(TAG, "文件" + bodyBean.name + "不在播放时间内");
 
@@ -505,7 +590,7 @@ public class DownloadService extends Service {
 
     public void startTasks(boolean isSerial) {
         if (!this.context.isStarted()) {
-            this.context.start(listener, isSerial);
+            this.context.start(combinedListener, isSerial);
         }
 
     }
@@ -521,6 +606,21 @@ public class DownloadService extends Service {
     public int tasksSize() {
         return taskList.size();
     }
+
+    public void addUpdateTask(String filename, String url) {
+        stopTasks();
+        int speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
+        int downloadSpeed = speedDownload / 6;
+        File parentFile = new File(downloadPath);
+        final DownloadTask task = new DownloadTask.Builder(url, parentFile)
+                .setPriority(10)
+                .setFilename(filename)
+                .setFlushBufferSize(downloadSpeed)//下载限速
+                .setReadBufferSize(downloadSpeed)
+                .build();
+        task.enqueue(updateListener);
+    }
+
 
     public DownloadTask addDownloadTask(String filename, String url, String isUrg) {
         /*DownloadTask task = new DownloadTask.Builder(url, parentFile)
@@ -538,13 +638,15 @@ public class DownloadService extends Service {
 
                 .setWifiRequired(boolean wifiRequired)//只允许wifi下载
                 .build();*/
+        int speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
+        int downloadSpeed = speedDownload / 6;
         isUrg = TextUtils.isEmpty(isUrg) ? "0" : isUrg;
         File parentFile = new File(downloadPath);
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority("1".equals(isUrg) ? 10 : 0)
                 .setFilename(filename)
-//                .setFlushBufferSize(10)//下载限速60kb
-//                .setReadBufferSize(10)
+                .setFlushBufferSize(downloadSpeed)//下载限速60kb
+                .setReadBufferSize(downloadSpeed)
                 .build();
         builder.bindSetTask(task);
         this.context = builder.build();
@@ -553,13 +655,27 @@ public class DownloadService extends Service {
     }
 
     public void addDowloadBean(@NonNull DownloadBean downloadBean) {
-        final int index = getPlaylistBean().data.items.indexOf(downloadBean);
+        for (int i = 0; i < getPlaylistBean().data.items.size(); i++) {
+            DownloadBean itemBean = getPlaylistBean().data.items.get(i);
+            if (downloadBean.id.equals(itemBean.id)) {
+                final int index = getPlaylistBean().data.items.indexOf(itemBean);
+                if (index >= 0) {
+                    // replace
+                    getPlaylistBean().data.items.set(index, downloadBean);
+                } else {
+                    getPlaylistBean().data.items.add(downloadBean);
+                }
+                return;
+            }
+        }
+        getPlaylistBean().data.items.add(downloadBean);
+   /*     final int index = getPlaylistBean().data.items.indexOf(downloadBean);
         if (index >= 0) {
             // replace
             getPlaylistBean().data.items.set(index, downloadBean);
         } else {
             getPlaylistBean().data.items.add(downloadBean);
-        }
+        }*/
     }
 
     private void openAndroidFile(String filepath) {
