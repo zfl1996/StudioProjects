@@ -656,27 +656,13 @@ public class DownloadService extends Service {
     }
 
     public void addDowloadBean(@NonNull DownloadBean downloadBean) {
-        for (int i = 0; i < getPlaylistBean().data.items.size(); i++) {
-            DownloadBean itemBean = getPlaylistBean().data.items.get(i);
-            if (downloadBean.id.equals(itemBean.id)) {
-                final int index = getPlaylistBean().data.items.indexOf(itemBean);
-                if (index >= 0) {
-                    // replace
-                    getPlaylistBean().data.items.set(index, downloadBean);
-                } else {
-                    getPlaylistBean().data.items.add(downloadBean);
-                }
-                return;
-            }
-        }
-        getPlaylistBean().data.items.add(downloadBean);
-   /*     final int index = getPlaylistBean().data.items.indexOf(downloadBean);
+        final int index = getPlaylistBean().data.items.indexOf(downloadBean);
         if (index >= 0) {
             // replace
             getPlaylistBean().data.items.set(index, downloadBean);
         } else {
             getPlaylistBean().data.items.add(downloadBean);
-        }*/
+        }
     }
 
     private void openAndroidFile(String filepath) {
