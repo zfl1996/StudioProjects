@@ -495,7 +495,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             if (mLongClick > LONG_CLICK + 1) clearClick();
         }
         if (dis > 2000) clearClick();
-        if (mLongClick == LONG_CLICK + 1 && mShortClick == SHORT_CLICK * 2 - 2) {
+        if ( mShortClick == SHORT_CLICK * 2 - 2) {
             loggerSwitch();
         }
         //i("s:" + mShortClick + "l:" + mLongClick);
@@ -662,7 +662,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                         //Process.killProcess(Process.myPid());
                     }
                 });
-                builder.setCancelable(false);
+                builder.setCancelable(true);
                 builder.show();
                 Looper.loop();
             }
