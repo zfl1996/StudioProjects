@@ -473,23 +473,24 @@ public class DownloadService extends Service {
                     if (Utils.isInPlayTime(bodyBean)) {
                         DownloadBean downloadBean = new DownloadBean();
 //                        existHttpPath(replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink));
-                    /*    if (isCanConnected) {
-                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
-                            downloadBean.id = bodyBean.id;
-                            addDowloadBean(downloadBean);
-                            TaskTagUtil.saveDownloadId(task, bodyBean.id);
-                            TaskTagUtil.saveDownloadBeanIndex(task, i);
-                            TaskTagUtil.saveDownloadBean(task, downloadBean);
-                        }*/
-//                        existHttpPath(bodyBean.downloadLink);
-                        if (isCanConnected2) {
-                            DownloadTask task = addDownloadTask(bodyBean.name, bodyBean.downloadLink, bodyBean.isUrg);
+                        if (isCanConnected) {
+//                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
+                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink), bodyBean.isUrg);
                             downloadBean.id = bodyBean.id;
                             addDowloadBean(downloadBean);
                             TaskTagUtil.saveDownloadId(task, bodyBean.id);
                             TaskTagUtil.saveDownloadBeanIndex(task, i);
                             TaskTagUtil.saveDownloadBean(task, downloadBean);
                         }
+//                        existHttpPath(bodyBean.downloadLink);
+                      /*  if (isCanConnected2) {
+                            DownloadTask task = addDownloadTask(bodyBean.name, bodyBean.downloadLink, bodyBean.isUrg);
+                            downloadBean.id = bodyBean.id;
+                            addDowloadBean(downloadBean);
+                            TaskTagUtil.saveDownloadId(task, bodyBean.id);
+                            TaskTagUtil.saveDownloadBeanIndex(task, i);
+                            TaskTagUtil.saveDownloadBean(task, downloadBean);
+                        }*/
                     } else {
                         Logger.e(TAG, "文件" + bodyBean.name + "不在播放时间内");
 
