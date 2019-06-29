@@ -346,8 +346,8 @@ public class MainActivity extends BaseActivity implements IMainView {
                 calendar2.add(Calendar.MINUTE, time);
                 String endTime = simpleDateFormat.format(calendar2.getTime());
 
-                if (startTime.compareTo(initResultBean.data.serverTime) < 0
-                        || endTime.compareTo(initResultBean.data.serverTime) > 0) {
+                if (startTime.compareTo(initResultBean.data.serverTime) > 0
+                        || endTime.compareTo(initResultBean.data.serverTime) < 0) {
                     ToastUtil.showToastLong(this, "请调整当前系统时间");
                     HandlerUtil.postDelayed(new Runnable() {
                         @Override
@@ -395,8 +395,8 @@ public class MainActivity extends BaseActivity implements IMainView {
             } else if (initResultBean.resCode.equals("1")) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("客户端版本过低");
-//                Utils.startUpdateDownloadTask(mActivity, "test.apk", "");
-                finish();
+                Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
+//                finish();
             }
         }
     }

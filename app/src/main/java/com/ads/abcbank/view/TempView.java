@@ -247,9 +247,6 @@ public class TempView extends LinearLayout {
                 }
             }
         }
-        if (fragmentList.size() == 0) {
-            fragmentList.add(new ImageFragment());
-        }
     }
 
     private boolean isDownloadFinished(PlaylistBodyBean bodyBean) {
@@ -284,12 +281,20 @@ public class TempView extends LinearLayout {
             }
         }
         addPlayList(hotLists);
+        if(fragmentList.size() > 0){
+            willPagerAdapter.notifyDataSetChanged();
+            return;
+        }
         for (int i = 0; i < playlistBean.data.items.size(); i++) {
             if (!"1".equals(playlistBean.data.items.get(i).isUrg)) {
                 normalLists.add(playlistBean.data.items.get(i));
             }
         }
         addPlayList(normalLists);
+
+        if (fragmentList.size() == 0) {
+            fragmentList.add(new ImageFragment());
+        }
         willPagerAdapter.notifyDataSetChanged();
     }
 
