@@ -45,6 +45,7 @@ public class TempView2 extends LinearLayout {
     private PlaylistResultBean playlistBean;
     private ImageView image;
     private boolean needUpdate;
+    private WillPagerAdapter willPagerAdapter;
 
     public boolean isNeedUpdate() {
         return needUpdate;
@@ -109,7 +110,8 @@ public class TempView2 extends LinearLayout {
             addTempViewList();
         }
 //        viewpager.setAdapter(new MyPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager()));
-        viewpager.setAdapter(new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList));
+        willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
+        viewpager.setAdapter(willPagerAdapter);
         viewpager.setCurrentItem(0);
     }
 
@@ -246,6 +248,7 @@ public class TempView2 extends LinearLayout {
             }
         }
         addPlayList(normalLists);
+        willPagerAdapter.notifyDataSetChanged();
     }
 
     public void nextPlay() {

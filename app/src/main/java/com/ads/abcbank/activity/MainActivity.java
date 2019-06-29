@@ -20,10 +20,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.bean.InitResultBean;
 import com.ads.abcbank.bean.RegisterBean;
+import com.ads.abcbank.bean.ResultBean;
 import com.ads.abcbank.presenter.MainPresenter;
 import com.ads.abcbank.presenter.TempPresenter;
+import com.ads.abcbank.service.CmdService;
 import com.ads.abcbank.service.TimePlaylistService;
+import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.HandlerUtil;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
@@ -31,6 +37,9 @@ import com.ads.abcbank.view.IMainView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -258,6 +267,7 @@ public class MainActivity extends BaseActivity implements IMainView {
         bean.data.cdn = cdn.getText().toString();
 
         Utils.put(this, Utils.KEY_FRAME_SET_NO, bean.data.frameSetNo);
+        Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
         mainPresenter.register(JSONObject.parseObject(JSONObject.toJSONString(bean)));
 
     }
@@ -311,43 +321,107 @@ public class MainActivity extends BaseActivity implements IMainView {
 //        }
     }
 
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+
     @Override
     public void init(String jsonObject) {
+        if (!TextUtils.isEmpty(jsonObject)) {
+            InitResultBean initResultBean = JSON.parseObject(jsonObject, InitResultBean.class);
+            if (initResultBean.resCode.equals("0")) {
+                String timePlaylist = Utils.get(MainActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
+                int time;
+                try {
+                    time = Integer.parseInt(timePlaylist);
+                } catch (NumberFormatException e) {
+                    time = 20;
+                }
 
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                calendar.add(Calendar.MINUTE, -1 * time);
+                String startTime = simpleDateFormat.format(calendar.getTime());
+
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTime(new Date());
+                calendar2.add(Calendar.MINUTE, time);
+                String endTime = simpleDateFormat.format(calendar2.getTime());
+
+                if (startTime.compareTo(initResultBean.data.serverTime) < 0
+                        || endTime.compareTo(initResultBean.data.serverTime) > 0) {
+                    ToastUtil.showToastLong(this, "请调整当前系统时间");
+                    HandlerUtil.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ActivityManager.getInstance().finishAllActivity();
+                            System.exit(0);
+                        }
+                    }, 2000);
+                    return;
+                }
+
+                String beanStr = Utils.get(MainActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
+                Intent intent = new Intent();
+                if (TextUtils.isEmpty(beanStr)) {
+                    intent.setClass(MainActivity.this, MainActivity.class);
+                } else {
+                    RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                    switch (bean.data.frameSetNo) {
+                        case "1":
+                            intent.setClass(MainActivity.this, Temp1Activity.class);
+                            break;
+                        case "2":
+                            intent.setClass(MainActivity.this, Temp2Activity.class);
+                            break;
+                        case "3":
+                            intent.setClass(MainActivity.this, Temp3Activity.class);
+                            break;
+                        case "4":
+                            intent.setClass(MainActivity.this, Temp4Activity.class);
+                            break;
+                        case "5":
+                            intent.setClass(MainActivity.this, Temp5Activity.class);
+                            break;
+                        case "6":
+                            intent.setClass(MainActivity.this, Temp6Activity.class);
+                            break;
+                    }
+                }
+                startActivity(intent);
+                finish();
+            } else if (initResultBean.resCode.equals("-1")) {
+                ToastUtil.showToastLong(this, initResultBean.resMessage);
+                Logger.e("服务器主动拒绝");
+                finish();
+            } else if (initResultBean.resCode.equals("1")) {
+                ToastUtil.showToastLong(this, initResultBean.resMessage);
+                Logger.e("客户端版本过低");
+                finish();
+            }
+        }
     }
 
     @Override
     public void register(String jsonObject) {
+        ResultBean resultBean = null;
         if (!TextUtils.isEmpty(jsonObject)) {
-            bean = JSON.parseObject(jsonObject, RegisterBean.class);
+            resultBean = JSON.parseObject(jsonObject, ResultBean.class);
         }
-        if (bean != null && TextUtils.isEmpty(bean.data.frameSetNo)) {
-            bean.data.frameSetNo = Utils.get(this, Utils.KEY_FRAME_SET_NO, "1").toString();
+        if (resultBean != null && !TextUtils.isEmpty(resultBean.resCode) && "0".equals(resultBean.resCode)) {
+            ToastUtil.showToastLong(this, "注册成功");
+            HandlerUtil.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (bean != null && TextUtils.isEmpty(bean.data.frameSetNo)) {
+                        bean.data.frameSetNo = Utils.get(MainActivity.this, Utils.KEY_FRAME_SET_NO, "1").toString();
+                    }
+                    Utils.put(MainActivity.this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+
+                    mainPresenter.init(JSONObject.parseObject(JSONObject.toJSONString(bean)));
+                }
+            }, 2000);
+        } else if (resultBean != null && !TextUtils.isEmpty(resultBean.resCode) && !TextUtils.isEmpty(resultBean.resMessage)) {
+            ToastUtil.showToastLong(this, resultBean.resMessage);
         }
-        Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
-        Intent intent = new Intent();
-        switch (bean.data.frameSetNo) {
-            case "1":
-                intent.setClass(this, Temp1Activity.class);
-                break;
-            case "2":
-                intent.setClass(this, Temp2Activity.class);
-                break;
-            case "3":
-                intent.setClass(this, Temp3Activity.class);
-                break;
-            case "4":
-                intent.setClass(this, Temp4Activity.class);
-                break;
-            case "5":
-                intent.setClass(this, Temp5Activity.class);
-                break;
-            case "6":
-                intent.setClass(this, Temp6Activity.class);
-                break;
-        }
-        startActivity(intent);
-        finish();
     }
 
     class TestArrayAdapter extends ArrayAdapter<String> {

@@ -147,14 +147,22 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
         if (!TextUtils.isEmpty(jsonObject)) {
             InitResultBean initResultBean = JSON.parseObject(jsonObject, InitResultBean.class);
             if (initResultBean.resCode.equals("0")) {
+                String timePlaylist = Utils.get(WelcomeActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
+                int time;
+                try {
+                    time = Integer.parseInt(timePlaylist);
+                } catch (NumberFormatException e) {
+                    time = 20;
+                }
+
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
-                calendar.add(Calendar.MINUTE, -10);
+                calendar.add(Calendar.MINUTE, -1 * time);
                 String startTime = simpleDateFormat.format(calendar.getTime());
 
                 Calendar calendar2 = Calendar.getInstance();
                 calendar2.setTime(new Date());
-                calendar2.add(Calendar.MINUTE, 10);
+                calendar2.add(Calendar.MINUTE, time);
                 String endTime = simpleDateFormat.format(calendar2.getTime());
 
                 if (startTime.compareTo(initResultBean.data.serverTime) < 0
@@ -199,25 +207,12 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                 }
                 startActivity(intent);
             } else if (initResultBean.resCode.equals("-1")) {
+                ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("服务器主动拒绝");
                 finish();
             } else if (initResultBean.resCode.equals("1")) {
-                Logger.e("省号非法");
-                finish();
-            } else if (initResultBean.resCode.equals("2")) {
-                Logger.e("6位机构号非法");
-                finish();
-            } else if (initResultBean.resCode.equals("3")) {
-                Logger.e("同一机构内设备标识码冲突");
-                finish();
-            } else if (initResultBean.resCode.equals("4")) {
-                Logger.e("播控客户端ip非法");
-                finish();
-            } else if (initResultBean.resCode.equals("5")) {
-                Logger.e("服务器地址非法");
-                finish();
-            } else if (initResultBean.resCode.equals("6")) {
-                Logger.e("缓存地址非法");
+                ToastUtil.showToastLong(this, initResultBean.resMessage);
+                Logger.e("客户端版本过低");
                 finish();
             }
         } else {

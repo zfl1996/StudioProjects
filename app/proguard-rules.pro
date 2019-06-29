@@ -143,14 +143,12 @@
     void *(**On*Listener);
 }
 
-# webView处理，项目中没有使用到webView忽略即可
--keepclassmembers class fqcn.of.javascript.interface.for.webview {
-    public *;
-}
--keepclassmembers class * extends android.webkit.webViewClient {
-    public void *(android.webkit.WebView, java.lang.String, android.graphics.Bitmap);
-    public boolean *(android.webkit.WebView, java.lang.String);
-}
--keepclassmembers class * extends android.webkit.webViewClient {
-    public void *(android.webkit.webView, jav.lang.String);
-}
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-verbose
+-ignorewarnings
+
+# 保留support下的所有类及其内部类
+-keep class com.alibaba.fastjson.** {*;}
+-keep class okhttp3.** {*;}
+-keep class okio.** {*;}

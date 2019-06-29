@@ -6,8 +6,8 @@ android {
         applicationId "com.ads.abcbank"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 1
-        versionName "2019062900"
+        versionCode 5
+        versionName "190629"
         ndk {
             abiFilters "armeabi","armeabi-v7a","x86"
         }
@@ -44,8 +44,8 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
-            zipAlignEnabled true
+            minifyEnabled false
+            zipAlignEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }

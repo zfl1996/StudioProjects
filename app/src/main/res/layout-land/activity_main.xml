@@ -63,7 +63,7 @@
                     android:id="@+id/appId"
                     style="@style/row_right"
                     android:background="@null"
-                    android:text="BDC201801_0302" />
+                    android:text="BDC201801_0302A" />
             </TableRow>
 
             <TableRow>

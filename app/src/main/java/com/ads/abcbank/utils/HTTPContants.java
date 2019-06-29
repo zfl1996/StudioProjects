@@ -6,7 +6,8 @@
 package com.ads.abcbank.utils;
 
 public class HTTPContants {
-    public static final String SERVICE = "http://omip.abc/ibcs/player/v1";
+//    public static final String SERVICE = "http://omip.abc/ibcs/player/v1";
+    public static final String SERVICE = "";
 
     public static final String CODE_REGISTER = SERVICE + "/register.json";//设备入网
     public static final String CODE_INIT = SERVICE + "/init.json";//启动检查

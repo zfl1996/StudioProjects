@@ -388,7 +388,8 @@ public class DownloadService extends Service {
                         DownloadBean downloadBean = new DownloadBean();
 //                        existHttpPath(replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink));
                         if (isCanConnected) {
-                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
+//                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
+                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink), bodyBean.isUrg);
                             downloadBean.id = bodyBean.id;
                             addDowloadBean(downloadBean);
                             TaskTagUtil.saveDownloadId(task, bodyBean.id);

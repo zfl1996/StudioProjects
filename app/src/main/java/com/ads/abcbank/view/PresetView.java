@@ -42,6 +42,7 @@ public class PresetView extends LinearLayout {
     private Tab3Fragment tab3Fragment;
     private int delayTime = 10 * 1000;
     private Context context;
+    private PresetPagerAdapter presetPagerAdapter;
 
     public PresetView(Context context) {
         this(context, null);
@@ -109,7 +110,8 @@ public class PresetView extends LinearLayout {
             }
         }
         addView(view);
-        viewpager.setAdapter(new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager()));
+        presetPagerAdapter = new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager());
+        viewpager.setAdapter(presetPagerAdapter);
         tablayout.setupWithViewPager(viewpager);//此方法就是让tablayout和ViewPager联动
         viewpager.setCurrentItem(0);
         viewpager.setOffscreenPageLimit(3);
@@ -145,7 +147,7 @@ public class PresetView extends LinearLayout {
             stringBuffer.insert(3, "\n");
             list_Title.add(stringBuffer.toString());
         }
-
+        presetPagerAdapter.notifyDataSetChanged();
     }
 
     private Handler handler = new Handler();
