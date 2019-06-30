@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.InitResultBean;
@@ -449,8 +450,12 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
             } else if (initResultBean.resCode.equals("1")) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("客户端版本过低");
-                Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
-//                finish();
+                if (Utils.existHttpPath(initResultBean.data.downloadLink)) {
+                    Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
+                } else {
+                    Toast.makeText(mActivity, "下载链接为空或路径非法", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
         }
     }

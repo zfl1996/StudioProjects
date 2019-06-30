@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def releaseTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
+}
+
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -9,7 +13,7 @@ android {
         versionCode 5
         versionName "190629"
         ndk {
-            abiFilters "armeabi","armeabi-v7a","x86"
+            abiFilters "armeabi", "armeabi-v7a", "x86"
         }
     }
     compileOptions {
@@ -63,6 +67,22 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def fileName = "abcbankModel_${releaseTime()}.apk"
+            def outFile = output.outputFile
+            if (outFile != null && outFile.name.endsWith('.apk')) {
+                outputFileName = new File(outFile.parent, fileName).getName()
+            }
+        }
+
+        variant.assemble.doLast {
+            variant.outputs.all { output ->
+                delete output.outputFile.parent + "/output.json"
+            }
+        }
+    }
+
 }
 
 dependencies {
@@ -78,7 +98,10 @@ dependencies {
     implementation 'cn.jzvd:jiaozivideoplayer:7.0_preview'
     implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.3'
 
-    implementation   'com.liulishuo.okdownload:okdownload:1.0.2'
-    implementation  'com.liulishuo.okdownload:sqlite:1.0.2'
-    implementation   'com.liulishuo.okdownload:okhttp:1.0.2'
+    implementation 'com.liulishuo.okdownload:okdownload:1.0.2'
+    implementation 'com.liulishuo.okdownload:sqlite:1.0.2'
+    implementation 'com.liulishuo.okdownload:okhttp:1.0.2'
+    implementation files('libs/commons-validator-1.6.jar')
+    implementation files('libs/commons-validator-1.6-javadoc.jar')
+    implementation files('libs/commons-validator-1.6-tests.jar')
 }

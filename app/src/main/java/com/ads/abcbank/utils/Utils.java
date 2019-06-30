@@ -34,6 +34,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import org.apache.commons.validator.routines.UrlValidator;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -971,6 +973,47 @@ public class Utils {
         intent.setAction(DownloadService.ADD_UPDATE_DOWNTASK);
         intent.setPackage(DownloadService.PACKAGE);
         context.startService(intent);
+    }
+
+    /**
+     * 判断url是否合法
+     *
+     * @param url url
+     * @return url是否合法
+     */
+    private static boolean isUrlValid(String url) {
+        String[] schemas = {"http", "https"};
+        UrlValidator urlValidator = new UrlValidator(schemas);
+        return urlValidator.isValid(url);
+    }
+
+    /**
+     * 判断url是否合法
+     *
+     * @param url
+     * @return
+     */
+    public static boolean existHttpPath(String url) {
+        //如果输入的url包含协议地址
+        if (url.length() >= 4 && url.substring(0, 4).equals("http")) {
+            if (isUrlValid(url)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        //如果输入的url不包含协议地址
+        else {
+            String url1 = "http://" + url;
+            String url2 = "https://" + url;
+            if (isUrlValid(url1)) {
+                return true;
+            } else if (isUrlValid(url2)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
 }

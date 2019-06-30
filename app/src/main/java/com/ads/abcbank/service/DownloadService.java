@@ -454,8 +454,6 @@ public class DownloadService extends Service {
         }
     }
 
-    private boolean isCanConnected = true;
-    private boolean isCanConnected2 = true;
 
     private void addDownloadTasks() {
         String json = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, "").toString();
@@ -472,15 +470,17 @@ public class DownloadService extends Service {
                 if (Utils.isInDownloadTime(bodyBean)) {
                     if (Utils.isInPlayTime(bodyBean)) {
                         DownloadBean downloadBean = new DownloadBean();
-//                        existHttpPath(replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink));
-                        if (isCanConnected) {
+                        String downloadUrl = replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink);
+                        if (Utils.existHttpPath(downloadUrl)) {
 //                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
-                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink), bodyBean.isUrg);
+                            DownloadTask task = addDownloadTask(bodyBean.name, downloadUrl, bodyBean.isUrg);
                             downloadBean.id = bodyBean.id;
                             addDowloadBean(downloadBean);
                             TaskTagUtil.saveDownloadId(task, bodyBean.id);
                             TaskTagUtil.saveDownloadBeanIndex(task, i);
                             TaskTagUtil.saveDownloadBean(task, downloadBean);
+                        } else {
+                           Logger.e("下载链接为空或路径非法");
                         }
 //                        existHttpPath(bodyBean.downloadLink);
                       /*  if (isCanConnected2) {
@@ -526,56 +526,7 @@ public class DownloadService extends Service {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    if (msg.obj != null) {
-                        isCanConnected = Boolean.valueOf(msg.obj.toString());
-                        isCanConnected2 = Boolean.valueOf(msg.obj.toString());
-                    }
-                    break;
-            }
-        }
-    };
 
-    /**
-     * 判断url文件是否存在
-     *
-     * @param httpPath
-     * @return
-     */
-    private void existHttpPath(String httpPath) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                URL httpurl = null;
-                Message message = new Message();
-                try {
-                    Looper.prepare();
-
-                    message.what = 0;
-
-                    handler.sendMessage(message);
-                    Looper.loop();
-                    httpurl = new URL(new URI(httpPath).toASCIIString());
-                    URLConnection urlConnection = httpurl.openConnection();
-                    // urlConnection.getInputStream();
-                    Long TotalSize = Long.parseLong(urlConnection.getHeaderField("Content-Length"));
-                    if (TotalSize <= 0) {
-                        message.obj = false;
-                    }
-                    message.obj = true;
-                } catch (Exception e) {
-                    Logger.e(httpurl + "路径异常，文件不存在" + e.toString());
-                    message.obj = false;
-                }
-            }
-        }).start();
-
-    }
 
     public void initTasks(@NonNull Context context, @NonNull DownloadContextListener listener) {
         final DownloadContext.QueueSet set = new DownloadContext.QueueSet();

@@ -89,11 +89,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     private boolean mAutoScroll = true;
     private static final int SHORT_CLICK = 3;
     private static final int LONG_CLICK = 3;
-
     public static void setTag(String tag) {
         Logger.tag = tag;
     }
-
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IgnoreLoggerView {
