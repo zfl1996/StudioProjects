@@ -33,6 +33,7 @@ import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
 import com.ads.abcbank.service.DownloadService;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
 
@@ -48,7 +49,6 @@ public class TempView extends LinearLayout {
     private Context context;
     private String type;
     private ViewPager viewpager;
-    private ViewPager viewpagerHot;
     private List<Fragment> fragmentList = new ArrayList<>();
     private PlaylistResultBean playlistBean;
     private ImageView image;
@@ -67,12 +67,6 @@ public class TempView extends LinearLayout {
         return image;
     }
 
-    private boolean showStaticData;
-
-    public void setShowStaticData(boolean showStaticData) {
-        this.showStaticData = showStaticData;
-    }
-
     public TempView(Context context) {
         this(context, null);
     }
@@ -89,20 +83,14 @@ public class TempView extends LinearLayout {
 
     private void initView() {
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
-        if (TextUtils.isEmpty(json)) {
-            json = Utils.getStringFromAssets("playlist.json", context);
+        if (!TextUtils.isEmpty(json)) {
+            playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
         }
-        playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
         View view = LayoutInflater.from(context).inflate(R.layout.view_temp, null);
         image = view.findViewById(R.id.image);
         viewpager = view.findViewById(R.id.viewpager);
-        viewpagerHot = view.findViewById(R.id.viewpager_hot);
 
-        int src = R.mipmap.h_zsyhxc;
-        if (Utils.getContentTypeMiddle(context).equals("V")) {
-            src = R.mipmap.v_sxdhb;
-        }
-        setImageSrc(src);
+        Utils.loadImage(image, "");
         addView(view);
     }
 
@@ -112,11 +100,7 @@ public class TempView extends LinearLayout {
 
     public void setType(String type) {
         this.type = type;
-        if (showStaticData) {
-            addImages();
-        } else {
-            addTempViewList();
-        }
+        addTempViewList();
         Activity activity = (Activity) getContext();
         if (activity != null) {
             if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
@@ -126,7 +110,7 @@ public class TempView extends LinearLayout {
                 Tab3Fragment tab3Fragment = new Tab3Fragment();
                 String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
                 if (TextUtils.isEmpty(json)) {
-                    json = Utils.getStringFromAssets("json.json", context);
+                    return;
                 }
                 PresetBean bean = JSON.parseObject(json, PresetBean.class);
                 tab1Fragment.setBean(bean.data.saveRate);
@@ -146,103 +130,97 @@ public class TempView extends LinearLayout {
                 }
             }
         }
-        //        viewpager.setAdapter(new MyPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager()));
+        if (fragmentList.size() == 0) {
+            fragmentList.add(new ImageFragment());
+        }
         willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
         viewpager.setAdapter(willPagerAdapter);
         viewpager.setCurrentItem(0);
-    }
-
-    private void addImages() {
-        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null)
-            return;
-        fragmentList.clear();
-        for (int i = 0; i < playlistBean.data.items.size(); i++) {
-            PlaylistBodyBean bodyBean = playlistBean.data.items.get(i);
-            BaseTempFragment fragment = null;
-            fragment = new ImageFragment();
-            fragment.setBean(bodyBean);
-            fragment.setTempView(this);
-            fragmentList.add(fragment);
+        try {
+            willPagerAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Logger.e(e.toString());
         }
     }
-
 
     private void addPlayList(List<PlaylistBodyBean> bodyBeans) {
         for (int i = 0; i < bodyBeans.size(); i++) {
             PlaylistBodyBean bodyBean = bodyBeans.get(i);
-            String contentTypeMiddle = Utils.getContentTypeMiddle(context);
-            String contentTypeEnd = Utils.getContentTypeEnd(context);
-            if (contentTypeEnd.equals("*")) {
-                if (bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
-                        type.contains(bodyBean.contentType.substring(0, 1))) {
-                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-                    BaseTempFragment fragment = null;
-                    switch (suffix) {
-                        case "mp4":
-                        case "mkv":
-                        case "wmv":
-                        case "avi":
-                        case "rmvb":
-                            fragment = new VideoFragment();
-                            break;
-                        case "jpg":
-                        case "png":
-                        case "bmp":
-                        case "jpeg":
-                            fragment = new ImageFragment();
-                            break;
-                        case "pdf":
-                            fragment = new PdfFragment();
-                            break;
-                        case "txt":
-                            fragment = new TxtFragment();
-                            break;
-                        default:
-                            fragment = new WebFragment();
-                            break;
+            if (Utils.isInPlayTime(bodyBean)) {
+                String contentTypeMiddle = Utils.getContentTypeMiddle(context);
+                String contentTypeEnd = Utils.getContentTypeEnd(context);
+                if ("*".equals(contentTypeEnd)) {
+                    if (bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                            type.contains(bodyBean.contentType.substring(0, 1))) {
+                        String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                        BaseTempFragment fragment;
+                        switch (suffix) {
+                            case "mp4":
+                            case "mkv":
+                            case "wmv":
+                            case "avi":
+                            case "rmvb":
+                                fragment = new VideoFragment();
+                                break;
+                            case "jpg":
+                            case "png":
+                            case "bmp":
+                            case "jpeg":
+                                fragment = new ImageFragment();
+                                break;
+                            case "pdf":
+                                fragment = new PdfFragment();
+                                break;
+                            case "txt":
+                                fragment = new TxtFragment();
+                                break;
+                            default:
+                                fragment = new WebFragment();
+                                break;
+                        }
+                        fragment.setBean(bodyBean);
+                        fragment.setTempView(this);
+                        //TODO 此处需添加文件是否已下载完成的判断
+                        if (isDownloadFinished(bodyBean)) {
+                            fragmentList.add(fragment);
+                        }
                     }
-                    fragment.setBean(bodyBean);
-                    fragment.setTempView(this);
-                    //TODO 此处需添加文件是否已下载完成的判断
-                    if (isDownloadFinished(bodyBean)) {
-                        fragmentList.add(fragment);
-                    }
-                }
-            } else {
-                if (bodyBean.contentType.endsWith(contentTypeEnd) &&
-                        bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
-                        type.contains(bodyBean.contentType.substring(0, 1))) {
-                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-                    BaseTempFragment fragment = null;
-                    switch (suffix) {
-                        case "mp4":
-                        case "mkv":
-                        case "wmv":
-                        case "avi":
-                        case "rmvb":
-                            fragment = new VideoFragment();
-                            break;
-                        case "jpg":
-                        case "png":
-                        case "bmp":
-                        case "jpeg":
-                            fragment = new ImageFragment();
-                            break;
-                        case "pdf":
-                            fragment = new PdfFragment();
-                            break;
-                        case "txt":
-                            fragment = new TxtFragment();
-                            break;
-                        default:
-                            fragment = new WebFragment();
-                            break;
-                    }
-                    fragment.setBean(bodyBean);
-                    fragment.setTempView(this);
-                    //TODO 此处需添加文件是否已下载完成的判断
-                    if (isDownloadFinished(bodyBean)) {
-                        fragmentList.add(fragment);
+                } else {
+                    if (bodyBean.contentType.endsWith(contentTypeEnd) &&
+                            bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                            type.contains(bodyBean.contentType.substring(0, 1))) {
+                        String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                        BaseTempFragment fragment;
+                        switch (suffix) {
+                            case "mp4":
+                            case "mkv":
+                            case "wmv":
+                            case "avi":
+                            case "rmvb":
+                                fragment = new VideoFragment();
+                                break;
+                            case "jpg":
+                            case "png":
+                            case "bmp":
+                            case "jpeg":
+                                fragment = new ImageFragment();
+                                break;
+                            case "pdf":
+                                fragment = new PdfFragment();
+                                break;
+                            case "txt":
+                                fragment = new TxtFragment();
+                                break;
+                            default:
+                                fragment = new WebFragment();
+                                break;
+                        }
+                        fragment.setBean(bodyBean);
+                        fragment.setTempView(this);
+                        //TODO 此处需添加文件是否已下载完成的判断
+                        if (isDownloadFinished(bodyBean)) {
+                            fragmentList.add(fragment);
+                        }
                     }
                 }
             }
@@ -253,7 +231,7 @@ public class TempView extends LinearLayout {
         for (int j = 0; j < getDownloadItems().size(); j++) {
             if (getDownloadItems().get(j).id.equals(bodyBean.id)) {
                 try {
-                    if (getDownloadItems().get(j).status.equals("finish")) {
+                    if ("finish".equals(getDownloadItems().get(j).status)) {
                         return true;
                     }
                 } catch (Exception e) {
@@ -268,9 +246,10 @@ public class TempView extends LinearLayout {
         return DownloadService.getPlaylistBean().data.items;
     }
 
-    private void addTempViewList() {
-        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null)
+    private synchronized void addTempViewList() {
+        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null) {
             return;
+        }
         fragmentList.clear();
 
         List<PlaylistBodyBean> hotLists = new ArrayList<>();
@@ -281,8 +260,12 @@ public class TempView extends LinearLayout {
             }
         }
         addPlayList(hotLists);
-        if(fragmentList.size() > 0){
-            willPagerAdapter.notifyDataSetChanged();
+        if (fragmentList.size() > 0) {
+            try {
+                willPagerAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Logger.e(e.toString());
+            }
             return;
         }
         for (int i = 0; i < playlistBean.data.items.size(); i++) {
@@ -291,11 +274,6 @@ public class TempView extends LinearLayout {
             }
         }
         addPlayList(normalLists);
-
-        if (fragmentList.size() == 0) {
-            fragmentList.add(new ImageFragment());
-        }
-        willPagerAdapter.notifyDataSetChanged();
     }
 
     public void nextPlay() {
@@ -303,17 +281,31 @@ public class TempView extends LinearLayout {
             setNeedUpdate(false);
             fragmentList.clear();
             String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
-            if (TextUtils.isEmpty(json)) {
-                json = Utils.getStringFromAssets("playlist.json", context);
+            if (!TextUtils.isEmpty(json)) {
+                playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
             }
-            playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
             setType(type);
         } else {
             int current = viewpager.getCurrentItem();
+            int next;
             if (current < fragmentList.size() - 1) {
-                viewpager.setCurrentItem(current + 1);
+                next = current + 1;
             } else {
-                viewpager.setCurrentItem(0);
+                next = 0;
+            }
+            if (fragmentList.get(next) instanceof BaseTempFragment) {
+                if (Utils.isInPlayTime(((BaseTempFragment) fragmentList.get(next)).getBean())) {
+                    viewpager.setCurrentItem(next);
+                } else {
+                    fragmentList.clear();
+                    String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
+                    if (!TextUtils.isEmpty(json)) {
+                        playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
+                    }
+                    setType(type);
+                }
+            } else {
+                viewpager.setCurrentItem(next);
             }
         }
     }
@@ -349,6 +341,7 @@ public class TempView extends LinearLayout {
                     fragment = BaseTabFragment.newInstance((BaseTabFragment) mList.get(position));
                 }
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
             return fragment;
         }
@@ -393,7 +386,7 @@ public class TempView extends LinearLayout {
         }
 
         public Fragment getRegisteredFragment(int position) {
-            return (Fragment) registeredFragments.get(position).get();
+            return registeredFragments.get(position).get();
         }
     }
 
@@ -436,7 +429,7 @@ public class TempView extends LinearLayout {
                 Tab3Fragment tab3Fragment = new Tab3Fragment();
                 String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
                 if (TextUtils.isEmpty(json)) {
-                    json = Utils.getStringFromAssets("json.json", context);
+                    return;
                 }
                 PresetBean bean = JSON.parseObject(json, PresetBean.class);
                 tab1Fragment.setBean(bean.data.saveRate);

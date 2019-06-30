@@ -126,11 +126,13 @@ public class DownloadService extends Service {
         public void taskStart(@NonNull DownloadTask task, @NonNull Listener1Assist.Listener1Model model) {
             TaskTagUtil.saveStatus(task, "taskStart");
             DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
-            downloadBean.started = dateToString();
-            downloadBean.status = "taskStart";
-            startTime = System.currentTimeMillis();
-            addDowloadBean(downloadBean);
-            Logger.e(TAG, task.getFilename() + "开始下载");
+            if (downloadBean != null) {
+                downloadBean.started = dateToString();
+                downloadBean.status = "taskStart";
+                startTime = System.currentTimeMillis();
+                addDowloadBean(downloadBean);
+                Logger.e(TAG, task.getFilename() + "开始下载");
+            }
         }
 
         @Override
@@ -142,19 +144,23 @@ public class DownloadService extends Service {
         @Override
         public void connected(@NonNull DownloadTask task, int blockCount, long currentOffset, long totalLength) {
             DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
-            downloadBean.status = "connected";
-            addDowloadBean(downloadBean);
-            TaskTagUtil.saveStatus(task, "connected");
+            if (downloadBean != null) {
+                downloadBean.status = "connected";
+                addDowloadBean(downloadBean);
+                TaskTagUtil.saveStatus(task, "connected");
+            }
         }
 
         @Override
         public void progress(@NonNull DownloadTask task, long currentOffset, long totalLength) {
             TaskTagUtil.saveStatus(task, "progress");
             DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
-            downloadBean.status = "progress";
-            addDowloadBean(downloadBean);
-            TaskTagUtil.saveOffset(task, currentOffset);
-            TaskTagUtil.saveTotal(task, totalLength);
+            if (downloadBean != null) {
+                downloadBean.status = "progress";
+                addDowloadBean(downloadBean);
+                TaskTagUtil.saveOffset(task, currentOffset);
+                TaskTagUtil.saveTotal(task, totalLength);
+            }
         }
 
         @Override
@@ -170,26 +176,29 @@ public class DownloadService extends Service {
             endTime = System.currentTimeMillis();
             try {
                 DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
-                Logger.i(task.getFilename() + "---index---" + TaskTagUtil.getDownloadBeanIndex(task));
-                downloadBean.status = cause.toString();
-                downloadBean.secUsed = String.valueOf((endTime - startTime) / 1000);
-                addDowloadBean(downloadBean);
-                if (cause.equals(EndCause.COMPLETED)) {
-                    File downloadFile = new File(downloadPath + task.getFilename());
-                    if (!downloadFile.exists()) {
-                        startTasks(true);
-                    } else {
-                        downloadBean.status = "finish";
-                        Logger.e(task.getFilename() + "--下载完成，通知服务端下载完成");
-                        Utils.getAsyncThread().httpService(HTTPContants.CODE_DOWNLOAD_FINISH, JSONObject.parseObject(JSONObject.toJSONString(downloadBean)), HandlerUtil.noCheckGet(), 1);
-                        //通知更新UI
-                        sendIntent(TASKS_CHANGED);
+                if (downloadBean != null) {
+                    Logger.i(task.getFilename() + "---index---" + TaskTagUtil.getDownloadBeanIndex(task));
+                    downloadBean.status = cause.toString();
+                    downloadBean.secUsed = String.valueOf((endTime - startTime) / 1000);
+                    addDowloadBean(downloadBean);
+                    if (cause.equals(EndCause.COMPLETED)) {
+                        File downloadFile = new File(downloadPath + task.getFilename());
+                        if (!downloadFile.exists()) {
+                            startTasks(true);
+                        } else {
+                            downloadBean.status = "finish";
+                            Logger.e(task.getFilename() + "--下载完成，通知服务端下载完成");
+                            Utils.getAsyncThread().httpService(HTTPContants.CODE_DOWNLOAD_FINISH, JSONObject.parseObject(JSONObject.toJSONString(downloadBean)), HandlerUtil.noCheckGet(), 1);
+                            //通知更新UI
+                            sendIntent(TASKS_CHANGED);
+                        }
                     }
+                    Logger.e(task.getFilename() + "--下载开始时间:" + downloadBean.started);
+                    Logger.e(task.getFilename() + "--下载状态:" + downloadBean.status);
+                    Logger.e(task.getFilename() + "--下载用时:" + downloadBean.secUsed);
                 }
-                Logger.e(task.getFilename() + "--下载开始时间:" + downloadBean.started);
-                Logger.e(task.getFilename() + "--下载状态:" + downloadBean.status);
-                Logger.e(task.getFilename() + "--下载用时:" + downloadBean.secUsed);
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
             Logger.e("--下载列表状态:" + JSONObject.toJSONString(getPlaylistBean()));
         }
@@ -289,8 +298,7 @@ public class DownloadService extends Service {
     }
 
     public static ArrayList<DownloadTask> getPrepareTasks() {
-        for (DownloadTask task : taskList
-        ) {
+        for (DownloadTask task : taskList) {
             boolean isCompleted = StatusUtil.isCompleted(task);
             if (!isCompleted) {
                 prepareTaskList.add(task);
@@ -329,13 +337,11 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent == null) {
-        }
         String action = null;
         try {
             action = intent.getAction();
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            Logger.e(e.toString());
         }
         if (action == null) {
             return super.onStartCommand(intent, flags, startId);
@@ -372,8 +378,7 @@ public class DownloadService extends Service {
                 break;
             case START_QUEUE_DOWNTASK:
                 boolean needStart = false;
-                for (DownloadTask task : taskList
-                ) {
+                for (DownloadTask task : taskList) {
                     if (!StatusUtil.isCompleted(task)) {
                         needStart = true;
                     }
@@ -411,29 +416,29 @@ public class DownloadService extends Service {
      * @return
      */
     public static String replaceDomainAndPort(String domain, String port, String url) {
-        String url_bak = "";
+        String urlBak = "";
         if (url.indexOf("//") != -1) {
             String[] splitTemp = url.split("//");
-            url_bak = splitTemp[0] + "//";
+            urlBak = splitTemp[0] + "//";
             if (port != null) {
-                url_bak = url_bak + domain + ":" + port;
+                urlBak = urlBak + domain + ":" + port;
             } else {
-                url_bak = url_bak + domain;
+                urlBak = urlBak + domain;
             }
 
             if (splitTemp.length >= 1 && splitTemp[1].indexOf("/") != -1) {
                 String[] urlTemp2 = splitTemp[1].split("/");
                 if (urlTemp2.length > 1) {
                     for (int i = 1; i < urlTemp2.length; i++) {
-                        url_bak = url_bak + "/" + urlTemp2[i];
+                        urlBak = urlBak + "/" + urlTemp2[i];
                     }
                 }
-                System.out.println("url_bak:" + url_bak);
+                System.out.println("url_bak:" + urlBak);
             } else {
-                System.out.println("url_bak:" + url_bak);
+                System.out.println("url_bak:" + urlBak);
             }
         }
-        return url_bak;
+        return urlBak;
     }
 
     private String getDownSave() {
@@ -454,13 +459,14 @@ public class DownloadService extends Service {
         }
     }
 
+    private boolean isCanConnected = true;
+    private boolean isCanConnected2 = true;
 
     private void addDownloadTasks() {
         String json = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, "").toString();
-        if (TextUtils.isEmpty(json)) {
-            json = Utils.getStringFromAssets("playlist.json", mContext);
+        if (!TextUtils.isEmpty(json)) {
+            playlistResultBean = JSON.parseObject(json, PlaylistResultBean.class);
         }
-        playlistResultBean = JSON.parseObject(json, PlaylistResultBean.class);
         if (playlistResultBean == null || playlistResultBean.data == null || playlistResultBean.data.items == null) {
             return;
         }
@@ -666,10 +672,12 @@ public class DownloadService extends Service {
                 needRemovedTask = task;
             }
         }
-        FileUtil.deleteFile(downloadPath + needRemovedTask.getFilename());
-        OkDownload.with().downloadDispatcher().cancel(needRemovedTask.getId());
-        OkDownload.with().breakpointStore().remove(needRemovedTask.getId());
-        builder.unbind(needRemovedTask);
+        if (needRemovedTask != null) {
+            FileUtil.deleteFile(downloadPath + needRemovedTask.getFilename());
+            OkDownload.with().downloadDispatcher().cancel(needRemovedTask.getId());
+            OkDownload.with().breakpointStore().remove(needRemovedTask.getId());
+            builder.unbind(needRemovedTask);
+        }
         this.context = builder.build();
         taskList = Arrays.asList(this.context.getTasks());
     }
@@ -677,17 +685,17 @@ public class DownloadService extends Service {
     private boolean isDownTime(String downloadTimeslice) {
 
         try {
-            if (TextUtils.isEmpty(downloadTimeslice))
+            if (TextUtils.isEmpty(downloadTimeslice)) {
                 return true;
-            else {
+            } else {
                 String[] strs = downloadTimeslice.split("-");
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
                 int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
-                int _week = 7;
-                _week = w;
-                Logger.e(("," + strs[0] + ",").indexOf("," + _week + ",") + "");
-                if (strs[0].indexOf(_week + "") != -1) {
+                int week;
+                week = w;
+                Logger.e(("," + strs[0] + ",").indexOf("," + week + ",") + "");
+                if (strs[0].indexOf(week + "") != -1) {
 //                    开始时间
                     int strDateBeginH = Integer.parseInt(strs[1].substring(0, 2));
                     int strDateBeginM = Integer.parseInt(strs[1].substring(3, 5));

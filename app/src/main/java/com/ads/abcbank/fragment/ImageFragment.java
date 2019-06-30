@@ -1,7 +1,6 @@
 package com.ads.abcbank.fragment;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,13 +11,8 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.activity.WebViewActivity;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.utils.ActivityManager;
-import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTempFragment;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
-import java.lang.ref.WeakReference;
 
 public class ImageFragment extends BaseTempFragment implements View.OnClickListener {
     private View view;
@@ -77,18 +71,20 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
             } catch (Exception e) {
                 delayTime = 5000;
             }
-            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
+            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                 tempView.nextPlay();
-            else
+            } else {
                 handler.postDelayed(runnable, delayTime);
-            if (tempView2 != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
+            }
+            if (tempView2 != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                 tempView2.nextPlay();
+            }
         }
     };
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        this.bean = bean;
+        ImageFragment.bean = bean;
         initData();
 //        showQRs(bean);
     }

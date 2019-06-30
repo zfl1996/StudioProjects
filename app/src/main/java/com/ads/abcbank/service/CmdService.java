@@ -37,6 +37,7 @@ public class CmdService extends Service {
     }
 
     /*每次调用startService启动该服务都会执行*/
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         startService(new Intent(CmdService.this, TimeCmdService.class));
@@ -62,10 +63,6 @@ public class CmdService extends Service {
             Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
             PlaylistBean playlistBean = DownloadService.getPlaylistBean();
             Logger.e("启动获取播放列表--下载列表状态:" + JSONObject.toJSONString(DownloadService.getPlaylistBean()));
-//            {//TODO 此处要添加下载文件列表及其状态
-//                DownloadBean bean = new DownloadBean();
-//                playlistBean.data.items.add(bean);
-//            }
             Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), handler, 1);
         }
         if (timeCurrentPreset.compareTo(timePreset) != 0) {
@@ -111,7 +108,6 @@ public class CmdService extends Service {
                 case 1:
                     Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
-//                        Utils.put(CmdService.this, Utils.KEY_PLAY_LIST, msg.obj);
                         FileUtil.writeJsonToFile(msg.obj.toString());
                         Activity activity = ActivityManager.getInstance().getTopActivity();
                         if (activity instanceof BaseActivity) {
@@ -130,6 +126,8 @@ public class CmdService extends Service {
                             ((BaseActivity) activity).getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
                         }
                     }
+                    break;
+                default:
                     break;
             }
         }

@@ -89,9 +89,11 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     private boolean mAutoScroll = true;
     private static final int SHORT_CLICK = 3;
     private static final int LONG_CLICK = 3;
+
     public static void setTag(String tag) {
         Logger.tag = tag;
     }
+
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface IgnoreLoggerView {
@@ -208,7 +210,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (TextUtils.isEmpty(s)) return;
+            if (TextUtils.isEmpty(s)) {
+                return;
+            }
             //Toast.makeText(mContext, "发生内存泄漏:" + s, Toast.LENGTH_SHORT).show();
         }
     };
@@ -264,33 +268,49 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     }
 
     public static void v(String tag, String msg) {
-        if (me != null) me.print(Log.VERBOSE, tag, msg);
+        if (me != null) {
+            me.print(Log.VERBOSE, tag, msg);
+        }
     }
 
     public static void d(String tag, String msg) {
-        if (me != null) me.print(Log.DEBUG, tag, msg);
+        if (me != null) {
+            me.print(Log.DEBUG, tag, msg);
+        }
     }
 
     public static void i(String tag, String msg) {
-        if (me != null) me.print(Log.INFO, tag, msg);
+        if (me != null) {
+            me.print(Log.INFO, tag, msg);
+        }
     }
 
     public static void w(String tag, String msg) {
-        if (me != null) me.print(Log.WARN, tag, msg);
+        if (me != null) {
+            me.print(Log.WARN, tag, msg);
+        }
     }
 
     public static void e(String tag, String msg) {
-        if (me != null) me.print(Log.ERROR, tag, msg);
+        if (me != null) {
+            me.print(Log.ERROR, tag, msg);
+        }
     }
 
     public static void s(String tag, String msg) {
-        if (me != null) me.print(LOG_SOUT, tag, msg);
+        if (me != null) {
+            me.print(LOG_SOUT, tag, msg);
+        }
     }
 
     private void print(int type, String tag, String msg) {
-        if (!debuggable || me == null || type < mFilterLevel + 2) return;
+        if (!debuggable || me == null || type < mFilterLevel + 2) {
+            return;
+        }
         String str = "[" + getTime() + "]" + getLevel(type) + "/" + tag + ":" + msg;
-        if (!TextUtils.isEmpty(mFilterText) && !str.contains(mFilterText)) return;
+        if (!TextUtils.isEmpty(mFilterText) && !str.contains(mFilterText)) {
+            return;
+        }
         handler.obtainMessage(type, str).sendToTarget();
         int start = 0;
         int end = 0;
@@ -317,6 +337,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 case LOG_SOUT:
                     System.out.println(tag + ":" + subMsg);
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -335,7 +357,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         String[] level = new String[]{"#FFFFFF", "", "#FFFFFF", "#2FB1FE", "#00ff00", "#EFC429", "#FF0000"};
         String str = String.format("<font color=\"" + level[type] + "\">%s</font>", text);
         mLogList.add(str);
-        while (mLogList.size() > 100) mLogList.remove(0);
+        while (mLogList.size() > 100) {
+            mLogList.remove(0);
+        }
         refreshList();
     }
 
@@ -357,8 +381,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             }
         }
         mLogAdapter.notifyDataSetChanged();
-        if (mAutoScroll)
+        if (mAutoScroll) {
             mLvLog.smoothScrollToPosition(mLogList.size());
+        }
     }
 
     @Override
@@ -375,7 +400,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     public void onActivityResumed(Activity activity) {
         mCurrentActivity = activity;
         if (debuggable) {
-            if (checkIgnore(activity)) return;
+            if (checkIgnore(activity)) {
+                return;
+            }
             ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
             mSrcView = decorView.getChildAt(0);
             decorView.removeView(mSrcView);
@@ -388,7 +415,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     @Override
     public void onActivityPaused(Activity activity) {
         mCurrentActivity = null;
-        if (checkIgnore(activity)) return;
+        if (checkIgnore(activity)) {
+            return;
+        }
         ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
         me.removeView(mSrcView);
         me.removeView(mLogContainer);
@@ -486,14 +515,20 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     private void checkSwitch(long dis) {
         if (dis <= 200 && mShortClick < SHORT_CLICK * 2) {
             mShortClick++;
-            if (mShortClick > SHORT_CLICK * 2) clearClick();
+            if (mShortClick > SHORT_CLICK * 2) {
+                clearClick();
+            }
         }
         if (dis > 200 && dis <= 2000 && mShortClick == SHORT_CLICK - 1) {
             mLongClick++;
-            if (mLongClick > LONG_CLICK + 1) clearClick();
+            if (mLongClick > LONG_CLICK + 1) {
+                clearClick();
+            }
         }
-        if (dis > 2000) clearClick();
-        if ( mShortClick == SHORT_CLICK * 2 - 2) {
+        if (dis > 2000) {
+            clearClick();
+        }
+        if (mShortClick == SHORT_CLICK * 2 - 2) {
             loggerSwitch();
         }
         //i("s:" + mShortClick + "l:" + mLongClick);
@@ -510,7 +545,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     }
 
     private void checkFilter(long dis, float y) {
-        if (mLogContainer.getVisibility() == GONE) return;
+        if (mLogContainer.getVisibility() == GONE) {
+            return;
+        }
         if (dis < 300 && y < 200) {
             mFilterClick++;
             if (mFilterClick > 3) {
@@ -618,11 +655,11 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             return false;
         }
         if (null == mCurrentActivity) {
-            Uri content_url = Uri.parse("http://127.0.0.1:45678");
+            Uri contentUrl = Uri.parse("http://127.0.0.1:45678");
             Intent intent = new Intent();
             intent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
             intent.setAction("android.intent.action.VIEW");
-            intent.setData(content_url);
+            intent.setData(contentUrl);
             mContext.startActivity(intent);
         }
         new Thread() {
@@ -657,7 +694,6 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mDefaultHandler.uncaughtException(t, e);
-                        //Process.killProcess(Process.myPid());
                     }
                 });
                 builder.setCancelable(true);
@@ -691,7 +727,6 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 os.close();
                 accept.close();
                 mDefaultHandler.uncaughtException(t, ex);
-                //Process.killProcess(Process.myPid());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -715,10 +750,11 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         }
 
         String checkLeak() throws InterruptedException {
-            if (!mPhantomReference.isEnqueued()) return null;
+            if (!mPhantomReference.isEnqueued()) {
+                return null;
+            }
 //            e("检测到GC");
 //            e("理论存活activity数：" + mList.size());
-
 
 
             StringBuilder stringBuilder = new StringBuilder();

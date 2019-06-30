@@ -15,10 +15,6 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 
-/**
- * Created by Nathen on 2017/11/18.
- */
-
 public class JZMediaIjk extends JZMediaInterface implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnVideoSizeChangedListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener, IMediaPlayer.OnInfoListener, IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnSeekCompleteListener, IMediaPlayer.OnTimedTextListener {
     IjkMediaPlayer ijkMediaPlayer;
 
@@ -69,7 +65,7 @@ public class JZMediaIjk extends JZMediaInterface implements IMediaPlayer.OnPrepa
 
                 ijkMediaPlayer.setSurface(new Surface(jzvd.textureView.getSurfaceTexture()));
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.e(e.toString());
             }
         });
 
@@ -92,8 +88,9 @@ public class JZMediaIjk extends JZMediaInterface implements IMediaPlayer.OnPrepa
 
     @Override
     public void release() {
-        if (ijkMediaPlayer != null)
+        if (ijkMediaPlayer != null){
             ijkMediaPlayer.release();
+        }
     }
 
     @Override

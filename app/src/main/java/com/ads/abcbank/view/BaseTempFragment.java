@@ -1,21 +1,18 @@
 package com.ads.abcbank.view;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
@@ -24,6 +21,7 @@ import com.ads.abcbank.fragment.PdfFragment;
 import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.QRCodeUtil;
 import com.ads.abcbank.utils.Utils;
 
@@ -127,6 +125,7 @@ public abstract class BaseTempFragment extends Fragment {
                 initData();
                 hasInitData = true;
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
         }
     }
@@ -135,7 +134,9 @@ public abstract class BaseTempFragment extends Fragment {
 
     public void showQRs(PlaylistBodyBean bean) {
         this.bodyBean = bean;
-        if (llQr1 == null) return;
+        if (llQr1 == null){
+            return;
+        }
         if (bean != null && bean.QRCode != null && bean.QRCode.size() > 0) {
             llQr1.setVisibility(View.INVISIBLE);
             llQr2.setVisibility(View.INVISIBLE);
@@ -183,6 +184,8 @@ public abstract class BaseTempFragment extends Fragment {
                 case "9":
                     llQr9.setVisibility(View.VISIBLE);
                     addQRs(llQr9, bean.QRCode);
+                    break;
+                default:
                     break;
             }
         } else {
@@ -234,10 +237,10 @@ public abstract class BaseTempFragment extends Fragment {
     }
 
     public void setTempView(TempView tempView) {
-        this.tempView = tempView;
+        BaseTempFragment.tempView = tempView;
     }
     public void setTempView2(TempView2 tempView) {
-        this.tempView2 = tempView;
+        BaseTempFragment.tempView2 = tempView;
     }
     public static BaseTempFragment newInstance(BaseTempFragment baseTempFragment) {
         if (baseTempFragment instanceof ImageFragment) {

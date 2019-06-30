@@ -124,7 +124,14 @@ public class ScreenAdaptation {
 
         //获取屏幕的数值
 
-        ((WindowManager) context.getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getSize(point);
+        try {
+            WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+            if(windowManager != null){
+                windowManager.getDefaultDisplay().getSize(point);
+            }
+        } catch (Exception e) {
+            Logger.e(e.toString());
+        }
 
 
         //dp适配getResources().getDisplayMetrics().density

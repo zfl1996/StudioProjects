@@ -40,7 +40,7 @@ public class MarqueeVerticalTextView extends LinearLayout {
     public MarqueeVerticalTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        initBasicView(attrs,0);
+        initBasicView(attrs, 0);
     }
 
     public void setTextArraysAndClickListener(String[] textArrays, MarqueeVerticalTextViewClickListener marqueeTextViewClickListener) {
@@ -49,7 +49,7 @@ public class MarqueeVerticalTextView extends LinearLayout {
         initMarqueeTextView(textArrays, marqueeTextViewClickListener);
     }
 
-    public void initBasicView( AttributeSet attrs, int defStyleAttr) {
+    public void initBasicView(AttributeSet attrs, int defStyleAttr) {
         marqueeTextView = LayoutInflater.from(mContext).inflate(R.layout.marquee_vertical_textview_layout, null);
         LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         addView(marqueeTextView, layoutParams);
@@ -71,8 +71,10 @@ public class MarqueeVerticalTextView extends LinearLayout {
             case GRAVITY_RIGHT:
                 gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
                 break;
+            default:
+                break;
         }
-        viewFlipper = (ViewFlipper) marqueeTextView.findViewById(R.id.viewFlipper);
+        viewFlipper = marqueeTextView.findViewById(R.id.viewFlipper);
         viewFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_in_bottom));
         viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_out_top));
         viewFlipper.startFlipping();

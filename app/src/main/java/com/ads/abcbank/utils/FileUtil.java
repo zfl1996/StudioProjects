@@ -2,6 +2,7 @@ package com.ads.abcbank.utils;
 
 
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.ads.abcbank.service.DownloadService;
 
@@ -30,34 +31,34 @@ public class FileUtil {
     /**
      * 创建目录
      *
-     * @param dir_path
+     * @param dirPath
      */
-    public static void mkDir(String dir_path) {
-        File myFolderPath = new File(dir_path);
+    public static void mkDir(String dirPath) {
+        File myFolderPath = new File(dirPath);
         try {
             if (!myFolderPath.exists()) {
                 myFolderPath.mkdir();
             }
         } catch (Exception e) {
             Logger.e(TAG, "新建目录操作出错");
-            e.printStackTrace();
+            Logger.e(e.toString());
         }
     }
 
     /**
      * 创建文件
      *
-     * @param file_path
+     * @param filePath
      */
-    public static void createNewFile(String file_path) {
-        File myFilePath = new File(file_path);
+    public static void createNewFile(String filePath) {
+        File myFilePath = new File(filePath);
         try {
             if (!myFilePath.exists()) {
                 myFilePath.createNewFile();
             }
         } catch (Exception e) {
             Logger.e(TAG, "新建文件操作出错");
-            e.printStackTrace();
+            Logger.e(e.toString());
         }
     }
 
@@ -108,7 +109,7 @@ public class FileUtil {
             FileOutputStream fosto = new FileOutputStream(toFile);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
-            int len = -1;
+            int len;
             while ((len = fosfrom.read(buffer)) != -1) {
                 baos.write(buffer, 0, len);
             }
@@ -252,20 +253,43 @@ public class FileUtil {
      */
     public static String readTextFile(String filePath) {
         StringBuilder sb = new StringBuilder();
+        InputStream in = null;
+        InputStreamReader isr = null;
+        BufferedReader br = null;
         try {
             File file = new File(getDownSave() + filePath);
-            InputStream in = null;
             in = new FileInputStream(file);
-            InputStreamReader isr = new InputStreamReader(in, "UTF-8");
-            BufferedReader br = new BufferedReader(isr);
-            String line = null;
+            isr = new InputStreamReader(in, "UTF-8");
+            br = new BufferedReader(isr);
+            String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
                 sb.append("\r\n");
             }
-            in.close();
         } catch (Exception e) {
             Logger.e(TAG, e.toString());
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    Logger.e(e.toString());
+                }
+            }
+            if (isr != null) {
+                try {
+                    isr.close();
+                } catch (IOException e) {
+                    Logger.e(e.toString());
+                }
+            }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    Logger.e(e.toString());
+                }
+            }
         }
         return sb.toString();
     }
@@ -298,11 +322,11 @@ public class FileUtil {
     /*
      * 得到一个文件夹下所有文件
      */
-    public static List<String> getAllFileNameInFold(String fold_path) {
+    public static List<String> getAllFileNameInFold(String foldPath) {
         List<String> file_paths = new ArrayList<String>();
 
         LinkedList<String> folderList = new LinkedList<String>();
-        folderList.add(fold_path);
+        folderList.add(foldPath);
         while (folderList.size() > 0) {
             File file = new File(folderList.peekLast());
             folderList.removeLast();
@@ -322,7 +346,7 @@ public class FileUtil {
         return file_paths;
     }
 
-    private static final String[][] MIME_MapTable = {
+    private static final String[][] MIME_MAP_TABLE = {
             //{后缀名，    MIME类型}
             {".3gp", "video/3gpp"},
             {".apk", "application/vnd.android.package-archive"},
@@ -401,13 +425,13 @@ public class FileUtil {
         }
         /* 获取文件的后缀名 */
         String fileType = fName.substring(dotIndex, fName.length()).toLowerCase();
-        if (fileType == null || "".equals(fileType)) {
+        if (TextUtils.isEmpty(fileType)) {
             return type;
         }
         //在MIME和文件类型的匹配表中找到对应的MIME类型。
-        for (int i = 0; i < MIME_MapTable.length; i++) {
-            if (fileType.equals(MIME_MapTable[i][0])) {
-                type = MIME_MapTable[i][1];
+        for (int i = 0; i < MIME_MAP_TABLE.length; i++) {
+            if (fileType.equals(MIME_MAP_TABLE[i][0])) {
+                type = MIME_MAP_TABLE[i][1];
             }
         }
         return type;

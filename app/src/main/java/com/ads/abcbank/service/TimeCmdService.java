@@ -10,11 +10,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.util.Log;
 
 import com.ads.abcbank.ProcessConnection;
 import com.ads.abcbank.utils.Logger;
-import com.ads.abcbank.utils.Utils;
 
 import java.util.Date;
 
@@ -36,16 +34,17 @@ public class TimeCmdService extends Service {
     }
 
     /*每次调用startService启动该服务都会执行*/
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Logger.e("TAG", "启动获取轮询命令服务_主进程：" + new Date().toString());
 
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        Intent i = new Intent(this, CmdService.class);
-        PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
-//        manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, Utils.getTimeCmd(), pi);
-        manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000, pi);
+        if (manager != null) {
+            Intent i = new Intent(this, CmdService.class);
+            PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
+            manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 60 * 1000, pi);
+        }
 
         Notification notification = new Notification();
         notification.flags = Notification.FLAG_ONGOING_EVENT;

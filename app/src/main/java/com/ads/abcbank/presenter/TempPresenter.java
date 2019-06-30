@@ -17,7 +17,7 @@ public class TempPresenter {
     private IView tempView;
     private AsyncThread asyncThread;
 
-    private  long presetTime = 30 * 60 * 1000;
+    private long presetTime = 30 * 60 * 1000;
 
     public TempPresenter(Context context, IView tempView) {
         asyncThread = Utils.getAsyncThread();
@@ -48,6 +48,8 @@ public class TempPresenter {
                         tempView.updatePresetDate(null);
                     }
                     break;
+                default:
+                    break;
             }
         }
     };
@@ -62,11 +64,6 @@ public class TempPresenter {
         asyncThread.httpService(HTTPContants.CODE_REGISTER, jsonObject, handler, 1);
     }
 
-    public void getPlayList() {
-        Logger.e(Utils.KEY_PLAY_LIST_ALL,"开始执行获取播放列表请求");
-        asyncThread.httpService(HTTPContants.CODE_PLAYLIST, new JSONObject(), handler, 2);
-    }
-
     public void getCmdPoll() {
         asyncThread.httpService(HTTPContants.CODE_CMDPOLL, new JSONObject(), handler, 3);
     }
@@ -75,20 +72,6 @@ public class TempPresenter {
         asyncThread.httpService(HTTPContants.CODE_CMDRESULT, jsonObject, handler, 4);
     }
 
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            presetTime = Integer.
-                    parseInt(Utils.
-                            get(context, Utils.KEY_TIME_PRESET, "30")
-                            .toString()) * 1000;
-            getPreset();
-        }
-    };
-
     public void getPreset() {
-        Logger.e("getPreset","开始执行获取预设汇率信息请求");
-        asyncThread.httpService(HTTPContants.CODE_PRESET, new JSONObject(), handler, 5);
-        handler.postDelayed(runnable, presetTime);
     }
 }

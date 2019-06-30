@@ -11,7 +11,9 @@ import android.widget.ImageView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTempFragment;
 
@@ -26,7 +28,6 @@ public class PdfFragment extends BaseTempFragment {
     private static PlaylistBodyBean bean;
     private static final String STATE_CURRENT_PAGE_INDEX = "current_page_index";
 
-    //    private static final String FILENAME = "sample.pdf";
     private static final String FILENAME = "1.pdf";
 
     private ParcelFileDescriptor mFileDescriptor;
@@ -62,17 +63,12 @@ public class PdfFragment extends BaseTempFragment {
      * Sets up a {@link android.graphics.pdf.PdfRenderer} and related resources.
      */
     private void openRenderer(Context context) throws IOException {
-        File file = new File(context.getCacheDir(), FILENAME);
+        File file = new File(DownloadService.downloadPath + bean.name);
         if (!file.exists()) {
-            InputStream asset = context.getAssets().open(FILENAME);
-            FileOutputStream output = new FileOutputStream(file);
-            final byte[] buffer = new byte[1024];
-            int size;
-            while ((size = asset.read(buffer)) != -1) {
-                output.write(buffer, 0, size);
+            if (tempView != null) {
+                tempView.nextPlay();
             }
-            asset.close();
-            output.close();
+            return;
         }
         mFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
         if (mFileDescriptor != null) {
@@ -87,18 +83,21 @@ public class PdfFragment extends BaseTempFragment {
             try {
                 mCurrentPage.close();
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
         }
         if (mPdfRenderer != null) {
             try {
                 mPdfRenderer.close();
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
         }
         if (mFileDescriptor != null) {
             try {
                 mFileDescriptor.close();
             } catch (IOException e) {
+                Logger.e(e.toString());
             }
         }
     }
@@ -122,6 +121,7 @@ public class PdfFragment extends BaseTempFragment {
                     openRenderer(getActivity());
                     showPage(index);
                 } catch (Exception e1) {
+                    Logger.e(e.toString());
                 }
             }
         }
@@ -146,6 +146,7 @@ public class PdfFragment extends BaseTempFragment {
                         openRenderer(getActivity());
                         showPage(pageNumber);
                     } catch (Exception e) {
+                        Logger.e(e.toString());
                     }
                 }
             }
@@ -167,6 +168,7 @@ public class PdfFragment extends BaseTempFragment {
                                 get(getActivity(), Utils.KEY_TIME_TAB_PDF, "5")
                                 .toString()) * 1000;
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
             if (pageNumber < pageTotal - 1) {
                 showPage(pageNumber + 1);
@@ -176,19 +178,21 @@ public class PdfFragment extends BaseTempFragment {
                 try {
                     closeRenderer();
                 } catch (Exception e) {
+                    Logger.e(e.toString());
                 }
                 pageTotal = -1;
-                if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
+                if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                     tempView.nextPlay();
-                else
+                } else {
                     handler.postDelayed(runnable, delayTime);
+                }
             }
         }
     };
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        this.bean = bean;
+        PdfFragment.bean = bean;
         initData();
         showQRs(bean);
     }

@@ -23,7 +23,7 @@ public class HandlerUtil {
 
     public static void destroy() {
         if (sHandler != null) {
-            sHandler.removeCallbacksAndMessages((Object) null);
+            sHandler.removeCallbacksAndMessages(null);
             sHandler = null;
         }
 

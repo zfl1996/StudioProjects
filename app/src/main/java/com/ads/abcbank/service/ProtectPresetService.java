@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.os.SystemClock;
-import android.util.Log;
 
 import com.ads.abcbank.ProcessConnection;
 import com.ads.abcbank.utils.Logger;
@@ -36,15 +34,18 @@ public class ProtectPresetService extends Service {
     }
 
     /*每次调用startService启动该服务都会执行*/
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Logger.e("TAG", "启动获取汇率列表服务_守护进程：" + new Date().toString());
 
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        Intent i = new Intent(this, PresetService.class);
-        PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
-        manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, Utils.getTimePreset(), pi);
+        if (manager != null) {
+            Intent i = new Intent(this, PresetService.class);
+            PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
+            manager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, Utils.getTimePreset(), pi);
+        }
 
         Notification notification = new Notification();
         notification.flags = Notification.FLAG_ONGOING_EVENT;

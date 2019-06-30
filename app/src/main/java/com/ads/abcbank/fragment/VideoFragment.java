@@ -1,6 +1,5 @@
 package com.ads.abcbank.fragment;
 
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -8,6 +7,7 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.JZMediaIjk;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.view.AutoVideoPlayer;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.JZMediaSystemAssertFolder;
@@ -45,7 +45,7 @@ public class VideoFragment extends BaseTempFragment {
                 jzDataSource = new JZDataSource(context.getAssets().openFd("local_video.mp4"));
                 jzDataSource.title = "";
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.e(e.toString());
             }
             content.setTempView(tempView);
 
@@ -66,7 +66,7 @@ public class VideoFragment extends BaseTempFragment {
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        this.bean = bean;
+        VideoFragment.bean = bean;
         initData();
         showQRs(bean);
     }
@@ -79,16 +79,18 @@ public class VideoFragment extends BaseTempFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (content != null && isVisiable)
+        if (content != null && isVisiable) {
             content.startVideo();
+        }
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            if (content != null && isVisiable)
+            if (content != null && isVisiable) {
                 content.startVideo();
+            }
         }
     }
 
@@ -96,11 +98,13 @@ public class VideoFragment extends BaseTempFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (content != null)
+            if (content != null) {
                 content.startVideo();
+            }
         } else {
-            if (content != null)
-                content.goOnPlayOnPause();
+            if (content != null) {
+                AutoVideoPlayer.goOnPlayOnPause();
+            }
         }
     }
 

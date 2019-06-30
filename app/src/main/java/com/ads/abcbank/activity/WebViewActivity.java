@@ -1,13 +1,11 @@
 package com.ads.abcbank.activity;
 
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.webkit.JsResult;
@@ -36,9 +34,9 @@ public class WebViewActivity extends BaseActivity {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void init() {
-        TextView back = (TextView) findViewById(R.id.back);
-        webView = (WebView) findViewById(R.id.webview);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        TextView back = findViewById(R.id.back);
+        webView = findViewById(R.id.webview);
+        progressBar = findViewById(R.id.progressBar);
 
         Intent intent = getIntent();
         String url = intent.getStringExtra(Utils.WEBURL);
@@ -68,6 +66,8 @@ public class WebViewActivity extends BaseActivity {
                 break;
             case DisplayMetrics.DENSITY_HIGH:
                 zoomDensity = WebSettings.ZoomDensity.FAR;
+                break;
+            default:
                 break;
         }
         settings.setDefaultZoom(zoomDensity);
@@ -115,7 +115,6 @@ public class WebViewActivity extends BaseActivity {
             }
         });
     }
-
 
 
     @Override

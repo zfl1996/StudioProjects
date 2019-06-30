@@ -3,14 +3,12 @@ package com.ads.abcbank.utils;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.ads.abcbank.bean.RegisterBean;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -22,13 +20,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class AsyncThread {
-    //    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("HHmmss");
-//	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-    public static final int ConnectTimeout = 10;
-    public static final int ConnectReadTimeout = 10;
+    public static final int CONNECT_TIMEOUT = 10;
+    public static final int CONNECT_READ_TIMEOUT = 10;
 
     public void httpService(String url, final JSONObject jsonString, final Handler handler, final int wath) {
         try {
@@ -40,11 +33,11 @@ public class AsyncThread {
             }
             Logger.e("接口地址拼接后：", url);
             OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(ConnectTimeout, TimeUnit.SECONDS)
-                    .readTimeout(ConnectReadTimeout, TimeUnit.SECONDS).build();//创建OkHttpClient对象。
-            MediaType JSON = MediaType.parse("application/json; charset=utf-8");//数据类型为json格式，
+                    .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                    .readTimeout(CONNECT_READ_TIMEOUT, TimeUnit.SECONDS).build();//创建OkHttpClient对象。
+            MediaType json = MediaType.parse("application/json; charset=utf-8");//数据类型为json格式，
 
-            RequestBody body = RequestBody.create(JSON, jsonString.toString());
+            RequestBody body = RequestBody.create(json, jsonString.toString());
             Request request = new Request.Builder()
                     .url(url)
                     .header("User-Agent", "OkHttp Headers.java")
@@ -69,7 +62,7 @@ public class AsyncThread {
                     if (response.isSuccessful()) {//回调的方法执行在子线程。
                         Message msg = handler.obtainMessage(wath);
                         try {
-                            msg.obj = response.body().string();
+                            msg.obj = response.body();
                             handler.sendMessage(msg);
                         } catch (Exception e) {
                             msg.obj = null;

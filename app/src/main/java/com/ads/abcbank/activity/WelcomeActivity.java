@@ -4,9 +4,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.Toast;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.InitResultBean;
@@ -42,29 +41,25 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
         mPermissionHelper.setOnApplyPermissionListener(new PermissionHelper.OnApplyPermissionListener() {
             @Override
             public void onAfterApplyAllPermission() {
-//                Logger.i(TAG, "All of requested permissions has been granted, so run app logic.");
                 runApp();
             }
         });
         if (Build.VERSION.SDK_INT < 23) {
             // 如果系统版本低于23，直接跑应用的逻辑
-//            Logger.d(TAG, "The api level of system is lower than 23, so run app logic directly.");
             runApp();
         } else {
             // 如果权限全部申请了，那就直接跑应用逻辑
             if (mPermissionHelper.isAllRequestedPermissionGranted()) {
-//                Logger.d(TAG, "All of requested permissions has been granted, so run app logic directly.");
                 runApp();
             } else {
                 // 如果还有权限为申请，而且系统版本大于23，执行申请权限逻辑
-//                Logger.i(TAG, "Some of requested permissions hasn't been granted, so apply permissions first.");
                 mPermissionHelper.applyPermissions();
             }
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mPermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
@@ -131,6 +126,8 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                     case "6":
                         intent.setClass(WelcomeActivity.this, Temp6Activity.class);
                         break;
+                    default:
+                        break;
                 }
             }
             startActivity(intent);
@@ -141,115 +138,102 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
     public void onBackPressed() {
     }
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-
     @Override
     public void init(String jsonObject) {
         if (!TextUtils.isEmpty(jsonObject)) {
             InitResultBean initResultBean = JSON.parseObject(jsonObject, InitResultBean.class);
-            if (initResultBean.resCode.equals("0")) {
-                String timePlaylist = Utils.get(WelcomeActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
-                int time;
-                try {
-                    time = Integer.parseInt(timePlaylist);
-                } catch (NumberFormatException e) {
-                    time = 20;
-                }
+            if ("0".equals(initResultBean.resCode)) {
+                ToastUtil.showToastLong(this, "初始化成功");
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
-                calendar.add(Calendar.MINUTE, -1 * time);
-                String startTime = simpleDateFormat.format(calendar.getTime());
-
-                Calendar calendar2 = Calendar.getInstance();
-                calendar2.setTime(new Date());
-                calendar2.add(Calendar.MINUTE, time);
-                String endTime = simpleDateFormat.format(calendar2.getTime());
-
-                if (startTime.compareTo(initResultBean.data.serverTime) > 0
-                        || endTime.compareTo(initResultBean.data.serverTime) < 0) {
-                    ToastUtil.showToastLong(this, "服务器时间与本地时间误差较大");
-                    HandlerUtil.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ActivityManager.getInstance().finishAllActivity();
-                            System.exit(0);
+                HandlerUtil.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+                        String timePlaylist = Utils.get(WelcomeActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
+                        int time;
+                        try {
+                            time = Integer.parseInt(timePlaylist);
+                        } catch (NumberFormatException e) {
+                            time = 20;
                         }
-                    }, 1000);
-                    return;
-                }
 
-                String beanStr = Utils.get(WelcomeActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
-                Intent intent = new Intent();
-                if (TextUtils.isEmpty(beanStr)) {
-                    intent.setClass(WelcomeActivity.this, MainActivity.class);
-                } else {
-                    RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
-                    switch (bean.data.frameSetNo) {
-                        case "1":
-                            intent.setClass(WelcomeActivity.this, Temp1Activity.class);
-                            break;
-                        case "2":
-                            intent.setClass(WelcomeActivity.this, Temp2Activity.class);
-                            break;
-                        case "3":
-                            intent.setClass(WelcomeActivity.this, Temp3Activity.class);
-                            break;
-                        case "4":
-                            intent.setClass(WelcomeActivity.this, Temp4Activity.class);
-                            break;
-                        case "5":
-                            intent.setClass(WelcomeActivity.this, Temp5Activity.class);
-                            break;
-                        case "6":
-                            intent.setClass(WelcomeActivity.this, Temp6Activity.class);
-                            break;
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(new Date());
+                        calendar.add(Calendar.MINUTE, -1 * time);
+                        String startTime = simpleDateFormat.format(calendar.getTime());
+
+                        Calendar calendar2 = Calendar.getInstance();
+                        calendar2.setTime(new Date());
+                        calendar2.add(Calendar.MINUTE, time);
+                        String endTime = simpleDateFormat.format(calendar2.getTime());
+
+                        if (startTime.compareTo(initResultBean.data.serverTime) > 0
+                                || endTime.compareTo(initResultBean.data.serverTime) < 0) {
+                            ToastUtil.showToastLong(WelcomeActivity.this, "请调整当前系统时间");
+                            HandlerUtil.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ActivityManager.getInstance().finishAllActivity();
+                                    System.exit(0);
+                                }
+                            }, 1000);
+                            return;
+                        }
+
+                        String beanStr = Utils.get(WelcomeActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
+                        Intent intent = new Intent();
+                        if (TextUtils.isEmpty(beanStr)) {
+                            intent.setClass(WelcomeActivity.this, MainActivity.class);
+                        } else {
+                            RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                            switch (bean.data.frameSetNo) {
+                                case "1":
+                                    intent.setClass(WelcomeActivity.this, Temp1Activity.class);
+                                    break;
+                                case "2":
+                                    intent.setClass(WelcomeActivity.this, Temp2Activity.class);
+                                    break;
+                                case "3":
+                                    intent.setClass(WelcomeActivity.this, Temp3Activity.class);
+                                    break;
+                                case "4":
+                                    intent.setClass(WelcomeActivity.this, Temp4Activity.class);
+                                    break;
+                                case "5":
+                                    intent.setClass(WelcomeActivity.this, Temp5Activity.class);
+                                    break;
+                                case "6":
+                                    intent.setClass(WelcomeActivity.this, Temp6Activity.class);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        startActivity(intent);
                     }
-                }
-                startActivity(intent);
-            } else if (initResultBean.resCode.equals("-1")) {
+                }, 2000);
+            } else if ("-1".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("服务器主动拒绝");
                 finish();
-            } else if (initResultBean.resCode.equals("1")) {
+            } else if ("1".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("客户端版本过低");
                 if (Utils.existHttpPath(initResultBean.data.downloadLink)) {
                     Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
                 } else {
-                    Toast.makeText(mActivity, "下载链接为空或路径非法", Toast.LENGTH_SHORT).show();
+                    ToastUtil.showToastLong(mActivity, "下载链接为空或路径非法");
                     finish();
                 }
             }
         } else {
-            String beanStr = Utils.get(WelcomeActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
-            Intent intent = new Intent();
-            if (TextUtils.isEmpty(beanStr)) {
-                intent.setClass(WelcomeActivity.this, MainActivity.class);
-            } else {
-                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
-                switch (bean.data.frameSetNo) {
-                    case "1":
-                        intent.setClass(WelcomeActivity.this, Temp1Activity.class);
-                        break;
-                    case "2":
-                        intent.setClass(WelcomeActivity.this, Temp2Activity.class);
-                        break;
-                    case "3":
-                        intent.setClass(WelcomeActivity.this, Temp3Activity.class);
-                        break;
-                    case "4":
-                        intent.setClass(WelcomeActivity.this, Temp4Activity.class);
-                        break;
-                    case "5":
-                        intent.setClass(WelcomeActivity.this, Temp5Activity.class);
-                        break;
-                    case "6":
-                        intent.setClass(WelcomeActivity.this, Temp6Activity.class);
-                        break;
+            ToastUtil.showToastLong(this, "初始化失败");
+            HandlerUtil.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
                 }
-            }
-            startActivity(intent);
+            }, 2000);
         }
     }
 

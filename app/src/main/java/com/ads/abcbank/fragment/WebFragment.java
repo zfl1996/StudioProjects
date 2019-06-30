@@ -17,13 +17,6 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.view.BaseTempFragment;
-import com.ads.abcbank.view.JZMediaSystemAssertFolder;
-import com.bumptech.glide.Glide;
-
-import java.io.IOException;
-
-import cn.jzvd.JZDataSource;
-import cn.jzvd.JzvdStd;
 
 public class WebFragment extends BaseTempFragment {
     private View view;
@@ -62,6 +55,8 @@ public class WebFragment extends BaseTempFragment {
                     break;
                 case DisplayMetrics.DENSITY_HIGH:
                     zoomDensity = WebSettings.ZoomDensity.FAR;
+                    break;
+                default:
                     break;
             }
             settings.setDefaultZoom(zoomDensity);
@@ -124,16 +119,17 @@ public class WebFragment extends BaseTempFragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
+            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                 tempView.nextPlay();
-            else
+            } else {
                 handler.postDelayed(runnable, delayTime);
+            }
         }
     };
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        this.bean = bean;
+        WebFragment.bean = bean;
         initData();
         showQRs(bean);
     }

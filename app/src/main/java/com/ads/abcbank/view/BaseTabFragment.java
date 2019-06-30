@@ -2,7 +2,6 @@ package com.ads.abcbank.view;
 
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,12 +11,12 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
-import android.widget.Toast;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.fragment.Tab1Fragment;
 import com.ads.abcbank.fragment.Tab2Fragment;
 import com.ads.abcbank.fragment.Tab3Fragment;
+import com.ads.abcbank.utils.Logger;
 
 public abstract class BaseTabFragment extends Fragment {
     public Activity mActivity;
@@ -102,13 +101,16 @@ public abstract class BaseTabFragment extends Fragment {
                 initData();
                 hasInitData = true;
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
         }
     }
 
 
     public void setBottomHeight(ViewTreeObserver.OnPreDrawListener preDrawListener) {
-        if (svTab1 == null || tlTab1 == null || tlBottom1 == null) return;
+        if (svTab1 == null || tlTab1 == null || tlBottom1 == null) {
+            return;
+        }
         int sHeight = svTab1.getHeight();
         int tHeight = tlTab1.getHeight();
         int bHeight = sHeight - tHeight;

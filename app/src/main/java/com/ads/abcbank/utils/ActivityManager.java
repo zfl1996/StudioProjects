@@ -4,11 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -20,26 +15,6 @@ public class ActivityManager implements Application.ActivityLifecycleCallbacks {
      * @brief 记录当前已经进入后台
      */
     private boolean isActive = false;
-    private boolean showToast = false;
-
-    private List<View> getAllViews(Activity act) {
-        List<View> list = getAllChildViews(act.getWindow().getDecorView());
-        return list;
-    }
-
-    private List<View> getAllChildViews(View view) {
-        List<View> allchildren = new ArrayList<View>();
-        if (view instanceof ViewGroup) {
-            ViewGroup vp = (ViewGroup) view;
-            for (int i = 0; i < vp.getChildCount(); i++) {
-                View viewchild = vp.getChildAt(i);
-                allchildren.add(viewchild);
-                //再次 调用本身（递归）
-                allchildren.addAll(getAllChildViews(viewchild));
-            }
-        }
-        return allchildren;
-    }
 
     private ActivityManager() {
     }
@@ -69,7 +44,6 @@ public class ActivityManager implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityStarted(Activity activity) {
-//        TDConfig_.getInstance_(LauncherApplicationAgent.getInstance().getApplicationContext()).onPageStart(activity, activity.getClass().getSimpleName());
     }
 
     @Override
@@ -124,7 +98,9 @@ public class ActivityManager implements Application.ActivityLifecycleCallbacks {
             while (pop != null) {
                 pop.finish();
                 //TODO onActivityDestroyed的时候会remove，可能会影响到这里代码运行
-                if (activityStack.empty()) break;
+                if (activityStack.empty()) {
+                    break;
+                }
                 pop = activityStack.pop();
             }
         } catch (Throwable e) {
@@ -138,10 +114,14 @@ public class ActivityManager implements Application.ActivityLifecycleCallbacks {
      */
     public boolean isAppOnForeground(Context context) {
         android.app.ActivityManager activityManager = (android.app.ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager == null) {
+            return false;
+        }
         String packageName = context.getPackageName();
         List<android.app.ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
-        if (appProcesses == null)
+        if (appProcesses == null) {
             return false;
+        }
         for (android.app.ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
             if (appProcess.processName.equals(packageName)
                     && appProcess.importance == android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
@@ -158,7 +138,4 @@ public class ActivityManager implements Application.ActivityLifecycleCallbacks {
         return null;
     }
 
-    public Stack<Activity> getActivityStack() {
-        return activityStack;
-    }
 }

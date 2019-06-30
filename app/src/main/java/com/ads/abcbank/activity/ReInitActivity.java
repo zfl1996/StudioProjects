@@ -3,8 +3,14 @@ package com.ads.abcbank.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.text.InputType;
+import android.text.Selection;
+import android.text.Spannable;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,6 +33,7 @@ import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IMainView;
+import com.ads.abcbank.view.KeyboardWindow;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -86,23 +93,62 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
         initDatas();
     }
 
+    private KeyboardWindow keyboardWindow;
+
     private void initViews() {
-        ivTemp = (ImageView) findViewById(R.id.iv_temp);
-        appId = (TextView) findViewById(R.id.appId);
-        cityCode = (EditText) findViewById(R.id.cityCode);
-        brchCode = (EditText) findViewById(R.id.brchCode);
-        clientVersion = (EditText) findViewById(R.id.clientVersion);
-        terminalType = (Spinner) findViewById(R.id.terminalType);
-        screenDirection = (Spinner) findViewById(R.id.screenDirection);
-        frameSetNo = (Spinner) findViewById(R.id.frameSetNo);
-        contentType = (Spinner) findViewById(R.id.contentType);
-        appIdAddress = (EditText) findViewById(R.id.appIdAddress);
-        server = (EditText) findViewById(R.id.server);
-        cdn = (EditText) findViewById(R.id.cdn);
-        storeId = (EditText) findViewById(R.id.storeId);
-        tvSubmit = (TextView) findViewById(R.id.tv_submit);
-        back = (TextView) findViewById(R.id.back);
+        ivTemp = findViewById(R.id.iv_temp);
+        appId = findViewById(R.id.appId);
+        cityCode = findViewById(R.id.cityCode);
+        brchCode = findViewById(R.id.brchCode);
+        clientVersion = findViewById(R.id.clientVersion);
+        terminalType = findViewById(R.id.terminalType);
+        screenDirection = findViewById(R.id.screenDirection);
+        frameSetNo = findViewById(R.id.frameSetNo);
+        contentType = findViewById(R.id.contentType);
+        appIdAddress = findViewById(R.id.appIdAddress);
+        server = findViewById(R.id.server);
+        cdn = findViewById(R.id.cdn);
+        storeId = findViewById(R.id.storeId);
+        tvSubmit = findViewById(R.id.tv_submit);
+        back = findViewById(R.id.back);
+        addListener(cityCode, true);
+        addListener(brchCode, true);
+        addListener(appIdAddress, true);
+        addListener(server, false);
+        addListener(cdn, true);
+        addListener(storeId, true);
     }
+
+    @SuppressWarnings("ALL")
+    private void addListener(EditText editText, boolean isNum) {
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (keyboardWindow != null) {
+                        keyboardWindow.dismiss();
+                    }
+                    keyboardWindow = new KeyboardWindow(ReInitActivity.this, editText, isNum);
+                    keyboardWindow.show();
+                    editText.requestFocus();
+                }
+
+                int inType = editText.getInputType();
+                editText.setInputType(InputType.TYPE_NULL);
+                editText.onTouchEvent(event);
+                editText.setInputType(inType);
+                CharSequence text = editText.getText();
+                if (text instanceof Spannable) {
+                    Spannable spanText = (Spannable) text;
+                    Selection.setSelection(spanText, text.length());
+                }
+                return false;
+            }
+        });
+        editText.setMovementMethod(ScrollingMovementMethod.getInstance());
+        editText.setSelection(editText.getText().length(), editText.getText().length());
+    }
+
 
     private void initDatas() {
         mainPresenter = new MainPresenter(this, this);
@@ -179,6 +225,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                     fPosition = position;
                     ivTemp.setImageResource(tempImages[sPosition][fPosition]);
                 } catch (Exception e) {
+                    Logger.e(e.toString());
                 }
             }
 
@@ -206,7 +253,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
             int tPosition = tAdapter.getPosition(bean.data.terminalType);
             terminalType.setSelection(tPosition);
 
-            int sToPosition = bean.data.screenDirection.equals("H") ? 0 : 1;
+            int sToPosition = "H".equals(bean.data.screenDirection) ? 0 : 1;
             screenDirection.setSelection(sToPosition);
 
             switch (bean.data.frameSetNo) {
@@ -223,6 +270,8 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                     break;
                 case "6":
                     fToPosition = 3;
+                    break;
+                default:
                     break;
             }
             switch (Utils.getContentTypeEnd(this)) {
@@ -243,6 +292,8 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                     break;
                 case "F":
                     cToPosition = 5;
+                    break;
+                default:
                     break;
             }
             appIdAddress.setText(bean.data.appIpAddress);
@@ -338,7 +389,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
 
     private void getSelectCon() {
         String start = "";
-        String end = "";
+        String end;
         String selectFra = getSelectFra();
         String selectCon = contents[sPosition][fPosition][cPosition];
         end = conMap.get(selectCon);
@@ -361,6 +412,8 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
             case "6":
                 start = "T";
                 break;
+            default:
+                break;
         }
         Utils.setContentTypeStart(this, start);
         Utils.setContentTypeMiddle(this, getSelectScr());
@@ -373,98 +426,120 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
             case R.id.back:
                 finish();
                 break;
+            default:
+                break;
         }
     }
-
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
     @Override
     public void init(String jsonObject) {
         if (!TextUtils.isEmpty(jsonObject)) {
             InitResultBean initResultBean = JSON.parseObject(jsonObject, InitResultBean.class);
-            if (initResultBean.resCode.equals("0")) {
-                String timePlaylist = Utils.get(ReInitActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
-                int time;
-                try {
-                    time = Integer.parseInt(timePlaylist);
-                } catch (NumberFormatException e) {
-                    time = 20;
-                }
+            if ("0".equals(initResultBean.resCode)) {
+                ToastUtil.showToastLong(this, "初始化成功");
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
-                calendar.add(Calendar.MINUTE, -1 * time);
-                String startTime = simpleDateFormat.format(calendar.getTime());
-
-                Calendar calendar2 = Calendar.getInstance();
-                calendar2.setTime(new Date());
-                calendar2.add(Calendar.MINUTE, time);
-                String endTime = simpleDateFormat.format(calendar2.getTime());
-
-                if (startTime.compareTo(initResultBean.data.serverTime) > 0
-                        || endTime.compareTo(initResultBean.data.serverTime) < 0) {
-                    ToastUtil.showToastLong(this, "请调整当前系统时间");
-                    HandlerUtil.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ActivityManager.getInstance().finishAllActivity();
-                            System.exit(0);
+                HandlerUtil.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+                        String timePlaylist = Utils.get(ReInitActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
+                        int time;
+                        try {
+                            time = Integer.parseInt(timePlaylist);
+                        } catch (NumberFormatException e) {
+                            time = 20;
                         }
-                    }, 2000);
-                    return;
-                }
 
-                String beanStr = Utils.get(ReInitActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
-                Intent intent = new Intent();
-                if (TextUtils.isEmpty(beanStr)) {
-                    intent.setClass(ReInitActivity.this, MainActivity.class);
-                } else {
-                    RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
-                    switch (bean.data.frameSetNo) {
-                        case "1":
-                            intent.setClass(ReInitActivity.this, Temp1Activity.class);
-                            break;
-                        case "2":
-                            intent.setClass(ReInitActivity.this, Temp2Activity.class);
-                            break;
-                        case "3":
-                            intent.setClass(ReInitActivity.this, Temp3Activity.class);
-                            break;
-                        case "4":
-                            intent.setClass(ReInitActivity.this, Temp4Activity.class);
-                            break;
-                        case "5":
-                            intent.setClass(ReInitActivity.this, Temp5Activity.class);
-                            break;
-                        case "6":
-                            intent.setClass(ReInitActivity.this, Temp6Activity.class);
-                            break;
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(new Date());
+                        calendar.add(Calendar.MINUTE, -1 * time);
+                        String startTime = simpleDateFormat.format(calendar.getTime());
+
+                        Calendar calendar2 = Calendar.getInstance();
+                        calendar2.setTime(new Date());
+                        calendar2.add(Calendar.MINUTE, time);
+                        String endTime = simpleDateFormat.format(calendar2.getTime());
+
+                        if (startTime.compareTo(initResultBean.data.serverTime) > 0
+                                || endTime.compareTo(initResultBean.data.serverTime) < 0) {
+                            ToastUtil.showToastLong(ReInitActivity.this, "请调整当前系统时间");
+                            HandlerUtil.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ActivityManager.getInstance().finishAllActivity();
+                                    System.exit(0);
+                                }
+                            }, 2000);
+                            return;
+                        }
+
+                        String beanStr = Utils.get(ReInitActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
+                        Intent intent = new Intent();
+                        if (TextUtils.isEmpty(beanStr)) {
+                            intent.setClass(ReInitActivity.this, MainActivity.class);
+                        } else {
+                            RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                            switch (bean.data.frameSetNo) {
+                                case "1":
+                                    intent.setClass(ReInitActivity.this, Temp1Activity.class);
+                                    break;
+                                case "2":
+                                    intent.setClass(ReInitActivity.this, Temp2Activity.class);
+                                    break;
+                                case "3":
+                                    intent.setClass(ReInitActivity.this, Temp3Activity.class);
+                                    break;
+                                case "4":
+                                    intent.setClass(ReInitActivity.this, Temp4Activity.class);
+                                    break;
+                                case "5":
+                                    intent.setClass(ReInitActivity.this, Temp5Activity.class);
+                                    break;
+                                case "6":
+                                    intent.setClass(ReInitActivity.this, Temp6Activity.class);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        startActivity(intent);
+                        finish();
                     }
-                }
-                startActivity(intent);
-                finish();
-            } else if (initResultBean.resCode.equals("-1")) {
+                }, 2000);
+            } else if ("-1".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("服务器主动拒绝");
                 finish();
-            } else if (initResultBean.resCode.equals("1")) {
+            } else if ("1".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("客户端版本过低");
                 if (Utils.existHttpPath(initResultBean.data.downloadLink)) {
                     Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
                 } else {
-                    Toast.makeText(mActivity, "下载链接为空或路径非法", Toast.LENGTH_SHORT).show();
+                    ToastUtil.showToastLong(mActivity, "下载链接为空或路径非法");
                     finish();
                 }
             }
+        } else {
+            ToastUtil.showToastLong(this, "初始化失败");
+            HandlerUtil.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ActivityManager.getInstance().finishAllActivity();
+                    System.exit(0);
+                }
+            }, 2000);
         }
     }
 
     @Override
     public void register(String jsonObject) {
-        ResultBean resultBean = null;
+        ResultBean resultBean;
         if (!TextUtils.isEmpty(jsonObject)) {
             resultBean = JSON.parseObject(jsonObject, ResultBean.class);
+        } else {
+            ToastUtil.showToastLong(this, "注册失败");
+            return;
         }
         if (resultBean != null && !TextUtils.isEmpty(resultBean.resCode) && "0".equals(resultBean.resCode)) {
             ToastUtil.showToastLong(this, "注册成功");
@@ -495,18 +570,18 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
 
 
         @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
             if (convertView == null) {
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 convertView = inflater.inflate(R.layout.item_spinner_dropdown, parent, false);
             }
 
-            TextView tv = (TextView) convertView.findViewById(android.R.id.text1);
+            TextView tv = convertView.findViewById(android.R.id.text1);
             if (mStringArray != null && position < mStringArray.length) {
                 try {
                     tv.setText(mStringArray[position]);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.e(e.toString());
                 }
             }
             return convertView;
@@ -514,19 +589,20 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public @NonNull
+        View getView(int position, View convertView, @NonNull ViewGroup parent) {
             if (convertView == null) {
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 convertView = inflater.inflate(R.layout.item_spinner, parent, false);
             }
 
             //此处text1是Spinner默认的用来显示文字的TextView
-            TextView tv = (TextView) convertView.findViewById(android.R.id.text1);
+            TextView tv = convertView.findViewById(android.R.id.text1);
             if (mStringArray != null && position < mStringArray.length) {
                 try {
                     tv.setText(mStringArray[position]);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.e(e.toString());
                 }
             }
 

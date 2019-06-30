@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.HTTPContants;
@@ -29,6 +28,7 @@ public class PresetService extends Service {
     }
 
     /*每次调用startService启动该服务都会执行*/
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Logger.e("TAG", "启动获取汇率列表服务：" + new Date().toString());
@@ -51,6 +51,8 @@ public class PresetService extends Service {
                             ((BaseActivity) activity).getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
                         }
                     }
+                    break;
+                default:
                     break;
             }
         }

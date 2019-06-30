@@ -16,11 +16,9 @@ package com.ads.abcbank.activity;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
-import com.ads.abcbank.utils.SystemUtil;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.TempView;
@@ -28,7 +26,6 @@ import com.alibaba.fastjson.JSONObject;
 
 public class Temp5Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
-//    private TextView sys_info;
     private TempView tvTemp;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +52,9 @@ public class Temp5Activity extends BaseActivity implements IView {
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
-        tvTemp.setNeedUpdate(true);
+        if (tvTemp != null) {
+            tvTemp.setNeedUpdate(true);
+        }
     }
 
     @Override

@@ -16,11 +16,8 @@
 
 package com.ads.abcbank.utils;
 
-import android.support.annotation.Nullable;
 
 import com.ads.abcbank.bean.DownloadBean;
-import com.ads.abcbank.bean.PlaylistBean;
-import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.liulishuo.okdownload.DownloadTask;
 
 public class TaskTagUtil {
@@ -44,7 +41,7 @@ public class TaskTagUtil {
 
     public static int getDownloadBeanIndex(DownloadTask task) {
         final Object beanIndex = task.getTag(KEY_DOWNLOAD_BEAN_INDEX);
-        return beanIndex != null ? (int) beanIndex : null;
+        return beanIndex != null ? (int) beanIndex : 0;
     }
 
     public static void saveDownloadBean(DownloadTask task, DownloadBean downloadBean) {

@@ -12,7 +12,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -49,7 +50,10 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -109,8 +113,9 @@ public class Utils {
     }
 
     public static final void showProgressDialog(Context context) {
-        if (mProgressDialog != null)
+        if (mProgressDialog != null) {
             mProgressDialog.dismiss();
+        }
         mProgressDialog = ProgressDialog.show(context, context.getString(R.string
                 .s_title), context.getString(R.string.s_loading), true, true);
     }
@@ -168,7 +173,9 @@ public class Utils {
     public static Object get(Context context, String key, Object defaultObject) {
         SharedPreferences sp = context.getSharedPreferences(USER_INFO, Context
                 .MODE_PRIVATE);
-
+        if (sp == null) {
+            return defaultObject;
+        }
         if (defaultObject instanceof String) {
             return sp.getString(key, (String) defaultObject);
         } else if (defaultObject instanceof Integer) {
@@ -210,7 +217,7 @@ public class Utils {
      * 创建一个解决SharedPreferencesCompat.apply方法的一个兼容类
      */
     private static class SharedPreferencesCompat {
-        private static final Method sApplyMethod = findApplyMethod();
+        private static final Method S_APPLY_METHOD = findApplyMethod();
 
         /**
          * 反射查找apply的方法
@@ -220,6 +227,7 @@ public class Utils {
                 Class clz = SharedPreferences.Editor.class;
                 return clz.getMethod("apply");
             } catch (NoSuchMethodException e) {
+                Logger.e(e.toString());
             }
             return null;
         }
@@ -229,11 +237,12 @@ public class Utils {
          */
         public static void apply(SharedPreferences.Editor editor) {
             try {
-                if (sApplyMethod != null) {
-                    sApplyMethod.invoke(editor);
+                if (S_APPLY_METHOD != null) {
+                    S_APPLY_METHOD.invoke(editor);
                     return;
                 }
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
             editor.commit();
         }
@@ -257,9 +266,18 @@ public class Utils {
             }
             InputMethodManager imm = (InputMethodManager) context
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(((Activity) context).getCurrentFocus()
-                    .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            if (imm != null) {
+                View view1 = ((Activity) context).getCurrentFocus();
+                if (view1 != null && view1.getWindowToken() != null) {
+                    try {
+                        imm.hideSoftInputFromWindow(view1.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    } catch (Exception e) {
+                        Logger.e(e.toString());
+                    }
+                }
+            }
         } catch (Exception e) {
+            Logger.e(e.toString());
         }
     }
 
@@ -288,26 +306,21 @@ public class Utils {
     }
 
     public static void loadImage(ImageView imageView, String url) {
-        int[] vIds = {R.mipmap.v_grzyhb, R.mipmap.v_sxdhb, R.mipmap.v_wkqk, R.mipmap.v_zysys};
-        int[] hIds = {R.mipmap.h_jjdt, R.mipmap.h_zyxykfq, R.mipmap.h_zsyhxc};
-        int index = (int) (Math.random() * hIds.length);
-        int index2 = (int) (Math.random() * vIds.length);
-        int random = hIds[index];
-        int random2 = vIds[index2];
         if (imageView != null) {
-            int placeholderId = random;
-            if (getContentTypeMiddle(imageView.getContext()).equals("V")
-                    || getContentTypeStart(imageView.getContext()).equals("H,L")
-                    || getContentTypeStart(imageView.getContext()).equals("N")
-            ) {
-                placeholderId = random2;
+            int placeholderId = R.mipmap.bg_land;
+            if ("V".equals(getContentTypeMiddle(imageView.getContext()))
+                    || "H,L".equals(getContentTypeStart(imageView.getContext()))
+                    || "N".equals(getContentTypeStart(imageView.getContext()))) {
+                placeholderId = R.mipmap.bg_port;
             }
             WeakReference<ImageView> reference = new WeakReference(imageView);
-            ImageView target = (ImageView) reference.get();
+            ImageView target = reference.get();
             if (target != null) {
-                target.setImageDrawable((Drawable) null);
+                target.setImageDrawable(null);
                 if (!TextUtils.isEmpty(url)) {
-                    Glide.with(imageView.getContext()).load(url).placeholder(placeholderId).diskCacheStrategy(DiskCacheStrategy.RESULT).dontAnimate().into(target);
+                    Glide.with(imageView.getContext()).load(url).placeholder(placeholderId).error(placeholderId).diskCacheStrategy(DiskCacheStrategy.RESULT).dontAnimate().into(target);
+                } else {
+                    imageView.setImageResource(placeholderId);
                 }
             }
         }
@@ -323,7 +336,7 @@ public class Utils {
             //返回版本号
             return packageInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            Logger.e(e.toString());
         }
         return "";
     }
@@ -336,10 +349,12 @@ public class Utils {
         }
         WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = null;
-        try {
-            info = wifi.getConnectionInfo();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (wifi != null) {
+            try {
+                info = wifi.getConnectionInfo();
+            } catch (Exception e) {
+                Logger.e(e.toString());
+            }
         }
 
         if (info == null) {
@@ -391,10 +406,13 @@ public class Utils {
             Enumeration<NetworkInterface> all = NetworkInterface.getNetworkInterfaces();
             ArrayList<NetworkInterface> netAlls = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface nif : netAlls) {
-                if (!nif.getName().toLowerCase().equals("wlan0"))
+                if (!"wlan0".equals(nif.getName().toLowerCase())) {
                     continue;
+                }
                 byte[] macBytes = nif.getHardwareAddress();
-                if (macBytes == null) return "";
+                if (macBytes == null) {
+                    return "";
+                }
                 StringBuilder res1 = new StringBuilder();
                 for (Byte b : macBytes) {
                     res1.append(String.format("%02X:", b));
@@ -405,7 +423,7 @@ public class Utils {
                 return res1.toString();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(e.toString());
         }
 
         return "";
@@ -435,43 +453,49 @@ public class Utils {
             // 获取devicetoken
             TelephonyManager tm = (TelephonyManager) context
                     .getSystemService(Activity.TELEPHONY_SERVICE);
-            token = tm.getDeviceId();
-            // 获取IMSI
-            String imsi = tm.getSubscriberId();
-            // 获取SIM卡序列号
-            String simNumber = tm.getSimSerialNumber();
-            // 获取MAC地址
-            WifiManager wifi = (WifiManager) context.getApplicationContext()
-                    .getSystemService(Context.WIFI_SERVICE);
-            WifiInfo info = wifi.getConnectionInfo();
-            String macAddress = info.getMacAddress();
-            if (null != token) {
-                if (null != imsi && !imsi.trim().equals("")) {
-                    // 若IMSI不为空，则使用deviceID拼接IMSI号作为设备唯一标识上传，不再拼接其他标识
-                    token = token.concat(imsi.trim());
-                } else if (!TextUtils.isEmpty(simNumber)) {
-                    // 若IMSI为空，但sim卡序列号不为空，则使用deviceID拼接sim卡序列号作为设备唯一标识上传，不再拼接其他标识
-                    token = token.concat(simNumber.trim());
-                } else if (!TextUtils.isEmpty(macAddress)) {
-                    // 若IMSI和sim卡序列号都为空，但MAC address不为空，则使用deviceID拼接MAC
-                    // address作为设备唯一标识上传，不再拼接其他标识
-                    token = token.concat(macAddress.trim());
+            if (tm != null) {
+                token = tm.getDeviceId();
+                // 获取IMSI
+                String imsi = tm.getSubscriberId();
+                // 获取SIM卡序列号
+                String simNumber = tm.getSimSerialNumber();
+                // 获取MAC地址
+                WifiManager wifi = (WifiManager) context.getApplicationContext()
+                        .getSystemService(Context.WIFI_SERVICE);
+                if (wifi != null) {
+                    WifiInfo info = wifi.getConnectionInfo();
+                    String macAddress = info.getMacAddress();
+                    if (null != token) {
+                        if (null != imsi && !"".equals(imsi.trim())) {
+                            // 若IMSI不为空，则使用deviceID拼接IMSI号作为设备唯一标识上传，不再拼接其他标识
+                            token = token.concat(imsi.trim());
+                        } else if (!TextUtils.isEmpty(simNumber)) {
+                            // 若IMSI为空，但sim卡序列号不为空，则使用deviceID拼接sim卡序列号作为设备唯一标识上传，不再拼接其他标识
+                            token = token.concat(simNumber.trim());
+                        } else if (!TextUtils.isEmpty(macAddress)) {
+                            // 若IMSI和sim卡序列号都为空，但MAC address不为空，则使用deviceID拼接MAC
+                            // address作为设备唯一标识上传，不再拼接其他标识
+                            token = token.concat(macAddress.trim());
+                        }
+                        token = token.replace(' ', '-');
+                        token = token.replace(':', '-');
+                    } else {
+                        token = Settings.Secure.getString(context.getContentResolver(),
+                                Settings.Secure.ANDROID_ID);
+                    }
+                } else {
+                    token = Settings.Secure.getString(context.getContentResolver(),
+                            Settings.Secure.ANDROID_ID);
                 }
-                token = token.replace(' ', '-');
-                token = token.replace(':', '-');
-            } else {
-                token = Settings.Secure.getString(context.getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(e.toString());
         }
         return token;
     }
 
     public static String getTxtString(Context context, String fileName) throws IOException {// 转码
         File file = new File(DownloadService.downloadPath, fileName);
-//        File file = new File(context.getCacheDir(), fileName);
         if (!file.exists()) {
             InputStream asset = context.getAssets().open(fileName);
             FileOutputStream output = new FileOutputStream(file);
@@ -490,7 +514,7 @@ public class Utils {
         InputStreamReader read = new InputStreamReader(
                 new FileInputStream(file), encoding);//考虑到编码格式
         BufferedReader bufferedReader = new BufferedReader(read);
-        String lineTxt = null;
+        String lineTxt;
         while ((lineTxt = bufferedReader.readLine()) != null) {
             boolean previousWasASpace = false;
             for (char c : (lineTxt + "\n").toCharArray()) {
@@ -541,44 +565,50 @@ public class Utils {
                 int loc = 0;
                 while ((read = bis.read()) != -1) {
                     loc++;
-                    if (read >= 0xF0)
+                    if (read >= 0xF0) {
                         break;
-                    if (0x80 <= read && read <= 0xBF) // 单独出现BF以下的，也算是GBK
+                    }
+                    // 单独出现BF以下的，也算是GBK
+                    if (0x80 <= read && read <= 0xBF) {
                         break;
+                    }
                     if (0xC0 <= read && read <= 0xDF) {
                         read = bis.read();
-                        if (0x80 <= read && read <= 0xBF) // 双字节 (0xC0 - 0xDF)
+                        // 双字节 (0xC0 - 0xDF)
+                        if (0x80 <= read && read <= 0xBF) {
                             // (0x80
                             // - 0xBF),也可能在GB编码内
                             continue;
-                        else
+                        } else {
                             break;
-                    } else if (0xE0 <= read && read <= 0xEF) {// 也有可能出错，但是几率较小
+                        }
+                    } else if (0xE0 <= read && read <= 0xEF) {
+                        // 也有可能出错，但是几率较小
                         read = bis.read();
                         if (0x80 <= read && read <= 0xBF) {
                             read = bis.read();
                             if (0x80 <= read && read <= 0xBF) {
                                 charset = "UTF-8";
                                 break;
-                            } else
+                            } else {
                                 break;
-                        } else
+                            }
+                        } else {
                             break;
+                        }
                     }
                 }
             }
             bis.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(e.toString());
         }
         return charset;
     }
 
-    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-    private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-
     //是否在允许下载的时间段内
     public static boolean isInDownloadTime(PlaylistBodyBean bean) {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         String downloadTimeslice = bean.downloadTimeslice;
         if (TextUtils.isEmpty(downloadTimeslice)) {
             return true;
@@ -586,14 +616,17 @@ public class Utils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         String[] strs = downloadTimeslice.split("-");
-        int _week = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        if (_week < 0)
-            _week = 0;
-        if (_week == 0) _week = 7;
-        if (("," + strs[0] + ",").indexOf("," + _week + ",") >= 0) {
+        int week = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (week < 0) {
+            week = 0;
+        }
+        if (week == 0) {
+            week = 7;
+        }
+        if (("," + strs[0] + ",").indexOf("," + week + ",") >= 0) {
             //判断当前时间是否在工作时间段内
-            Date startDt = null;
-            Date endDt = null;
+            Date startDt;
+            Date endDt;
             Date nowDt = new Date();
             try {
                 startDt = timeFormat.parse(strs[1]);
@@ -615,6 +648,7 @@ public class Utils {
 
     //是否在播放时间段内
     public static boolean isInPlayTime(PlaylistBodyBean bean) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
         String currentDate = simpleDateFormat.format(new Date());
         if (!TextUtils.isEmpty(bean.playDate) && !TextUtils.isEmpty(bean.stopDate)
                 && currentDate.compareTo(bean.playDate) >= 0 && currentDate.compareTo(bean.stopDate) < 0) {
@@ -625,6 +659,7 @@ public class Utils {
 
     //过期需要删除的文件
     public static boolean isNeedDel(Context context, PlaylistBodyBean bean) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
         int timeFile = Integer.parseInt(get(context, KEY_TIME_FILE, "30").toString());
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
@@ -687,7 +722,9 @@ public class Utils {
     //删除播放文件列表中指定文件
     public static void delOneAllBean(Context context, PlaylistBodyBean bean) {
         String allBeanStr = get(context, KEY_PLAY_LIST_ALL, "").toString();
-        if (TextUtils.isEmpty(allBeanStr)) return;
+        if (TextUtils.isEmpty(allBeanStr)) {
+            return;
+        }
         PlaylistResultBean allBean = JSON.parseObject(allBeanStr, PlaylistResultBean.class);
         List<PlaylistBodyBean> allList = allBean.data.items;
         for (int i = 0; i < allList.size(); i++) {
@@ -703,7 +740,9 @@ public class Utils {
     //删除下载文件列表中指定文件
     public static void delOneDownloadBean(Context context, PlaylistBodyBean bean) {
         String allBeanStr = get(context, KEY_PLAY_LIST_DOWNLOAD, "").toString();
-        if (TextUtils.isEmpty(allBeanStr)) return;
+        if (TextUtils.isEmpty(allBeanStr)) {
+            return;
+        }
         PlaylistResultBean allBean = JSON.parseObject(allBeanStr, PlaylistResultBean.class);
         List<PlaylistBodyBean> allList = allBean.data.items;
         for (int i = 0; i < allList.size(); i++) {
@@ -766,7 +805,9 @@ public class Utils {
 
     //将新添加的下载文件添加到下载列表中
     public static void megerDownloadBean(Context context, String jsonStr) {
-        if (TextUtils.isEmpty(jsonStr)) return;
+        if (TextUtils.isEmpty(jsonStr)) {
+            return;
+        }
         String allBeanStr = get(context, KEY_PLAY_LIST_DOWNLOAD, "").toString();
         if (TextUtils.isEmpty(allBeanStr)) {
             allBeanStr = jsonStr;
@@ -808,9 +849,6 @@ public class Utils {
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bmp);
 
-        /** 如果不设置canvas画布为白色，则生成透明 */
-//        c.drawColor(Color.WHITE);
-
         v.layout(0, v.getTop(), w, v.getTop() + h);
         v.draw(c);
 
@@ -834,7 +872,7 @@ public class Utils {
                 // 向后台传递识别数据
                 return Utils.bitmap2String(bmp);
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.e(e.toString());
             }
         }
         return "";
@@ -855,21 +893,20 @@ public class Utils {
 //                while (bitmapSize > (size + size / 3)) {
                 while (bitmapSize > size) {
                     opt.inSampleSize = opt.inSampleSize + 1;
-                    is = Bitmap2IS(bitmap);
+                    is = bitmap2Is(bitmap);
                     if (is != null) {
                         bitmap = BitmapFactory.decodeStream(is, null, opt);
                         bitmapSize = Utils.getSizeOfBitmap(bitmap);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.e(e.toString());
             } finally {
                 if (is != null) {
                     try {
                         is.close();
-                    } catch (RuntimeException rethrown) {
-                        throw rethrown;
                     } catch (Exception ignored) {
+                        Logger.e(ignored.toString());
                     }
                 }
             }
@@ -886,14 +923,14 @@ public class Utils {
         return length;
     }
 
-    private static InputStream Bitmap2IS(Bitmap bm) {
+    private static InputStream bitmap2Is(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream stream = null;
         try {
             bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             stream = new ByteArrayInputStream(baos.toByteArray());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(e.toString());
         }
         return stream;
     }
@@ -908,7 +945,7 @@ public class Utils {
             string = Base64.encodeToString(bytes, Base64.DEFAULT);
             bStream.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(e.toString());
         }
         if (null == string) {
             string = "";
@@ -924,7 +961,7 @@ public class Utils {
         String beanStart = bodyBean.contentType.substring(0, 1);
         String beanMiddle = bodyBean.contentType.substring(1, 2);
         String beanEnd = bodyBean.contentType.substring(2, 3);
-        if (start.contains(beanStart) && middle.equals(beanMiddle) && ((!end.equals("*") && end.equals(beanEnd)) || end.equals("*"))) {
+        if (start.contains(beanStart) && middle.equals(beanMiddle) && ((!"*".equals(end) && end.equals(beanEnd)) || "*".equals(end))) {
             return true;
         }
         return false;
@@ -973,6 +1010,62 @@ public class Utils {
         intent.setAction(DownloadService.ADD_UPDATE_DOWNTASK);
         intent.setPackage(DownloadService.PACKAGE);
         context.startService(intent);
+    }
+
+    @SuppressLint("MissingPermission")
+    public static String getIPAddress(Context context) {
+        if (context != null && context.getSystemService(Context.CONNECTIVITY_SERVICE) != null) {
+            try {
+                NetworkInfo info = null;
+                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                if(connectivityManager != null){
+                    try {
+                        info = connectivityManager.getActiveNetworkInfo();
+                    } catch (Exception e) {
+                        Logger.e(e.toString());
+                    }
+                }
+                if (info != null && info.isConnected()) {
+                    if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
+                        //当前使用2G/3G/4G网络
+                        try {
+                            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                                NetworkInterface intf = en.nextElement();
+                                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                                    InetAddress inetAddress = enumIpAddr.nextElement();
+                                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+                                        return inetAddress.getHostAddress();
+                                    }
+                                }
+                            }
+                        } catch (SocketException e) {
+                            Logger.e(e.toString());
+                        }
+                    } else if (info.getType() == ConnectivityManager.TYPE_WIFI) {
+                        //当前使用无线网络
+                        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                        if (wifiManager != null) {
+                            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                            if (wifiInfo != null) {
+                                //得到IPV4地址
+                                String ipAddress = changeToStringIP(wifiInfo.getIpAddress());
+                                return ipAddress;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Logger.e(e.toString());
+            }
+        }
+        return "";
+    }
+
+    private static String changeToStringIP(int ip) {
+        return (ip & 0xFF) + "." +
+                ((ip >> 8) & 0xFF) + "." +
+                ((ip >> 16) & 0xFF) + "." +
+                (ip >> 24 & 0xFF);
     }
 
     /**

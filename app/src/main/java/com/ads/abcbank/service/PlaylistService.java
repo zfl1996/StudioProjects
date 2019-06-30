@@ -14,7 +14,6 @@ import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
-import com.ads.abcbank.view.IView;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Date;
@@ -30,6 +29,7 @@ public class PlaylistService extends Service {
     }
 
     /*每次调用startService启动该服务都会执行*/
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Logger.e("TAG", "启动获取下载列表服务：" + new Date().toString());
@@ -53,6 +53,8 @@ public class PlaylistService extends Service {
                             ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
                         }
                     }
+                    break;
+                default:
                     break;
             }
         }

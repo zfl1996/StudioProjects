@@ -3,19 +3,15 @@ package com.ads.abcbank.fragment;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.ScrollView;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.ActivityManager;
-import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTabFragment;
 import com.ads.abcbank.view.TempView;
@@ -57,7 +53,9 @@ public class Tab3Fragment extends BaseTabFragment {
 
     @Override
     public void initData() {
-        if (tlTab1 == null || mActivity == null || bean == null || bean.entry == null) return;
+        if (tlTab1 == null || mActivity == null || bean == null || bean.entry == null) {
+            return;
+        }
         tlTab1.removeAllViews();
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.BIAOFE.BIAOFEItem item = bean.entry.get(i);
@@ -67,7 +65,7 @@ public class Tab3Fragment extends BaseTabFragment {
             final TextView value2 = rowView.findViewById(R.id.tv_value2);
             final TextView value3 = rowView.findViewById(R.id.tv_value3);
             if (!TextUtils.isEmpty(item.placeholder)) {
-                key.setText(item.placeholder + item.currCName);
+                key.setText(item.placeholder.replace("\\t", "\t") + item.currCName);
             } else {
                 key.setText(item.currCName);
             }
@@ -140,12 +138,12 @@ public class Tab3Fragment extends BaseTabFragment {
                                 .toString()) * 1000;
             } catch (Exception e) {
                 delayTime = 5000;
-//                Logger.e("delayTime", e.toString());
             }
-            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext())
+            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                 tempView.nextPlay();
-            else
+            } else {
                 handler.postDelayed(runnable, delayTime);
+            }
         }
     };
 

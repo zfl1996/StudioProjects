@@ -33,17 +33,17 @@ public class Temp6Activity extends BaseActivity implements IView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp6);
         tvTemp = findViewById(R.id.tv_temp);
-//        tvTemp.setShowStaticData(true);
         tvTemp.setType("T");
         tvTemp.getImage().setVisibility(View.GONE);
-//        tvTemp.setImageSrc(R.mipmap.h_zyxykfq);
         setiView(this);
         startServices("T");
     }
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
-        tvTemp.setNeedUpdate(true);
+        if (tvTemp != null) {
+            tvTemp.setNeedUpdate(true);
+        }
     }
 
     @Override

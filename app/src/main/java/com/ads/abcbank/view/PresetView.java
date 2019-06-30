@@ -20,6 +20,7 @@ import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.fragment.Tab1Fragment;
 import com.ads.abcbank.fragment.Tab2Fragment;
 import com.ads.abcbank.fragment.Tab3Fragment;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
 
@@ -34,7 +35,7 @@ import java.util.List;
 public class PresetView extends LinearLayout {
 
     private List<Fragment> fragmentList;
-    private List<String> list_Title;
+    private List<String> listTitle;
     private ViewPager viewpager;
     private TabLayout tablayout;
     private Tab1Fragment tab1Fragment;
@@ -58,7 +59,7 @@ public class PresetView extends LinearLayout {
         initView();
     }
 
-    private void initView() {
+    private synchronized void initView() {
         View view = LayoutInflater.from(context).inflate(R.layout.view_preset, null);
         viewpager = view.findViewById(R.id.viewpager_preset);
         tablayout = view.findViewById(R.id.tablayout);
@@ -68,12 +69,13 @@ public class PresetView extends LinearLayout {
         tab3Fragment = new Tab3Fragment();
 
         fragmentList = new ArrayList<>();
-        list_Title = new ArrayList<>();
+        listTitle = new ArrayList<>();
 
 
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
         if (TextUtils.isEmpty(json)) {
-            json = Utils.getStringFromAssets("json.json", context);
+            return;
+//            json = Utils.getStringFromAssets("json.json", context);
         }
         PresetBean bean = JSON.parseObject(json, PresetBean.class);
         tab1Fragment.setBean(bean.data.saveRate);
@@ -84,19 +86,19 @@ public class PresetView extends LinearLayout {
             fragmentList.add(tab1Fragment);
             StringBuffer stringBuffer = new StringBuffer(bean.data.saveRate.title);
             stringBuffer.insert(3, "\n");
-            list_Title.add(stringBuffer.toString());
+            listTitle.add(stringBuffer.toString());
         }
         if (bean.data.loanRate.enable) {
             fragmentList.add(tab2Fragment);
             StringBuffer stringBuffer = new StringBuffer(bean.data.loanRate.title);
             stringBuffer.insert(3, "\n");
-            list_Title.add(stringBuffer.toString());
+            listTitle.add(stringBuffer.toString());
         }
         if (bean.data.buyInAndOutForeignExchange.enable) {
             fragmentList.add(tab3Fragment);
             StringBuffer stringBuffer = new StringBuffer(bean.data.buyInAndOutForeignExchange.title);
             stringBuffer.insert(3, "\n");
-            list_Title.add(stringBuffer.toString());
+            listTitle.add(stringBuffer.toString());
         }
 
         setTabWidth(tablayout);
@@ -115,12 +117,20 @@ public class PresetView extends LinearLayout {
         tablayout.setupWithViewPager(viewpager);//此方法就是让tablayout和ViewPager联动
         viewpager.setCurrentItem(0);
         viewpager.setOffscreenPageLimit(3);
+        try {
+            presetPagerAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Logger.e(e.toString());
+        }
     }
 
-    public void updatePresetDate() {
+    public synchronized void updatePresetDate() {
+        if (presetPagerAdapter == null) {
+            return;
+        }
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
         if (TextUtils.isEmpty(json)) {
-            json = Utils.getStringFromAssets("json.json", context);
+            return;
         }
         PresetBean bean = JSON.parseObject(json, PresetBean.class);
         tab1Fragment.setBean(bean.data.saveRate);
@@ -128,26 +138,34 @@ public class PresetView extends LinearLayout {
         tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
 
         fragmentList.clear();
-        list_Title.clear();
+        listTitle.clear();
         if (bean.data.saveRate.enable) {
             fragmentList.add(tab1Fragment);
             StringBuffer stringBuffer = new StringBuffer(bean.data.saveRate.title);
             stringBuffer.insert(3, "\n");
-            list_Title.add(stringBuffer.toString());
+            listTitle.add(stringBuffer.toString());
         }
         if (bean.data.loanRate.enable) {
             fragmentList.add(tab2Fragment);
             StringBuffer stringBuffer = new StringBuffer(bean.data.loanRate.title);
             stringBuffer.insert(3, "\n");
-            list_Title.add(stringBuffer.toString());
+            listTitle.add(stringBuffer.toString());
         }
         if (bean.data.buyInAndOutForeignExchange.enable) {
             fragmentList.add(tab3Fragment);
             StringBuffer stringBuffer = new StringBuffer(bean.data.buyInAndOutForeignExchange.title);
             stringBuffer.insert(3, "\n");
-            list_Title.add(stringBuffer.toString());
+            listTitle.add(stringBuffer.toString());
         }
-        presetPagerAdapter.notifyDataSetChanged();
+        if (presetPagerAdapter == null) {
+            presetPagerAdapter = new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager());
+            viewpager.setAdapter(presetPagerAdapter);
+        }
+        try {
+            presetPagerAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Logger.e(e.toString());
+        }
     }
 
     private Handler handler = new Handler();
@@ -159,16 +177,18 @@ public class PresetView extends LinearLayout {
                         Utils.get(context, Utils.KEY_TIME_TAB_PRESET, "5")
                                 .toString()) * 1000;
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
 
             try {
                 int item = viewpager.getCurrentItem();
-                if (item < list_Title.size() - 1) {
+                if (item < listTitle.size() - 1) {
                     viewpager.setCurrentItem(item + 1);
                 } else {
                     viewpager.setCurrentItem(0);
                 }
             } catch (Exception e) {
+                Logger.e(e.toString());
             }
             handler.postDelayed(runnable, delayTime);
         }
@@ -176,8 +196,8 @@ public class PresetView extends LinearLayout {
 
     private View getTabView(int currentPosition) {
         View view = LayoutInflater.from(context).inflate(R.layout.tab_item, null);
-        TextView textView = (TextView) view.findViewById(R.id.tab_item_textview);
-        textView.setText(list_Title.get(currentPosition));
+        TextView textView = view.findViewById(R.id.tab_item_textview);
+        textView.setText(listTitle.get(currentPosition));
         return view;
     }
 
@@ -200,7 +220,7 @@ public class PresetView extends LinearLayout {
 
         @Override
         public int getCount() {
-            return list_Title.size();
+            return listTitle.size();
         }
 
         /**
@@ -211,7 +231,7 @@ public class PresetView extends LinearLayout {
          */
         @Override
         public CharSequence getPageTitle(int position) {
-            return list_Title.get(position);
+            return listTitle.get(position);
         }
 
         @Override
@@ -242,7 +262,7 @@ public class PresetView extends LinearLayout {
                         tabView.setPadding(0, 0, 0, 0);
 
                         //因为我想要的效果是   字多宽线就多宽，所以测量mTextView的宽度
-                        int width = 0;
+                        int width;
                         width = mTextView.getWidth();
                         if (width == 0) {
                             mTextView.measure(0, 0);
@@ -261,9 +281,9 @@ public class PresetView extends LinearLayout {
                     }
 
                 } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
+                    Logger.e(e.toString());
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Logger.e(e.toString());
                 }
             }
         });

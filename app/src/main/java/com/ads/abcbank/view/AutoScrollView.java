@@ -97,6 +97,8 @@ public class AutoScrollView extends ScrollView {
                 //不要问我上面10怎么来的，我大概估算的，正常一点应该是7或8吧，我故意让手动滑动的时候少一丢
                 scrollTo(0, paddingTop);
                 break;
+            default:
+                break;
         }
         return true;
     }
@@ -169,6 +171,9 @@ public class AutoScrollView extends ScrollView {
                     if (!hadStop) {
                         mHandler.sendEmptyMessageDelayed(MSG_SCROLL, fistTimeScroll);
                     }
+                    break;
+                default:
+                    break;
 
             }
 
@@ -193,7 +198,6 @@ public class AutoScrollView extends ScrollView {
         View childAt = getChildAt(0);
         int childMeasuredHeight = childAt.getMeasuredHeight(); //获取子控件的高度
         int measuredHeight = getMeasuredHeight();//获取ScrollView的高度
-//        Log.e("onMeasure", "childMeasuredHeight:" + childMeasuredHeight + "  ,measuredHeight:" + measuredHeight);
         if (childMeasuredHeight > measuredHeight) {  //如果子控件的高度大于父控件才需要滚动
             scrollAble = true;
             paddingTop = 0;

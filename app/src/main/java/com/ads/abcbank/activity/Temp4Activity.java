@@ -37,9 +37,6 @@ public class Temp4Activity extends BaseActivity implements IView {
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp2 = findViewById(R.id.tv_temp2);
 
-//        tvTemp.setShowStaticData(true);
-//        tvTemp2.setShowStaticData(true);
-
         tvTemp.setType("H,L");
         tvTemp2.setType("N");
 
@@ -53,8 +50,12 @@ public class Temp4Activity extends BaseActivity implements IView {
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
-        tvTemp.setNeedUpdate(true);
-        tvTemp2.setNeedUpdate(true);
+        if (tvTemp != null) {
+            tvTemp.setNeedUpdate(true);
+        }
+        if (tvTemp2 != null) {
+            tvTemp2.setNeedUpdate(true);
+        }
     }
 
     @Override

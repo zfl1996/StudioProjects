@@ -1,10 +1,7 @@
 package com.ads.abcbank.activity;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,16 +14,11 @@ import com.ads.abcbank.view.PresetView;
 import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import cn.jzvd.JZUtils;
 import cn.jzvd.JzvdStd;
 
 public class Temp1Activity extends BaseActivity implements IView {
@@ -53,7 +45,6 @@ public class Temp1Activity extends BaseActivity implements IView {
                 initViews();
             }
         }, 100);
-//        initViews();
         setiView(this);
         startServices("M,H,P,N,E,L,R");
     }
@@ -91,6 +82,8 @@ public class Temp1Activity extends BaseActivity implements IView {
                 case 7:
                     weekStr = "星期六";
                     break;
+                default:
+                    break;
             }
             tvTime.setText(timeFormat.format(calendar.getTime()));
             tvDate.setText(weekStr + "\n" + dateFormat.format(calendar.getTime()));
@@ -104,62 +97,48 @@ public class Temp1Activity extends BaseActivity implements IView {
         tvTime = findViewById(R.id.tv_time);
         tvDate = findViewById(R.id.tv_date);
         tvTemp = findViewById(R.id.tv_temp);
-//        videoplayer = findViewById(R.id.videoplayer);
-//        cpAssertVideoToLocalPath();
-//        JZDataSource jzDataSource = null;
-//        try {
-//            jzDataSource = new JZDataSource(getAssets().openFd("local_video.mp4"));
-//            jzDataSource.title = "";
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        videoplayer.setUp(jzDataSource
-//                , JzvdStd.SCREEN_NORMAL);
-//        Glide.with(this).load(R.drawable.app_icon_your_company).into(videoplayer.thumbImageView);
-//        videoplayer.setMediaInterface(new JZMediaSystemAssertFolder(videoplayer));
         marqueeTextView.invalidate();
         handler.post(timeRunnable);
         tvTemp.setType("M,H,P,N,E,L,R");
         tvTemp.getImage().setVisibility(View.GONE);
         tempPresenter = new TempPresenter(this, this);
-        tempPresenter.getPreset();
-        tempPresenter.getPlayList();
-
-//        videoplayer.startVideo();
-        if (marqueeTextView != null)
+        if (marqueeTextView != null) {
             marqueeTextView.startScroll();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         JzvdStd.goOnPlayOnPause();
-        if (marqueeTextView != null)
+        if (marqueeTextView != null) {
             marqueeTextView.pauseScroll();
+        }
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (marqueeTextView != null)
+        if (marqueeTextView != null) {
             marqueeTextView.startScroll();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (marqueeTextView != null)
+        if (marqueeTextView != null) {
             marqueeTextView.resumeScroll();
+        }
     }
-
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (marqueeTextView != null)
+        if (marqueeTextView != null) {
             marqueeTextView.stopScroll();
+        }
     }
 
     @Override
@@ -169,7 +148,9 @@ public class Temp1Activity extends BaseActivity implements IView {
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
-        tvTemp.setNeedUpdate(true);
+        if (tvTemp != null) {
+            tvTemp.setNeedUpdate(true);
+        }
     }
 
     @Override
@@ -177,46 +158,11 @@ public class Temp1Activity extends BaseActivity implements IView {
 
     }
 
-    public void cpAssertVideoToLocalPath() {
-        JZUtils.verifyStoragePermissions(this);
-        try {
-            InputStream myInput;
-            OutputStream myOutput = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/Camera/local_video.mp4");
-            myInput = this.getAssets().open("local_video.mp4");
-            byte[] buffer = new byte[1024];
-            int length = myInput.read(buffer);
-            while (length > 0) {
-                myOutput.write(buffer, 0, length);
-                length = myInput.read(buffer);
-            }
-
-            myOutput.flush();
-            myInput.close();
-            myOutput.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void updatePresetDate(JSONObject jsonObject) {
-        presetView.updatePresetDate();
-    }
-
-
-    public class JZVideoPlayerStandardLoopVideo extends JzvdStd {
-        public JZVideoPlayerStandardLoopVideo(Context context) {
-            super(context);
-        }
-
-        public JZVideoPlayerStandardLoopVideo(Context context, AttributeSet attrs) {
-            super(context, attrs);
-        }
-
-        @Override
-        public void onAutoCompletion() {
-            super.onAutoCompletion();
-            startVideo();
+        if (presetView != null) {
+            presetView.updatePresetDate();
         }
     }
+
 }

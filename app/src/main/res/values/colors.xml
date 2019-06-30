@@ -6,4 +6,19 @@
     <color name="selected_background">#ffaa3f</color>
     <color name="default_background">#3d3d3d</color>
     <color name="bg_btn_back">#04c967</color>
+    <color name="transparent">#00000000</color>
+    <!--keyborad-->
+    <color name="key_title_bg">#e3e6ec</color>
+    <color name="key_btn_bg_white">#ffffff</color>
+    <color name="key_btn_bg_press">#e3e6ec</color>
+    <color name="key_btn_bg_gray">#bbc1ca</color>
+    <color name="key_divider">#e0e0e0</color>
+    <color name="key_safe_bg_white">#ffffff</color>
+    <color name="key_safe_bg_press">#e3e6ec</color>
+    <color name="key_safe_bg_gray">#bbc1ca</color>
+    <color name="key_safe_stroke">#cccccc</color>
+    <color name="key_safe_finish">#d33b30</color>
+    <color name="key_safe_title">#e3e6ec</color>
+    <color name="text_color_333333">#333</color>
+    <color name="text_color_ffffff">#fff</color>
 </resources>

@@ -127,8 +127,9 @@ public class MarqueeTextView extends TextView {
      * 继续滚动
      */
     public void resumeScroll() {
-        if (!mPaused)
+        if (!mPaused) {
             return;
+        }
 
         if (mScrollDirection == DIRECTION_HOR) {
 
@@ -142,7 +143,6 @@ public class MarqueeTextView extends TextView {
             }
             int scrollingLen = calculateScrollingLen();
             final int distance = scrollingLen - mXPaused;
-//        final int duration = (Double.valueOf(mRollingInterval * distance * 1.00000 / scrollingLen)).intValue();
             final int duration = distance * 5;
             if (mFirst) {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -169,7 +169,6 @@ public class MarqueeTextView extends TextView {
             }
             int scrollingLen = calculateScrollingLen();
             final int distance = scrollingLen - mXPaused;
-//        final int duration = (Double.valueOf(mRollingInterval * distance * 1.00000 / scrollingLen)).intValue();
             final int duration = distance * 5;
             if (mFirst) {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -193,11 +192,13 @@ public class MarqueeTextView extends TextView {
      * 暂停滚动
      */
     public void pauseScroll() {
-        if (null == mScroller)
+        if (null == mScroller) {
             return;
+        }
 
-        if (mPaused)
+        if (mPaused) {
             return;
+        }
 
         mPaused = true;
 
@@ -233,7 +234,9 @@ public class MarqueeTextView extends TextView {
     @Override
     public void computeScroll() {
         super.computeScroll();
-        if (null == mScroller) return;
+        if (null == mScroller) {
+            return;
+        }
         if (mScroller.isFinished() && (!mPaused)) {
             if (mScrollMode == SCROLL_ONCE) {
                 stopScroll();

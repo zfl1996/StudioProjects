@@ -5,18 +5,16 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.activity.WebViewActivity;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.service.DownloadService;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.AutoScrollView;
 import com.ads.abcbank.view.BaseTempFragment;
-import com.ads.abcbank.view.MarqueeVerticalTextView;
-import com.ads.abcbank.view.MarqueeVerticalTextViewClickListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +47,10 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
                 if (file.exists()) {
                     content.setText(Utils.getTxtString(context, bean.name));
                 } else {
-                    content.setText(Utils.getTxtString(context, "aaa.txt"));
+                    if (tempView != null) {
+                        tempView.nextPlay();
+                    }
+                    return;
                 }
                 scrollView.setAutoToScroll(true);//设置可以自动滑动
                 scrollView.setFistTimeScroll(1000);//设置第一次自动滑动的时间
@@ -76,6 +77,7 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
                     }
                 });
             } catch (IOException e) {
+                Logger.e(e.toString());
             }
             if (!TextUtils.isEmpty(bean.onClickLink)) {
                 view.setOnClickListener(this);
@@ -104,20 +106,11 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
         }
     }
 
-    //
-//    private long delayTime = 5000;
     private Handler handler = new Handler();
-//    private Runnable runnable = new Runnable() {
-//        @Override
-//        public void run() {
-//            if (tempView != null && isVisiable)
-//                tempView.nextPlay();
-//        }
-//    };
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        this.bean = bean;
+        TxtFragment.bean = bean;
         initData();
         showQRs(bean);
     }

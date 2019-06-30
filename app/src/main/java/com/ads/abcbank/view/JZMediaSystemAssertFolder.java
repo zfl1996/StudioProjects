@@ -1,4 +1,5 @@
 package com.ads.abcbank.view;
+
 import android.content.res.AssetFileDescriptor;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
@@ -9,6 +10,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.RequiresApi;
 import android.view.Surface;
+
+import com.ads.abcbank.utils.Logger;
 
 import cn.jzvd.JZMediaInterface;
 import cn.jzvd.Jzvd;
@@ -54,7 +57,7 @@ public class JZMediaSystemAssertFolder extends JZMediaInterface implements Media
                 mediaPlayer.prepareAsync();
                 mediaPlayer.setSurface(new Surface(jzvd.textureView.getSurfaceTexture()));
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.e(e.toString());
             }
         });
     }
@@ -80,7 +83,7 @@ public class JZMediaSystemAssertFolder extends JZMediaInterface implements Media
             try {
                 mediaPlayer.seekTo((int) time);
             } catch (IllegalStateException e) {
-                e.printStackTrace();
+                Logger.e(e.toString());
             }
         });
     }
@@ -119,9 +122,13 @@ public class JZMediaSystemAssertFolder extends JZMediaInterface implements Media
 
     @Override
     public void setVolume(float leftVolume, float rightVolume) {
-        if (mMediaHandler == null) return;
+        if (mMediaHandler == null) {
+            return;
+        }
         mMediaHandler.post(() -> {
-            if (mediaPlayer != null) mediaPlayer.setVolume(leftVolume, rightVolume);
+            if (mediaPlayer != null) {
+                mediaPlayer.setVolume(leftVolume, rightVolume);
+            }
         });
     }
 
