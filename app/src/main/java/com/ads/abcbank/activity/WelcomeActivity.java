@@ -141,7 +141,14 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
     @Override
     public void init(String jsonObject) {
         if (!TextUtils.isEmpty(jsonObject)) {
-            InitResultBean initResultBean = JSON.parseObject(jsonObject, InitResultBean.class);
+            InitResultBean initResultBean;
+            try {
+                initResultBean = JSON.parseObject(jsonObject, InitResultBean.class);
+            } catch (Exception e) {
+                ToastUtil.showToastLong(this, "初始化返回结果异常：" + jsonObject);
+                Logger.e("初始化返回结果异常：" + jsonObject);
+                return;
+            }
             if ("0".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, "初始化成功");
 

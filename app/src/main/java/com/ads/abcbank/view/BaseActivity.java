@@ -29,6 +29,7 @@ import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Logger;
+import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -242,7 +243,12 @@ public class BaseActivity extends AppCompatActivity {
                     Logger.e("getCmdPoll", "获取轮询命令返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(BaseActivity.this, Utils.KEY_CMD_POLL, msg.obj);
-                        getCmdResult(JSON.parseObject(msg.obj.toString(), CmdpollResultBean.class));
+                        try {
+                            getCmdResult(JSON.parseObject(msg.obj.toString(), CmdpollResultBean.class));
+                        } catch (Exception e) {
+                            ToastUtil.showToastLong(BaseActivity.this, "获取轮询命令返回结果异常：" + msg.obj.toString());
+                            Logger.e("获取轮询命令返回结果异常：" + msg.obj.toString());
+                        }
                     }
                     break;
                 case 1:

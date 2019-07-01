@@ -384,7 +384,14 @@ public class MainActivity extends BaseActivity implements IMainView {
     @Override
     public void init(String jsonObject) {
         if (!TextUtils.isEmpty(jsonObject)) {
-            InitResultBean initResultBean = JSON.parseObject(jsonObject, InitResultBean.class);
+            InitResultBean initResultBean;
+            try {
+                initResultBean = JSON.parseObject(jsonObject, InitResultBean.class);
+            } catch (Exception e) {
+                ToastUtil.showToastLong(this, "初始化返回结果异常：" + jsonObject);
+                Logger.e("初始化返回结果异常：" + jsonObject);
+                return;
+            }
             if ("0".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, "初始化成功");
 
@@ -486,7 +493,13 @@ public class MainActivity extends BaseActivity implements IMainView {
     public void register(String jsonObject) {
         ResultBean resultBean;
         if (!TextUtils.isEmpty(jsonObject)) {
-            resultBean = JSON.parseObject(jsonObject, ResultBean.class);
+            try {
+                resultBean = JSON.parseObject(jsonObject, ResultBean.class);
+            } catch (Exception e) {
+                ToastUtil.showToastLong(this, "注册返回结果异常：" + jsonObject);
+                Logger.e("注册返回结果异常：" + jsonObject);
+                return;
+            }
         } else {
             ToastUtil.showToastLong(this, "注册失败");
             return;
