@@ -434,18 +434,14 @@ public class KeyboardSafeView extends LinearLayout implements View.OnTouchListen
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (view.getTag() != null) {
                 if (!isSpecialLetter((String) view.getTag())) {
-                    if (isNumber((String) view.getTag())) {
-                        view.setBackgroundResource(R.drawable.selector_key_num_btn_bg);
-                    } else {
-                        String tag = view.getTag().toString();
-                        if (editText != null && !TextUtils.isEmpty(tag)) {
-                            if (!TextUtils.isEmpty(editText.getText())) {
-                                editText.setText(editText.getText().toString() + tag);
-                            } else {
-                                editText.setText(tag);
-                            }
-                            editText.setSelection(editText.getText().toString().length());
+                    String tag = view.getTag().toString();
+                    if (editText != null && !TextUtils.isEmpty(tag)) {
+                        if (!TextUtils.isEmpty(editText.getText())) {
+                            editText.setText(editText.getText().toString() + tag);
+                        } else {
+                            editText.setText(tag);
                         }
+                        editText.setSelection(editText.getText().toString().length());
                     }
                 } else {
                     if (view.getTag().equals(KeyTpye.KEY_UP)) {

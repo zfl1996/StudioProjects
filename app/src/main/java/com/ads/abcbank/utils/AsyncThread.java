@@ -62,7 +62,7 @@ public class AsyncThread {
                     if (response.isSuccessful()) {//回调的方法执行在子线程。
                         Message msg = handler.obtainMessage(wath);
                         try {
-                            msg.obj = response.body();
+                            msg.obj = response.body().string();
                             handler.sendMessage(msg);
                         } catch (Exception e) {
                             msg.obj = null;
