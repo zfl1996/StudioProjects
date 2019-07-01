@@ -81,30 +81,33 @@ public class TempView extends LinearLayout {
         initView();
     }
 
-    private void initView() {
+    private synchronized void initView() {
+        if (image == null || viewpager == null) {
+            View view = LayoutInflater.from(context).inflate(R.layout.view_temp, null);
+            image = view.findViewById(R.id.image);
+            viewpager = view.findViewById(R.id.viewpager);
+            Utils.loadImage(image, "");
+            addView(view);
+        }
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
         if (!TextUtils.isEmpty(json)) {
             try {
                 playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
             } catch (Exception e) {
                 Logger.e("解析播放列表出错" + json);
-                return;
             }
         }
-        View view = LayoutInflater.from(context).inflate(R.layout.view_temp, null);
-        image = view.findViewById(R.id.image);
-        viewpager = view.findViewById(R.id.viewpager);
-
-        Utils.loadImage(image, "");
-        addView(view);
     }
 
     public void setImageSrc(int src) {
         image.setImageResource(src);
     }
 
-    public void setType(String type) {
+    public synchronized void setType(String type) {
         this.type = type;
+        if (image == null || viewpager == null) {
+            initView();
+        }
         addTempViewList();
         Activity activity = (Activity) getContext();
         if (activity != null) {
