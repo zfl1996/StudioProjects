@@ -113,14 +113,16 @@ public class PresetView extends LinearLayout {
         }
         addView(view);
         presetPagerAdapter = new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager());
-        viewpager.setAdapter(presetPagerAdapter);
-        tablayout.setupWithViewPager(viewpager);//此方法就是让tablayout和ViewPager联动
-        viewpager.setCurrentItem(0);
-        viewpager.setOffscreenPageLimit(3);
-        try {
-            presetPagerAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            Logger.e(e.toString());
+        if (viewpager != null) {
+            viewpager.setAdapter(presetPagerAdapter);
+            tablayout.setupWithViewPager(viewpager);//此方法就是让tablayout和ViewPager联动
+            viewpager.setCurrentItem(0);
+            viewpager.setOffscreenPageLimit(3);
+            try {
+                presetPagerAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Logger.e(e.toString());
+            }
         }
     }
 
@@ -159,7 +161,9 @@ public class PresetView extends LinearLayout {
         }
         if (presetPagerAdapter == null) {
             presetPagerAdapter = new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager());
-            viewpager.setAdapter(presetPagerAdapter);
+            if (viewpager != null) {
+                viewpager.setAdapter(presetPagerAdapter);
+            }
         }
         try {
             presetPagerAdapter.notifyDataSetChanged();

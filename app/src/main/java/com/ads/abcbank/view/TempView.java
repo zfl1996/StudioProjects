@@ -84,7 +84,12 @@ public class TempView extends LinearLayout {
     private void initView() {
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
         if (!TextUtils.isEmpty(json)) {
-            playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
+            try {
+                playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
+            } catch (Exception e) {
+                Logger.e("解析播放列表出错" + json);
+                return;
+            }
         }
         View view = LayoutInflater.from(context).inflate(R.layout.view_temp, null);
         image = view.findViewById(R.id.image);
@@ -134,12 +139,14 @@ public class TempView extends LinearLayout {
             fragmentList.add(new ImageFragment());
         }
         willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
-        viewpager.setAdapter(willPagerAdapter);
-        viewpager.setCurrentItem(0);
-        try {
-            willPagerAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            Logger.e(e.toString());
+        if (viewpager != null) {
+            viewpager.setAdapter(willPagerAdapter);
+            viewpager.setCurrentItem(0);
+            try {
+                willPagerAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Logger.e(e.toString());
+            }
         }
     }
 

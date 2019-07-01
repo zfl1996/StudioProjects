@@ -97,12 +97,14 @@ public class TempView2 extends LinearLayout {
             fragmentList.add(new ImageFragment());
         }
         willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
-        viewpager.setAdapter(willPagerAdapter);
-        viewpager.setCurrentItem(0);
-        try {
-            willPagerAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            Logger.e(e.toString());
+        if (viewpager != null) {
+            viewpager.setAdapter(willPagerAdapter);
+            viewpager.setCurrentItem(0);
+            try {
+                willPagerAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Logger.e(e.toString());
+            }
         }
     }
 
