@@ -208,7 +208,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             try {
                 s = mLeakCheck.checkLeak();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.e("闪退",e.toString());
+//                e.printStackTrace();
             }
             if (TextUtils.isEmpty(s)) {
                 return;
@@ -641,7 +642,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         // 打印异常信息
-        e.printStackTrace();
+//        e.printStackTrace();
+        Log.e("闪退",e.toString());
         // 我们没有处理异常 并且默认异常处理不为空 则交给系统处理
         if (!handleException(t, e) && mDefaultHandler != null) {
             // 系统处理  
@@ -729,7 +731,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 mDefaultHandler.uncaughtException(t, ex);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("闪退",e.toString());
+//            e.printStackTrace();
         }
     }
 

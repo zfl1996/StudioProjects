@@ -254,6 +254,7 @@ public class BaseActivity extends AppCompatActivity {
                 case 1:
                     Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
+                        Utils.put(BaseActivity.this, Utils.KEY_PLAY_LIST, msg.obj.toString());
                         FileUtil.writeJsonToFile(msg.obj.toString());
                         if (Utils.getNewPlayList(BaseActivity.this, msg.obj.toString())) {
                             getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));

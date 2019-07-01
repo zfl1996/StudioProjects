@@ -98,7 +98,7 @@ public class CmdService extends Service {
                 case 0:
                     Logger.e("getCmdPoll", "获取cmdpoll轮询命令返回数据====" + msg.obj);
                     if (msg.obj != null) {
-                        Utils.put(CmdService.this, Utils.KEY_CMD_POLL, msg.obj);
+                        Utils.put(CmdService.this, Utils.KEY_CMD_POLL, msg.obj.toString());
                         Activity activity = ActivityManager.getInstance().getTopActivity();
                         if (activity instanceof BaseActivity) {
                             ((BaseActivity) activity).getCmdResult(JSON.parseObject(msg.obj.toString(), CmdpollResultBean.class));
@@ -121,7 +121,7 @@ public class CmdService extends Service {
                 case 2:
                     Logger.e("getPreset", "获取预设汇率列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
-                        Utils.put(CmdService.this, Utils.KEY_PRESET, msg.obj);
+                        Utils.put(CmdService.this, Utils.KEY_PRESET, msg.obj.toString());
                         Activity activity = ActivityManager.getInstance().getTopActivity();
                         if (activity instanceof BaseActivity) {
                             ((BaseActivity) activity).getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));

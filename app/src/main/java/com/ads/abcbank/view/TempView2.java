@@ -42,7 +42,7 @@ public class TempView2 extends LinearLayout {
     private String type;
     private ViewPager viewpager;
     private List<BaseTempFragment> fragmentList = new ArrayList<>();
-    private PlaylistResultBean playlistBean;
+    private List<PlaylistBodyBean> playlistBean;
     private ImageView image;
     private boolean needUpdate;
     private WillPagerAdapter willPagerAdapter;
@@ -84,7 +84,7 @@ public class TempView2 extends LinearLayout {
         }
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
         if (!TextUtils.isEmpty(json)) {
-            playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
+            playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
         }
     }
 
@@ -99,7 +99,9 @@ public class TempView2 extends LinearLayout {
         }
         addTempViewList();
         if (fragmentList.size() == 0) {
-            fragmentList.add(new ImageFragment());
+            ImageFragment imageFragment = new ImageFragment();
+            imageFragment.setTempView2(this);
+            fragmentList.add(imageFragment);
         }
         willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
         if (viewpager != null) {
@@ -213,16 +215,16 @@ public class TempView2 extends LinearLayout {
     }
 
     private synchronized void addTempViewList() {
-        if (playlistBean == null || playlistBean.data == null || playlistBean.data.items == null) {
+        if (playlistBean == null) {
             return;
         }
         fragmentList.clear();
 
         List<PlaylistBodyBean> hotLists = new ArrayList<>();
         List<PlaylistBodyBean> normalLists = new ArrayList<>();
-        for (int i = 0; i < playlistBean.data.items.size(); i++) {
-            if ("1".equals(playlistBean.data.items.get(i).isUrg)) {
-                hotLists.add(playlistBean.data.items.get(i));
+        for (int i = 0; i < playlistBean.size(); i++) {
+            if ("1".equals(playlistBean.get(i).isUrg)) {
+                hotLists.add(playlistBean.get(i));
             }
         }
         addPlayList(hotLists);
@@ -234,9 +236,9 @@ public class TempView2 extends LinearLayout {
             }
             return;
         }
-        for (int i = 0; i < playlistBean.data.items.size(); i++) {
-            if (!"1".equals(playlistBean.data.items.get(i).isUrg)) {
-                normalLists.add(playlistBean.data.items.get(i));
+        for (int i = 0; i < playlistBean.size(); i++) {
+            if (!"1".equals(playlistBean.get(i).isUrg)) {
+                normalLists.add(playlistBean.get(i));
             }
         }
         addPlayList(normalLists);
@@ -248,9 +250,8 @@ public class TempView2 extends LinearLayout {
             fragmentList.clear();
             String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
             if (!TextUtils.isEmpty(json)) {
-                playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
+                playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
             }
-            playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
             setType(type);
         } else {
             int current = viewpager.getCurrentItem();
@@ -266,7 +267,7 @@ public class TempView2 extends LinearLayout {
                 fragmentList.clear();
                 String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
                 if (!TextUtils.isEmpty(json)) {
-                    playlistBean = JSON.parseObject(json, PlaylistResultBean.class);
+                    playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
                 }
                 setType(type);
             }

@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:maxWidth="90000px"
-        android:scaleType="centerInside" />
+        android:scaleType="fitCenter" />
 
     <include layout="@layout/item_qrs_layout" />
 </FrameLayout>

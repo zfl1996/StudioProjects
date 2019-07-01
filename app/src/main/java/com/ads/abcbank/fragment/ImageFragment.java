@@ -39,6 +39,8 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
             } else {
                 view.setOnClickListener(null);
             }
+        } else {
+            Utils.loadImage(content, "");
         }
     }
 
