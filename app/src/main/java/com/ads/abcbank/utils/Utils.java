@@ -608,7 +608,7 @@ public class Utils {
 
     //是否在允许下载的时间段内
     public static boolean isInDownloadTime(PlaylistBodyBean bean) {
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         String downloadTimeslice = bean.downloadTimeslice;
         if (TextUtils.isEmpty(downloadTimeslice)) {
             return true;
@@ -636,7 +636,8 @@ public class Utils {
                 endDt = ca.getTime();
 
                 if (timeFormat.format(nowDt).compareTo(timeFormat.format(startDt)) >= 0
-                        && timeFormat.format(nowDt).compareTo(timeFormat.format(endDt)) <= 0) {
+                        && ((!"00:00".equals(timeFormat.format(endDt)) && timeFormat.format(nowDt).compareTo(timeFormat.format(endDt)) <= 0)
+                        || "00:00".equals(timeFormat.format(endDt)))) {
                     return true;
                 }
             } catch (Exception e) {
@@ -648,7 +649,7 @@ public class Utils {
 
     //是否在播放时间段内
     public static boolean isInPlayTime(PlaylistBodyBean bean) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
         String currentDate = simpleDateFormat.format(new Date());
         if (!TextUtils.isEmpty(bean.playDate) && !TextUtils.isEmpty(bean.stopDate)
                 && currentDate.compareTo(bean.playDate) >= 0 && currentDate.compareTo(bean.stopDate) < 0) {
@@ -659,7 +660,7 @@ public class Utils {
 
     //过期需要删除的文件
     public static boolean isNeedDel(Context context, PlaylistBodyBean bean) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
         int timeFile = Integer.parseInt(get(context, KEY_TIME_FILE, "30").toString());
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());

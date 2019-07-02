@@ -105,6 +105,7 @@ public class Temp1Activity extends BaseActivity implements IView {
         if (marqueeTextView != null) {
             marqueeTextView.startScroll();
         }
+        presetView.updatePresetDate();
     }
 
     @Override

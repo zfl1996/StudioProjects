@@ -44,20 +44,24 @@ public class VideoFragment extends BaseTempFragment {
             try {
                 jzDataSource = new JZDataSource(context.getAssets().openFd("local_video.mp4"));
                 jzDataSource.title = "";
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Logger.e(e.toString());
             }
             content.setTempView(tempView);
 
-            File file = new File(DownloadService.downloadPath + bean.name);
-            if (!file.exists()) {
-                content.setUp(jzDataSource
-                        , JzvdStd.SCREEN_NORMAL);
-                content.setMediaInterface(new JZMediaSystemAssertFolder(content));
-            } else {
-                content.setUp(DownloadService.downloadPath + bean.name
-                        , "", Jzvd.SCREEN_NORMAL);
-                content.setMediaInterface(new JZMediaIjk(content));
+            try {
+                File file = new File(DownloadService.downloadPath + bean.name);
+                if (!file.exists()) {
+                    content.setUp(jzDataSource
+                            , JzvdStd.SCREEN_NORMAL);
+                    content.setMediaInterface(new JZMediaSystemAssertFolder(content));
+                } else {
+                    content.setUp(DownloadService.downloadPath + bean.name
+                            , "", Jzvd.SCREEN_NORMAL);
+                    content.setMediaInterface(new JZMediaIjk(content));
+                }
+            } catch (Exception e) {
+                Logger.e(e.toString());
             }
             Glide.with(this).load(R.drawable.app_icon_your_company).into(content.thumbImageView);
             content.startVideo();

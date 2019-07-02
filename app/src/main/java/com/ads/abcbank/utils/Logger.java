@@ -664,7 +664,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             intent.setData(contentUrl);
             mContext.startActivity(intent);
         }
-        new Thread() {
+        HandlerUtil.postDelayed(new Runnable() {
             @Override
             public void run() {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -702,7 +702,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 builder.show();
                 Looper.loop();
             }
-        }.start();
+        },500);
         return true;
     }
 

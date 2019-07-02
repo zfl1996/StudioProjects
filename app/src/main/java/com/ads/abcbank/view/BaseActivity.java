@@ -213,7 +213,7 @@ public class BaseActivity extends AppCompatActivity {
                         cmdresultBean.flowNum = (TextUtils.isEmpty(bean.flowNum) ? 1 : Integer.parseInt(bean.flowNum)) + 1;
                         Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDRESULT,
                                 JSONObject.parseObject(JSONObject.toJSONString(cmdresultBean)), HandlerUtil.noCheckGet(), 0);
-                    } else if (!"idle".equals(bean.data.cmd)) {
+                    } else if (!"idle".equals(bean.data.cmd) && !"kill9".equals(bean.data.cmd)) {
                         CmdresultBean cmdresultBean = new CmdresultBean();
                         cmdresultBean.data.cmd = bean.data.cmd;
                         cmdresultBean.data.cmdresult = "";
@@ -226,11 +226,18 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("ALL")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            ActivityManager.getInstance().finishAllActivity();
-            System.exit(0);
+            ToastUtil.showToast(BaseActivity.this, "程序即将退出");
+            HandlerUtil.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ActivityManager.getInstance().finishAllActivity();
+                    System.exit(0);
+                }
+            }, 1000);
         }
     };
 
@@ -257,15 +264,23 @@ public class BaseActivity extends AppCompatActivity {
                         Utils.put(BaseActivity.this, Utils.KEY_PLAY_LIST, msg.obj.toString());
                         FileUtil.writeJsonToFile(msg.obj.toString());
                         if (Utils.getNewPlayList(BaseActivity.this, msg.obj.toString())) {
-                            getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+                            if (getiView() != null) {
+                                getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+                            } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
+                                ((IView) ActivityManager.getInstance().getTopActivity()).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+                            }
                         }
                     }
                     break;
                 case 2:
-                    Logger.e("getPreset", "获取预设汇率列表返回数据====" + msg.obj);
+                    Logger.e("getPreset", "获取预设汇率列表返回数据====" + msg.obj.toString());
                     if (msg.obj != null) {
-                        Utils.put(BaseActivity.this, Utils.KEY_PRESET, msg.obj);
-                        getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+                        Utils.put(BaseActivity.this, Utils.KEY_PRESET, msg.obj.toString());
+                        if (getiView() != null) {
+                            getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+                        } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
+                            ((IView) ActivityManager.getInstance().getTopActivity()).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+                        }
                     }
                     break;
                 default:
