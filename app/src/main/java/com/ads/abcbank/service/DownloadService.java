@@ -612,9 +612,9 @@ public class DownloadService extends Service {
                 .setReadBufferSize(10)//设置读取缓存区大小，默认4096
                 .setPreAllocateLength(false) //在获取资源长度后，设置是否需要为文件预分配长度
 
-                .setWifiRequired(boolean wifiRequired)//只允许wifi下载
+//                .setWifiRequired(boolean wifiRequired)//只允许wifi下载
                 .build();*/
-        createDir();
+        createFilePath();
         File parentFile = null;
         String suffix = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
         switch (suffix) {
