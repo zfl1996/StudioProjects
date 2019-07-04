@@ -32,7 +32,6 @@ public class MainPresenter {
             }
             switch (msg.what) {
                 case 0:
-                    Logger.e("CODE_INIT", "初始化请求返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         mainView.init(msg.obj.toString());
                     } else {
@@ -40,7 +39,6 @@ public class MainPresenter {
                     }
                     break;
                 case 1:
-                    Logger.e("register", "注册请求返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         mainView.register(msg.obj.toString());
                     } else {
@@ -55,12 +53,10 @@ public class MainPresenter {
 
 
     public void init(JSONObject jsonObject) {
-        Logger.e("CODE_INIT", "开始执行初始化请求");
         asyncThread.httpService(HTTPContants.CODE_INIT, jsonObject, handler, 0);
     }
 
     public void register(JSONObject jsonObject) {
-        Logger.e(Utils.KEY_REGISTER_BEAN, "开始执行注册请求");
         asyncThread.httpService(HTTPContants.CODE_REGISTER, jsonObject, handler, 1);
     }
 

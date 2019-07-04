@@ -249,10 +249,16 @@ public class TempView2 extends LinearLayout {
             setNeedUpdate(false);
             fragmentList.clear();
             String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
-            if (!TextUtils.isEmpty(json)) {
-                playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+            try {
+                if (!TextUtils.isEmpty(json)) {
+                    playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+                }
+                setType(type);
+            } catch (Exception e) {
+                Logger.e(e.toString());
+                Logger.e("出错，播放列表记录："+json);
+                nextPlay();
             }
-            setType(type);
         } else {
             int current = viewpager.getCurrentItem();
             int next;

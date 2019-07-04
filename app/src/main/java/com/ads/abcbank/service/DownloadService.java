@@ -93,7 +93,7 @@ public class DownloadService extends Service {
                 Logger.e(TAG, task.getFilename() + "下载完成");
             } else {
                 Logger.e(TAG, task.getFilename() + "下载出错，状态：" + status +
-                        ">>>downloadLink=" + task.getUrl());
+                        ">>>downloadLink=" + task.getUrl() + "，异常信息：" + realCause);
             }
 
             /*if (cause.equals(EndCause.COMPLETED)) {
@@ -192,6 +192,23 @@ public class DownloadService extends Service {
                             //通知更新UI
                             sendIntent(TASKS_CHANGED);
                         }
+
+                        {
+                            String json = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, "").toString();
+                            PlaylistResultBean allDownResultBean = null;
+                            if (!TextUtils.isEmpty(json)) {
+                                allDownResultBean = JSON.parseObject(json, PlaylistResultBean.class);
+                            }
+                            if (allDownResultBean != null && allDownResultBean.data != null && allDownResultBean.data.items != null) {
+                                for (int i = 0; i < allDownResultBean.data.items.size(); i++) {
+                                    if (allDownResultBean.data.items.get(i).name.equals(task.getFilename())) {
+                                        allDownResultBean.data.items.remove(i);
+                                        break;
+                                    }
+                                }
+                                Utils.put(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, JSONObject.toJSONString(allDownResultBean));
+                            }
+                        }
                     }
                     Logger.e(task.getFilename() + "--下载开始时间:" + downloadBean.started);
                     Logger.e(task.getFilename() + "--下载状态:" + downloadBean.status);
@@ -272,11 +289,10 @@ public class DownloadService extends Service {
                 if (!downloadFile.exists()) {
                     addUpdateTask(updateFileName, updateUrl);
                 } else {
-                    openAndroidFile(downloadPath + task.getFilename());
+//                    openAndroidFile(downloadPath + task.getFilename());
                 }
             } else {
-                Logger.e(TAG, task.getFilename() + "下载出错，状态：" + cause.toString() +
-                        ">>>downloadLink=" + task.getUrl());
+                Logger.e(TAG, task.getFilename() + "下载出错，>>>downloadLink=" + task.getUrl() + "，异常信息：" + realCause);
             }
         }
     };
@@ -476,7 +492,12 @@ public class DownloadService extends Service {
                 if (Utils.isInDownloadTime(bodyBean)) {
                     if (Utils.isInPlayTime(bodyBean)) {
                         DownloadBean downloadBean = new DownloadBean();
-                        String downloadUrl = replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink);
+                        String downloadUrl;
+                        if(Utils.IS_TEST){
+                            downloadUrl = bodyBean.downloadLink;
+                        }else{
+                            downloadUrl = replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink);
+                        }
                         if (Utils.existHttpPath(downloadUrl)) {
 //                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
                             DownloadTask task = addDownloadTask(bodyBean.name, downloadUrl, bodyBean.isUrg);
@@ -486,7 +507,7 @@ public class DownloadService extends Service {
                             TaskTagUtil.saveDownloadBeanIndex(task, i);
                             TaskTagUtil.saveDownloadBean(task, downloadBean);
                         } else {
-                           Logger.e("下载链接为空或路径非法");
+                            Logger.e("下载链接为空或路径非法");
                         }
 //                        existHttpPath(bodyBean.downloadLink);
                       /*  if (isCanConnected2) {
@@ -533,7 +554,6 @@ public class DownloadService extends Service {
     }
 
 
-
     public void initTasks(@NonNull Context context, @NonNull DownloadContextListener listener) {
         final DownloadContext.QueueSet set = new DownloadContext.QueueSet();
         final File parentFile = new File(downloadPath);
@@ -567,7 +587,16 @@ public class DownloadService extends Service {
 
     public void addUpdateTask(String filename, String url) {
         stopTasks();
-        int speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
+        int speedDownload;
+        try {
+            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
+        } catch (Exception e) {
+            speedDownload = 50;
+        }
+        if (speedDownload < 50) {
+            speedDownload = 50;
+            Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
+        }
         int downloadSpeed = speedDownload / 6;
         File parentFile = new File(downloadPath);
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
@@ -596,7 +625,16 @@ public class DownloadService extends Service {
 
                 .setWifiRequired(boolean wifiRequired)//只允许wifi下载
                 .build();*/
-        int speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
+        int speedDownload;
+        try {
+            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
+        } catch (Exception e) {
+            speedDownload = 50;
+        }
+        if (speedDownload < 50) {
+            speedDownload = 50;
+            Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
+        }
         int downloadSpeed = speedDownload / 6;
         isUrg = TextUtils.isEmpty(isUrg) ? "0" : isUrg;
         File parentFile = new File(downloadPath);

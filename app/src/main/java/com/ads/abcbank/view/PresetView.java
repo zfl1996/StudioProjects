@@ -134,42 +134,48 @@ public class PresetView extends LinearLayout {
         if (TextUtils.isEmpty(json)) {
             return;
         }
-        PresetBean bean = JSON.parseObject(json, PresetBean.class);
-        tab1Fragment.setBean(bean.data.saveRate);
-        tab2Fragment.setBean(bean.data.loanRate);
-        tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
-
-        fragmentList.clear();
-        listTitle.clear();
-        if (bean.data.saveRate.enable) {
-            fragmentList.add(tab1Fragment);
-            StringBuffer stringBuffer = new StringBuffer(bean.data.saveRate.title);
-            stringBuffer.insert(3, "\n");
-            listTitle.add(stringBuffer.toString());
-        }
-        if (bean.data.loanRate.enable) {
-            fragmentList.add(tab2Fragment);
-            StringBuffer stringBuffer = new StringBuffer(bean.data.loanRate.title);
-            stringBuffer.insert(3, "\n");
-            listTitle.add(stringBuffer.toString());
-        }
-        if (bean.data.buyInAndOutForeignExchange.enable) {
-            fragmentList.add(tab3Fragment);
-            StringBuffer stringBuffer = new StringBuffer(bean.data.buyInAndOutForeignExchange.title);
-            stringBuffer.insert(3, "\n");
-            listTitle.add(stringBuffer.toString());
-        }
-        if (presetPagerAdapter == null) {
-            presetPagerAdapter = new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager());
-            if (viewpager != null) {
-                viewpager.setAdapter(presetPagerAdapter);
-            }
-        }
+        handler.removeCallbacks(runnable);
         try {
-            presetPagerAdapter.notifyDataSetChanged();
+            PresetBean bean = JSON.parseObject(json, PresetBean.class);
+            tab1Fragment.setBean(bean.data.saveRate);
+            tab2Fragment.setBean(bean.data.loanRate);
+            tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+
+            fragmentList.clear();
+            listTitle.clear();
+            if (bean.data.saveRate.enable) {
+                fragmentList.add(tab1Fragment);
+                StringBuffer stringBuffer = new StringBuffer(bean.data.saveRate.title);
+                stringBuffer.insert(3, "\n");
+                listTitle.add(stringBuffer.toString());
+            }
+            if (bean.data.loanRate.enable) {
+                fragmentList.add(tab2Fragment);
+                StringBuffer stringBuffer = new StringBuffer(bean.data.loanRate.title);
+                stringBuffer.insert(3, "\n");
+                listTitle.add(stringBuffer.toString());
+            }
+            if (bean.data.buyInAndOutForeignExchange.enable) {
+                fragmentList.add(tab3Fragment);
+                StringBuffer stringBuffer = new StringBuffer(bean.data.buyInAndOutForeignExchange.title);
+                stringBuffer.insert(3, "\n");
+                listTitle.add(stringBuffer.toString());
+            }
+            if (presetPagerAdapter == null) {
+                presetPagerAdapter = new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager());
+                if (viewpager != null) {
+                    viewpager.setAdapter(presetPagerAdapter);
+                }
+            }
+            try {
+                presetPagerAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                Logger.e(e.toString());
+            }
         } catch (Exception e) {
             Logger.e(e.toString());
         }
+        handler.postDelayed(runnable, delayTime);
     }
 
     private Handler handler = new Handler();

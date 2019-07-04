@@ -37,6 +37,7 @@ import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -288,15 +289,21 @@ public class TempView extends LinearLayout {
         addPlayList(normalLists);
     }
 
-    public void nextPlay() {
+    public synchronized void nextPlay() {
         if (isNeedUpdate()) {
             setNeedUpdate(false);
             fragmentList.clear();
             String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
-            if (!TextUtils.isEmpty(json)) {
-                playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+            try {
+                if (!TextUtils.isEmpty(json)) {
+                    playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+                }
+                setType(type);
+            } catch (Exception e) {
+                Logger.e(e.toString());
+                Logger.e("出错，播放列表记录："+json);
+                nextPlay();
             }
-            setType(type);
         } else {
             int current = viewpager.getCurrentItem();
             int next;
@@ -403,63 +410,67 @@ public class TempView extends LinearLayout {
     }
 
     public synchronized void updatePreset() {
-        Activity activity = (Activity) getContext();
-        if (activity != null) {
-            if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
-                    || activity instanceof Temp5Activity) {
+        try {
+            Activity activity = (Activity) getContext();
+            if (activity != null) {
+                if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
+                        || activity instanceof Temp5Activity) {
 
-                Fragment oldTab1Fragment = null;
-                Fragment oldTab2Fragment = null;
-                Fragment oldTab3Fragment = null;
-                int tabSum = 0;
-                for (int i = 0; i < fragmentList.size(); i++) {
-                    if (fragmentList.get(i) instanceof Tab1Fragment) {
-                        oldTab1Fragment = fragmentList.get(i);
-                        tabSum++;
-                    } else if (fragmentList.get(i) instanceof Tab2Fragment) {
-                        oldTab2Fragment = fragmentList.get(i);
-                        tabSum++;
-                    } else if (fragmentList.get(i) instanceof Tab3Fragment) {
-                        oldTab3Fragment = fragmentList.get(i);
-                        tabSum++;
+                    Fragment oldTab1Fragment = null;
+                    Fragment oldTab2Fragment = null;
+                    Fragment oldTab3Fragment = null;
+                    int tabSum = 0;
+                    for (int i = 0; i < fragmentList.size(); i++) {
+                        if (fragmentList.get(i) instanceof Tab1Fragment) {
+                            oldTab1Fragment = fragmentList.get(i);
+                            tabSum++;
+                        } else if (fragmentList.get(i) instanceof Tab2Fragment) {
+                            oldTab2Fragment = fragmentList.get(i);
+                            tabSum++;
+                        } else if (fragmentList.get(i) instanceof Tab3Fragment) {
+                            oldTab3Fragment = fragmentList.get(i);
+                            tabSum++;
+                        }
+                    }
+                    if (tabSum > 0 && viewpager.getCurrentItem() >= fragmentList.size() - tabSum) {
+                        viewpager.setCurrentItem(0);
+                    }
+                    if (oldTab1Fragment != null) {
+                        fragmentList.remove(oldTab1Fragment);
+                    }
+                    if (oldTab2Fragment != null) {
+                        fragmentList.remove(oldTab2Fragment);
+                    }
+                    if (oldTab3Fragment != null) {
+                        fragmentList.remove(oldTab3Fragment);
+                    }
+                    Tab1Fragment tab1Fragment = new Tab1Fragment();
+                    Tab2Fragment tab2Fragment = new Tab2Fragment();
+                    Tab3Fragment tab3Fragment = new Tab3Fragment();
+                    String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
+                    if (TextUtils.isEmpty(json)) {
+                        return;
+                    }
+                    PresetBean bean = JSON.parseObject(json, PresetBean.class);
+                    tab1Fragment.setBean(bean.data.saveRate);
+                    tab2Fragment.setBean(bean.data.loanRate);
+                    tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+                    if (bean.data.saveRate.enable) {
+                        tab1Fragment.setTempView(this);
+                        fragmentList.add(tab1Fragment);
+                    }
+                    if (bean.data.loanRate.enable) {
+                        tab2Fragment.setTempView(this);
+                        fragmentList.add(tab2Fragment);
+                    }
+                    if (bean.data.buyInAndOutForeignExchange.enable) {
+                        tab3Fragment.setTempView(this);
+                        fragmentList.add(tab3Fragment);
                     }
                 }
-                if (tabSum > 0 && viewpager.getCurrentItem() >= fragmentList.size() - tabSum) {
-                    viewpager.setCurrentItem(0);
-                }
-                if (oldTab1Fragment != null) {
-                    fragmentList.remove(oldTab1Fragment);
-                }
-                if (oldTab2Fragment != null) {
-                    fragmentList.remove(oldTab2Fragment);
-                }
-                if (oldTab3Fragment != null) {
-                    fragmentList.remove(oldTab3Fragment);
-                }
-                Tab1Fragment tab1Fragment = new Tab1Fragment();
-                Tab2Fragment tab2Fragment = new Tab2Fragment();
-                Tab3Fragment tab3Fragment = new Tab3Fragment();
-                String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
-                if (TextUtils.isEmpty(json)) {
-                    return;
-                }
-                PresetBean bean = JSON.parseObject(json, PresetBean.class);
-                tab1Fragment.setBean(bean.data.saveRate);
-                tab2Fragment.setBean(bean.data.loanRate);
-                tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
-                if (bean.data.saveRate.enable) {
-                    tab1Fragment.setTempView(this);
-                    fragmentList.add(tab1Fragment);
-                }
-                if (bean.data.loanRate.enable) {
-                    tab2Fragment.setTempView(this);
-                    fragmentList.add(tab2Fragment);
-                }
-                if (bean.data.buyInAndOutForeignExchange.enable) {
-                    tab3Fragment.setTempView(this);
-                    fragmentList.add(tab3Fragment);
-                }
             }
+        } catch (Exception e) {
+            Logger.e(e.toString());
         }
     }
 }

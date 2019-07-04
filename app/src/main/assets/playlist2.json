@@ -1,0 +1,126 @@
+{
+  "appId": "BDC201801_0302A",
+  "trCode": "playlist",
+  "trVersion": "v1",
+  "resCode": "0 ",
+  "resMessage": "",
+  "terminalId": "42 FAE ",
+  "timestamp": 1484560403600,
+  "uniqueId": "12FAEC6168D113FCE0539F39E80A55A7",
+  "flowNum": 1,
+  "data": {
+    "items": [
+      {
+        "id": "awerdfd",
+        "name": "信用卡推销.jpg",
+        "playDate": "20190101 08:00",
+        "stopDate": "20190631 14:05",
+        "downloadTimeslice": "1,3,5,7-00:00-90",
+        "contentType": "MH*",
+        "md5": "af3ad7fsae9qer0wry1rempewmvpwiev",
+        "lastModified": "20180301 21:08:59",
+        "downloadLink": "http://omip.abc/download/99/20181201/awerdfd.jpg",
+        "onClickLink": "http://www.abchina.com",
+        "QRCode": [
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail1.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "9",
+            "QRTip": "扫码了解详情1"
+          },
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail2.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "9",
+            "QRTip": "扫码了解详情共十个字"
+          },
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail3.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "9",
+            "QRTip": "扫码了解详情3"
+          }
+        ]
+      },
+      {
+        "id": "awerdfd001",
+        "name": "企业宣传片推销.mp4",
+        "playDate": "20190108 08:00",
+        "stopDate": "20190803 14:05",
+        "downloadTimeslice": "",
+        "contentType": "MH0",
+        "md5": "bf3ad7fsae9qer0wry1rempewmvpwi0v",
+        "lastModified": "20180201 21:08:59",
+        "downloadLink": "http://omip.abc/download/09/20181201/awerdfd001.mp4",
+        "QRCode": [
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail1.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "9",
+            "QRTip": "扫码了解详情1"
+          }
+        ]
+      },
+      {
+        "id": "awerdfd123",
+        "name": "门楣屏欢迎领导莅临检查.txt",
+        "playDate": "20190101 08:00",
+        "stopDate": "20191001 14:05",
+        "downloadTimeslice": "2-23:59-2",
+        "contentType": "MH*",
+        "md5": "cf3ad7fsae9qer0wry1rempewmvpwi0v",
+        "lastModified": "20180301 21:08:59",
+        "downloadLink": "http://10.230.217.248:3128/p/09/20181201/awerdfd123.txt"
+      },
+      {
+        "id": "awerdfd",
+        "name": "信用卡推销.pdf",
+        "playDate": "20190101 08:00",
+        "stopDate": "20190331 14:05",
+        "downloadTimeslice": "1,3,5,7-00:00-90",
+        "contentType": "MH*",
+        "md5": "af3ad7fsae9qer0wry1rempewmvpwiev",
+        "lastModified": "20180301 21:08:59",
+        "downloadLink": "http://omip.abc/download/99/20181201/awerdfd.pdf",
+        "onClickLink": "http://www.abchina.com",
+        "QRCode": [
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail1.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "7",
+            "QRTip": "扫码了解详情1"
+          },
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail3.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "7",
+            "QRTip": "扫码了解详情3"
+          }
+        ]
+      },
+      {
+        "id": "awerdfd",
+        "name": "信用卡推销.jpg",
+        "playDate": "20190101 08:00",
+        "stopDate": "20190331 14:05",
+        "downloadTimeslice": "1,3,5,7-00:00-90",
+        "contentType": "MH*",
+        "md5": "af3ad7fsae9qer0wry1rempewmvpwiev",
+        "lastModified": "20180301 21:08:59",
+        "downloadLink": "http://omip.abc/download/99/20181201/awerdfd.jpg",
+        "onClickLink": "http://www.abchina.com",
+        "QRCode": [
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail1.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "9",
+            "QRTip": "扫码了解详情1"
+          },
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail2.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "9",
+            "QRTip": "扫码了解详情共十个字"
+          },
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail3.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "9",
+            "QRTip": "扫码了解详情3"
+          }
+        ]
+      }
+    ]
+  }
+}

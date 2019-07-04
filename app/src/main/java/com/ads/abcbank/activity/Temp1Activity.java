@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
+import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.MarqueeTextView;
 import com.ads.abcbank.view.IView;
@@ -39,14 +40,15 @@ public class Temp1Activity extends BaseActivity implements IView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp1);
-        handler.postDelayed(new Runnable() {
+        setiView(this);
+
+        HandlerUtil.postDelayed(new Runnable() {
             @Override
             public void run() {
                 initViews();
+                startServices("M,H,P,N,E,L,R");
             }
         }, 100);
-        setiView(this);
-        startServices("M,H,P,N,E,L,R");
     }
 
     private Handler handler = new Handler();

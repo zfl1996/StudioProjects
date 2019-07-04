@@ -25,13 +25,13 @@ public class AsyncThread {
 
     public void httpService(String url, final JSONObject jsonString, final Handler handler, final int wath) {
         try {
-            Logger.e("接口地址拼接前：", url);
+//            Logger.e("接口地址拼接前：", url);
             String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
             if (!TextUtils.isEmpty(beanStr)) {
                 RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
                 url = "http://" + bean.data.server + url;
             }
-            Logger.e("接口地址拼接后：", url);
+//            Logger.e("接口地址拼接后：", url);
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
                     .readTimeout(CONNECT_READ_TIMEOUT, TimeUnit.SECONDS).build();//创建OkHttpClient对象。
@@ -46,8 +46,8 @@ public class AsyncThread {
                     .post(body)
                     .build();
             client.dispatcher().setMaxRequestsPerHost(8);
-            Logger.e("接口地址", url);
-            Logger.e("上送数据", jsonString.toString());
+//            Logger.e("接口地址", url);
+//            Logger.e("上送数据", jsonString.toString());
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {

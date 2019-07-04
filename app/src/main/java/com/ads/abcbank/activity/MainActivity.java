@@ -482,10 +482,44 @@ public class MainActivity extends BaseActivity implements IMainView {
             HandlerUtil.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    ActivityManager.getInstance().finishAllActivity();
-                    System.exit(0);
+//                    ActivityManager.getInstance().finishAllActivity();
+//                    System.exit(0);
                 }
             }, 2000);
+
+            if(Utils.IS_TEST){
+                String beanStr = Utils.get(MainActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
+                Intent intent = new Intent();
+                if (TextUtils.isEmpty(beanStr)) {
+                    intent.setClass(MainActivity.this, MainActivity.class);
+                } else {
+                    RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                    switch (bean.data.frameSetNo) {
+                        case "1":
+                            intent.setClass(MainActivity.this, Temp1Activity.class);
+                            break;
+                        case "2":
+                            intent.setClass(MainActivity.this, Temp2Activity.class);
+                            break;
+                        case "3":
+                            intent.setClass(MainActivity.this, Temp3Activity.class);
+                            break;
+                        case "4":
+                            intent.setClass(MainActivity.this, Temp4Activity.class);
+                            break;
+                        case "5":
+                            intent.setClass(MainActivity.this, Temp5Activity.class);
+                            break;
+                        case "6":
+                            intent.setClass(MainActivity.this, Temp6Activity.class);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                startActivity(intent);
+                finish();
+            }
         }
     }
 
@@ -502,6 +536,14 @@ public class MainActivity extends BaseActivity implements IMainView {
             }
         } else {
             ToastUtil.showToastLong(this, "注册失败");
+            if(Utils.IS_TEST){
+                if (bean != null && TextUtils.isEmpty(bean.data.frameSetNo)) {
+                    bean.data.frameSetNo = Utils.get(MainActivity.this, Utils.KEY_FRAME_SET_NO, "1").toString();
+                }
+                Utils.put(MainActivity.this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+
+                mainPresenter.init(JSONObject.parseObject(JSONObject.toJSONString(bean)));
+            }
             return;
         }
         if (resultBean != null && !TextUtils.isEmpty(resultBean.resCode) && "0".equals(resultBean.resCode)) {

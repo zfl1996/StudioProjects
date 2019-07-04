@@ -74,6 +74,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     private int mLongClick;
     private int mShortClick;
     private int mFilterClick;
+    private int mDownLoadFilterClick;
     private Context mCurrentActivity;
     private AlertDialog mFilterDialog;
     private String mFilterText;
@@ -81,12 +82,18 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     private static final int LOG_SOUT = 8;
     private static Thread.UncaughtExceptionHandler mDefaultHandler;
     private final LinearLayout mLogContainer;
+    private final LinearLayout mDownLoadLogContainer;
     private List<String> mLogList = new ArrayList<>();
     private List<String> mFilterList = new ArrayList<>();
+    private List<String> mDownLoadLogList = new ArrayList<>();
     private final ArrayAdapter<String> mLogAdapter;
+    private final ArrayAdapter<String> mDownLoadLogAdapter;
     private final TextView mTvTitle;
+    private final TextView mDownLoadTvTitle;
     private final ListView mLvLog;
+    private final ListView mDownLoadLvLog;
     private boolean mAutoScroll = true;
+    private boolean mDownLoadAutoScroll = true;
     private static final int SHORT_CLICK = 3;
     private static final int LONG_CLICK = 3;
 
@@ -116,6 +123,13 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         LayoutParams layoutParams = new LayoutParams(widthPixels / 2, heightPixels / 3, Gravity.CENTER);
         mLogContainer.setLayoutParams(layoutParams);
         mLogContainer.setVisibility(GONE);
+        //日志容器
+        mDownLoadLogContainer = new LinearLayout(context);
+        mDownLoadLogContainer.setOrientation(LinearLayout.VERTICAL);
+        mDownLoadLogContainer.setBackgroundColor(Color.argb(0x33, 0X00, 0x00, 0x00));
+        LayoutParams layoutParams2 = new LayoutParams(widthPixels / 2, heightPixels / 3, Gravity.CENTER);
+        mDownLoadLogContainer.setLayoutParams(layoutParams2);
+        mDownLoadLogContainer.setVisibility(GONE);
         //小窗口标题
         mTvTitle = new TextView(context);
         mTvTitle.setTextSize(v);
@@ -135,7 +149,27 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 return true;
             }
         });
+        //小窗口标题
+        mDownLoadTvTitle = new TextView(context);
+        mDownLoadTvTitle.setTextSize(v);
+        mDownLoadTvTitle.setText("下载相关日志");
+        mDownLoadTvTitle.setTextColor(Color.WHITE);
+        mDownLoadTvTitle.setBackgroundColor(Color.argb(0x55, 0X00, 0x00, 0x00));
+        mDownLoadTvTitle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterDialog(); //点击日志窗口标题栏打开过滤器
+            }
+        });
+        mDownLoadTvTitle.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                loggerDownSwitch();//长按日志窗口标题栏关闭日志窗口
+                return true;
+            }
+        });
         mLogContainer.addView(mTvTitle);
+        mDownLoadLogContainer.addView(mDownLoadTvTitle);
         //日志列表
         mLvLog = new ListView(context) {
             @Override
@@ -145,7 +179,17 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             }
         };
         mLvLog.setFastScrollEnabled(true);
+        //下载日志列表
+        mDownLoadLvLog = new ListView(context) {
+            @Override
+            public boolean onTouchEvent(MotionEvent ev) {
+                getParent().requestDisallowInterceptTouchEvent(true);
+                return super.onTouchEvent(ev);
+            }
+        };
+        mDownLoadLvLog.setFastScrollEnabled(true);
         mLogContainer.addView(mLvLog);
+        mDownLoadLogContainer.addView(mDownLoadLvLog);
         mLogAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, mFilterList) {
             @NonNull
             @Override
@@ -156,6 +200,20 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 TextView textView = (TextView) convertView;
                 textView.setTextSize(v);
                 textView.setText(Html.fromHtml(mFilterList.get(position)));
+                textView.setShadowLayer(1, 1, 1, Color.BLACK);
+                return textView;
+            }
+        };
+        mDownLoadLogAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, mDownLoadLogList) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = new TextView(parent.getContext());
+                }
+                TextView textView = (TextView) convertView;
+                textView.setTextSize(v);
+                textView.setText(Html.fromHtml(mDownLoadLogList.get(position)));
                 textView.setShadowLayer(1, 1, 1, Color.BLACK);
                 return textView;
             }
@@ -190,7 +248,36 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 builder.show();
             }
         });
+        mDownLoadLvLog.setAdapter(mDownLoadLogAdapter);
+        mDownLoadLvLog.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
 
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                mDownLoadAutoScroll = firstVisibleItem + visibleItemCount == totalItemCount;
+            }
+        });
+        mDownLoadLvLog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mCurrentActivity);
+                String message = mDownLoadLogList.get(position);
+                message = message.replace("FFFFFF", "000000");
+                builder.setMessage(Html.fromHtml(message));
+                builder.setPositiveButton("确定", null);
+                builder.setNegativeButton("清空日志", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mDownLoadLogList.clear();
+                        refreshDownList();
+                    }
+                });
+                builder.show();
+            }
+        });
         //检测内存泄漏相关
         mLeakCheck = new LeakCheck();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -207,8 +294,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             String s = null;
             try {
                 s = mLeakCheck.checkLeak();
-            } catch (InterruptedException e) {
-                Log.e("闪退",e.toString());
+            } catch (Exception e) {
+                Log.e("闪退1", e.toString());
 //                e.printStackTrace();
             }
             if (TextUtils.isEmpty(s)) {
@@ -361,7 +448,14 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         while (mLogList.size() > 100) {
             mLogList.remove(0);
         }
+        if (str.contains("下载")) {
+            mDownLoadLogList.add(str);
+            while (mDownLoadLogList.size() > 100) {
+                mDownLoadLogList.remove(0);
+            }
+        }
         refreshList();
+        refreshDownList();
     }
 
     /*刷新日志列表*/
@@ -387,6 +481,14 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         }
     }
 
+    /*刷新日志列表*/
+    private void refreshDownList() {
+        mDownLoadLogAdapter.notifyDataSetChanged();
+        if (mDownLoadAutoScroll) {
+            mDownLoadLvLog.smoothScrollToPosition(mDownLoadLogList.size());
+        }
+    }
+
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         mLeakCheck.add(activity);
@@ -409,6 +511,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             decorView.removeView(mSrcView);
             me.addView(mSrcView, 0);
             me.addView(mLogContainer, 1);
+            me.addView(mDownLoadLogContainer, 2);
             decorView.addView(me);
         }
     }
@@ -422,6 +525,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
         me.removeView(mSrcView);
         me.removeView(mLogContainer);
+        me.removeView(mDownLoadLogContainer);
         decorView.removeView(me);
         if (mSrcView != null) {
             decorView.addView(mSrcView, 0);
@@ -452,7 +556,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            return child == mLogContainer;
+            return child == mLogContainer || child == mDownLoadLogContainer;
         }
 
         @Override
@@ -467,7 +571,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
 
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
-            resetParams(left, top);
+            resetParams(changedView, left, top);
         }
 
         @Override
@@ -482,11 +586,18 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
 
     });
 
-    private void resetParams(int x, int y) {
-        MarginLayoutParams margin = new MarginLayoutParams(mLogContainer.getLayoutParams());
-        margin.setMargins(x, y, x + margin.width, y + margin.height);
-        LayoutParams layoutParams = new LayoutParams(margin);
-        mLogContainer.setLayoutParams(layoutParams);
+    private void resetParams(View changeView, int x, int y) {
+        if (changeView == mLogContainer) {
+            MarginLayoutParams margin = new MarginLayoutParams(mLogContainer.getLayoutParams());
+            margin.setMargins(x, y, x + margin.width, y + margin.height);
+            LayoutParams layoutParams = new LayoutParams(margin);
+            mLogContainer.setLayoutParams(layoutParams);
+        } else {
+            MarginLayoutParams margin = new MarginLayoutParams(mDownLoadLogContainer.getLayoutParams());
+            margin.setMargins(x, y, x + margin.width, y + margin.height);
+            LayoutParams layoutParams = new LayoutParams(margin);
+            mDownLoadLogContainer.setLayoutParams(layoutParams);
+        }
     }
 
     @Override
@@ -507,7 +618,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             long l = SystemClock.uptimeMillis();
             long dis = l - timestamp;
             checkSwitch(dis);
+            checkSwitch(dis);
             checkFilter(dis, ev.getY());
+            checkDownFilter(dis, ev.getY());
             timestamp = SystemClock.uptimeMillis();
         }
         return super.dispatchTouchEvent(ev);
@@ -531,6 +644,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         }
         if (mShortClick == SHORT_CLICK * 2 - 2) {
             loggerSwitch();
+            loggerDownSwitch();
         }
         //i("s:" + mShortClick + "l:" + mLongClick);
     }
@@ -541,6 +655,15 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             mLogContainer.setVisibility(VISIBLE);
         } else {
             mLogContainer.setVisibility(GONE);
+        }
+        clearClick();
+    }
+
+    private void loggerDownSwitch() {
+        if (mDownLoadLogContainer.getVisibility() == GONE) {
+            mDownLoadLogContainer.setVisibility(VISIBLE);
+        } else {
+            mDownLoadLogContainer.setVisibility(GONE);
         }
         clearClick();
     }
@@ -557,6 +680,21 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             }
         } else {
             mFilterClick = 0;
+        }
+    }
+
+    private void checkDownFilter(long dis, float y) {
+        if (mDownLoadLogContainer.getVisibility() == GONE) {
+            return;
+        }
+        if (dis < 300 && y < 200) {
+            mDownLoadFilterClick++;
+            if (mDownLoadFilterClick > 3) {
+                showFilterDialog();
+                mDownLoadFilterClick = 0;
+            }
+        } else {
+            mDownLoadFilterClick = 0;
         }
     }
 
@@ -643,7 +781,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     public void uncaughtException(Thread t, Throwable e) {
         // 打印异常信息
 //        e.printStackTrace();
-        Log.e("闪退",e.toString());
+        Log.e("闪退2", e.toString());
         // 我们没有处理异常 并且默认异常处理不为空 则交给系统处理
         if (!handleException(t, e) && mDefaultHandler != null) {
             // 系统处理  
@@ -702,7 +840,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 builder.show();
                 Looper.loop();
             }
-        },500);
+        }, 500);
         return true;
     }
 
@@ -731,7 +869,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 mDefaultHandler.uncaughtException(t, ex);
             }
         } catch (IOException e) {
-            Log.e("闪退",e.toString());
+            Log.e("闪退3", e.toString());
 //            e.printStackTrace();
         }
     }

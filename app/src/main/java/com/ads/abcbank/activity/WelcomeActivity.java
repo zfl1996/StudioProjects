@@ -36,21 +36,32 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_welcome);
-// 当系统为6.0以上时，需要申请权限
-        mPermissionHelper = new PermissionHelper(this);
-        mPermissionHelper.setOnApplyPermissionListener(new PermissionHelper.OnApplyPermissionListener() {
-            @Override
-            public void onAfterApplyAllPermission() {
-                runApp();
-            }
-        });
+
         if (Build.VERSION.SDK_INT < 23) {
             // 如果系统版本低于23，直接跑应用的逻辑
-            runApp();
+            HandlerUtil.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    runApp();
+                }
+            }, 500);
         } else {
+            // 当系统为6.0以上时，需要申请权限
+            mPermissionHelper = new PermissionHelper(this);
+            mPermissionHelper.setOnApplyPermissionListener(new PermissionHelper.OnApplyPermissionListener() {
+                @Override
+                public void onAfterApplyAllPermission() {
+                    runApp();
+                }
+            });
             // 如果权限全部申请了，那就直接跑应用逻辑
             if (mPermissionHelper.isAllRequestedPermissionGranted()) {
-                runApp();
+                HandlerUtil.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        runApp();
+                    }
+                }, 500);
             } else {
                 // 如果还有权限为申请，而且系统版本大于23，执行申请权限逻辑
                 mPermissionHelper.applyPermissions();
@@ -131,6 +142,7 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                 }
             }
             startActivity(intent);
+            finish();
         }
     };
 
@@ -160,7 +172,7 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                         int time;
                         try {
                             time = Integer.parseInt(timePlaylist);
-                        } catch (NumberFormatException e) {
+                        } catch (Exception e) {
                             time = 20;
                         }
 
@@ -217,12 +229,14 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                             }
                         }
                         startActivity(intent);
+                        finish();
                     }
                 }, 2000);
             } else if ("-1".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("服务器主动拒绝");
-                finish();
+                ActivityManager.getInstance().finishAllActivity();
+                System.exit(0);
             } else if ("1".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("客户端版本过低");
@@ -230,7 +244,8 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                     Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
                 } else {
                     ToastUtil.showToastLong(mActivity, "下载链接为空或路径非法");
-                    finish();
+                    ActivityManager.getInstance().finishAllActivity();
+                    System.exit(0);
                 }
             }
         } else {
@@ -238,9 +253,44 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
             HandlerUtil.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    finish();
+//                    ActivityManager.getInstance().finishAllActivity();
+//                    System.exit(0);
                 }
             }, 2000);
+
+            if (Utils.IS_TEST) {
+                String beanStr = Utils.get(WelcomeActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
+                Intent intent = new Intent();
+                if (TextUtils.isEmpty(beanStr)) {
+                    intent.setClass(WelcomeActivity.this, MainActivity.class);
+                } else {
+                    RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                    switch (bean.data.frameSetNo) {
+                        case "1":
+                            intent.setClass(WelcomeActivity.this, Temp1Activity.class);
+                            break;
+                        case "2":
+                            intent.setClass(WelcomeActivity.this, Temp2Activity.class);
+                            break;
+                        case "3":
+                            intent.setClass(WelcomeActivity.this, Temp3Activity.class);
+                            break;
+                        case "4":
+                            intent.setClass(WelcomeActivity.this, Temp4Activity.class);
+                            break;
+                        case "5":
+                            intent.setClass(WelcomeActivity.this, Temp5Activity.class);
+                            break;
+                        case "6":
+                            intent.setClass(WelcomeActivity.this, Temp6Activity.class);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                startActivity(intent);
+                finish();
+            }
         }
     }
 

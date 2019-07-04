@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -68,6 +69,7 @@ import java.util.Locale;
  */
 
 public class Utils {
+    public static final boolean IS_TEST = true;
     public static final String WEBURL = "WEBURL";
     public static final String USER_INFO = "userInfo";//xml文件名称，记录主要内容
     public static ProgressDialog mProgressDialog;
@@ -318,6 +320,27 @@ public class Utils {
             if (target != null) {
                 target.setImageDrawable(null);
                 if (!TextUtils.isEmpty(url)) {
+                    Glide.with(imageView.getContext()).load(url).placeholder(placeholderId).error(placeholderId).diskCacheStrategy(DiskCacheStrategy.RESULT).dontAnimate().into(target);
+                } else {
+                    imageView.setImageResource(placeholderId);
+                }
+            }
+        }
+    }
+
+    public static void loadImage(ImageView imageView, Uri url) {
+        if (imageView != null) {
+            int placeholderId = R.mipmap.bg_land;
+            if ("V".equals(getContentTypeMiddle(imageView.getContext()))
+                    || "H,L".equals(getContentTypeStart(imageView.getContext()))
+                    || "N".equals(getContentTypeStart(imageView.getContext()))) {
+                placeholderId = R.mipmap.bg_port;
+            }
+            WeakReference<ImageView> reference = new WeakReference(imageView);
+            ImageView target = reference.get();
+            if (target != null) {
+                target.setImageDrawable(null);
+                if (url != null) {
                     Glide.with(imageView.getContext()).load(url).placeholder(placeholderId).error(placeholderId).diskCacheStrategy(DiskCacheStrategy.RESULT).dontAnimate().into(target);
                 } else {
                     imageView.setImageResource(placeholderId);
@@ -1019,7 +1042,7 @@ public class Utils {
             try {
                 NetworkInfo info = null;
                 ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                if(connectivityManager != null){
+                if (connectivityManager != null) {
                     try {
                         info = connectivityManager.getActiveNetworkInfo();
                     } catch (Exception e) {

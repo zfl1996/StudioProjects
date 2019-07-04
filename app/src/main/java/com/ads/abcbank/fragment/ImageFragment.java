@@ -1,6 +1,7 @@
 package com.ads.abcbank.fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,9 +11,12 @@ import android.widget.ImageView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.activity.WebViewActivity;
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTempFragment;
+
+import java.io.File;
 
 public class ImageFragment extends BaseTempFragment implements View.OnClickListener {
     private View view;
@@ -33,7 +37,12 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     @Override
     public void initData() {
         if (bean != null && view != null && isVisiable) {
-            Utils.loadImage(content, bean.downloadLink);
+//            Utils.loadImage(content, bean.downloadLink);
+            try {
+                Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadPath + bean.downloadLink)));
+            } catch (Exception e) {
+                Utils.loadImage(content, bean.downloadLink);
+            }
             if (!TextUtils.isEmpty(bean.onClickLink)) {
                 view.setOnClickListener(this);
             } else {
