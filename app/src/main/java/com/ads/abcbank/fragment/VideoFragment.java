@@ -50,13 +50,13 @@ public class VideoFragment extends BaseTempFragment {
             content.setTempView(tempView);
 
             try {
-                File file = new File(DownloadService.downloadPath + bean.name);
+                File file = new File(DownloadService.downloadVideoPath + bean.name);
                 if (!file.exists()) {
                     content.setUp(jzDataSource
                             , JzvdStd.SCREEN_NORMAL);
                     content.setMediaInterface(new JZMediaSystemAssertFolder(content));
                 } else {
-                    content.setUp(DownloadService.downloadPath + bean.name
+                    content.setUp(DownloadService.downloadVideoPath + bean.name
                             , "", Jzvd.SCREEN_NORMAL);
                     content.setMediaInterface(new JZMediaIjk(content));
                 }

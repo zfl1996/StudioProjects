@@ -80,6 +80,10 @@ public class DownloadService extends Service {
 
     private static final String TAG = "DownloadService";
     public static String downloadPath;
+    public static String downloadFilePath;
+    public static String downloadVideoPath;
+    public static String downloadApkPath;
+    public static String downloadImagePath;
     public static String rootPath;
 
     private String type;
@@ -340,15 +344,20 @@ public class DownloadService extends Service {
 
     private void createFilePath() {
         rootPath = getDownSave();
-        downloadPath = rootPath + "/temp/";
-        FileUtil.mkDir(rootPath + "/files/");
-        FileUtil.mkDir(rootPath + "/conf/");
-        FileUtil.mkDir(rootPath + "/zip/");
-        FileUtil.mkDir(rootPath + "/temp/");
-        FileUtil.mkDir(rootPath + "/screen/");
-        FileUtil.createNewFile(rootPath + "playlist.json");
+        downloadPath = rootPath + "temp/";
+        downloadFilePath = rootPath + "files/";
+        downloadImagePath = rootPath + "images/";
+        downloadVideoPath = rootPath + "videos/";
+        downloadApkPath = rootPath + "zip/";
+        createDir();
+    }
 
-
+    private void createDir() {
+        FileUtil.mkDir(downloadPath);
+        FileUtil.mkDir(downloadFilePath);
+        FileUtil.mkDir(downloadImagePath);
+        FileUtil.mkDir(downloadVideoPath);
+        FileUtil.mkDir(downloadApkPath);
     }
 
     @Override
@@ -493,9 +502,9 @@ public class DownloadService extends Service {
                     if (Utils.isInPlayTime(bodyBean)) {
                         DownloadBean downloadBean = new DownloadBean();
                         String downloadUrl;
-                        if(Utils.IS_TEST){
+                        if (Utils.IS_TEST) {
                             downloadUrl = bodyBean.downloadLink;
-                        }else{
+                        } else {
                             downloadUrl = replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink);
                         }
                         if (Utils.existHttpPath(downloadUrl)) {
@@ -528,26 +537,6 @@ public class DownloadService extends Service {
             } else {
                 Logger.e(TAG, "文件" + bodyBean.name + "下载链接为空");
 
-            }
-            String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-            switch (suffix) {
-                case "mp4":
-                case "mkv":
-                case "wmv":
-                case "avi":
-                case "rmvb":
-                    break;
-                case "jpg":
-                case "png":
-                case "bmp":
-                case "jpeg":
-                    break;
-                case "pdf":
-                    break;
-                case "txt":
-                    break;
-                default:
-                    break;
             }
 
         }
@@ -598,7 +587,7 @@ public class DownloadService extends Service {
             Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
         }
         int downloadSpeed = speedDownload / 6;
-        File parentFile = new File(downloadPath);
+        File parentFile = new File(downloadApkPath);
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority(10)
                 .setFilename(filename)
@@ -625,6 +614,32 @@ public class DownloadService extends Service {
 
                 .setWifiRequired(boolean wifiRequired)//只允许wifi下载
                 .build();*/
+        createDir();
+        File parentFile = null;
+        String suffix = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        switch (suffix) {
+            case "mp4":
+            case "mkv":
+            case "wmv":
+            case "avi":
+            case "rmvb":
+                parentFile = new File(downloadVideoPath);
+                break;
+            case "jpg":
+            case "png":
+            case "bmp":
+            case "jpeg":
+                parentFile = new File(downloadImagePath);
+                break;
+            case "pdf":
+            case "txt":
+                parentFile = new File(downloadFilePath);
+                break;
+            default:
+                parentFile = new File(downloadPath);
+                break;
+        }
+
         int speedDownload;
         try {
             speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
@@ -637,7 +652,7 @@ public class DownloadService extends Service {
         }
         int downloadSpeed = speedDownload / 6;
         isUrg = TextUtils.isEmpty(isUrg) ? "0" : isUrg;
-        File parentFile = new File(downloadPath);
+
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority("1".equals(isUrg) ? 10 : 0)
                 .setFilename(filename)

@@ -39,7 +39,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
         if (bean != null && view != null && isVisiable) {
 //            Utils.loadImage(content, bean.downloadLink);
             try {
-                Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadPath + bean.name)));
+                Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadImagePath + bean.name)));
             } catch (Exception e) {
                 Utils.loadImage(content, "");
             }

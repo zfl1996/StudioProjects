@@ -523,7 +523,7 @@ public class Utils {
     }
 
     public static String getTxtString(Context context, String fileName) throws IOException {// 转码
-        File file = new File(DownloadService.downloadPath, fileName);
+        File file = new File(DownloadService.downloadFilePath, fileName);
         if (!file.exists()) {
             InputStream asset = context.getAssets().open(fileName);
             FileOutputStream output = new FileOutputStream(file);

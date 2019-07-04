@@ -244,7 +244,7 @@ public class TempView extends LinearLayout {
         for (int j = 0; j < getDownloadItems().size(); j++) {
             if (getDownloadItems().get(j).id.equals(bodyBean.id)) {
                 try {
-                    if ("finish".equals(getDownloadItems().get(j).status)) {
+                    if ("finish".equals(getDownloadItems().get(j).status)||"COMPLETED".equals(getDownloadItems().get(j).status)) {
                         return true;
                     }
                 } catch (Exception e) {

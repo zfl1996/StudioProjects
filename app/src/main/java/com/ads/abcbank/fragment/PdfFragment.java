@@ -63,7 +63,7 @@ public class PdfFragment extends BaseTempFragment {
      * Sets up a {@link android.graphics.pdf.PdfRenderer} and related resources.
      */
     private void openRenderer(Context context) throws IOException {
-        File file = new File(DownloadService.downloadPath + bean.name);
+        File file = new File(DownloadService.downloadFilePath + bean.name);
         if (!file.exists()) {
             if (tempView != null) {
                 tempView.nextPlay();

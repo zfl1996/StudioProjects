@@ -43,7 +43,7 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
         if (bean != null && view != null && isVisiable && context != null) {
             try {
 //                content.setText(Utils.getTxtString(context, bean.name));//TODO 此处要替换真实文件路径
-                File file = new File(DownloadService.downloadPath, bean.name);
+                File file = new File(DownloadService.downloadFilePath, bean.name);
                 if (file.exists()) {
                     content.setText(Utils.getTxtString(context, bean.name));
                 } else {

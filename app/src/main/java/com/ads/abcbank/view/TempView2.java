@@ -202,8 +202,12 @@ public class TempView2 extends LinearLayout {
     private boolean isDownloadFinished(PlaylistBodyBean bodyBean) {
         for (int j = 0; j < getDownloadItems().size(); j++) {
             if (getDownloadItems().get(j).id.equals(bodyBean.id)) {
-                if ("finish".equals(getDownloadItems().get(j).status)) {
-                    return true;
+                try {
+                    if ("finish".equals(getDownloadItems().get(j).status)||"COMPLETED".equals(getDownloadItems().get(j).status)) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    return false;
                 }
             }
         }
