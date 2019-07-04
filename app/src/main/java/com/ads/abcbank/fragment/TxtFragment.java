@@ -90,6 +90,9 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
+        if (scrollView != null) {
+            scrollView.startScroll();
+        }
     }
 
     @Override

@@ -39,9 +39,9 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
         if (bean != null && view != null && isVisiable) {
 //            Utils.loadImage(content, bean.downloadLink);
             try {
-                Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadPath + bean.downloadLink)));
+                Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadPath + bean.name)));
             } catch (Exception e) {
-                Utils.loadImage(content, bean.downloadLink);
+                Utils.loadImage(content, "");
             }
             if (!TextUtils.isEmpty(bean.onClickLink)) {
                 view.setOnClickListener(this);
@@ -56,12 +56,22 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        handler.postDelayed(runnable, delayTime);
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            if (bean != null) {
+                try {
+                    Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadPath + bean.name)));
+                } catch (Exception e) {
+                    Utils.loadImage(content, "");
+                }
+            } else {
+                Utils.loadImage(content, "");
+            }
             handler.postDelayed(runnable, delayTime);
         } else {
             handler.removeCallbacks(runnable);

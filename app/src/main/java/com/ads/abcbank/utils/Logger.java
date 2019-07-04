@@ -780,8 +780,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         // 打印异常信息
-//        e.printStackTrace();
-        Log.e("闪退2", e.toString());
+        e.printStackTrace();
+//        Log.e("闪退2", e.toString());
         // 我们没有处理异常 并且默认异常处理不为空 则交给系统处理
         if (!handleException(t, e) && mDefaultHandler != null) {
             // 系统处理  

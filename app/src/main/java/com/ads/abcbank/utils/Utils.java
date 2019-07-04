@@ -22,6 +22,7 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -173,21 +174,25 @@ public class Utils {
      * 得到保存数据的方法，我们根据默认值得到保存的数据的具体类型，然后调用相对于的方法获取值
      */
     public static Object get(Context context, String key, Object defaultObject) {
-        SharedPreferences sp = context.getSharedPreferences(USER_INFO, Context
-                .MODE_PRIVATE);
-        if (sp == null) {
-            return defaultObject;
-        }
-        if (defaultObject instanceof String) {
-            return sp.getString(key, (String) defaultObject);
-        } else if (defaultObject instanceof Integer) {
-            return sp.getInt(key, (Integer) defaultObject);
-        } else if (defaultObject instanceof Boolean) {
-            return sp.getBoolean(key, (Boolean) defaultObject);
-        } else if (defaultObject instanceof Float) {
-            return sp.getFloat(key, (Float) defaultObject);
-        } else if (defaultObject instanceof Long) {
-            return sp.getLong(key, (Long) defaultObject);
+        try {
+            SharedPreferences sp = context.getSharedPreferences(USER_INFO, Context
+                    .MODE_PRIVATE);
+            if (sp == null) {
+                return defaultObject;
+            }
+            if (defaultObject instanceof String) {
+                return sp.getString(key, (String) defaultObject);
+            } else if (defaultObject instanceof Integer) {
+                return sp.getInt(key, (Integer) defaultObject);
+            } else if (defaultObject instanceof Boolean) {
+                return sp.getBoolean(key, (Boolean) defaultObject);
+            } else if (defaultObject instanceof Float) {
+                return sp.getFloat(key, (Float) defaultObject);
+            } else if (defaultObject instanceof Long) {
+                return sp.getLong(key, (Long) defaultObject);
+            }
+        } catch (Exception e) {
+           Logger.e(e.toString());
         }
 
         return defaultObject;
@@ -672,11 +677,18 @@ public class Utils {
 
     //是否在播放时间段内
     public static boolean isInPlayTime(PlaylistBodyBean bean) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
-        String currentDate = simpleDateFormat.format(new Date());
-        if (!TextUtils.isEmpty(bean.playDate) && !TextUtils.isEmpty(bean.stopDate)
-                && currentDate.compareTo(bean.playDate) >= 0 && currentDate.compareTo(bean.stopDate) < 0) {
-            return true;
+        try {
+            if (bean == null) {
+                return false;
+            }
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
+            String currentDate = simpleDateFormat.format(new Date());
+            if (!TextUtils.isEmpty(bean.playDate) && !TextUtils.isEmpty(bean.stopDate)
+                    && currentDate.compareTo(bean.playDate) >= 0 && currentDate.compareTo(bean.stopDate) < 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            Logger.e(e.toString());
         }
         return false;
     }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTabFragment;
 import com.ads.abcbank.view.TempView;
@@ -109,6 +110,20 @@ public class Tab3Fragment extends BaseTabFragment {
         if (bean instanceof PresetBean.BIAOFE) {
             this.bean = (PresetBean.BIAOFE) bean;
             initData();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
+                view.findViewById(R.id.ll_root).setBackgroundColor(Color.parseColor("#212832"));
+            }
+            initData();
+            handler.postDelayed(runnable, delayTime);
+        } catch (Exception e) {
+            Logger.e(e.toString());
         }
     }
 

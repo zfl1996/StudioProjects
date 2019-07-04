@@ -34,7 +34,7 @@ public class TempPresenter {
             }
             switch (msg.what) {
                 case 2:
-                    Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj.toString());
+                    Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(context, Utils.KEY_PLAY_LIST, msg.obj.toString());
                     }

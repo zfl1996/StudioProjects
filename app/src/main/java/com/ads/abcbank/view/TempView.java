@@ -289,7 +289,13 @@ public class TempView extends LinearLayout {
         addPlayList(normalLists);
     }
 
+    private long lastUpdaTime;
+
     public synchronized void nextPlay() {
+        if ((System.currentTimeMillis() - lastUpdaTime) < 4000) {
+            return;
+        }
+        lastUpdaTime = System.currentTimeMillis();
         if (isNeedUpdate()) {
             setNeedUpdate(false);
             fragmentList.clear();
@@ -301,7 +307,7 @@ public class TempView extends LinearLayout {
                 setType(type);
             } catch (Exception e) {
                 Logger.e(e.toString());
-                Logger.e("出错，播放列表记录："+json);
+                Logger.e("出错，播放列表记录：" + json);
                 nextPlay();
             }
         } else {

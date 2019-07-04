@@ -157,6 +157,24 @@ public class PdfFragment extends BaseTempFragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (pageTotal > 0) {
+            handler.postDelayed(runnable, delayTime);
+        } else {
+            pageNumber = 0;
+            if (getActivity() != null) {
+                try {
+                    openRenderer(getActivity());
+                    showPage(pageNumber);
+                } catch (Exception e) {
+                    Logger.e(e.toString());
+                }
+            }
+        }
+    }
+
     private long delayTime = 5000;
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {

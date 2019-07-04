@@ -127,9 +127,6 @@ public class PresetView extends LinearLayout {
     }
 
     public synchronized void updatePresetDate() {
-        if (presetPagerAdapter == null) {
-            return;
-        }
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
         if (TextUtils.isEmpty(json)) {
             return;
@@ -162,20 +159,19 @@ public class PresetView extends LinearLayout {
                 listTitle.add(stringBuffer.toString());
             }
             if (presetPagerAdapter == null) {
-                presetPagerAdapter = new PresetPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager());
-                if (viewpager != null) {
-                    viewpager.setAdapter(presetPagerAdapter);
+                initView();
+            } else {
+                try {
+                    presetPagerAdapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    Logger.e(e.toString());
                 }
-            }
-            try {
-                presetPagerAdapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                Logger.e(e.toString());
+                handler.postDelayed(runnable, delayTime);
             }
         } catch (Exception e) {
             Logger.e(e.toString());
         }
-        handler.postDelayed(runnable, delayTime);
+
     }
 
     private Handler handler = new Handler();

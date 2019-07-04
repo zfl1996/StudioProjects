@@ -262,8 +262,7 @@ public class BaseActivity extends AppCompatActivity {
                 case 1:
                     Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
                     if (Utils.IS_TEST) {
-                        msg.obj = Utils.getStringFromAssets("playlist.json",BaseActivity.this).toString();
-                        Utils.put(BaseActivity.this, Utils.KEY_PLAY_LIST, msg.obj.toString());
+                        msg.obj = Utils.getStringFromAssets("playlist.json", BaseActivity.this).toString();
                         FileUtil.writeJsonToFile(msg.obj.toString());
                         if (Utils.getNewPlayList(BaseActivity.this, msg.obj.toString())) {
                             if (getiView() != null) {
@@ -275,7 +274,6 @@ public class BaseActivity extends AppCompatActivity {
                         return;
                     }
                     if (msg.obj != null) {
-                        Utils.put(BaseActivity.this, Utils.KEY_PLAY_LIST, msg.obj.toString());
                         FileUtil.writeJsonToFile(msg.obj.toString());
                         if (Utils.getNewPlayList(BaseActivity.this, msg.obj.toString())) {
                             if (getiView() != null) {
@@ -288,7 +286,8 @@ public class BaseActivity extends AppCompatActivity {
                     break;
                 case 2:
                     if (Utils.IS_TEST) {
-                        Utils.put(BaseActivity.this, Utils.KEY_PRESET, Utils.getStringFromAssets("json.json",BaseActivity.this));
+                        msg.obj = Utils.getStringFromAssets("json.json", BaseActivity.this);
+                        Utils.put(BaseActivity.this, Utils.KEY_PRESET, msg.obj.toString());
                         if (getiView() != null) {
                             getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
                         } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
