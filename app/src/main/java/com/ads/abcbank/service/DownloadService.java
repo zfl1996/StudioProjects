@@ -231,16 +231,33 @@ public class DownloadService extends Service {
 
         @Override
         public void taskStart(@NonNull DownloadTask task) {
-
         }
 
         @Override
         public void connectStart(@NonNull DownloadTask task, int blockIndex, @NonNull Map<String, List<String>> requestHeaderFields) {
+            for (Map.Entry<String, List<String>> entry : requestHeaderFields.entrySet()) {
+                StringBuffer stringBuffer = new StringBuffer();
+                for (String value :
+                        entry.getValue()) {
+                    stringBuffer.append(value);
+
+                }
+                Logger.e(TAG, "requestHeaderFields---Key = " + entry.getKey() + ",Value=" + stringBuffer.toString());
+            }
 
         }
 
         @Override
         public void connectEnd(@NonNull DownloadTask task, int blockIndex, int responseCode, @NonNull Map<String, List<String>> responseHeaderFields) {
+            for (Map.Entry<String, List<String>> entry : responseHeaderFields.entrySet()) {
+                StringBuffer stringBuffer = new StringBuffer();
+                for (String value :
+                        entry.getValue()) {
+                    stringBuffer.append(value);
+
+                }
+                Logger.e(TAG, "responseHeaderFields---Key = " + entry.getKey() + ",Value=" + stringBuffer.toString());
+            }
 
         }
 
