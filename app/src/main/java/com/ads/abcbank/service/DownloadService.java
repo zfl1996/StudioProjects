@@ -735,6 +735,17 @@ public class DownloadService extends Service {
         return task;
     }
 
+    public void removeAllTasks() {
+        for (DownloadTask task : taskList) {
+//            FileUtil.deleteFile(downloadPath + task.getFilename());
+            OkDownload.with().downloadDispatcher().cancel(task.getId());
+            OkDownload.with().breakpointStore().remove(task.getId());
+            builder.unbind(task);
+        }
+        this.context = builder.build();
+        taskList = Arrays.asList(this.context.getTasks());
+    }
+
     public void removeTask(String downloadTaskId) {
         DownloadTask needRemovedTask = null;
         for (DownloadTask task : taskList) {

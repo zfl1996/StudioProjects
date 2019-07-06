@@ -22,7 +22,6 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -192,7 +191,7 @@ public class Utils {
                 return sp.getLong(key, (Long) defaultObject);
             }
         } catch (Exception e) {
-           Logger.e(e.toString());
+            Logger.e(e.toString());
         }
 
         return defaultObject;
@@ -764,7 +763,7 @@ public class Utils {
         PlaylistResultBean allBean = JSON.parseObject(allBeanStr, PlaylistResultBean.class);
         List<PlaylistBodyBean> allList = allBean.data.items;
         for (int i = 0; i < allList.size(); i++) {
-            if (containSame(allList, bean)) {
+            if (containSame(allList, bean, context)) {
                 allList.remove(i);
                 allBeanStr = JSONObject.toJSONString(allBean);
                 put(context, KEY_PLAY_LIST_ALL, allBeanStr);
@@ -782,7 +781,7 @@ public class Utils {
         PlaylistResultBean allBean = JSON.parseObject(allBeanStr, PlaylistResultBean.class);
         List<PlaylistBodyBean> allList = allBean.data.items;
         for (int i = 0; i < allList.size(); i++) {
-            if (containSame(allList, bean)) {
+            if (containSame(allList, bean, context)) {
                 allList.remove(i);
                 allBeanStr = JSONObject.toJSONString(allBean);
                 put(context, KEY_PLAY_LIST_DOWNLOAD, allBeanStr);
@@ -805,7 +804,7 @@ public class Utils {
             List<PlaylistBodyBean> allList = allBean.data.items;
             List<PlaylistBodyBean> addList = addBean.data.items;
             for (int i = 0; i < addList.size(); i++) {
-                if (!containSame(allList, addList.get(i))) {
+                if (!containSame(allList, addList.get(i), context)) {
                     allList.add(addList.get(i));
                 }
             }
@@ -823,7 +822,7 @@ public class Utils {
         put(context, KEY_PLAY_LIST_ALL, allBeanStr);
     }
 
-    private static boolean containSame(List<PlaylistBodyBean> allList, PlaylistBodyBean bean) {
+    private static boolean containSame(List<PlaylistBodyBean> allList, PlaylistBodyBean bean, Context context) {
         for (int i = 0; i < allList.size(); i++) {
             PlaylistBodyBean bodyBean = allList.get(i);
             if (bodyBean.id.equals(bean.id) && bodyBean.name.equals(bean.name)) {
@@ -831,6 +830,7 @@ public class Utils {
                     return true;
                 } else {
                     allList.remove(bodyBean);
+                    removeDownloadTask(context,bodyBean.id);
                     allList.add(i, bean);
                     return true;
                 }
@@ -853,7 +853,7 @@ public class Utils {
             List<PlaylistBodyBean> allList = allBean.data.items;
             List<PlaylistBodyBean> addList = addBean.data.items;
             for (int i = 0; i < addList.size(); i++) {
-                if (!containSame(allList, addList.get(i))) {
+                if (!containSame(allList, addList.get(i), context)) {
                     allList.add(addList.get(i));
                 }
             }
@@ -1044,6 +1044,14 @@ public class Utils {
         intent.putExtra("name", fileName);
         intent.putExtra("url", downloadLink);
         intent.setAction(DownloadService.ADD_UPDATE_DOWNTASK);
+        intent.setPackage(DownloadService.PACKAGE);
+        context.startService(intent);
+    }
+
+    public static void removeDownloadTask(Context context, String downloadId) {
+        Intent intent = new Intent();
+        intent.putExtra("downloadid", downloadId);
+        intent.setAction(DownloadService.REMOVE_DOWNTASK);
         intent.setPackage(DownloadService.PACKAGE);
         context.startService(intent);
     }
