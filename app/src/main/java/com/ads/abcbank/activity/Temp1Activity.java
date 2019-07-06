@@ -2,6 +2,7 @@ package com.ads.abcbank.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
@@ -9,6 +10,8 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.view.BaseActivity;
+//import com.ads.abcbank.view.HorizontalListView;
+//import com.ads.abcbank.view.HorizontalListViewAdapter;
 import com.ads.abcbank.view.MarqueeTextView;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.PresetView;
@@ -16,8 +19,10 @@ import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import cn.jzvd.JzvdStd;
@@ -35,6 +40,10 @@ public class Temp1Activity extends BaseActivity implements IView {
     private PresetView presetView;
 
     private TempView tvTemp;
+
+//    private HorizontalListView hListView;
+//    private HorizontalListViewAdapter hListViewAdapter;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,6 +104,7 @@ public class Temp1Activity extends BaseActivity implements IView {
 
     private void initViews() {
         marqueeTextView = findViewById(R.id.marqueeTextView);
+//        hListView = findViewById(R.id.hlv_main);
         presetView = findViewById(R.id.pv_preset);
         tvTime = findViewById(R.id.tv_time);
         tvDate = findViewById(R.id.tv_date);
@@ -108,6 +118,18 @@ public class Temp1Activity extends BaseActivity implements IView {
             marqueeTextView.startScroll();
         }
         presetView.updatePresetDate();
+//        List<String> stringList = new ArrayList<>();
+//        stringList.add("    中国农业银行欢迎您！        ");
+//        stringList.add("    中国农业银行欢迎您！        ");
+//        stringList.add("    中国农业银行欢迎您！        ");
+//        stringList.add("    中国农业银行欢迎您！        ");
+//        stringList.add("    中国农业银行欢迎您！        ");
+//        stringList.add("    中国农业银行欢迎您！        ");
+//        stringList.add("    中国农业银行欢迎您！        ");
+//        stringList.add("    中国农业银行欢迎您！        ");
+//        HorizontalListViewAdapter adapter = new HorizontalListViewAdapter(this,stringList);
+//        hListView.setAdapter(adapter);
+
     }
 
     @Override

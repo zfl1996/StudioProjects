@@ -48,16 +48,25 @@ public class CmdService extends Service {
         String timeCurrentCmd = Utils.get(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, "1").toString();
         String timeCurrentPlaylist = Utils.get(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1").toString();
         String timeCurrentPreset = Utils.get(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, "1").toString();
-        if (timeCurrentCmd.compareTo(timeCmd) != 0) {
-            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, (Integer.parseInt(timeCurrentCmd) + 1) + "");
+
+        int timeCmdInt = Utils.getNumberForString(timeCmd, 5);
+        int timePlaylistInt = Utils.getNumberForString(timePlaylist, 20);
+        int timePresetInt = Utils.getNumberForString(timePreset, 30);
+
+        int timeCurrentCmdInt = Utils.getNumberForString(timeCurrentCmd, 1);
+        int timeCurrentPlaylistInt = Utils.getNumberForString(timeCurrentPlaylist, 1);
+        int timeCurrentPresetInt = Utils.getNumberForString(timeCurrentPreset, 1);
+
+        if (timeCurrentCmdInt < timeCmdInt) {
+            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, (timeCurrentCmdInt + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, "1");
             Logger.e("TAG", "启动获取cmdpoll轮询命令服务：" + new Date().toString());
             CmdpollBean cmdpollBean = new CmdpollBean();
             Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(cmdpollBean)), handler, 0);
         }
-        if (timeCurrentPlaylist.compareTo(timePlaylist) != 0) {
-            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, (Integer.parseInt(timeCurrentCmd) + 1) + "");
+        if (timeCurrentPlaylistInt < timePlaylistInt) {
+            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, (timeCurrentPlaylistInt + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1");
             Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
@@ -65,8 +74,8 @@ public class CmdService extends Service {
             Logger.e("启动获取播放列表--下载列表状态:" + JSONObject.toJSONString(DownloadService.getPlaylistBean()));
             Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), handler, 1);
         }
-        if (timeCurrentPreset.compareTo(timePreset) != 0) {
-            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, (Integer.parseInt(timeCurrentCmd) + 1) + "");
+        if (timeCurrentPresetInt < timePresetInt) {
+            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, (timeCurrentPresetInt + 1) + "");
         } else {
             Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, "1");
             Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());

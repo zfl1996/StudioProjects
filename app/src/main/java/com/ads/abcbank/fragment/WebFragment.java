@@ -21,7 +21,7 @@ import com.ads.abcbank.view.BaseTempFragment;
 public class WebFragment extends BaseTempFragment {
     private View view;
     private WebView content;
-    private static PlaylistBodyBean bean;
+    private PlaylistBodyBean bean;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -119,6 +119,10 @@ public class WebFragment extends BaseTempFragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            if (!isVisiable) {
+                handler.removeCallbacks(runnable);
+                return;
+            }
             if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                 tempView.nextPlay();
             } else {
@@ -129,7 +133,7 @@ public class WebFragment extends BaseTempFragment {
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        WebFragment.bean = bean;
+        this.bean = bean;
         initData();
         showQRs(bean);
     }

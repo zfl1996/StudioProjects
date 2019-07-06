@@ -146,7 +146,10 @@ public class MainActivity extends BaseActivity implements IMainView {
                 appIdAddress.setText(ip);
             }
             server.setText("10.233.93.110:315/ibcs/player/v1");
-            cdn.setText("10.233.93.110:315");
+//            cdn.setText("10.233.93.110:315");
+            cdn.setText("10.5.13.64:3128");
+//            server.setText("10.233.14.37:8080/ibcs/player/v1");
+//            cdn.setText("10.233.14.37:8080");
             storeId.setText("123");
         }
     }
@@ -326,6 +329,8 @@ public class MainActivity extends BaseActivity implements IMainView {
 
         Utils.put(this, Utils.KEY_FRAME_SET_NO, bean.data.frameSetNo);
         Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+
+        Utils.showProgressDialog(this);
         mainPresenter.register(JSONObject.parseObject(JSONObject.toJSONString(bean)));
 
     }

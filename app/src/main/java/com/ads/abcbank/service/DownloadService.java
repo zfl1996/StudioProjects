@@ -1,17 +1,14 @@
 package com.ads.abcbank.service;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,6 +31,7 @@ import com.ads.abcbank.utils.TaskTagUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.liulishuo.okdownload.DownloadContext;
 import com.liulishuo.okdownload.DownloadContextListener;
@@ -55,9 +53,6 @@ import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 import com.liulishuo.okdownload.core.listener.assist.Listener4SpeedAssistExtend;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,10 +80,32 @@ public class DownloadService extends Service {
     public static String downloadApkPath;
     public static String downloadImagePath;
     public static String rootPath;
+    public final static String ROOT_FILE_NAME = "ibcsPlayerData";
 
     private String type;
     private static List<DownloadTask> taskList = new ArrayList<>();
     private DownloadContext context;
+
+    public class MyBinder extends Binder {
+
+        public DownloadService getService() {
+            return DownloadService.this;
+        }
+    }
+
+    //通过binder实现了 调用者（client）与 service之间的通信
+    private DownloadService.MyBinder binder = new DownloadService.MyBinder();
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return false;
+    }
+
     private final DownloadContextListener contextListener = new DownloadContextListener() {
         @Override
         public void taskEnd(@NonNull DownloadContext context, @NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, int remainCount) {
@@ -169,14 +186,31 @@ public class DownloadService extends Service {
 
         @Override
         public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, @NonNull Listener1Assist.Listener1Model model) {
-            /*TaskTagUtil.saveStatus(task, cause.toString());
-            if (cause == EndCause.COMPLETED) {
-                final String realMd5 = FileUtil.fileToMD5(task.getFile().getAbsolutePath());
-                if (!realMd5.equalsIgnoreCase(TaskTagUtil.getMd5(task))) {
-                    Logger.e(TAG, "file is wrong because of md5 is wrong " + realMd5);
-                    FileUtil.deleteFile(downloadPath + task.getFilename());
+//            TaskTagUtil.saveStatus(task, cause.toString());
+            if (cause == EndCause.COMPLETED && Utils.IS_CHECK_MD5) {
+                if (!FileUtil.fileToMD5(task.getFile().getAbsolutePath()).equalsIgnoreCase(TaskTagUtil.getMd5(task))) {
+                    Logger.e(TAG, "file is wrong because of md5 is wrong " + FileUtil.fileToMD5(task.getFile().getAbsolutePath()));
+                    switch (Utils.getFileExistType(task.getFilename())) {
+                        case 1:
+                            FileUtil.deleteFile(downloadPath + task.getFilename());
+                            break;
+                        case 2:
+                            FileUtil.deleteFile(downloadFilePath + task.getFilename());
+                            break;
+                        case 3:
+                            FileUtil.deleteFile(downloadImagePath + task.getFilename());
+                            break;
+                        case 4:
+                            FileUtil.deleteFile(downloadVideoPath + task.getFilename());
+                            break;
+                        case 5:
+                            FileUtil.deleteFile(downloadApkPath + task.getFilename());
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }*/
+            }
             endTime = System.currentTimeMillis();
             try {
                 DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
@@ -205,13 +239,22 @@ public class DownloadService extends Service {
                             }
                             if (allDownResultBean != null && allDownResultBean.data != null && allDownResultBean.data.items != null) {
                                 for (int i = 0; i < allDownResultBean.data.items.size(); i++) {
-                                    if (allDownResultBean.data.items.get(i).name.equals(task.getFilename())) {
+                                    if (allDownResultBean.data.items.get(i).id.equals(downloadBean.id) &&
+                                            allDownResultBean.data.items.get(i).name.equals(task.getFilename())) {
                                         allDownResultBean.data.items.remove(i);
                                         break;
                                     }
                                 }
                                 Utils.put(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, JSONObject.toJSONString(allDownResultBean));
+                                Utils.fileDownload(DownloadService.this, downloadBean);
                             }
+                        }
+                    } else if (cause.equals(EndCause.ERROR)) {
+                        try {
+                            getPlaylistBean().data.items.remove(downloadBean);
+                            removeTask(downloadBean.id);
+                        } catch (Exception e) {
+                            Logger.e(TAG, e.toString());
                         }
                     }
                     Logger.e(task.getFilename() + "--下载开始时间:" + downloadBean.started);
@@ -231,6 +274,8 @@ public class DownloadService extends Service {
 
         @Override
         public void taskStart(@NonNull DownloadTask task) {
+            DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
+            downloadBean.started = System.currentTimeMillis() + "";
         }
 
         @Override
@@ -300,6 +345,10 @@ public class DownloadService extends Service {
         @Override
         public void taskStart(@NonNull DownloadTask task) {
             Logger.e(TAG, task.getFilename() + "开始下载");
+            DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
+            if (downloadBean != null) {
+                downloadBean.started = System.currentTimeMillis() + "";
+            }
         }
 
         @Override
@@ -309,8 +358,8 @@ public class DownloadService extends Service {
                 File downloadFile = new File(downloadPath + task.getFilename());
                 if (!downloadFile.exists()) {
                     addUpdateTask(updateFileName, updateUrl);
-                } else {
-//                    openAndroidFile(downloadPath + task.getFilename());
+                } else if (task.getFilename() != null && task.getFilename().toLowerCase().endsWith(".apk")) {
+                    openAndroidFile(downloadPath + task.getFilename());
                 }
             } else {
                 Logger.e(TAG, task.getFilename() + "下载出错，>>>downloadLink=" + task.getUrl() + "，异常信息：" + realCause);
@@ -401,6 +450,7 @@ public class DownloadService extends Service {
                     registerBean = JSON.parseObject(beanStr, RegisterBean.class);
                 }
                 getPlaylistBean();
+                removeAllTasks();
                 addDownloadTasks();
                 startTasks(true);
                 break;
@@ -445,11 +495,11 @@ public class DownloadService extends Service {
         super.onDestroy();
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+//    @Nullable
+//    @Override
+//    public IBinder onBind(Intent intent) {
+//        return null;
+//    }
 
     /**
      * @param domain 域名
@@ -485,7 +535,7 @@ public class DownloadService extends Service {
 
     private String getDownSave() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/abcdownload/");
+            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + ROOT_FILE_NAME + "/");
             if (!file.exists()) {
                 boolean r = file.mkdirs();
                 if (!r) {
@@ -509,6 +559,23 @@ public class DownloadService extends Service {
         if (!TextUtils.isEmpty(json)) {
             playlistResultBean = JSON.parseObject(json, PlaylistResultBean.class);
         }
+        String jsonFinish = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD_FINISH, "").toString();
+        if (!TextUtils.isEmpty(jsonFinish)) {
+            JSONArray jsonArray = JSON.parseArray(jsonFinish);
+            List<PlaylistBodyBean> finished = new ArrayList<>();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                DownloadBean bean = JSON.parseObject(jsonArray.getString(i), DownloadBean.class);
+                List<PlaylistBodyBean> list = playlistResultBean.data.items;
+
+                for (int j = 0; j < list.size(); j++) {
+                    if (bean.id != null && list.get(j).id != null && bean.id.equals(list.get(j).id) && Utils.getFileExistType(bean.name) > 0) {
+                        finished.add(list.get(j));
+                        break;
+                    }
+                }
+            }
+            playlistResultBean.data.items.removeAll(finished);
+        }
         if (playlistResultBean == null || playlistResultBean.data == null || playlistResultBean.data.items == null) {
             return;
         }
@@ -516,25 +583,29 @@ public class DownloadService extends Service {
             PlaylistBodyBean bodyBean = playlistResultBean.data.items.get(i);
             if (!TextUtils.isEmpty(bodyBean.downloadLink)) {
                 if (Utils.isInDownloadTime(bodyBean)) {
-                    if (Utils.isInPlayTime(bodyBean)) {
-                        DownloadBean downloadBean = new DownloadBean();
-                        String downloadUrl;
-                        if (Utils.IS_TEST) {
-                            downloadUrl = bodyBean.downloadLink;
-                        } else {
-                            downloadUrl = replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink);
-                        }
-                        if (Utils.existHttpPath(downloadUrl)) {
+//                    if (Utils.isInPlayTime(bodyBean)) {
+                    DownloadBean downloadBean = new DownloadBean();
+                    String downloadUrl;
+                    if (Utils.IS_TEST) {
+                        downloadUrl = bodyBean.downloadLink;
+                    } else {
+                        downloadUrl = replaceDomainAndPort(registerBean.data.cdn, null, bodyBean.downloadLink);
+                    }
+                    if (Utils.existHttpPath(downloadUrl)) {
 //                            DownloadTask task = addDownloadTask(bodyBean.name, replaceDomainAndPort(registerBean.data.server, null, bodyBean.downloadLink), bodyBean.isUrg);
-                            DownloadTask task = addDownloadTask(bodyBean.name, downloadUrl, bodyBean.isUrg);
+                        DownloadTask task = addDownloadTask(bodyBean.name, downloadUrl, bodyBean.isUrg);
+                        if (task != null) {
+                            TaskTagUtil.saveMD5(task, bodyBean.md5);
                             downloadBean.id = bodyBean.id;
+                            downloadBean.name = bodyBean.name;
                             addDowloadBean(downloadBean);
                             TaskTagUtil.saveDownloadId(task, bodyBean.id);
                             TaskTagUtil.saveDownloadBeanIndex(task, i);
                             TaskTagUtil.saveDownloadBean(task, downloadBean);
-                        } else {
-                            Logger.e("下载链接为空或路径非法");
                         }
+                    } else {
+                        Logger.e("下载链接为空或路径非法");
+                    }
 //                        existHttpPath(bodyBean.downloadLink);
                       /*  if (isCanConnected2) {
                             DownloadTask task = addDownloadTask(bodyBean.name, bodyBean.downloadLink, bodyBean.isUrg);
@@ -544,10 +615,10 @@ public class DownloadService extends Service {
                             TaskTagUtil.saveDownloadBeanIndex(task, i);
                             TaskTagUtil.saveDownloadBean(task, downloadBean);
                         }*/
-                    } else {
-                        Logger.e(TAG, "文件" + bodyBean.name + "不在播放时间内");
+//                    } else {
+//                        Logger.e(TAG, "文件" + bodyBean.name + "不在播放时间内");
 
-                    }
+//                    }
                 } else {
                     Logger.e(TAG, "文件" + bodyBean.name + "不在下载时间内");
                 }
@@ -603,7 +674,7 @@ public class DownloadService extends Service {
             speedDownload = 50;
             Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
         }
-        int downloadSpeed = speedDownload / 6;
+        int downloadSpeed = speedDownload / 10;
         File parentFile = new File(downloadApkPath);
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority(10)
@@ -652,6 +723,8 @@ public class DownloadService extends Service {
             case "txt":
                 parentFile = new File(downloadFilePath);
                 break;
+            case "wps":
+                return null;
             default:
                 parentFile = new File(downloadPath);
                 break;
@@ -668,7 +741,11 @@ public class DownloadService extends Service {
             Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
         }
         int downloadSpeed = speedDownload / 6;
+//        int downloadSpeed = speedDownload / 100 + 1;
         isUrg = TextUtils.isEmpty(isUrg) ? "0" : isUrg;
+        if (downloadSpeed <= 0) {
+            downloadSpeed = 1;
+        }
 
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority("1".equals(isUrg) ? 10 : 0)
@@ -733,17 +810,6 @@ public class DownloadService extends Service {
 
         taskList = Arrays.asList(this.context.getTasks());
         return task;
-    }
-
-    public void removeAllTasks() {
-        for (DownloadTask task : taskList) {
-//            FileUtil.deleteFile(downloadPath + task.getFilename());
-            OkDownload.with().downloadDispatcher().cancel(task.getId());
-            OkDownload.with().breakpointStore().remove(task.getId());
-            builder.unbind(task);
-        }
-        this.context = builder.build();
-        taskList = Arrays.asList(this.context.getTasks());
     }
 
     public void removeTask(String downloadTaskId) {
@@ -878,4 +944,16 @@ public class DownloadService extends Service {
         intent.setPackage(PACKAGE);
         sendBroadcast(intent);
     }
+
+    public void removeAllTasks() {
+        for (DownloadTask task : taskList) {
+//            FileUtil.deleteFile(downloadPath + task.getFilename());
+            OkDownload.with().downloadDispatcher().cancel(task.getId());
+            OkDownload.with().breakpointStore().remove(task.getId());
+            builder.unbind(task);
+        }
+        this.context = builder.build();
+        taskList = Arrays.asList(this.context.getTasks());
+    }
+
 }

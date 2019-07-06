@@ -3,6 +3,8 @@ package com.ads.abcbank.view;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import com.ads.abcbank.utils.Logger;
+
 import cn.jzvd.JzvdStd;
 
 public class AutoVideoPlayer extends JzvdStd {
@@ -27,5 +29,13 @@ public class AutoVideoPlayer extends JzvdStd {
             tempView.nextPlay();
         }
 //        startVideo();
+    }
+
+    @Override
+    public void onStateError() {
+        Logger.e(this.getClass().toString(), "播放出错");
+        if (tempView != null) {
+            tempView.fileHadDel();
+        }
     }
 }

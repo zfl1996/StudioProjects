@@ -55,6 +55,7 @@ public class AsyncThread {
                     msg.obj = null;
                     handler.sendMessage(msg);
                     Logger.e("数据交互出错", e.toString());
+                    Utils.hideProgressDialog();
                 }
 
                 @Override
@@ -70,10 +71,12 @@ public class AsyncThread {
                             Logger.e("数据交互出错", e.toString());
                         }
                     }
+                    Utils.hideProgressDialog();
                 }
             });//此处省略回调方法。
         } catch (Exception e) {
             Logger.e("数据交互出错", e.toString());
+            Utils.hideProgressDialog();
         }
     }
 }

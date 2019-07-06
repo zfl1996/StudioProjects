@@ -3,13 +3,16 @@ package com.ads.abcbank.view;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -46,6 +49,8 @@ public class BaseActivity extends AppCompatActivity {
     private IView iView;
     public static Activity mActivity;
     private DownloadStatus downloadStatus;
+    private TimeCmdService timeCmdService = null;
+    private DownloadService downloadService = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +75,54 @@ public class BaseActivity extends AppCompatActivity {
         registerReceiver(netChangeReceiver, filter);
     }
 
+    private ServiceConnection cmdConn = new ServiceConnection() {
+        /** 获取服务对象时的操作 */
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // TODO Auto-generated method stub
+            TimeCmdService.MyBinder binder = (TimeCmdService.MyBinder) service;
+            timeCmdService = binder.getService();
+
+        }
+
+        /** 无法获取到服务对象时的操作 */
+        public void onServiceDisconnected(ComponentName name) {
+            // TODO Auto-generated method stub
+            timeCmdService = null;
+        }
+
+    };
+    private ServiceConnection downConn = new ServiceConnection() {
+        /** 获取服务对象时的操作 */
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // TODO Auto-generated method stub
+            DownloadService.MyBinder binder = (DownloadService.MyBinder) service;
+            downloadService = binder.getService();
+
+        }
+
+        /** 无法获取到服务对象时的操作 */
+        public void onServiceDisconnected(ComponentName name) {
+            // TODO Auto-generated method stub
+            downloadService = null;
+        }
+
+    };
+
     public void startServices(String type) {
-        startService(new Intent(this, TimeCmdService.class));
-//        startService(new Intent(this, TimePlaylistService.class));
-//        startService(new Intent(this, TimePresetService.class));
-        Intent intent = new Intent();
-        intent.putExtra("type", type);
-        intent.setAction(DownloadService.ADD_MULTI_DOWNTASK);
-        intent.setPackage(DownloadService.PACKAGE);
-        startService(intent);
+//        startService(new Intent(this, TimeCmdService.class));
+        {
+            Intent intent = new Intent(this, TimeCmdService.class);
+            intent.putExtra("from", "ActivityA");
+            bindService(intent, cmdConn, BIND_AUTO_CREATE);
+        }
+        {
+            Intent intent = new Intent();
+            intent.putExtra("type", type);
+            intent.setAction(DownloadService.ADD_MULTI_DOWNTASK);
+            intent.setPackage(DownloadService.PACKAGE);
+//            startService(intent);
+            bindService(intent, downConn, BIND_AUTO_CREATE);
+        }
         {
             Logger.e("TAG", "获取轮询命令服务：" + new Date().toString());
             CmdpollBean cmdpollBean = new CmdpollBean();
@@ -157,8 +201,30 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(netChangeReceiver);
-        unregisterReceiver(downloadStatus);
+        try {
+            unregisterReceiver(netChangeReceiver);
+        } catch (Exception e) {
+            Logger.e(BaseActivity.class.toString(), e.toString());
+        }
+        try {
+            unregisterReceiver(downloadStatus);
+        } catch (Exception e) {
+            Logger.e(BaseActivity.class.toString(), e.toString());
+        }
+        if (cmdConn != null && timeCmdService != null) {
+            try {
+                unbindService(cmdConn);
+            } catch (Exception e) {
+                Logger.e(BaseActivity.class.toString(), e.toString());
+            }
+        }
+        if (downConn != null && downloadService != null) {
+            try {
+                unbindService(downConn);
+            } catch (Exception e) {
+                Logger.e(BaseActivity.class.toString(), e.toString());
+            }
+        }
         Utils.changeIntent(this);
     }
 

@@ -23,7 +23,7 @@ import cn.jzvd.JzvdStd;
 public class VideoFragment extends BaseTempFragment {
     private View view;
     private AutoVideoPlayer content;
-    private static PlaylistBodyBean bean;
+    private PlaylistBodyBean bean;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -63,14 +63,14 @@ public class VideoFragment extends BaseTempFragment {
             } catch (Exception e) {
                 Logger.e(e.toString());
             }
-            Glide.with(this).load(R.drawable.app_icon_your_company).into(content.thumbImageView);
+//            Glide.with(this).load(R.drawable.app_icon_your_company).into(content.thumbImageView);
             content.startVideo();
         }
     }
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        VideoFragment.bean = bean;
+        this.bean = bean;
         initData();
         showQRs(bean);
     }

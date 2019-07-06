@@ -13,6 +13,7 @@ import com.ads.abcbank.activity.WebViewActivity;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTempFragment;
 
@@ -21,7 +22,7 @@ import java.io.File;
 public class ImageFragment extends BaseTempFragment implements View.OnClickListener {
     private View view;
     private ImageView content;
-    private static PlaylistBodyBean bean;
+    private PlaylistBodyBean bean;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -37,7 +38,6 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     @Override
     public void initData() {
         if (bean != null && view != null && isVisiable) {
-//            Utils.loadImage(content, bean.downloadLink);
             try {
                 Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadImagePath + bean.name)));
             } catch (Exception e) {
@@ -65,7 +65,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
         if (isVisibleToUser) {
             if (bean != null) {
                 try {
-                    Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadPath + bean.name)));
+                    Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadImagePath + bean.name)));
                 } catch (Exception e) {
                     Utils.loadImage(content, "");
                 }
@@ -83,7 +83,10 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-
+            if (!isVisiable) {
+                handler.removeCallbacks(runnable);
+                return;
+            }
             try {
                 delayTime = Integer.
                         parseInt(Utils.
@@ -105,7 +108,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        ImageFragment.bean = bean;
+        this.bean = bean;
         initData();
 //        showQRs(bean);
     }

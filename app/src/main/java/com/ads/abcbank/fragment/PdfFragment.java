@@ -25,7 +25,7 @@ import java.io.InputStream;
 public class PdfFragment extends BaseTempFragment {
     private View view;
     private ImageView content;
-    private static PlaylistBodyBean bean;
+    private PlaylistBodyBean bean;
     private static final String STATE_CURRENT_PAGE_INDEX = "current_page_index";
 
     private static final String FILENAME = "1.pdf";
@@ -180,6 +180,10 @@ public class PdfFragment extends BaseTempFragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            if (!isVisiable) {
+                handler.removeCallbacks(runnable);
+                return;
+            }
             try {
                 delayTime = Integer.
                         parseInt(Utils.
@@ -210,7 +214,7 @@ public class PdfFragment extends BaseTempFragment {
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        PdfFragment.bean = bean;
+        this.bean = bean;
         initData();
         showQRs(bean);
     }

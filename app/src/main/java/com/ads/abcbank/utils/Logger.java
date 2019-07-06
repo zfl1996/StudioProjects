@@ -2,6 +2,7 @@ package com.ads.abcbank.utils;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -158,7 +159,20 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         mDownLoadTvTitle.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFilterDialog(); //点击日志窗口标题栏打开过滤器
+//                showFilterDialog(); //点击日志窗口标题栏打开过滤器
+                new android.app.AlertDialog.Builder(ActivityManager.getInstance().getTopActivity()).setTitle("提示")
+                        .setMessage("是否删除已下载数据").setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("删除", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Utils.deleteDownloadFiles();
+                        dialog.dismiss();
+                    }
+                }).create().show();
             }
         });
         mDownLoadTvTitle.setOnLongClickListener(new OnLongClickListener() {

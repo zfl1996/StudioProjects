@@ -27,11 +27,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.service.DownloadService;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -69,13 +71,15 @@ import java.util.Locale;
  */
 
 public class Utils {
-    public static final boolean IS_TEST = true;
+    public static final boolean IS_TEST = false;
+    public static final boolean IS_CHECK_MD5 = false;
     public static final String WEBURL = "WEBURL";
     public static final String USER_INFO = "userInfo";//xml文件名称，记录主要内容
     public static ProgressDialog mProgressDialog;
 
     public static final String KEY_PLAY_LIST = "playList";
     public static final String KEY_PLAY_LIST_DOWNLOAD = "playListDownload";
+    public static final String KEY_PLAY_LIST_DOWNLOAD_FINISH = "playListDownloadFinish";
     public static final String KEY_PLAY_LIST_ALL = "playListAll";
     public static final String KEY_PRESET = "preset";
     public static final String KEY_CONTENT_TYPE_START = "contentTypeStart";
@@ -122,6 +126,12 @@ public class Utils {
                 .s_title), context.getString(R.string.s_loading), true, true);
     }
 
+    public static final void hideProgressDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+    }
+
     public static String getStringFromAssets(String fileName, Context context) {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -149,24 +159,28 @@ public class Utils {
      */
     public static void put(Context context, String key, Object object) {
 
-        SharedPreferences sp = context.getSharedPreferences(USER_INFO, Context
-                .MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
+        try {
+            SharedPreferences sp = context.getSharedPreferences(USER_INFO, Context
+                    .MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
 
-        if (object instanceof String) {
-            editor.putString(key, (String) object);
-        } else if (object instanceof Integer) {
-            editor.putInt(key, (Integer) object);
-        } else if (object instanceof Boolean) {
-            editor.putBoolean(key, (Boolean) object);
-        } else if (object instanceof Float) {
-            editor.putFloat(key, (Float) object);
-        } else if (object instanceof Long) {
-            editor.putLong(key, (Long) object);
-        } else {
-            editor.putString(key, object.toString());
+            if (object instanceof String) {
+                editor.putString(key, (String) object);
+            } else if (object instanceof Integer) {
+                editor.putInt(key, (Integer) object);
+            } else if (object instanceof Boolean) {
+                editor.putBoolean(key, (Boolean) object);
+            } else if (object instanceof Float) {
+                editor.putFloat(key, (Float) object);
+            } else if (object instanceof Long) {
+                editor.putLong(key, (Long) object);
+            } else {
+                editor.putString(key, object.toString());
+            }
+            SharedPreferencesCompat.apply(editor);
+        } catch (Exception e) {
+            Logger.e(e.toString());
         }
-        SharedPreferencesCompat.apply(editor);
     }
 
     /**
@@ -1151,6 +1165,106 @@ public class Utils {
                 return false;
             }
         }
+    }
+
+    public static void fileDownload(Context context, DownloadBean downloadBean) {
+        String json = get(context, KEY_PLAY_LIST_DOWNLOAD_FINISH, "").toString();
+        if (TextUtils.isEmpty(json)) {
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = JSONObject.parseObject(JSONObject.toJSONString(downloadBean));
+            jsonArray.add(jsonObject);
+            put(context, KEY_PLAY_LIST_DOWNLOAD_FINISH, JSONArray.toJSONString(jsonArray));
+        } else {
+            JSONArray jsonArray = JSON.parseArray(json);
+            JSONObject jsonObject = JSONObject.parseObject(JSONObject.toJSONString(downloadBean));
+            jsonArray.add(jsonObject);
+            put(context, KEY_PLAY_LIST_DOWNLOAD_FINISH, JSONArray.toJSONString(jsonArray));
+        }
+    }
+
+    public static void deleteDownloadFiles() {
+        FileUtil.deleteFile(DownloadService.downloadPath);
+        FileUtil.deleteFile(DownloadService.downloadFilePath);
+        FileUtil.deleteFile(DownloadService.downloadImagePath);
+        FileUtil.deleteFile(DownloadService.downloadVideoPath);
+        FileUtil.deleteFile(DownloadService.downloadApkPath);
+    }
+
+    public static int getFileExistType(String fileName) {
+        if (new File(DownloadService.downloadPath + fileName).exists()) {
+            return 1;
+        } else if (new File(DownloadService.downloadFilePath + fileName).exists()) {
+            return 2;
+        } else if (new File(DownloadService.downloadImagePath + fileName).exists()) {
+            return 3;
+        } else if (new File(DownloadService.downloadVideoPath + fileName).exists()) {
+            return 4;
+        } else if (new File(DownloadService.downloadApkPath + fileName).exists()) {
+            return 5;
+        }
+        return 0;
+    }
+
+    public static boolean checkMd5(Context context, PlaylistBodyBean bodyBean) {
+        String fileName = bodyBean.name;
+        File file = null;
+        switch (getFileExistType(fileName)) {
+            case 1:
+                file = new File(DownloadService.downloadPath + fileName);
+                break;
+            case 2:
+                file = new File(DownloadService.downloadFilePath + fileName);
+                break;
+            case 3:
+                file = new File(DownloadService.downloadImagePath + fileName);
+                break;
+            case 4:
+                file = new File(DownloadService.downloadVideoPath + fileName);
+                break;
+            case 5:
+                file = new File(DownloadService.downloadApkPath + fileName);
+                break;
+        }
+        if (file == null || !file.exists()) {
+            return false;
+        } else {
+            if (IS_CHECK_MD5) {
+                String fileMd5 = FileUtil.fileToMD5(file.getAbsolutePath());
+                if (!TextUtils.isEmpty(fileMd5) && fileMd5.equalsIgnoreCase(bodyBean.md5)) {
+                    return true;
+                } else {
+                    FileUtil.deleteFile(file);
+                    deleteFinishItem(context, fileName);
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        }
+    }
+
+    public static void deleteFinishItem(Context context, String name) {
+        String json = get(context, KEY_PLAY_LIST_DOWNLOAD_FINISH, "").toString();
+        if (!TextUtils.isEmpty(json)) {
+            List<DownloadBean> downloadBean = JSON.parseArray(json, DownloadBean.class);
+            for (DownloadBean bean : downloadBean) {
+                if (bean.name.equals(name)) {
+                    downloadBean.remove(bean);
+                    break;
+                }
+            }
+            put(context, KEY_PLAY_LIST_DOWNLOAD_FINISH, JSONArray.toJSONString(downloadBean));
+        }
+    }
+
+    public static int getNumberForString(String string, int defaultValue) {
+        int timeCmdInt;
+        try {
+            timeCmdInt = Integer.parseInt(string);
+        } catch (Exception e) {
+            timeCmdInt = defaultValue;
+        }
+        return timeCmdInt;
     }
 
 }

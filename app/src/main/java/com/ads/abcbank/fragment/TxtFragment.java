@@ -23,7 +23,7 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
     private View view;
     private TextView content;
     private AutoScrollView scrollView;
-    private static PlaylistBodyBean bean;
+    private PlaylistBodyBean bean;
     private int rate = 30;
 
     @Override
@@ -113,7 +113,7 @@ public class TxtFragment extends BaseTempFragment implements View.OnClickListene
 
     @Override
     public void setBean(PlaylistBodyBean bean) {
-        TxtFragment.bean = bean;
+        this.bean = bean;
         initData();
         showQRs(bean);
     }

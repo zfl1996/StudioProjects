@@ -131,9 +131,7 @@ public class FileUtil {
 
     public static void deleteFile(File file) {
         try {
-            if (file.exists() == false) {
-                return;
-            } else {
+            if (file.exists()) {
                 if (file.isFile()) {
                     file.delete();
                     return;
@@ -238,14 +236,14 @@ public class FileUtil {
     }
 
     public static void writeJsonToFile(String json) {
-        try {
-            String filePath = getDownSave() + "playlist.json";
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true), "UTF-8"));
-            bw.write(json);
-            bw.flush();
-        } catch (IOException e) {
-            Logger.e(TAG, "write json to file failed");
-        }
+//        try {
+//            String filePath = getDownSave() + "playlist.json";
+//            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true), "UTF-8"));
+//            bw.write(json);
+//            bw.flush();
+//        } catch (IOException e) {
+//            Logger.e(TAG, "write json to file failed");
+//        }
     }
 
     /**
@@ -296,7 +294,7 @@ public class FileUtil {
 
     public static String getDownSave() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/abcdownload/");
+            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + DownloadService.ROOT_FILE_NAME + "/");
             if (!file.exists()) {
                 boolean r = file.mkdirs();
                 if (!r) {
