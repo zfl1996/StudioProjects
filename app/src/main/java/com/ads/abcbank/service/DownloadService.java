@@ -220,7 +220,7 @@ public class DownloadService extends Service {
                     downloadBean.secUsed = String.valueOf((endTime - startTime) / 1000);
                     addDowloadBean(downloadBean);
                     if (cause.equals(EndCause.COMPLETED)) {
-                        File downloadFile = new File(downloadPath + task.getFilename());
+                        File downloadFile = getDownloadFile(task);
                         if (!downloadFile.exists()) {
                             startTasks(true);
                         } else {
@@ -265,6 +265,37 @@ public class DownloadService extends Service {
                 Logger.e(e.toString());
             }
             Logger.e("--下载列表状态:" + JSONObject.toJSONString(getPlaylistBean()));
+        }
+
+        private File getDownloadFile(@NonNull DownloadTask task) {
+            File downloadFile = null;
+            String suffix = task.getFilename().substring(task.getFilename().lastIndexOf(".") + 1).toLowerCase();
+            switch (suffix) {
+                case "mp4":
+                case "mkv":
+                case "wmv":
+                case "avi":
+                case "rmvb":
+                    downloadFile = new File(downloadVideoPath+task.getFilename());
+                    break;
+                case "jpg":
+                case "png":
+                case "bmp":
+                case "jpeg":
+                    downloadFile = new File(downloadImagePath+task.getFilename());
+                    break;
+                case "pdf":
+                case "txt":
+                    downloadFile = new File(downloadFilePath+task.getFilename());
+                    break;
+                case "wps":
+                    return null;
+                default:
+                    downloadFile = new File(downloadPath+task.getFilename());
+                    break;
+            }
+
+            return downloadFile;
         }
     };
     private DownloadListener downloadListener = new DownloadListener4WithSpeed() {
@@ -740,8 +771,8 @@ public class DownloadService extends Service {
             speedDownload = 50;
             Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
         }
-        int downloadSpeed = speedDownload / 6;
-//        int downloadSpeed = speedDownload / 100 + 1;
+//        int downloadSpeed = speedDownload / 6;
+        int downloadSpeed = speedDownload / 100 + 1;
         isUrg = TextUtils.isEmpty(isUrg) ? "0" : isUrg;
         if (downloadSpeed <= 0) {
             downloadSpeed = 1;
