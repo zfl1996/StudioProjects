@@ -108,11 +108,28 @@ public class BaseActivity extends AppCompatActivity {
 
     };
 
+    private void stopServices() {
+        if (cmdConn != null && timeCmdService != null) {
+            try {
+                unbindService(cmdConn);
+            } catch (Exception e) {
+                Logger.e(BaseActivity.class.toString(), e.toString());
+            }
+        }
+        if (downConn != null && downloadService != null) {
+            try {
+                unbindService(downConn);
+            } catch (Exception e) {
+                Logger.e(BaseActivity.class.toString(), e.toString());
+            }
+        }
+    }
+
     public void startServices(String type) {
+        stopServices();
 //        startService(new Intent(this, TimeCmdService.class));
         {
             Intent intent = new Intent(this, TimeCmdService.class);
-            intent.putExtra("from", "ActivityA");
             bindService(intent, cmdConn, BIND_AUTO_CREATE);
         }
         {
@@ -178,7 +195,12 @@ public class BaseActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
+            String action = null;
+            try {
+                action = intent.getAction();
+            } catch (Exception e) {
+                Logger.e(e.toString());
+            }
             if (TextUtils.equals(action, CONNECTIVITY_CHANGE_ACTION)) {
                 netType = getNetworkType();
                 if (netType == ConnectivityManager.TYPE_WIFI || netType == ConnectivityManager.TYPE_MOBILE) {
@@ -211,20 +233,7 @@ public class BaseActivity extends AppCompatActivity {
         } catch (Exception e) {
             Logger.e(BaseActivity.class.toString(), e.toString());
         }
-        if (cmdConn != null && timeCmdService != null) {
-            try {
-                unbindService(cmdConn);
-            } catch (Exception e) {
-                Logger.e(BaseActivity.class.toString(), e.toString());
-            }
-        }
-        if (downConn != null && downloadService != null) {
-            try {
-                unbindService(downConn);
-            } catch (Exception e) {
-                Logger.e(BaseActivity.class.toString(), e.toString());
-            }
-        }
+        stopServices();
         Utils.changeIntent(this);
     }
 
@@ -263,6 +272,7 @@ public class BaseActivity extends AppCompatActivity {
             } else {
                 clickTimes = 0;
                 startActivity(new Intent(this, ReInitActivity.class));
+                finish();
             }
         }
     }
@@ -381,7 +391,12 @@ public class BaseActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
+            String action = null;
+            try {
+                action = intent.getAction();
+            } catch (Exception e) {
+                Logger.e(e.toString());
+            }
             if (action != null) {
                 switch (action) {
                     case DownloadService.TASKS_CHANGED:

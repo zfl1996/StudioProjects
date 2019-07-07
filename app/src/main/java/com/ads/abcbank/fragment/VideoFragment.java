@@ -24,6 +24,8 @@ public class VideoFragment extends BaseTempFragment {
     private View view;
     private AutoVideoPlayer content;
     private PlaylistBodyBean bean;
+    private JZMediaSystemAssertFolder jzMediaSystemAssertFolder;
+    private JZMediaIjk jzMediaIjk;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -52,10 +54,12 @@ public class VideoFragment extends BaseTempFragment {
             try {
                 File file = new File(DownloadService.downloadVideoPath + bean.name);
                 if (!file.exists()) {
+                    jzMediaSystemAssertFolder = new JZMediaSystemAssertFolder(content);
                     content.setUp(jzDataSource
                             , JzvdStd.SCREEN_NORMAL);
-                    content.setMediaInterface(new JZMediaSystemAssertFolder(content));
+                    content.setMediaInterface(jzMediaSystemAssertFolder);
                 } else {
+                    jzMediaIjk = new JZMediaIjk(content);
                     content.setUp(DownloadService.downloadVideoPath + bean.name
                             , "", Jzvd.SCREEN_NORMAL);
                     content.setMediaInterface(new JZMediaIjk(content));
@@ -64,7 +68,16 @@ public class VideoFragment extends BaseTempFragment {
                 Logger.e(e.toString());
             }
 //            Glide.with(this).load(R.drawable.app_icon_your_company).into(content.thumbImageView);
+            playerSeekTo();
             content.startVideo();
+        }
+    }
+
+    private void playerSeekTo() {
+        if (jzMediaSystemAssertFolder != null) {
+            jzMediaSystemAssertFolder.seekTo(0);
+        } else if (jzMediaIjk != null) {
+            jzMediaIjk.seekTo(0);
         }
     }
 
@@ -84,6 +97,7 @@ public class VideoFragment extends BaseTempFragment {
     public void onResume() {
         super.onResume();
         if (content != null && isVisiable) {
+            playerSeekTo();
             content.startVideo();
         }
     }
@@ -93,6 +107,7 @@ public class VideoFragment extends BaseTempFragment {
         super.onHiddenChanged(hidden);
         if (!hidden) {
             if (content != null && isVisiable) {
+                playerSeekTo();
                 content.startVideo();
             }
         }
@@ -103,6 +118,7 @@ public class VideoFragment extends BaseTempFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (content != null) {
+                playerSeekTo();
                 content.startVideo();
             }
         } else {

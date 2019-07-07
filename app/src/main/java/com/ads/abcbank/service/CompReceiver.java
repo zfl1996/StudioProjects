@@ -12,10 +12,13 @@ public class CompReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
-            Intent i = new Intent(context, WelcomeActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(i);
+        try {
+            if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
+                Intent i = new Intent(context, WelcomeActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
+            }
+        } catch (Exception e) {
         }
     }
 }

@@ -16,7 +16,9 @@ import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTabFragment;
+import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.TempView;
+import com.alibaba.fastjson.JSONObject;
 
 public class Tab2Fragment extends BaseTabFragment {
     private View view;
@@ -112,7 +114,11 @@ public class Tab2Fragment extends BaseTabFragment {
                 view.findViewById(R.id.ll_root).setBackgroundColor(Color.parseColor("#212832"));
             }
             initData();
-            handler.postDelayed(runnable, delayTime);
+            if (getUserVisibleHint()) {
+                handler.postDelayed(runnable, delayTime);
+            } else {
+                handler.removeCallbacks(runnable);
+            }
         } catch (Exception e) {
             Logger.e(e.toString());
         }
@@ -145,7 +151,7 @@ public class Tab2Fragment extends BaseTabFragment {
             } catch (Exception e) {
                 delayTime = 5000;
             }
-            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
+            if (getUserVisibleHint() && tempView != null) {
                 tempView.nextPlay();
             } else {
                 handler.postDelayed(runnable, delayTime);

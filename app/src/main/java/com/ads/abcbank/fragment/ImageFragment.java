@@ -56,7 +56,12 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        handler.postDelayed(runnable, delayTime);
+        if (getUserVisibleHint()) {
+            handler.removeCallbacks(runnable);
+            handler.postDelayed(runnable, delayTime);
+//        } else {
+//            handler.removeCallbacks(runnable);
+        }
     }
 
     @Override
@@ -72,9 +77,10 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
             } else {
                 Utils.loadImage(content, "");
             }
-            handler.postDelayed(runnable, delayTime);
-        } else {
             handler.removeCallbacks(runnable);
+            handler.postDelayed(runnable, delayTime);
+//        } else {
+//            handler.removeCallbacks(runnable);
         }
     }
 
@@ -83,10 +89,10 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (!isVisiable) {
-                handler.removeCallbacks(runnable);
-                return;
-            }
+//            if (!isVisiable) {
+//                handler.removeCallbacks(runnable);
+//                return;
+//            }
             try {
                 delayTime = Integer.
                         parseInt(Utils.
@@ -95,12 +101,15 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
             } catch (Exception e) {
                 delayTime = 5000;
             }
-            if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
+            if (isVisiable && tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                 tempView.nextPlay();
+                handler.removeCallbacks(runnable);
+                handler.postDelayed(runnable, delayTime);
             } else {
+                handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable, delayTime);
             }
-            if (tempView2 != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
+            if (isVisiable && tempView2 != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                 tempView2.nextPlay();
             }
         }

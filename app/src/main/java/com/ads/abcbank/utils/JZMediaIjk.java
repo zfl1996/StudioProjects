@@ -24,6 +24,7 @@ public class JZMediaIjk extends JZMediaInterface implements IMediaPlayer.OnPrepa
 
     @Override
     public void start() {
+        ijkMediaPlayer.release();
         ijkMediaPlayer.start();
     }
 
@@ -73,7 +74,9 @@ public class JZMediaIjk extends JZMediaInterface implements IMediaPlayer.OnPrepa
 
     @Override
     public void pause() {
-        ijkMediaPlayer.pause();
+        if (ijkMediaPlayer != null) {
+            ijkMediaPlayer.pause();
+        }
     }
 
     @Override
@@ -83,24 +86,34 @@ public class JZMediaIjk extends JZMediaInterface implements IMediaPlayer.OnPrepa
 
     @Override
     public void seekTo(long time) {
-        ijkMediaPlayer.seekTo(time);
+        if (ijkMediaPlayer != null) {
+            ijkMediaPlayer.seekTo(time);
+        }
     }
 
     @Override
     public void release() {
-        if (ijkMediaPlayer != null){
+        if (ijkMediaPlayer != null) {
             ijkMediaPlayer.release();
         }
     }
 
     @Override
     public long getCurrentPosition() {
-        return ijkMediaPlayer.getCurrentPosition();
+        if (ijkMediaPlayer != null) {
+            return ijkMediaPlayer.getCurrentPosition();
+        } else {
+            return 0;
+        }
     }
 
     @Override
     public long getDuration() {
-        return ijkMediaPlayer.getDuration();
+        if (ijkMediaPlayer != null) {
+            return ijkMediaPlayer.getDuration();
+        } else {
+            return 0;
+        }
     }
 
     @Override

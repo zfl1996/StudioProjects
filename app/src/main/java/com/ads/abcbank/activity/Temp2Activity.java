@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.MarqueeVerticalTextView;
 import com.ads.abcbank.view.MarqueeVerticalTextViewClickListener;
@@ -39,6 +40,18 @@ public class Temp2Activity extends BaseActivity implements IView {
                 }
         );
 
+        setiView(this);
+        startServices("M,H,P,N,E,L,R");
+        BaseTempFragment.tempView = tvTemp;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (tvTemp != null) {
+            BaseTempFragment.tempView = tvTemp;
+            tvTemp.setNeedUpdate(true);
+        }
         setiView(this);
         startServices("M,H,P,N,E,L,R");
     }

@@ -20,6 +20,7 @@ import android.view.View;
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.TempView;
 import com.ads.abcbank.view.TempView2;
@@ -44,6 +45,18 @@ public class Temp4Activity extends BaseActivity implements IView {
         tvTemp2.getImage().setVisibility(View.GONE);
         tvTemp.setImageSrc(R.mipmap.v_wkqk);
         tvTemp2.setImageSrc(R.mipmap.v_zysys);
+        setiView(this);
+        startServices("H,L,N");
+        BaseTempFragment.tempView = tvTemp;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (tvTemp != null) {
+            BaseTempFragment.tempView = tvTemp;
+            tvTemp.setNeedUpdate(true);
+        }
         setiView(this);
         startServices("H,L,N");
     }

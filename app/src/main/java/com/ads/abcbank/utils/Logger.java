@@ -563,6 +563,10 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        if (ActivityManager.getInstance().getTopActivity() == null) {
+            System.exit(0);
+            return;
+        }
         mLeakCheck.remove(activity);
     }
 
@@ -873,14 +877,20 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                     .append("<br/>")
                     .append("</html>");
             byte[] bytes = sb.toString().getBytes();
-            for (; ; ) {
-                Socket accept = socket.accept();
-                OutputStream os = accept.getOutputStream();
-                os.write(bytes);
-                os.flush();
-                os.close();
-                accept.close();
-                mDefaultHandler.uncaughtException(t, ex);
+            try {
+                for (; ; ) {
+                    Socket accept = socket.accept();
+                    OutputStream os = accept.getOutputStream();
+                    os.write(bytes);
+                    os.flush();
+                    os.close();
+                    accept.close();
+                    mDefaultHandler.uncaughtException(t, ex);
+                }
+            } catch (Exception e) {
+                Log.e("闪退3", e.toString());
+                ActivityManager.getInstance().finishAllActivity();
+                System.exit(0);
             }
         } catch (IOException e) {
             Log.e("闪退3", e.toString());

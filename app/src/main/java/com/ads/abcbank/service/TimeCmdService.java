@@ -70,8 +70,17 @@ public class TimeCmdService extends Service {
         notification.flags |= Notification.FLAG_NO_CLEAR;
         notification.flags |= Notification.FLAG_FOREGROUND_SERVICE;
         startForeground(1, notification);
+        try {
+            unbindService(mServiceConnection);
+        } catch (Exception e) {
+            Logger.e(e.toString());
+        }
         //绑定建立链接
-        bindService(new Intent(this, ProtectCmdService.class), mServiceConnection, Context.BIND_IMPORTANT);
+        try {
+            bindService(new Intent(this, ProtectCmdService.class), mServiceConnection, Context.BIND_IMPORTANT);
+        } catch (Exception e) {
+            Logger.e(e.toString());
+        }
     }
 
 

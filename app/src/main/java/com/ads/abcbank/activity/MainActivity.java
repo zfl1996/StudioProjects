@@ -400,40 +400,42 @@ public class MainActivity extends BaseActivity implements IMainView {
             if ("0".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, "初始化成功");
 
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+                String timePlaylist = Utils.get(MainActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
+                int time;
+                try {
+                    time = Integer.parseInt(timePlaylist);
+                } catch (NumberFormatException e) {
+                    time = 20;
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                calendar.add(Calendar.MINUTE, -1 * time);
+                String startTime = simpleDateFormat.format(calendar.getTime());
+
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTime(new Date());
+                calendar2.add(Calendar.MINUTE, time);
+                String endTime = simpleDateFormat.format(calendar2.getTime());
+
+                if (startTime.compareTo(initResultBean.data.serverTime) > 0
+                        || endTime.compareTo(initResultBean.data.serverTime) < 0) {
+                    ToastUtil.showToastLong(MainActivity.this, "请调整当前系统时间");
+                    HandlerUtil.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ActivityManager.getInstance().finishAllActivity();
+                            System.exit(0);
+                        }
+                    }, 2000);
+                    return;
+                }
+
                 HandlerUtil.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-                        String timePlaylist = Utils.get(MainActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
-                        int time;
-                        try {
-                            time = Integer.parseInt(timePlaylist);
-                        } catch (NumberFormatException e) {
-                            time = 20;
-                        }
-
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(new Date());
-                        calendar.add(Calendar.MINUTE, -1 * time);
-                        String startTime = simpleDateFormat.format(calendar.getTime());
-
-                        Calendar calendar2 = Calendar.getInstance();
-                        calendar2.setTime(new Date());
-                        calendar2.add(Calendar.MINUTE, time);
-                        String endTime = simpleDateFormat.format(calendar2.getTime());
-
-                        if (startTime.compareTo(initResultBean.data.serverTime) > 0
-                                || endTime.compareTo(initResultBean.data.serverTime) < 0) {
-                            ToastUtil.showToastLong(MainActivity.this, "请调整当前系统时间");
-                            HandlerUtil.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ActivityManager.getInstance().finishAllActivity();
-                                    System.exit(0);
-                                }
-                            }, 2000);
-                            return;
-                        }
 
                         String beanStr = Utils.get(MainActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
                         Intent intent = new Intent();

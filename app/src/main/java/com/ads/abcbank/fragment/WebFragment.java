@@ -102,15 +102,17 @@ public class WebFragment extends BaseTempFragment {
     @Override
     public void onResume() {
         super.onResume();
+
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            handler.postDelayed(runnable, delayTime);
-        } else {
             handler.removeCallbacks(runnable);
+            handler.postDelayed(runnable, delayTime);
+//        } else {
+//            handler.removeCallbacks(runnable);
         }
     }
 
@@ -125,7 +127,10 @@ public class WebFragment extends BaseTempFragment {
             }
             if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                 tempView.nextPlay();
+                handler.removeCallbacks(runnable);
+                handler.postDelayed(runnable, delayTime);
             } else {
+                handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable, delayTime);
             }
         }

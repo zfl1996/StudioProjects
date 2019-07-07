@@ -114,37 +114,43 @@ public class TempView extends LinearLayout {
 
     public synchronized void setType(String type) {
         errFileSum = 0;
+        presetSum = 0;
         this.type = type;
         if (image == null || viewpager == null) {
             initView();
         }
-        addTempViewList();
-        Activity activity = (Activity) getContext();
-        if (activity != null) {
-            if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
-                    || activity instanceof Temp5Activity) {
-                Tab1Fragment tab1Fragment = new Tab1Fragment();
-                Tab2Fragment tab2Fragment = new Tab2Fragment();
-                Tab3Fragment tab3Fragment = new Tab3Fragment();
-                String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
-                if (TextUtils.isEmpty(json)) {
-                    return;
-                }
-                PresetBean bean = JSON.parseObject(json, PresetBean.class);
-                tab1Fragment.setBean(bean.data.saveRate);
-                tab2Fragment.setBean(bean.data.loanRate);
-                tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
-                if (bean.data.saveRate.enable) {
-                    tab1Fragment.setTempView(this);
-                    fragmentList.add(tab1Fragment);
-                }
-                if (bean.data.loanRate.enable) {
-                    tab2Fragment.setTempView(this);
-                    fragmentList.add(tab2Fragment);
-                }
-                if (bean.data.buyInAndOutForeignExchange.enable) {
-                    tab3Fragment.setTempView(this);
-                    fragmentList.add(tab3Fragment);
+        int listType = addTempViewList();
+        if (listType == 0) {
+            Activity activity = (Activity) getContext();
+            if (activity != null) {
+                if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
+                        || activity instanceof Temp5Activity) {
+                    Tab1Fragment tab1Fragment = new Tab1Fragment();
+                    Tab2Fragment tab2Fragment = new Tab2Fragment();
+                    Tab3Fragment tab3Fragment = new Tab3Fragment();
+                    String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
+                    if (TextUtils.isEmpty(json)) {
+                        return;
+                    }
+                    PresetBean bean = JSON.parseObject(json, PresetBean.class);
+                    tab1Fragment.setBean(bean.data.saveRate);
+                    tab2Fragment.setBean(bean.data.loanRate);
+                    tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+                    if (bean.data.saveRate.enable) {
+                        tab1Fragment.setTempView(this);
+                        fragmentList.add(tab1Fragment);
+                        presetSum++;
+                    }
+                    if (bean.data.loanRate.enable) {
+                        tab2Fragment.setTempView(this);
+                        fragmentList.add(tab2Fragment);
+                        presetSum++;
+                    }
+                    if (bean.data.buyInAndOutForeignExchange.enable) {
+                        tab3Fragment.setTempView(this);
+                        fragmentList.add(tab3Fragment);
+                        presetSum++;
+                    }
                 }
             }
         }
@@ -166,6 +172,7 @@ public class TempView extends LinearLayout {
     }
 
     private int errFileSum = 0;
+    private int presetSum = 0;
 
     private void addPlayList(List<PlaylistBodyBean> bodyBeans) {
         for (int i = 0; i < bodyBeans.size(); i++) {
@@ -293,9 +300,9 @@ public class TempView extends LinearLayout {
         return finished;
     }
 
-    private synchronized void addTempViewList() {
+    private synchronized int addTempViewList() {
         if (playlistBean == null) {
-            return;
+            return -1;
         }
         fragmentList.clear();
 
@@ -315,7 +322,7 @@ public class TempView extends LinearLayout {
             } catch (Exception e) {
                 Logger.e(e.toString());
             }
-            return;
+            return 1;
         }
         for (int i = 0; i < playlistBean.size(); i++) {
             if (!"1".equals(playlistBean.get(i).isUrg)) {
@@ -323,6 +330,7 @@ public class TempView extends LinearLayout {
             }
         }
         addPlayList(normalLists);
+        return 0;
     }
 
     private long lastUpdaTime;
@@ -332,7 +340,7 @@ public class TempView extends LinearLayout {
     }
 
     public synchronized void nextPlay() {
-        if ((System.currentTimeMillis() - lastUpdaTime) < 4000) {
+        if ((System.currentTimeMillis() - lastUpdaTime) < 2000) {
             return;
         }
         lastUpdaTime = System.currentTimeMillis();
@@ -353,7 +361,7 @@ public class TempView extends LinearLayout {
         } else {
             int current = viewpager.getCurrentItem();
             int next;
-            if (playlistBean != null && playlistBean.size() > fragmentList.size() + errFileSum) {
+            if (playlistBean != null && playlistBean.size() + presetSum > fragmentList.size() + errFileSum) {
                 setType(type);
                 return;
             }
@@ -424,7 +432,7 @@ public class TempView extends LinearLayout {
             // 得到缓存的fragment
             Fragment fragment = (Fragment) super.instantiateItem(container,
                     position);
-            if (mList != null && playlistBean != null && mList.size() + errFileSum < playlistBean.size()) {
+            if (mList != null && playlistBean != null && mList.size() + errFileSum < playlistBean.size() + presetSum) {
                 setType(type);
             }
             if (fragment instanceof BaseTempFragment) {
@@ -445,6 +453,8 @@ public class TempView extends LinearLayout {
                         ((BaseTempFragment) fragment).setBean(bodyBean);
                     }
                 }
+            } else if (playlistBean != null && position < playlistBean.size()) {
+//                fragment = BaseTempFragment.newInstance((BaseTempFragment) mList.get(position));
             }
             WeakReference<Fragment> weak = new WeakReference<Fragment>(fragment);
 
@@ -486,6 +496,7 @@ public class TempView extends LinearLayout {
     }
 
     public synchronized void updatePreset() {
+        presetSum = 0;
         try {
             Activity activity = (Activity) getContext();
             if (activity != null) {
@@ -534,14 +545,17 @@ public class TempView extends LinearLayout {
                     if (bean.data.saveRate.enable) {
                         tab1Fragment.setTempView(this);
                         fragmentList.add(tab1Fragment);
+                        presetSum++;
                     }
                     if (bean.data.loanRate.enable) {
                         tab2Fragment.setTempView(this);
                         fragmentList.add(tab2Fragment);
+                        presetSum++;
                     }
                     if (bean.data.buyInAndOutForeignExchange.enable) {
                         tab3Fragment.setTempView(this);
                         fragmentList.add(tab3Fragment);
+                        presetSum++;
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package com.ads.abcbank.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -16,10 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.activity.Temp2Activity;
+import com.ads.abcbank.activity.Temp3Activity;
+import com.ads.abcbank.activity.Temp5Activity;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.fragment.Tab1Fragment;
 import com.ads.abcbank.fragment.Tab2Fragment;
 import com.ads.abcbank.fragment.Tab3Fragment;
+import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
@@ -178,6 +183,17 @@ public class PresetView extends LinearLayout {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            if (((Activity) getContext()).isDestroyed()) {
+                if (BaseTempFragment.tempView != null) {
+                    Activity activity = ActivityManager.getInstance().getTopActivity();
+                    if (activity != null && (activity instanceof Temp2Activity || activity instanceof Temp3Activity
+                            || activity instanceof Temp5Activity)) {
+                        BaseTempFragment.tempView.nextPlay();
+                    }
+                }
+                handler.removeCallbacks(runnable);
+                return;
+            }
             try {
                 delayTime = Integer.parseInt(
                         Utils.get(context, Utils.KEY_TIME_TAB_PRESET, "5")

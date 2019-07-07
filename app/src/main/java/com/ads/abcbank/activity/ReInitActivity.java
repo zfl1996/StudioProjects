@@ -424,6 +424,38 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back:
+                String beanStr = Utils.get(ReInitActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
+                Intent intent = new Intent();
+                if (TextUtils.isEmpty(beanStr)) {
+                    intent.setClass(ReInitActivity.this, MainActivity.class);
+                } else {
+                    RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                    switch (bean.data.frameSetNo) {
+                        case "1":
+                            intent.setClass(ReInitActivity.this, Temp1Activity.class);
+                            break;
+                        case "2":
+                            intent.setClass(ReInitActivity.this, Temp2Activity.class);
+                            break;
+                        case "3":
+                            intent.setClass(ReInitActivity.this, Temp3Activity.class);
+                            break;
+                        case "4":
+                            intent.setClass(ReInitActivity.this, Temp4Activity.class);
+                            break;
+                        case "5":
+                            intent.setClass(ReInitActivity.this, Temp5Activity.class);
+                            break;
+                        case "6":
+                            intent.setClass(ReInitActivity.this, Temp6Activity.class);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+//                Utils.put(ReInitActivity.this,Utils.KEY_PLAY_LIST,"");
+//                Utils.put(ReInitActivity.this,Utils.KEY_PLAY_LIST_DOWNLOAD,"");
+                startActivity(intent);
                 finish();
                 break;
             default:
@@ -445,40 +477,42 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
             if ("0".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, "初始化成功");
 
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+                String timePlaylist = Utils.get(ReInitActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
+                int time;
+                try {
+                    time = Integer.parseInt(timePlaylist);
+                } catch (NumberFormatException e) {
+                    time = 20;
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                calendar.add(Calendar.MINUTE, -1 * time);
+                String startTime = simpleDateFormat.format(calendar.getTime());
+
+                Calendar calendar2 = Calendar.getInstance();
+                calendar2.setTime(new Date());
+                calendar2.add(Calendar.MINUTE, time);
+                String endTime = simpleDateFormat.format(calendar2.getTime());
+
+                if (startTime.compareTo(initResultBean.data.serverTime) > 0
+                        || endTime.compareTo(initResultBean.data.serverTime) < 0) {
+                    ToastUtil.showToastLong(ReInitActivity.this, "请调整当前系统时间");
+                    HandlerUtil.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ActivityManager.getInstance().finishAllActivity();
+                            System.exit(0);
+                        }
+                    }, 2000);
+                    return;
+                }
+
                 HandlerUtil.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-                        String timePlaylist = Utils.get(ReInitActivity.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
-                        int time;
-                        try {
-                            time = Integer.parseInt(timePlaylist);
-                        } catch (NumberFormatException e) {
-                            time = 20;
-                        }
-
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(new Date());
-                        calendar.add(Calendar.MINUTE, -1 * time);
-                        String startTime = simpleDateFormat.format(calendar.getTime());
-
-                        Calendar calendar2 = Calendar.getInstance();
-                        calendar2.setTime(new Date());
-                        calendar2.add(Calendar.MINUTE, time);
-                        String endTime = simpleDateFormat.format(calendar2.getTime());
-
-                        if (startTime.compareTo(initResultBean.data.serverTime) > 0
-                                || endTime.compareTo(initResultBean.data.serverTime) < 0) {
-                            ToastUtil.showToastLong(ReInitActivity.this, "请调整当前系统时间");
-                            HandlerUtil.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ActivityManager.getInstance().finishAllActivity();
-                                    System.exit(0);
-                                }
-                            }, 2000);
-                            return;
-                        }
 
                         String beanStr = Utils.get(ReInitActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
                         Intent intent = new Intent();
@@ -509,6 +543,8 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                                     break;
                             }
                         }
+                        Utils.put(ReInitActivity.this,Utils.KEY_PLAY_LIST,"");
+                        Utils.put(ReInitActivity.this,Utils.KEY_PLAY_LIST_DOWNLOAD,"");
                         startActivity(intent);
                         finish();
                     }

@@ -39,62 +39,68 @@ public class CmdService extends Service {
     /*每次调用startService启动该服务都会执行*/
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (ActivityManager.getInstance().getTopActivity() != null) {
+            startService(new Intent(CmdService.this, TimeCmdService.class));
+            String timeCmd = Utils.get(CmdService.this, Utils.KEY_TIME_CMD, "5").toString();
+            String timePlaylist = Utils.get(CmdService.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
+            String timePreset = Utils.get(CmdService.this, Utils.KEY_TIME_PRESET, "30").toString();
 
-        startService(new Intent(CmdService.this, TimeCmdService.class));
-        String timeCmd = Utils.get(CmdService.this, Utils.KEY_TIME_CMD, "5").toString();
-        String timePlaylist = Utils.get(CmdService.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
-        String timePreset = Utils.get(CmdService.this, Utils.KEY_TIME_PRESET, "30").toString();
+            String timeCurrentCmd = Utils.get(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, "1").toString();
+            String timeCurrentPlaylist = Utils.get(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1").toString();
+            String timeCurrentPreset = Utils.get(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, "1").toString();
 
-        String timeCurrentCmd = Utils.get(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, "1").toString();
-        String timeCurrentPlaylist = Utils.get(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1").toString();
-        String timeCurrentPreset = Utils.get(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, "1").toString();
+            int timeCmdInt = Utils.getNumberForString(timeCmd, 5);
+            int timePlaylistInt = Utils.getNumberForString(timePlaylist, 20);
+            int timePresetInt = Utils.getNumberForString(timePreset, 30);
 
-        int timeCmdInt = Utils.getNumberForString(timeCmd, 5);
-        int timePlaylistInt = Utils.getNumberForString(timePlaylist, 20);
-        int timePresetInt = Utils.getNumberForString(timePreset, 30);
+            int timeCurrentCmdInt = Utils.getNumberForString(timeCurrentCmd, 1);
+            int timeCurrentPlaylistInt = Utils.getNumberForString(timeCurrentPlaylist, 1);
+            int timeCurrentPresetInt = Utils.getNumberForString(timeCurrentPreset, 1);
 
-        int timeCurrentCmdInt = Utils.getNumberForString(timeCurrentCmd, 1);
-        int timeCurrentPlaylistInt = Utils.getNumberForString(timeCurrentPlaylist, 1);
-        int timeCurrentPresetInt = Utils.getNumberForString(timeCurrentPreset, 1);
-
-        if (timeCurrentCmdInt < timeCmdInt) {
-            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, (timeCurrentCmdInt + 1) + "");
-        } else {
-            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, "1");
-            Logger.e("TAG", "启动获取cmdpoll轮询命令服务：" + new Date().toString());
-            CmdpollBean cmdpollBean = new CmdpollBean();
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(cmdpollBean)), handler, 0);
-        }
-        if (timeCurrentPlaylistInt < timePlaylistInt) {
-            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, (timeCurrentPlaylistInt + 1) + "");
-        } else {
-            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1");
-            Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
-            PlaylistBean playlistBean = DownloadService.getPlaylistBean();
-            Logger.e("启动获取播放列表--下载列表状态:" + JSONObject.toJSONString(DownloadService.getPlaylistBean()));
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), handler, 1);
-        }
-        if (timeCurrentPresetInt < timePresetInt) {
-            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, (timeCurrentPresetInt + 1) + "");
-        } else {
-            Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, "1");
-            Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());
-            RequestBean requestBean = new RequestBean();
-            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
-            if (!TextUtils.isEmpty(beanStr)) {
-                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
-                requestBean.appId = bean.appId;
-                requestBean.trCode = bean.trCode;
-                requestBean.trVersion = bean.trVersion;
-                requestBean.cityCode = bean.cityCode;
-                requestBean.brchCode = bean.brchCode;
-                requestBean.clientVersion = bean.clientVersion;
-                requestBean.terminalId = bean.terminalId;
-                requestBean.uniqueId = bean.uniqueId;
+            if (timeCurrentCmdInt < timeCmdInt) {
+                Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, (timeCurrentCmdInt + 1) + "");
+            } else {
+                Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_CMD, "1");
+                Logger.e("TAG", "启动获取cmdpoll轮询命令服务：" + new Date().toString());
+                CmdpollBean cmdpollBean = new CmdpollBean();
+                Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(cmdpollBean)), handler, 0);
             }
-            requestBean.timestamp = System.currentTimeMillis();
-            requestBean.flowNum = 0;
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), handler, 2);
+            if (timeCurrentPlaylistInt < timePlaylistInt) {
+                Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, (timeCurrentPlaylistInt + 1) + "");
+            } else {
+                Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1");
+                Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
+                PlaylistBean playlistBean = DownloadService.getPlaylistBean();
+                Logger.e("启动获取播放列表--下载列表状态:" + JSONObject.toJSONString(DownloadService.getPlaylistBean()));
+                Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), handler, 1);
+            }
+            if (timeCurrentPresetInt < timePresetInt) {
+                Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, (timeCurrentPresetInt + 1) + "");
+            } else {
+                Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PRESET, "1");
+                Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());
+                RequestBean requestBean = new RequestBean();
+                String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
+                if (!TextUtils.isEmpty(beanStr)) {
+                    RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                    requestBean.appId = bean.appId;
+                    requestBean.trCode = bean.trCode;
+                    requestBean.trVersion = bean.trVersion;
+                    requestBean.cityCode = bean.cityCode;
+                    requestBean.brchCode = bean.brchCode;
+                    requestBean.clientVersion = bean.clientVersion;
+                    requestBean.terminalId = bean.terminalId;
+                    requestBean.uniqueId = bean.uniqueId;
+                }
+                requestBean.timestamp = System.currentTimeMillis();
+                requestBean.flowNum = 0;
+                Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), handler, 2);
+            }
+        } else {
+            try {
+                System.exit(0);
+            } catch (Exception e) {
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }

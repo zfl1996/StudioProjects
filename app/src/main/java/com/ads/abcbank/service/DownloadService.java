@@ -462,7 +462,7 @@ public class DownloadService extends Service {
         String action = null;
         try {
             action = intent.getAction();
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             Logger.e(e.toString());
         }
         if (action == null) {
@@ -771,8 +771,8 @@ public class DownloadService extends Service {
             speedDownload = 50;
             Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
         }
-//        int downloadSpeed = speedDownload / 6;
-        int downloadSpeed = speedDownload / 100 + 1;
+//        int downloadSpeed = speedDownload / 8;
+        int downloadSpeed = speedDownload / 128 + 1;
         isUrg = TextUtils.isEmpty(isUrg) ? "0" : isUrg;
         if (downloadSpeed <= 0) {
             downloadSpeed = 1;

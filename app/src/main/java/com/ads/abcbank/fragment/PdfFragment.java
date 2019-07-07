@@ -67,6 +67,8 @@ public class PdfFragment extends BaseTempFragment {
         if (!file.exists()) {
             if (tempView != null) {
                 tempView.nextPlay();
+                handler.removeCallbacks(runnable);
+                handler.postDelayed(runnable, delayTime);
             }
             return;
         }
@@ -150,10 +152,10 @@ public class PdfFragment extends BaseTempFragment {
                     }
                 }
             }
-        } else {
-            if (handler != null && runnable != null && content != null && pageTotal > 0) {
-                handler.removeCallbacks(runnable);
-            }
+//        } else {
+//            if (handler != null && runnable != null && content != null && pageTotal > 0) {
+//                handler.removeCallbacks(runnable);
+//            }
         }
     }
 
@@ -161,7 +163,12 @@ public class PdfFragment extends BaseTempFragment {
     public void onResume() {
         super.onResume();
         if (pageTotal > 0) {
-            handler.postDelayed(runnable, delayTime);
+            if (getUserVisibleHint()) {
+                handler.removeCallbacks(runnable);
+                handler.postDelayed(runnable, delayTime);
+//            } else {
+//                handler.removeCallbacks(runnable);
+            }
         } else {
             pageNumber = 0;
             if (getActivity() != null) {
@@ -180,10 +187,10 @@ public class PdfFragment extends BaseTempFragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (!isVisiable) {
-                handler.removeCallbacks(runnable);
-                return;
-            }
+//            if (!isVisiable) {
+//                handler.removeCallbacks(runnable);
+//                return;
+//            }
             try {
                 delayTime = Integer.
                         parseInt(Utils.
@@ -203,9 +210,12 @@ public class PdfFragment extends BaseTempFragment {
                     Logger.e(e.toString());
                 }
                 pageTotal = -1;
-                if (tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
+                if (isVisiable && tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                     tempView.nextPlay();
+                    handler.removeCallbacks(runnable);
+                    handler.postDelayed(runnable, delayTime);
                 } else {
+                    handler.removeCallbacks(runnable);
                     handler.postDelayed(runnable, delayTime);
                 }
             }

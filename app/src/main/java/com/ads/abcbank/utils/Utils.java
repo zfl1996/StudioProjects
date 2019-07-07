@@ -179,7 +179,6 @@ public class Utils {
             }
             SharedPreferencesCompat.apply(editor);
         } catch (Exception e) {
-            Logger.e(e.toString());
         }
     }
 
@@ -205,7 +204,6 @@ public class Utils {
                 return sp.getLong(key, (Long) defaultObject);
             }
         } catch (Exception e) {
-            Logger.e(e.toString());
         }
 
         return defaultObject;

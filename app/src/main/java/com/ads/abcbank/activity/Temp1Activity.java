@@ -12,6 +12,7 @@ import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.view.BaseActivity;
 //import com.ads.abcbank.view.HorizontalListView;
 //import com.ads.abcbank.view.HorizontalListViewAdapter;
+import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.MarqueeTextView;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.PresetView;
@@ -59,6 +60,8 @@ public class Temp1Activity extends BaseActivity implements IView {
             }
         }, 100);
     }
+
+
 
     private Handler handler = new Handler();
 
@@ -129,7 +132,7 @@ public class Temp1Activity extends BaseActivity implements IView {
 //        stringList.add("    中国农业银行欢迎您！        ");
 //        HorizontalListViewAdapter adapter = new HorizontalListViewAdapter(this,stringList);
 //        hListView.setAdapter(adapter);
-
+        BaseTempFragment.tempView = tvTemp;
     }
 
     @Override
@@ -144,6 +147,17 @@ public class Temp1Activity extends BaseActivity implements IView {
     @Override
     protected void onRestart() {
         super.onRestart();
+        if (tvTemp != null) {
+            BaseTempFragment.tempView = tvTemp;
+            tvTemp.setNeedUpdate(true);
+        }
+        HandlerUtil.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initViews();
+                startServices("M,H,P,N,E,L,R");
+            }
+        }, 100);
         if (marqueeTextView != null) {
             marqueeTextView.startScroll();
         }
