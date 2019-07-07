@@ -22,6 +22,7 @@ public class Tab3Fragment extends BaseTabFragment {
     private PresetBean.BIAOFE bean;
     private TempView tempView;
 
+
     @Override
     public View initView(LayoutInflater inflater) {
         view = inflater.inflate(R.layout.fragment_tab3, null);
