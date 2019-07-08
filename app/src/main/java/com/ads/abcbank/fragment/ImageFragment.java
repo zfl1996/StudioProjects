@@ -89,6 +89,11 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            if (!getFragmentManager().getFragments().contains(ImageFragment.this)) {
+                handler.removeCallbacks(runnable);
+                onDestroy();
+                return;
+            }
 //            if (!isVisiable) {
 //                handler.removeCallbacks(runnable);
 //                return;

@@ -1,11 +1,13 @@
 package com.ads.abcbank.fragment;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.service.DownloadService;
+import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.JZMediaIjk;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.view.AutoVideoPlayer;
@@ -17,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import cn.jzvd.JZDataSource;
+import cn.jzvd.JZUtils;
 import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
 
@@ -26,6 +29,7 @@ public class VideoFragment extends BaseTempFragment {
     private PlaylistBodyBean bean;
     private JZMediaSystemAssertFolder jzMediaSystemAssertFolder;
     private JZMediaIjk jzMediaIjk;
+    private String currentUrl;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -60,24 +64,21 @@ public class VideoFragment extends BaseTempFragment {
                     content.setMediaInterface(jzMediaSystemAssertFolder);
                 } else {
                     jzMediaIjk = new JZMediaIjk(content);
-                    content.setUp(DownloadService.downloadVideoPath + bean.name
-                            , "", Jzvd.SCREEN_NORMAL);
+                    currentUrl = DownloadService.downloadVideoPath + bean.name;
+                    content.setUp(currentUrl, "", Jzvd.SCREEN_NORMAL);
                     content.setMediaInterface(new JZMediaIjk(content));
                 }
             } catch (Exception e) {
                 Logger.e(e.toString());
             }
-//            Glide.with(this).load(R.drawable.app_icon_your_company).into(content.thumbImageView);
             playerSeekTo();
             content.startVideo();
         }
     }
 
     private void playerSeekTo() {
-        if (jzMediaSystemAssertFolder != null) {
-            jzMediaSystemAssertFolder.seekTo(0);
-        } else if (jzMediaIjk != null) {
-            jzMediaIjk.seekTo(0);
+        if (!TextUtils.isEmpty(currentUrl)) {
+            JZUtils.saveProgress(getContext(), currentUrl, 0);
         }
     }
 
@@ -96,7 +97,7 @@ public class VideoFragment extends BaseTempFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (content != null && isVisiable) {
+        if (content != null && getUserVisibleHint()) {
             playerSeekTo();
             content.startVideo();
         }
@@ -106,7 +107,7 @@ public class VideoFragment extends BaseTempFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            if (content != null && isVisiable) {
+            if (content != null && getUserVisibleHint()) {
                 playerSeekTo();
                 content.startVideo();
             }
@@ -132,5 +133,17 @@ public class VideoFragment extends BaseTempFragment {
     public void onPause() {
         super.onPause();
         Jzvd.resetAllVideos();
+    }
+
+    public void replayCurrent() {
+//        if (content == null && bean != null) {
+//            view = ActivityManager.getInstance().getTopActivity().getLayoutInflater().inflate(R.layout.fragment_video, null);
+//            getViews();
+//            initData();
+//        } else
+            if (content != null && getUserVisibleHint()) {
+            playerSeekTo();
+            content.startVideo();
+        }
     }
 }

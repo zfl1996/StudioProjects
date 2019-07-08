@@ -259,10 +259,10 @@ public abstract class BaseTempFragment extends Fragment {
             PdfFragment fragment = new PdfFragment();
             fragment.setBean(baseTempFragment.getBean());
             return fragment;
-        } else if (baseTempFragment instanceof TxtFragment) {
-            TxtFragment fragment = new TxtFragment();
-            fragment.setBean(baseTempFragment.getBean());
-            return fragment;
+//        } else if (baseTempFragment instanceof TxtFragment) {
+//            TxtFragment fragment = new TxtFragment();
+//            fragment.setBean(baseTempFragment.getBean());
+//            return fragment;
         }
         WebFragment fragment = new WebFragment();
         fragment.setBean(baseTempFragment.getBean());

@@ -2,13 +2,17 @@ package com.ads.abcbank.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -159,6 +163,13 @@ public class TempView extends LinearLayout {
             imageFragment.setTempView(this);
             fragmentList.add(imageFragment);
         }
+        reSetAdapter();
+    }
+
+    private int errFileSum = 0;
+    private int presetSum = 0;
+
+    private void reSetAdapter(){
         willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
         if (viewpager != null) {
             viewpager.setAdapter(willPagerAdapter);
@@ -170,9 +181,6 @@ public class TempView extends LinearLayout {
             }
         }
     }
-
-    private int errFileSum = 0;
-    private int presetSum = 0;
 
     private void addPlayList(List<PlaylistBodyBean> bodyBeans) {
         for (int i = 0; i < bodyBeans.size(); i++) {
@@ -202,9 +210,9 @@ public class TempView extends LinearLayout {
                             case "pdf":
                                 fragment = new PdfFragment();
                                 break;
-                            case "txt":
-                                fragment = new TxtFragment();
-                                break;
+//                            case "txt":
+//                                fragment = new TxtFragment();
+//                                break;
                             default:
                                 fragment = new WebFragment();
                                 break;
@@ -241,9 +249,9 @@ public class TempView extends LinearLayout {
                             case "pdf":
                                 fragment = new PdfFragment();
                                 break;
-                            case "txt":
-                                fragment = new TxtFragment();
-                                break;
+//                            case "txt":
+//                                fragment = new TxtFragment();
+//                                break;
                             default:
                                 fragment = new WebFragment();
                                 break;
@@ -359,10 +367,20 @@ public class TempView extends LinearLayout {
                 nextPlay();
             }
         } else {
+
             int current = viewpager.getCurrentItem();
             int next;
             if (playlistBean != null && playlistBean.size() + presetSum > fragmentList.size() + errFileSum) {
                 setType(type);
+                return;
+            }
+            if (fragmentList.size() == 1 && fragmentList.get(0) instanceof VideoFragment) {
+                if (!(willPagerAdapter.getRegisteredFragment(0) instanceof VideoFragment)) {
+                    willPagerAdapter.setRegisteredFragment(0, fragmentList.get(0));
+                    willPagerAdapter.notifyDataSetChanged();
+//                    reSetAdapter();
+                }
+                ((VideoFragment) willPagerAdapter.getRegisteredFragment(0)).replayCurrent();
                 return;
             }
             if (current < fragmentList.size() - 1) {
@@ -390,7 +408,8 @@ public class TempView extends LinearLayout {
         }
     }
 
-    public class WillPagerAdapter extends FragmentPagerAdapter {
+//    public class WillPagerAdapter extends FragmentPagerAdapter {
+    public class WillPagerAdapter extends MyFragmentPagerAdapter {
         // SparseArray是Hashmap的改良品，其核心是折半查找函数（binarySearch）
         SparseArray<WeakReference<Fragment>> registeredFragments = new SparseArray<WeakReference<Fragment>>();
         private List<Fragment> mList;
@@ -452,9 +471,20 @@ public class TempView extends LinearLayout {
                     if (bodyBean != null && fBean.id != bodyBean.id) {
                         ((BaseTempFragment) fragment).setBean(bodyBean);
                     }
+                    if(!fragment.getClass().equals(mList.get(position).getClass()) ){
+                        willPagerAdapter.setRegisteredFragment(position, mList.get(position));
+                        willPagerAdapter.notifyDataSetChanged();
+                        return getRegisteredFragment(position);
+//
+//                        reSetAdapter();
+                    }
+
                 }
             } else if (playlistBean != null && position < playlistBean.size()) {
-//                fragment = BaseTempFragment.newInstance((BaseTempFragment) mList.get(position));
+                willPagerAdapter.setRegisteredFragment(position, mList.get(position));
+                willPagerAdapter.notifyDataSetChanged();
+                return getRegisteredFragment(position);
+//                reSetAdapter();
             }
             WeakReference<Fragment> weak = new WeakReference<Fragment>(fragment);
 
@@ -492,6 +522,11 @@ public class TempView extends LinearLayout {
 
         public Fragment getRegisteredFragment(int position) {
             return registeredFragments.get(position).get();
+        }
+
+        public void setRegisteredFragment(int position, Fragment fragment) {
+            WeakReference<Fragment> weak = new WeakReference<Fragment>(fragment);
+            registeredFragments.put(position, weak);
         }
     }
 
@@ -563,4 +598,5 @@ public class TempView extends LinearLayout {
             Logger.e(e.toString());
         }
     }
+
 }

@@ -143,9 +143,9 @@ public class TempView2 extends LinearLayout {
                             case "pdf":
                                 fragment = new PdfFragment();
                                 break;
-                            case "txt":
-                                fragment = new TxtFragment();
-                                break;
+//                            case "txt":
+//                                fragment = new TxtFragment();
+//                                break;
                             default:
                                 fragment = new WebFragment();
                                 break;
@@ -180,9 +180,9 @@ public class TempView2 extends LinearLayout {
                             case "pdf":
                                 fragment = new PdfFragment();
                                 break;
-                            case "txt":
-                                fragment = new TxtFragment();
-                                break;
+//                            case "txt":
+//                                fragment = new TxtFragment();
+//                                break;
                             default:
                                 fragment = new WebFragment();
                                 break;

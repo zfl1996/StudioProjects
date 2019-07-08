@@ -276,22 +276,22 @@ public class DownloadService extends Service {
                 case "wmv":
                 case "avi":
                 case "rmvb":
-                    downloadFile = new File(downloadVideoPath+task.getFilename());
+                    downloadFile = new File(downloadVideoPath + task.getFilename());
                     break;
                 case "jpg":
                 case "png":
                 case "bmp":
                 case "jpeg":
-                    downloadFile = new File(downloadImagePath+task.getFilename());
+                    downloadFile = new File(downloadImagePath + task.getFilename());
                     break;
                 case "pdf":
                 case "txt":
-                    downloadFile = new File(downloadFilePath+task.getFilename());
+                    downloadFile = new File(downloadFilePath + task.getFilename());
                     break;
                 case "wps":
                     return null;
                 default:
-                    downloadFile = new File(downloadPath+task.getFilename());
+                    downloadFile = new File(downloadPath + task.getFilename());
                     break;
             }
 
@@ -765,13 +765,14 @@ public class DownloadService extends Service {
         try {
             speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
         } catch (Exception e) {
-            speedDownload = 50;
+            speedDownload = 500;
         }
         if (speedDownload < 50) {
             speedDownload = 50;
             Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
         }
 //        int downloadSpeed = speedDownload / 8;
+        // speedDownload  * 8 / 1024
         int downloadSpeed = speedDownload / 128 + 1;
         isUrg = TextUtils.isEmpty(isUrg) ? "0" : isUrg;
         if (downloadSpeed <= 0) {
@@ -783,6 +784,7 @@ public class DownloadService extends Service {
                 .setFilename(filename)
                 .setFlushBufferSize(downloadSpeed)//下载限速60kb
                 .setReadBufferSize(downloadSpeed)
+                .setSyncBufferSize(downloadSpeed)
                 .build();
         builder.bindSetTask(task);
         this.context = builder.build();
