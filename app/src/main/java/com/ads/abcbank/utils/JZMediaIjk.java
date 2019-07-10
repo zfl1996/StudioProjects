@@ -74,7 +74,7 @@ public class JZMediaIjk extends JZMediaInterface implements IMediaPlayer.OnPrepa
 
     @Override
     public void pause() {
-        if (ijkMediaPlayer != null) {
+        if (ijkMediaPlayer != null && isPlaying()) {
             ijkMediaPlayer.pause();
         }
     }

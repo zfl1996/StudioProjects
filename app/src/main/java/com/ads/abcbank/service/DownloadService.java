@@ -153,6 +153,7 @@ public class DownloadService extends Service {
                 startTime = System.currentTimeMillis();
                 addDowloadBean(downloadBean);
                 Logger.e(TAG, task.getFilename() + "开始下载");
+                Logger.e("--下载列表状态:" + getDownloadListStatusStr());
             }
         }
 
@@ -182,6 +183,7 @@ public class DownloadService extends Service {
                 TaskTagUtil.saveOffset(task, currentOffset);
                 TaskTagUtil.saveTotal(task, totalLength);
             }
+
         }
 
         @Override
@@ -264,7 +266,7 @@ public class DownloadService extends Service {
             } catch (Exception e) {
                 Logger.e(e.toString());
             }
-            Logger.e("--下载列表状态:" + JSONObject.toJSONString(getPlaylistBean()));
+            Logger.e("--下载列表状态:" + getDownloadListStatusStr());
         }
 
         private File getDownloadFile(@NonNull DownloadTask task) {
@@ -298,6 +300,7 @@ public class DownloadService extends Service {
             return downloadFile;
         }
     };
+
     private DownloadListener downloadListener = new DownloadListener4WithSpeed() {
 
         private long totalLength;
@@ -305,8 +308,6 @@ public class DownloadService extends Service {
 
         @Override
         public void taskStart(@NonNull DownloadTask task) {
-            DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
-            downloadBean.started = System.currentTimeMillis() + "";
         }
 
         @Override
@@ -386,12 +387,12 @@ public class DownloadService extends Service {
         public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause) {
             if (cause.equals(EndCause.COMPLETED)) {
                 Logger.e(TAG, task.getFilename() + "下载完成");
-                File downloadFile = new File(downloadPath + task.getFilename());
+                File downloadFile = new File(downloadApkPath + task.getFilename());
                 if (!downloadFile.exists()) {
                     addUpdateTask(updateFileName, updateUrl);
                 } else if (task.getFilename() != null && task.getFilename().toLowerCase().endsWith(".apk")) {
-                    openAndroidFile(downloadPath + task.getFilename());
-                }
+                    openAndroidFile(downloadApkPath + task.getFilename());
+                 }
             } else {
                 Logger.e(TAG, task.getFilename() + "下载出错，>>>downloadLink=" + task.getUrl() + "，异常信息：" + realCause);
             }
@@ -989,4 +990,18 @@ public class DownloadService extends Service {
         taskList = Arrays.asList(this.context.getTasks());
     }
 
+    public static String getDownloadListStatusStr() {
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < getPlaylistBean().data.items.size(); i++) {
+            DownloadBean downloadBean = getPlaylistBean().data.items.get(i);
+            if (downloadBean.status != null) {
+                stringBuffer.append("{ 状态:" + downloadBean.status + "\t");
+            } else {
+                stringBuffer.append("{ 状态:" + "等待下载" + "\t");
+            }
+            stringBuffer.append("ID:" + downloadBean.id + "\t");
+            stringBuffer.append("名称:" + downloadBean.name + " }\t\n");
+        }
+        return stringBuffer.toString();
+    }
 }

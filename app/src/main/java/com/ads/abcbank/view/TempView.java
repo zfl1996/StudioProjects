@@ -35,6 +35,7 @@ import com.ads.abcbank.fragment.Tab3Fragment;
 import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.alibaba.fastjson.JSON;
@@ -169,7 +170,7 @@ public class TempView extends LinearLayout {
     private int errFileSum = 0;
     private int presetSum = 0;
 
-    private void reSetAdapter(){
+    private void reSetAdapter() {
         willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
         if (viewpager != null) {
             viewpager.setAdapter(willPagerAdapter);
@@ -180,6 +181,108 @@ public class TempView extends LinearLayout {
                 Logger.e(e.toString());
             }
         }
+    }
+
+    private String getPlayListStr(List<PlaylistBodyBean> bodyBeans) {
+        if (bodyBeans == null) {
+            return "";
+        }
+        StringBuffer playListStr = new StringBuffer();
+        for (int i = 0; i < bodyBeans.size(); i++) {
+            PlaylistBodyBean bodyBean = bodyBeans.get(i);
+            if (Utils.isInPlayTime(bodyBean)) {
+                String contentTypeMiddle = Utils.getContentTypeMiddle(context);
+                String contentTypeEnd = Utils.getContentTypeEnd(context);
+                if ("*".equals(contentTypeEnd)) {
+                    if (bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                            type.contains(bodyBean.contentType.substring(0, 1))) {
+                        String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                        String downloadFileFath = "";
+                        switch (suffix) {
+                            case "mp4":
+                            case "mkv":
+                            case "wmv":
+                            case "avi":
+                            case "rmvb":
+                                downloadFileFath = DownloadService.downloadVideoPath + bodyBean.name;
+                                break;
+                            case "jpg":
+                            case "png":
+                            case "bmp":
+                            case "jpeg":
+                                downloadFileFath = DownloadService.downloadImagePath + bodyBean.name;
+                                break;
+                            case "pdf":
+                                downloadFileFath = DownloadService.downloadFilePath + bodyBean.name;
+                                break;
+                            default:
+                                downloadFileFath = DownloadService.downloadPath + bodyBean.name;
+                                break;
+                        }
+                        if (isDownloadFinished(bodyBean)) {
+                            int currentItem = 0;
+                            if (viewpager != null) {
+                                currentItem = viewpager.getCurrentItem();
+                            }
+                            playListStr.append("{\tID:" + bodyBean.id + "\t");
+                            playListStr.append("name:" + bodyBean.name + "\t");
+                            playListStr.append("contentType:" + bodyBean.contentType + "\t");
+                            playListStr.append("xelUrl:" + downloadFileFath + "\t");
+                            playListStr.append("playTime:" + bodyBean.playDate + "-" + bodyBean.stopDate + "\t");
+                            playListStr.append("isUrg:" + (bodyBean.isUrg == null ? "0" : bodyBean.isUrg) + "\t");
+                            playListStr.append("playStatus:" + (i == currentItem ? "play" : "pause") + "\t}\t\n");
+                        } else {
+                        }
+                    }
+                } else {
+                    if (bodyBean.contentType.endsWith(contentTypeEnd) &&
+                            bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                            type.contains(bodyBean.contentType.substring(0, 1))) {
+                        String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                        String downloadFileFath = "";
+                        switch (suffix) {
+                            case "mp4":
+                            case "mkv":
+                            case "wmv":
+                            case "avi":
+                            case "rmvb":
+                                downloadFileFath = DownloadService.downloadVideoPath + bodyBean.name;
+                                break;
+                            case "jpg":
+                            case "png":
+                            case "bmp":
+                            case "jpeg":
+                                downloadFileFath = DownloadService.downloadImagePath + bodyBean.name;
+                                break;
+                            case "pdf":
+                                downloadFileFath = DownloadService.downloadFilePath + bodyBean.name;
+                                break;
+                            default:
+                                downloadFileFath = DownloadService.downloadPath + bodyBean.name;
+                                break;
+                        }
+
+                        if (isDownloadFinished(bodyBean)) {
+                            int currentItem = 0;
+                            if (viewpager != null) {
+                                currentItem = viewpager.getCurrentItem();
+                            }
+                            playListStr.append("{\tID:" + bodyBean.id + "\t");
+                            playListStr.append("name:" + bodyBean.name + "\t");
+                            playListStr.append("contentType:" + bodyBean.contentType + "\t");
+                            playListStr.append("xelUrl:" + downloadFileFath + "\t");
+                            playListStr.append("playTime:" + bodyBean.playDate + "-" + bodyBean.stopDate + "\t");
+                            playListStr.append("isUrg:" + (bodyBean.isUrg == null ? "0" : bodyBean.isUrg) + "\t");
+                            playListStr.append("playStatus:" + (i == currentItem ? "play" : "pause") + "\t}\t\n");
+
+                        } else {
+                        }
+                    }
+                }
+            } else {
+            }
+        }
+        return playListStr.toString();
     }
 
     private void addPlayList(List<PlaylistBodyBean> bodyBeans) {
@@ -338,6 +441,7 @@ public class TempView extends LinearLayout {
             }
         }
         addPlayList(normalLists);
+        Logger.d("当前播放列表状态:", getPlayListStr(playlistBean));
         return 0;
     }
 
@@ -402,13 +506,14 @@ public class TempView extends LinearLayout {
             } else {
                 viewpager.setCurrentItem(next);
             }
+            Logger.d("当前播放列表状态:", getPlayListStr(playlistBean));
 //            if (errFileSum > 0) {
 //                setType(type);
 //            }
         }
     }
 
-//    public class WillPagerAdapter extends FragmentPagerAdapter {
+    //    public class WillPagerAdapter extends FragmentPagerAdapter {
     public class WillPagerAdapter extends MyFragmentPagerAdapter {
         // SparseArray是Hashmap的改良品，其核心是折半查找函数（binarySearch）
         SparseArray<WeakReference<Fragment>> registeredFragments = new SparseArray<WeakReference<Fragment>>();
@@ -471,7 +576,7 @@ public class TempView extends LinearLayout {
                     if (bodyBean != null && fBean.id != bodyBean.id) {
                         ((BaseTempFragment) fragment).setBean(bodyBean);
                     }
-                    if(!fragment.getClass().equals(mList.get(position).getClass()) ){
+                    if (!fragment.getClass().equals(mList.get(position).getClass())) {
                         willPagerAdapter.setRegisteredFragment(position, mList.get(position));
                         willPagerAdapter.notifyDataSetChanged();
                         return getRegisteredFragment(position);

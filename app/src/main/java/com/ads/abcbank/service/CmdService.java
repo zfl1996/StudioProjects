@@ -71,7 +71,7 @@ public class CmdService extends Service {
                 Utils.put(CmdService.this, Utils.KEY_TIME_CURRENT_PLAYLIST, "1");
                 Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
                 PlaylistBean playlistBean = DownloadService.getPlaylistBean();
-                Logger.e("启动获取播放列表--下载列表状态:" + JSONObject.toJSONString(DownloadService.getPlaylistBean()));
+                Logger.e("启动获取播放列表--下载列表状态:" + DownloadService.getDownloadListStatusStr());
                 Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), handler, 1);
             }
             if (timeCurrentPresetInt < timePresetInt) {

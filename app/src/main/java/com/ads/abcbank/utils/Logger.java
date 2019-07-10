@@ -462,7 +462,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         while (mLogList.size() > 100) {
             mLogList.remove(0);
         }
-        if (str.contains("下载")) {
+        if (str.contains("下载列表")
+                || str.contains("当前播放列表")) {
             mDownLoadLogList.add(str);
             while (mDownLoadLogList.size() > 100) {
                 mDownLoadLogList.remove(0);
