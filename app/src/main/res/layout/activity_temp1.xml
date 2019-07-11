@@ -14,8 +14,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="@dimen/top_height"
+            android:layout_height="110px"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -63,8 +62,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="@dimen/top_main_height"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <com.ads.abcbank.view.TempView
@@ -84,21 +83,30 @@
                 android:orientation="vertical" />
         </LinearLayout>
 
-        <com.ads.abcbank.view.MarqueeTextView
-            android:id="@+id/marqueeTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/icon_bottom"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/bottom_padding"
-            android:paddingRight="@dimen/bottom_padding"
-            android:text="    中国农业银行欢迎您！               中国农业银行欢迎您！               中国农业银行欢迎您！    "
-            android:textColor="#fff"
-            android:textSize="@dimen/text_super_big"
-            app:scroll_first_delay="0"
-            app:scroll_interval="50000"
-            app:scroll_mode="mode_forever" />
+        <!--<com.ads.abcbank.view.MarqueeTextView-->
+        <!--android:id="@+id/marqueeTextView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@drawable/icon_bottom"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:paddingLeft="@dimen/bottom_padding"-->
+        <!--android:paddingRight="@dimen/bottom_padding"-->
+        <!--android:text="    中国农业银行欢迎您！               中国农业银行欢迎您！               中国农业银行欢迎您！    "-->
+        <!--android:textColor="#fff"-->
+        <!--android:textSize="@dimen/text_super_big"-->
+        <!--android:visibility="gone"-->
+        <!--app:scroll_first_delay="0"-->
+        <!--app:scroll_interval="50000"-->
+        <!--app:scroll_mode="mode_forever" />-->
 
+        <com.ads.abcbank.view.AutoPollRecyclerView
+            android:id="@+id/rv_recycleView"
+            android:layout_width="match_parent"
+            android:layout_height="100px"
+            android:background="@drawable/icon_bottom"
+            android:paddingLeft="20px"
+            android:paddingRight="20px"
+            android:singleLine="true" />
         <!--<com.ads.abcbank.view.HorizontalListView-->
         <!--android:id="@+id/hlv_main"-->
         <!--android:layout_width="match_parent"-->

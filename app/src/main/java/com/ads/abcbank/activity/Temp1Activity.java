@@ -3,12 +3,16 @@ package com.ads.abcbank.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.utils.HandlerUtil;
+import com.ads.abcbank.view.AutoPollAdapter;
+import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
 //import com.ads.abcbank.view.HorizontalListView;
 //import com.ads.abcbank.view.HorizontalListViewAdapter;
@@ -29,7 +33,7 @@ import java.util.TimeZone;
 import cn.jzvd.JzvdStd;
 
 public class Temp1Activity extends BaseActivity implements IView {
-    private MarqueeTextView marqueeTextView;
+//    private MarqueeTextView marqueeTextView;
 
     private int delayDateTime = 60 * 1000;
     private TempPresenter tempPresenter;
@@ -41,6 +45,9 @@ public class Temp1Activity extends BaseActivity implements IView {
     private PresetView presetView;
 
     private TempView tvTemp;
+    private AutoPollRecyclerView mRecyclerView;
+    private AutoPollAdapter autoPollAdapter;
+    private List<String> list = new ArrayList<>();
 
 //    private HorizontalListView hListView;
 //    private HorizontalListViewAdapter hListViewAdapter;
@@ -60,7 +67,6 @@ public class Temp1Activity extends BaseActivity implements IView {
             }
         }, 100);
     }
-
 
 
     private Handler handler = new Handler();
@@ -106,20 +112,21 @@ public class Temp1Activity extends BaseActivity implements IView {
     };
 
     private void initViews() {
-        marqueeTextView = findViewById(R.id.marqueeTextView);
+//        marqueeTextView = findViewById(R.id.marqueeTextView);
+        mRecyclerView = findViewById(R.id.rv_recycleView);
 //        hListView = findViewById(R.id.hlv_main);
         presetView = findViewById(R.id.pv_preset);
         tvTime = findViewById(R.id.tv_time);
         tvDate = findViewById(R.id.tv_date);
         tvTemp = findViewById(R.id.tv_temp);
-        marqueeTextView.invalidate();
+//        marqueeTextView.invalidate();
         handler.post(timeRunnable);
         tvTemp.setType("M,H,P,N,E,L,R");
         tvTemp.getImage().setVisibility(View.GONE);
         tempPresenter = new TempPresenter(this, this);
-        if (marqueeTextView != null) {
-            marqueeTextView.startScroll();
-        }
+//        if (marqueeTextView != null) {
+//            marqueeTextView.startScroll();
+//        }
         presetView.updatePresetDate();
 //        List<String> stringList = new ArrayList<>();
 //        stringList.add("    中国农业银行欢迎您！        ");
@@ -132,6 +139,14 @@ public class Temp1Activity extends BaseActivity implements IView {
 //        stringList.add("    中国农业银行欢迎您！        ");
 //        HorizontalListViewAdapter adapter = new HorizontalListViewAdapter(this,stringList);
 //        hListView.setAdapter(adapter);
+
+        for (int i = 0; i < 10; i++) {
+            list.add("    中国农业银行欢迎您！    ");
+        }
+        autoPollAdapter = new AutoPollAdapter(this, list);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mRecyclerView.setAdapter(autoPollAdapter);
+        mRecyclerView.start();
         BaseTempFragment.tempView = tvTemp;
     }
 
@@ -139,9 +154,9 @@ public class Temp1Activity extends BaseActivity implements IView {
     protected void onPause() {
         super.onPause();
         JzvdStd.goOnPlayOnPause();
-        if (marqueeTextView != null) {
-            marqueeTextView.pauseScroll();
-        }
+//        if (marqueeTextView != null) {
+//            marqueeTextView.pauseScroll();
+//        }
     }
 
     @Override
@@ -158,25 +173,31 @@ public class Temp1Activity extends BaseActivity implements IView {
                 startServices("M,H,P,N,E,L,R");
             }
         }, 100);
-        if (marqueeTextView != null) {
-            marqueeTextView.startScroll();
+//        if (marqueeTextView != null) {
+//            marqueeTextView.startScroll();
+//        }
+        if (mRecyclerView != null) {
+            mRecyclerView.start();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (marqueeTextView != null) {
-            marqueeTextView.resumeScroll();
-        }
+//        if (marqueeTextView != null) {
+//            marqueeTextView.resumeScroll();
+//        }
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (marqueeTextView != null) {
-            marqueeTextView.stopScroll();
+//        if (marqueeTextView != null) {
+//            marqueeTextView.stopScroll();
+//        }
+        if (mRecyclerView != null) {
+            mRecyclerView.stop();
         }
     }
 
