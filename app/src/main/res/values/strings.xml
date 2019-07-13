@@ -41,4 +41,12 @@
     <string name="s_title"></string>
     <string name="s_loading">数据加载中...</string>
     <string name="s_back">返回</string>
+
+    <string name="name">Name</string>
+    <string name="id">ID</string>
+    <string name="contentType">ContentType</string>
+    <string name="xelUrl">XelUrl</string>
+    <string name="playTime">PlayTime</string>
+    <string name="isUrg">IsUrg</string>
+    <string name="playStatus">PlayStatus</string>
 </resources>

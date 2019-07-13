@@ -153,7 +153,7 @@ public class DownloadService extends Service {
                 startTime = System.currentTimeMillis();
                 addDowloadBean(downloadBean);
                 Logger.e(TAG, task.getFilename() + "开始下载");
-                Logger.e("--下载列表状态:" + getDownloadListStatusStr());
+                Logger.updateDownloadlistView( getPlaylistBean().data.items);
             }
         }
 
@@ -266,7 +266,7 @@ public class DownloadService extends Service {
             } catch (Exception e) {
                 Logger.e(e.toString());
             }
-            Logger.e("--下载列表状态:" + getDownloadListStatusStr());
+            Logger.updateDownloadlistView( getPlaylistBean().data.items);
         }
 
         private File getDownloadFile(@NonNull DownloadTask task) {
@@ -706,13 +706,17 @@ public class DownloadService extends Service {
             speedDownload = 50;
             Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
         }
-        int downloadSpeed = speedDownload / 10;
+        int downloadSpeed = speedDownload / 128 + 1;
+        if (downloadSpeed <= 0) {
+            downloadSpeed = 1;
+        }
         File parentFile = new File(downloadApkPath);
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority(10)
                 .setFilename(filename)
                 .setFlushBufferSize(downloadSpeed)//下载限速
                 .setReadBufferSize(downloadSpeed)
+                .setSyncBufferSize(downloadSpeed)
                 .build();
         task.enqueue(updateListener);
     }

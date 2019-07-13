@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00000000"
+    android:background="@mipmap/m1_presetbg"
     android:orientation="vertical"
     android:paddingLeft="10px"
     android:paddingRight="10px"
@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="75px"
         android:layout_marginBottom="10px"
-        android:background="@mipmap/preset_top"
         android:paddingTop="5px"
         app:tabGravity="fill"
         app:tabIndicatorColor="#087366"
@@ -28,6 +27,6 @@
         android:id="@+id/viewpager_preset"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@mipmap/preset_bottom" />
+        />
 
 </LinearLayout>

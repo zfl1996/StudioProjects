@@ -46,6 +46,7 @@ public class Tab3Fragment extends BaseTabFragment {
         this.handler = handler;
     }
 
+
     public Runnable getRunnable() {
         return runnable;
     }
@@ -120,7 +121,10 @@ public class Tab3Fragment extends BaseTabFragment {
         super.onResume();
         try {
             if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
-                view.findViewById(R.id.ll_root).setBackgroundColor(Color.parseColor("#212832"));
+                view.findViewById(R.id.ll_root).setBackgroundResource(Utils.isDirectionVertical(context) ? R.mipmap.presetbg_v : R.mipmap.presetbg_h3);
+                if (Utils.isDirectionVertical(context)) {
+                    view.findViewById(R.id.ll_root).setPadding(0, 110, 0, 0);
+                }
             }
             initData();
             if (getUserVisibleHint()) {
@@ -138,7 +142,10 @@ public class Tab3Fragment extends BaseTabFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
-                view.findViewById(R.id.ll_root).setBackgroundColor(Color.parseColor("#212832"));
+                view.findViewById(R.id.ll_root).setBackgroundResource(Utils.isDirectionVertical(context) ? R.mipmap.presetbg_v : R.mipmap.presetbg_h3);
+                if (Utils.isDirectionVertical(context)) {
+                    view.findViewById(R.id.ll_root).setPadding(0, 110, 0, 0);
+                }
             }
             initData();
             handler.postDelayed(runnable, delayTime);

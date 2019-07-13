@@ -32,4 +32,8 @@
     <dimen name="top_height_2">1760</dimen>
     <dimen name="bottom_padding2">30px</dimen>
 
+    <dimen name="row_height">110px</dimen>
+    <dimen name="header_height">60px</dimen>
+    <dimen name="cell_width">220px</dimen>
+    <dimen name="margin">0px</dimen>
 </resources>

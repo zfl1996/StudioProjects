@@ -21,4 +21,8 @@
     <color name="key_safe_title">#e3e6ec</color>
     <color name="text_color_333333">#333</color>
     <color name="text_color_ffffff">#fff</color>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryText">#212121</color>
+    <color name="colorSecondaryText">#212121</color>
+    <color name="colorRow">#B2DFDB</color>
 </resources>

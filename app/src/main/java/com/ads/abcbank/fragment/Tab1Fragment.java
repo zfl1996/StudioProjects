@@ -111,7 +111,10 @@ public class Tab1Fragment extends BaseTabFragment {
         super.onResume();
         try {
             if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
-                view.findViewById(R.id.ll_root).setBackgroundColor(Color.parseColor("#212832"));
+                view.findViewById(R.id.ll_root).setBackgroundResource(Utils.isDirectionVertical(context) ? R.mipmap.presetbg_v : R.mipmap.presetbg_h1);
+                if (Utils.isDirectionVertical(context)) {
+                    view.findViewById(R.id.ll_root).setPadding(0, 120, 0, 0);
+                }
             }
             initData();
             if (getUserVisibleHint()) {
@@ -129,7 +132,10 @@ public class Tab1Fragment extends BaseTabFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
-                view.findViewById(R.id.ll_root).setBackgroundColor(Color.parseColor("#212832"));
+                view.findViewById(R.id.ll_root).setBackgroundResource(Utils.isDirectionVertical(context) ? R.mipmap.presetbg_v : R.mipmap.presetbg_h1);
+                if (Utils.isDirectionVertical(context)) {
+                    view.findViewById(R.id.ll_root).setPadding(0, 120, 0, 0);
+                }
             }
             initData();
             handler.postDelayed(runnable, delayTime);

@@ -39,6 +39,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ads.abcbank.bean.DownloadBean;
+import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.view.tableview.DownloadlistTableView;
+import com.ads.abcbank.view.tableview.PlaylistTableView;
+import com.ads.abcbank.view.tableview.adapter.DownloadlistTableViewAdapter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -83,16 +89,20 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     private static final int LOG_SOUT = 8;
     private static Thread.UncaughtExceptionHandler mDefaultHandler;
     private final LinearLayout mLogContainer;
-    private final LinearLayout mDownLoadLogContainer;
+    private final LinearLayout mPlaylistLogContainer;
+    private final LinearLayout mDownloadLogContainer;
     private List<String> mLogList = new ArrayList<>();
     private List<String> mFilterList = new ArrayList<>();
     private List<String> mDownLoadLogList = new ArrayList<>();
     private final ArrayAdapter<String> mLogAdapter;
     private final ArrayAdapter<String> mDownLoadLogAdapter;
     private final TextView mTvTitle;
+    private final TextView mPlaylistTvTitle;
     private final TextView mDownLoadTvTitle;
     private final ListView mLvLog;
     private final ListView mDownLoadLvLog;
+    private static PlaylistTableView playlistTableView;
+    private static DownloadlistTableView downloadlistTableView;
     private boolean mAutoScroll = true;
     private boolean mDownLoadAutoScroll = true;
     private static final int SHORT_CLICK = 3;
@@ -124,13 +134,28 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         LayoutParams layoutParams = new LayoutParams(widthPixels / 2, heightPixels / 3, Gravity.CENTER);
         mLogContainer.setLayoutParams(layoutParams);
         mLogContainer.setVisibility(GONE);
+
         //日志容器
-        mDownLoadLogContainer = new LinearLayout(context);
-        mDownLoadLogContainer.setOrientation(LinearLayout.VERTICAL);
-        mDownLoadLogContainer.setBackgroundColor(Color.argb(0x33, 0X00, 0x00, 0x00));
-        LayoutParams layoutParams2 = new LayoutParams(widthPixels / 2, heightPixels / 3, Gravity.CENTER);
-        mDownLoadLogContainer.setLayoutParams(layoutParams2);
-        mDownLoadLogContainer.setVisibility(GONE);
+        mPlaylistLogContainer = new LinearLayout(context);
+        mPlaylistLogContainer.setOrientation(LinearLayout.VERTICAL);
+        mPlaylistLogContainer.setBackgroundColor(Color.argb(0x33, 0X00, 0x00, 0x00));
+
+        LayoutParams layoutParams2 = new LayoutParams((widthPixels > heightPixels) ? widthPixels : heightPixels, heightPixels / 3, Gravity.CENTER);
+        mPlaylistLogContainer.setLayoutParams(layoutParams2);
+        mPlaylistLogContainer.setVisibility(GONE);
+
+
+        playlistTableView = new PlaylistTableView(context);
+        //日志容器
+        mDownloadLogContainer = new LinearLayout(context);
+        mDownloadLogContainer.setOrientation(LinearLayout.VERTICAL);
+        mDownloadLogContainer.setBackgroundColor(Color.argb(0x33, 0X00, 0x00, 0x00));
+
+        LayoutParams layoutParams3 = new LayoutParams((widthPixels > heightPixels) ? widthPixels / 2 : heightPixels / 2, heightPixels / 3, Gravity.TOP);
+        mDownloadLogContainer.setLayoutParams(layoutParams3);
+        mDownloadLogContainer.setVisibility(GONE);
+        downloadlistTableView = new DownloadlistTableView(context);
+
         //小窗口标题
         mTvTitle = new TextView(context);
         mTvTitle.setTextSize(v);
@@ -151,16 +176,16 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             }
         });
         //小窗口标题
-        mDownLoadTvTitle = new TextView(context);
-        mDownLoadTvTitle.setTextSize(v);
-        mDownLoadTvTitle.setText("下载相关日志");
-        mDownLoadTvTitle.setTextColor(Color.WHITE);
-        mDownLoadTvTitle.setBackgroundColor(Color.argb(0x55, 0X00, 0x00, 0x00));
-        mDownLoadTvTitle.setOnClickListener(new OnClickListener() {
+        mPlaylistTvTitle = new TextView(context);
+        mPlaylistTvTitle.setTextSize(v);
+        mPlaylistTvTitle.setText("播放列表状态：");
+        mPlaylistTvTitle.setTextColor(Color.WHITE);
+        mPlaylistTvTitle.setBackgroundColor(Color.argb(0x55, 0X00, 0x00, 0x00));
+        mPlaylistTvTitle.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
 //                showFilterDialog(); //点击日志窗口标题栏打开过滤器
-                new android.app.AlertDialog.Builder(ActivityManager.getInstance().getTopActivity()).setTitle("提示")
+       /*         new android.app.AlertDialog.Builder(ActivityManager.getInstance().getTopActivity()).setTitle("提示")
                         .setMessage("是否删除已下载数据").setPositiveButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -172,7 +197,43 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                         Utils.deleteDownloadFiles();
                         dialog.dismiss();
                     }
-                }).create().show();
+                }).create().show();*/
+            }
+        });
+        mPlaylistTvTitle.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                loggerPlaylistSwitch();//长按日志窗口标题栏关闭日志窗口
+                return true;
+            }
+        });
+        mLogContainer.addView(mTvTitle);
+        mPlaylistLogContainer.addView(mPlaylistTvTitle);
+        mPlaylistLogContainer.addView(playlistTableView);
+
+        //小窗口标题
+        mDownLoadTvTitle = new TextView(context);
+        mDownLoadTvTitle.setTextSize(v);
+        mDownLoadTvTitle.setText("下载列表状态：");
+        mDownLoadTvTitle.setTextColor(Color.WHITE);
+        mDownLoadTvTitle.setBackgroundColor(Color.argb(0x55, 0X00, 0x00, 0x00));
+        mDownLoadTvTitle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                showFilterDialog(); //点击日志窗口标题栏打开过滤器
+       /*         new android.app.AlertDialog.Builder(ActivityManager.getInstance().getTopActivity()).setTitle("提示")
+                        .setMessage("是否删除已下载数据").setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("删除", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Utils.deleteDownloadFiles();
+                        dialog.dismiss();
+                    }
+                }).create().show();*/
             }
         });
         mDownLoadTvTitle.setOnLongClickListener(new OnLongClickListener() {
@@ -182,8 +243,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
                 return true;
             }
         });
-        mLogContainer.addView(mTvTitle);
-        mDownLoadLogContainer.addView(mDownLoadTvTitle);
+        mDownloadLogContainer.addView(mDownLoadTvTitle);
+        mDownloadLogContainer.addView(downloadlistTableView);
         //日志列表
         mLvLog = new ListView(context) {
             @Override
@@ -203,7 +264,6 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         };
         mDownLoadLvLog.setFastScrollEnabled(true);
         mLogContainer.addView(mLvLog);
-        mDownLoadLogContainer.addView(mDownLoadLvLog);
         mLogAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, mFilterList) {
             @NonNull
             @Override
@@ -277,6 +337,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         mDownLoadLvLog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(mCurrentActivity);
                 String message = mDownLoadLogList.get(position);
                 message = message.replace("FFFFFF", "000000");
@@ -297,6 +358,15 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(mRunnable, 10000);
     }
+
+    public static void updatePlaylistView(List<PlaylistBodyBean> playListStr) {
+        playlistTableView.setPlaylistBeanList(playListStr);
+    }
+
+    public static void updateDownloadlistView(List<DownloadBean> playListStr) {
+        downloadlistTableView.setPlaylistBeanList(playListStr);
+    }
+
 
     //activity内存泄漏检测
     private LeakCheck mLeakCheck;
@@ -526,7 +596,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             decorView.removeView(mSrcView);
             me.addView(mSrcView, 0);
             me.addView(mLogContainer, 1);
-            me.addView(mDownLoadLogContainer, 2);
+            me.addView(mPlaylistLogContainer, 2);
+            me.addView(mDownloadLogContainer, 3);
             decorView.addView(me);
         }
     }
@@ -540,7 +611,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
         me.removeView(mSrcView);
         me.removeView(mLogContainer);
-        me.removeView(mDownLoadLogContainer);
+        me.removeView(mPlaylistLogContainer);
+        me.removeView(mDownloadLogContainer);
         decorView.removeView(me);
         if (mSrcView != null) {
             decorView.addView(mSrcView, 0);
@@ -575,7 +647,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            return child == mLogContainer || child == mDownLoadLogContainer;
+            return child == mLogContainer || child == mPlaylistLogContainer|| child == mDownloadLogContainer;
         }
 
         @Override
@@ -611,11 +683,16 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             margin.setMargins(x, y, x + margin.width, y + margin.height);
             LayoutParams layoutParams = new LayoutParams(margin);
             mLogContainer.setLayoutParams(layoutParams);
-        } else {
-            MarginLayoutParams margin = new MarginLayoutParams(mDownLoadLogContainer.getLayoutParams());
+        } else if (changeView == mPlaylistLogContainer) {
+            MarginLayoutParams margin = new MarginLayoutParams(mPlaylistLogContainer.getLayoutParams());
             margin.setMargins(x, y, x + margin.width, y + margin.height);
             LayoutParams layoutParams = new LayoutParams(margin);
-            mDownLoadLogContainer.setLayoutParams(layoutParams);
+            mPlaylistLogContainer.setLayoutParams(layoutParams);
+        }else {
+            MarginLayoutParams margin = new MarginLayoutParams(mDownloadLogContainer.getLayoutParams());
+            margin.setMargins(x, y, x + margin.width, y + margin.height);
+            LayoutParams layoutParams = new LayoutParams(margin);
+            mDownloadLogContainer.setLayoutParams(layoutParams);
         }
     }
 
@@ -663,6 +740,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         }
         if (mShortClick == SHORT_CLICK * 2 - 2) {
             loggerSwitch();
+            loggerPlaylistSwitch();
             loggerDownSwitch();
         }
         //i("s:" + mShortClick + "l:" + mLongClick);
@@ -678,15 +756,22 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         clearClick();
     }
 
-    private void loggerDownSwitch() {
-        if (mDownLoadLogContainer.getVisibility() == GONE) {
-            mDownLoadLogContainer.setVisibility(VISIBLE);
+    private void loggerPlaylistSwitch() {
+        if (mPlaylistLogContainer.getVisibility() == GONE) {
+            mPlaylistLogContainer.setVisibility(VISIBLE);
         } else {
-            mDownLoadLogContainer.setVisibility(GONE);
+            mPlaylistLogContainer.setVisibility(GONE);
         }
         clearClick();
     }
-
+    private void loggerDownSwitch() {
+        if (mDownloadLogContainer.getVisibility() == GONE) {
+            mDownloadLogContainer.setVisibility(VISIBLE);
+        } else {
+            mDownloadLogContainer.setVisibility(GONE);
+        }
+        clearClick();
+    }
     private void checkFilter(long dis, float y) {
         if (mLogContainer.getVisibility() == GONE) {
             return;
@@ -703,7 +788,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     }
 
     private void checkDownFilter(long dis, float y) {
-        if (mDownLoadLogContainer.getVisibility() == GONE) {
+        if (mPlaylistLogContainer.getVisibility() == GONE) {
             return;
         }
         if (dis < 300 && y < 200) {

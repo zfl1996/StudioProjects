@@ -183,13 +183,15 @@ public class TempView extends LinearLayout {
         }
     }
 
-    private String getPlayListStr(List<PlaylistBodyBean> bodyBeans) {
+    private List<PlaylistBodyBean> getPlayListStr(List<PlaylistBodyBean> bodyBeans) {
         if (bodyBeans == null) {
-            return "";
+            return null;
         }
+        List<PlaylistBodyBean> bodyBeansList = new ArrayList<>();
         StringBuffer playListStr = new StringBuffer();
         for (int i = 0; i < bodyBeans.size(); i++) {
             PlaylistBodyBean bodyBean = bodyBeans.get(i);
+            PlaylistBodyBean bodyBean2 = new PlaylistBodyBean();
             if (Utils.isInPlayTime(bodyBean)) {
                 String contentTypeMiddle = Utils.getContentTypeMiddle(context);
                 String contentTypeEnd = Utils.getContentTypeEnd(context);
@@ -224,13 +226,22 @@ public class TempView extends LinearLayout {
                             if (viewpager != null) {
                                 currentItem = viewpager.getCurrentItem();
                             }
-                            playListStr.append("{\tID:" + bodyBean.id + "\t");
-                            playListStr.append("name:" + bodyBean.name + "\t");
-                            playListStr.append("contentType:" + bodyBean.contentType + "\t");
-                            playListStr.append("xelUrl:" + downloadFileFath + "\t");
-                            playListStr.append("playTime:" + bodyBean.playDate + "-" + bodyBean.stopDate + "\t");
-                            playListStr.append("isUrg:" + (bodyBean.isUrg == null ? "0" : bodyBean.isUrg) + "\t");
-                            playListStr.append("playStatus:" + (i == currentItem ? "play" : "pause") + "\t}\t\n");
+                            bodyBean2.id = bodyBean.id;
+                            bodyBean2.name = bodyBean.name;
+                            bodyBean2.contentType = bodyBean.contentType;
+                            bodyBean2.downloadLink = downloadFileFath;
+                            bodyBean2.playDate = bodyBean.playDate;
+                            bodyBean2.stopDate = bodyBean.stopDate;
+                            bodyBean2.isUrg = bodyBean.isUrg;
+                            bodyBean2.trCode = (i == currentItem ? "play" : "pause");
+                            bodyBeansList.add(bodyBean2);
+//                            playListStr.append("{\tID:" + bodyBean.id + "\t");
+//                            playListStr.append("name:" + bodyBean.name + "\t");
+//                            playListStr.append("contentType:" + bodyBean.contentType + "\t");
+//                            playListStr.append("xelUrl:" + downloadFileFath + "\t");
+//                            playListStr.append("playTime:" + bodyBean.playDate + "-" + bodyBean.stopDate + "\t");
+//                            playListStr.append("isUrg:" + (bodyBean.isUrg == null ? "0" : bodyBean.isUrg) + "\t");
+//                            playListStr.append("playStatus:" + (i == currentItem ? "play" : "pause") + "\t}\t\n");
                         } else {
                         }
                     }
@@ -267,13 +278,22 @@ public class TempView extends LinearLayout {
                             if (viewpager != null) {
                                 currentItem = viewpager.getCurrentItem();
                             }
-                            playListStr.append("{\tID:" + bodyBean.id + "\t");
-                            playListStr.append("name:" + bodyBean.name + "\t");
-                            playListStr.append("contentType:" + bodyBean.contentType + "\t");
-                            playListStr.append("xelUrl:" + downloadFileFath + "\t");
-                            playListStr.append("playTime:" + bodyBean.playDate + "-" + bodyBean.stopDate + "\t");
-                            playListStr.append("isUrg:" + (bodyBean.isUrg == null ? "0" : bodyBean.isUrg) + "\t");
-                            playListStr.append("playStatus:" + (i == currentItem ? "play" : "pause") + "\t}\t\n");
+                            bodyBean2.id = bodyBean.id;
+                            bodyBean2.name = bodyBean.name;
+                            bodyBean2.contentType = bodyBean.contentType;
+                            bodyBean2.downloadLink = downloadFileFath;
+                            bodyBean2.playDate = bodyBean.playDate;
+                            bodyBean2.stopDate = bodyBean.stopDate;
+                            bodyBean2.isUrg = bodyBean.isUrg;
+                            bodyBean2.trCode = (i == currentItem ? "play" : "pause");
+                            bodyBeansList.add(bodyBean2);
+//                            playListStr.append("{\tID:" + bodyBean.id + "\t");
+//                            playListStr.append("name:" + bodyBean.name + "\t");
+//                            playListStr.append("contentType:" + bodyBean.contentType + "\t");
+//                            playListStr.append("xelUrl:" + downloadFileFath + "\t");
+//                            playListStr.append("playTime:" + bodyBean.playDate + "-" + bodyBean.stopDate + "\t");
+//                            playListStr.append("isUrg:" + (bodyBean.isUrg == null ? "0" : bodyBean.isUrg) + "\t");
+//                            playListStr.append("playStatus:" + (i == currentItem ? "play" : "pause") + "\t}\t\n");
 
                         } else {
                         }
@@ -282,7 +302,7 @@ public class TempView extends LinearLayout {
             } else {
             }
         }
-        return playListStr.toString();
+        return bodyBeansList;
     }
 
     private void addPlayList(List<PlaylistBodyBean> bodyBeans) {
@@ -441,7 +461,7 @@ public class TempView extends LinearLayout {
             }
         }
         addPlayList(normalLists);
-        Logger.d("当前播放列表状态:", getPlayListStr(playlistBean));
+        Logger.updatePlaylistView(getPlayListStr(playlistBean));
         return 0;
     }
 
@@ -506,7 +526,7 @@ public class TempView extends LinearLayout {
             } else {
                 viewpager.setCurrentItem(next);
             }
-            Logger.d("当前播放列表状态:", getPlayListStr(playlistBean));
+            Logger.updatePlaylistView(getPlayListStr(playlistBean));
 //            if (errFileSum > 0) {
 //                setType(type);
 //            }

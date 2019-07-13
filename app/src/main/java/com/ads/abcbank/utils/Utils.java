@@ -1265,4 +1265,15 @@ public class Utils {
         return timeCmdInt;
     }
 
+    public static boolean isDirectionVertical(Context context) {
+        String beanStr = Utils.get(context, Utils.KEY_REGISTER_BEAN, "").toString();
+
+        if (!TextUtils.isEmpty(beanStr)) {
+            RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+            if (bean.data.screenDirection != null) {
+                return "V".equals(bean.data.screenDirection);
+            }
+        }
+        return false;
+    }
 }
