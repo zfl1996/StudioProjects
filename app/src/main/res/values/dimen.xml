@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--注册页-->
-    <dimen name="text_super_big">40px</dimen>
+    <dimen name="text_super_big">50px</dimen>
     <dimen name="text_big">32px</dimen>
     <dimen name="text_big_super">50px</dimen>
     <dimen name="text_normal">22px</dimen>

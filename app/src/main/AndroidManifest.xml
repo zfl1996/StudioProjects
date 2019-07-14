@@ -18,8 +18,8 @@
         android:name="android.hardware.touchscreen"
         android:required="false" />
     <!--<uses-feature-->
-        <!--android:name="android.software.leanback"-->
-        <!--android:required="true" />-->
+    <!--android:name="android.software.leanback"-->
+    <!--android:required="true" />-->
 
     <application
         android:name=".MyApplication"
@@ -76,6 +76,10 @@
             android:name=".activity.Temp6Activity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.Temp7Activity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.WebViewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

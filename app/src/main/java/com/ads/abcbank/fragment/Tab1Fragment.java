@@ -24,10 +24,12 @@ public class Tab1Fragment extends BaseTabFragment {
     private View view;
     private PresetBean.SaveRate bean;
     private TempView tempView;
+    private TextView tvBottom;
 
     @Override
     public View initView(LayoutInflater inflater) {
         view = inflater.inflate(R.layout.fragment_tab1, null);
+        tvBottom = view.findViewById(R.id.tv_bottom);
         return view;
     }
 
@@ -95,6 +97,9 @@ public class Tab1Fragment extends BaseTabFragment {
                     return false;
                 }
             });
+        }
+        if (tvBottom != null) {
+            tvBottom.setText(bean.rem);
         }
     }
 

@@ -24,8 +24,11 @@ public class JZMediaIjk extends JZMediaInterface implements IMediaPlayer.OnPrepa
 
     @Override
     public void start() {
-        ijkMediaPlayer.release();
-        ijkMediaPlayer.start();
+        try {
+            ijkMediaPlayer.release();
+            ijkMediaPlayer.start();
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -64,8 +67,10 @@ public class JZMediaIjk extends JZMediaInterface implements IMediaPlayer.OnPrepa
                 ijkMediaPlayer.setScreenOnWhilePlaying(true);
                 ijkMediaPlayer.prepareAsync();
 
-                ijkMediaPlayer.setSurface(new Surface(jzvd.textureView.getSurfaceTexture()));
-            } catch (IOException e) {
+                if(jzvd.textureView.getSurfaceTexture() != null){
+                    ijkMediaPlayer.setSurface(new Surface(jzvd.textureView.getSurfaceTexture()));
+                }
+            } catch (Exception e) {
                 Logger.e(e.toString());
             }
         });

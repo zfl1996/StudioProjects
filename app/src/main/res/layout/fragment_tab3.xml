@@ -8,20 +8,20 @@
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="0,2,4,6">
+        android:layout_height="wrap_content">
+        <!--android:stretchColumns="0,2,4,6">-->
 
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15px"
-            android:layout_marginTop="20px"
-            android:layout_marginBottom="10px">
+            android:layout_marginBottom="10px"
+            android:layout_marginTop="20px">
 
             <TextView
                 android:id="@+id/tv_item_name"
-                android:layout_width="0px"
+                android:layout_width="10px"
                 android:layout_height="wrap_content"
+                android:layout_weight="19"
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="货币"
@@ -30,28 +30,32 @@
 
             <View
                 android:layout_width="10px"
-                android:layout_height="1px" />
+                android:layout_height="1px"
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/tv_item_name2"
-                android:layout_width="0px"
+                android:layout_width="10px"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20px"
+                android:layout_weight="13"
                 android:gravity="center"
                 android:maxLines="1"
+                android:paddingLeft="20px"
                 android:text="买入汇率"
                 android:textColor="#fff"
                 android:textSize="@dimen/tab_text" />
 
             <View
                 android:layout_width="10px"
-                android:layout_height="1px" />
+                android:layout_height="1px"
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/tv_item_name3"
-                android:layout_width="0px"
+                android:layout_width="10px"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5px"
+                android:layout_weight="13"
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="卖出汇率"
@@ -60,12 +64,14 @@
 
             <View
                 android:layout_width="10px"
-                android:layout_height="1px" />
+                android:layout_height="1px"
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/tv_item_name4"
-                android:layout_width="0px"
+                android:layout_width="10px"
                 android:layout_height="wrap_content"
+                android:layout_weight="13"
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="现钞买入\n汇率"
@@ -80,32 +86,37 @@
             <View
                 android:layout_width="10px"
                 android:layout_height="10px"
-
-                />
-
-            <View
-                android:layout_width="10px"
-                android:layout_height="10px" />
+                android:layout_weight="19" />
 
             <View
                 android:layout_width="10px"
-                android:layout_height="10px" />
+                android:layout_height="10px"
+                android:layout_weight="1" />
 
             <View
                 android:layout_width="10px"
-                android:layout_height="10px" />
+                android:layout_height="10px"
+                android:layout_weight="13" />
 
             <View
                 android:layout_width="10px"
-                android:layout_height="10px" />
+                android:layout_height="10px"
+                android:layout_weight="1" />
 
             <View
                 android:layout_width="10px"
-                android:layout_height="10px" />
+                android:layout_height="10px"
+                android:layout_weight="13" />
 
             <View
                 android:layout_width="10px"
-                android:layout_height="10px" />
+                android:layout_height="10px"
+                android:layout_weight="1" />
+
+            <View
+                android:layout_width="10px"
+                android:layout_height="10px"
+                android:layout_weight="13" />
         </TableRow>
 
     </TableLayout>
@@ -113,7 +124,8 @@
     <ScrollView
         android:id="@+id/sv_tab1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:paddingBottom="10px">
 
@@ -125,16 +137,15 @@
             <TableLayout
                 android:id="@+id/tl_tab1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="0,2,4,6">
+                android:layout_height="wrap_content">
+                <!--android:stretchColumns="0,2,4,6">-->
 
             </TableLayout>
 
             <TableLayout
                 android:id="@+id/tl_bottom1"
                 android:layout_width="match_parent"
-                android:layout_height="10px"
-                android:stretchColumns="0,2,4,6">
+                android:layout_height="10px">
 
                 <TableRow
                     android:layout_width="wrap_content"
@@ -142,31 +153,38 @@
 
                     <View
                         android:layout_width="10px"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="19" />
 
                     <View
                         android:layout_width="10px"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
 
                     <View
                         android:layout_width="10px"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="13" />
 
                     <View
                         android:layout_width="10px"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
 
                     <View
                         android:layout_width="10px"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="13" />
 
                     <View
                         android:layout_width="10px"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
 
                     <View
                         android:layout_width="10px"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="13" />
                 </TableRow>
 
             </TableLayout>
@@ -174,4 +192,13 @@
 
     </ScrollView>
 
+    <TextView
+        android:id="@+id/tv_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#fff"
+        android:paddingTop="5px"
+        android:paddingBottom="5px"
+        android:textSize="@dimen/text_small" />
 </LinearLayout>

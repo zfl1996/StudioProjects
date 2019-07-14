@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ads.abcbank.bean.PlaylistBodyBean;
+
 /**
  * Created by Administrator on 2019/7/9.
  */
@@ -48,7 +50,7 @@ public abstract class MyFragmentPagerAdapter extends PagerAdapter {
         final long itemId = getItemId(position);
 
         // Do we already have this fragment?
-        String name = makeFragmentName(container.getId(), itemId, getItem(position).getClass().toString());
+        String name = makeFragmentName(container.getId(), itemId, getItem(position));
         Fragment fragment = mFragmentManager.findFragmentByTag(name);
         if (fragment != null) {
             if (DEBUG) Log.v(TAG, "Attaching item #" + itemId + ": f=" + fragment);
@@ -57,7 +59,7 @@ public abstract class MyFragmentPagerAdapter extends PagerAdapter {
             fragment = getItem(position);
             if (DEBUG) Log.v(TAG, "Adding item #" + itemId + ": f=" + fragment);
             mCurTransaction.add(container.getId(), fragment,
-                    makeFragmentName(container.getId(), itemId, getItem(position).getClass().toString()));
+                    makeFragmentName(container.getId(), itemId, getItem(position)));
         }
         if (fragment != mCurrentPrimaryItem) {
             fragment.setMenuVisibility(false);
@@ -129,7 +131,16 @@ public abstract class MyFragmentPagerAdapter extends PagerAdapter {
         return position;
     }
 
-    private static String makeFragmentName(int viewId, long id, String sub) {
-        return "android:switcher:" + viewId + ":" + id + sub;
+    private static String makeFragmentName(int viewId, long id, Fragment fragment) {
+        if (fragment != null && fragment instanceof BaseTempFragment) {
+            PlaylistBodyBean bodyBean = ((BaseTempFragment) fragment).getBean();
+            if (bodyBean != null) {
+                return "android:switcher:" + viewId + ":" + id + fragment.getClass().toString() + "_" + bodyBean.id;
+            }
+        }
+        if (fragment != null) {
+            return "android:switcher:" + viewId + ":" + id + fragment.getClass().toString();
+        }
+        return "android:switcher:" + viewId + ":" + id;
     }
 }

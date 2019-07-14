@@ -1,11 +1,14 @@
 package com.ads.abcbank.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.InitResultBean;
@@ -25,6 +28,7 @@ import com.alibaba.fastjson.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class WelcomeActivity extends BaseActivity implements IMainView {
     private MainPresenter mainPresenter;
@@ -37,6 +41,7 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
 
         setContentView(R.layout.activity_welcome);
 
+        Utils.closeRunningService(this);
         if (Build.VERSION.SDK_INT < 23) {
             // 如果系统版本低于23，直接跑应用的逻辑
             HandlerUtil.postDelayed(new Runnable() {
@@ -137,6 +142,9 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                     case "6":
                         intent.setClass(WelcomeActivity.this, Temp6Activity.class);
                         break;
+                    case "7":
+                        intent.setClass(WelcomeActivity.this, Temp7Activity.class);
+                        break;
                     default:
                         break;
                 }
@@ -224,6 +232,9 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                                 case "6":
                                     intent.setClass(WelcomeActivity.this, Temp6Activity.class);
                                     break;
+                                case "7":
+                                    intent.setClass(WelcomeActivity.this, Temp7Activity.class);
+                                    break;
                                 default:
                                     break;
                             }
@@ -283,6 +294,9 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                             break;
                         case "6":
                             intent.setClass(WelcomeActivity.this, Temp6Activity.class);
+                            break;
+                        case "7":
+                            intent.setClass(WelcomeActivity.this, Temp7Activity.class);
                             break;
                         default:
                             break;

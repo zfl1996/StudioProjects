@@ -34,7 +34,7 @@ public class WebViewActivity extends BaseActivity {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void init() {
-        TextView back = findViewById(R.id.back);
+        View back = findViewById(R.id.back);
         webView = findViewById(R.id.webview);
         progressBar = findViewById(R.id.progressBar);
 

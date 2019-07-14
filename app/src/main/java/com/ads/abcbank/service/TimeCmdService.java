@@ -22,21 +22,21 @@ import java.util.Date;
  */
 
 public class TimeCmdService extends Service {
-    public class MyBinder extends Binder {
-
-        public TimeCmdService getService() {
-            return TimeCmdService.this;
-        }
-    }
+//    public class MyBinder extends Binder {
+//
+//        public TimeCmdService getService() {
+//            return TimeCmdService.this;
+//        }
+//    }
 
     //通过binder实现了 调用者（client）与 service之间的通信
-    private MyBinder binder = new MyBinder();
+//    private MyBinder binder = new MyBinder();
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        initService();
-        return binder;
-    }
+//    @Override
+//    public IBinder onBind(Intent intent) {
+//        initService();
+//        return binder;
+//    }
 
     @Override
     public boolean onUnbind(Intent intent) {
@@ -47,13 +47,13 @@ public class TimeCmdService extends Service {
 
     }
 
-//    @Override
-//    public IBinder onBind(Intent intent) {
-//        // TODO: Return the communication channel to the service.
-////        throw new UnsupportedOperationException("Not yet implemented");
-//        return new ProcessConnection.Stub() {
-//        };
-//    }
+    @Override
+    public IBinder onBind(Intent intent) {
+        // TODO: Return the communication channel to the service.
+//        throw new UnsupportedOperationException("Not yet implemented");
+        return new ProcessConnection.Stub() {
+        };
+    }
 
     private void initService() {
         Logger.e("TAG", "启动获取轮询命令服务_主进程：" + new Date().toString());
@@ -70,11 +70,11 @@ public class TimeCmdService extends Service {
         notification.flags |= Notification.FLAG_NO_CLEAR;
         notification.flags |= Notification.FLAG_FOREGROUND_SERVICE;
         startForeground(1, notification);
-        try {
-            unbindService(mServiceConnection);
-        } catch (Exception e) {
-            Logger.e(e.toString());
-        }
+//        try {
+//            unbindService(mServiceConnection);
+//        } catch (Exception e) {
+//            Logger.e(e.toString());
+//        }
         //绑定建立链接
         try {
             bindService(new Intent(this, ProtectCmdService.class), mServiceConnection, Context.BIND_IMPORTANT);
@@ -119,7 +119,7 @@ public class TimeCmdService extends Service {
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
 //            //断开链接
-//            startService(new Intent(TimeCmdService.this, ProtectCmdService.class));
+            startService(new Intent(TimeCmdService.this, ProtectCmdService.class));
             //重新绑定
             bindService(new Intent(TimeCmdService.this, ProtectCmdService.class),
                     mServiceConnection, Context.BIND_IMPORTANT);

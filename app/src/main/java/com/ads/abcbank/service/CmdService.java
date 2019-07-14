@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.ads.abcbank.ProcessConnection;
 import com.ads.abcbank.bean.CmdpollBean;
 import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.bean.PlaylistBean;
@@ -32,8 +33,10 @@ public class CmdService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+//        // TODO: Return the communication channel to the service.
+//        throw new UnsupportedOperationException("Not yet implemented");
+        return new ProcessConnection.Stub() {
+        };
     }
 
     /*每次调用startService启动该服务都会执行*/

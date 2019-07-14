@@ -17,7 +17,9 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ProgressBar;
 
+import com.ads.abcbank.R;
 import com.ads.abcbank.activity.ReInitActivity;
 import com.ads.abcbank.bean.CmdpollBean;
 import com.ads.abcbank.bean.CmdpollResultBean;
@@ -75,99 +77,153 @@ public class BaseActivity extends AppCompatActivity {
         registerReceiver(netChangeReceiver, filter);
     }
 
-    private ServiceConnection cmdConn = new ServiceConnection() {
-        /** 获取服务对象时的操作 */
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            // TODO Auto-generated method stub
-            TimeCmdService.MyBinder binder = (TimeCmdService.MyBinder) service;
-            timeCmdService = binder.getService();
-
-        }
-
-        /** 无法获取到服务对象时的操作 */
-        public void onServiceDisconnected(ComponentName name) {
-            // TODO Auto-generated method stub
-            timeCmdService = null;
-        }
-
-    };
-    private ServiceConnection downConn = new ServiceConnection() {
-        /** 获取服务对象时的操作 */
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            // TODO Auto-generated method stub
-            DownloadService.MyBinder binder = (DownloadService.MyBinder) service;
-            downloadService = binder.getService();
-
-        }
-
-        /** 无法获取到服务对象时的操作 */
-        public void onServiceDisconnected(ComponentName name) {
-            // TODO Auto-generated method stub
-            downloadService = null;
-        }
-
-    };
+//    private ServiceConnection cmdConn = new ServiceConnection() {
+//        /** 获取服务对象时的操作 */
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            // TODO Auto-generated method stub
+//            TimeCmdService.MyBinder binder = (TimeCmdService.MyBinder) service;
+//            timeCmdService = binder.getService();
+//
+//        }
+//
+//        /** 无法获取到服务对象时的操作 */
+//        public void onServiceDisconnected(ComponentName name) {
+//            // TODO Auto-generated method stub
+//            timeCmdService = null;
+//        }
+//
+//    };
+//    private ServiceConnection downConn = new ServiceConnection() {
+//        /** 获取服务对象时的操作 */
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            // TODO Auto-generated method stub
+//            DownloadService.MyBinder binder = (DownloadService.MyBinder) service;
+//            downloadService = binder.getService();
+//
+//        }
+//
+//        /** 无法获取到服务对象时的操作 */
+//        public void onServiceDisconnected(ComponentName name) {
+//            // TODO Auto-generated method stub
+//            downloadService = null;
+//        }
+//
+//    };
 
     private void stopServices() {
-        if (cmdConn != null && timeCmdService != null) {
-            try {
-                unbindService(cmdConn);
-            } catch (Exception e) {
-                Logger.e(BaseActivity.class.toString(), e.toString());
-            }
-        }
-        if (downConn != null && downloadService != null) {
-            try {
-                unbindService(downConn);
-            } catch (Exception e) {
-                Logger.e(BaseActivity.class.toString(), e.toString());
-            }
-        }
+//        if (cmdConn != null && timeCmdService != null) {
+//            try {
+//                unbindService(cmdConn);
+//            } catch (Exception e) {
+//                Logger.e(BaseActivity.class.toString(), e.toString());
+//            }
+//        }
+//        if (downConn != null && downloadService != null) {
+//            try {
+//                unbindService(downConn);
+//            } catch (Exception e) {
+//                Logger.e(BaseActivity.class.toString(), e.toString());
+//            }
+//        }
     }
 
     public void startServices(String type) {
-        stopServices();
-//        startService(new Intent(this, TimeCmdService.class));
-        {
-            Intent intent = new Intent(this, TimeCmdService.class);
-            bindService(intent, cmdConn, BIND_AUTO_CREATE);
-        }
-        {
-            Intent intent = new Intent();
-            intent.putExtra("type", type);
-            intent.setAction(DownloadService.ADD_MULTI_DOWNTASK);
-            intent.setPackage(DownloadService.PACKAGE);
-//            startService(intent);
-            bindService(intent, downConn, BIND_AUTO_CREATE);
-        }
-        {
-            Logger.e("TAG", "获取轮询命令服务：" + new Date().toString());
-            CmdpollBean cmdpollBean = new CmdpollBean();
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(cmdpollBean)), baseHandler, 0);
+        HandlerUtil.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Utils.getExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopServices();
+                        startService(new Intent(BaseActivity.this, TimeCmdService.class));
+//                {
+//                    Intent intent = new Intent(BaseActivity.this, TimeCmdService.class);
+//                    bindService(intent, cmdConn, BIND_AUTO_CREATE);
+//                }
+                        {
+                            Intent intent = new Intent();
+                            intent.putExtra("type", type);
+                            intent.setAction(DownloadService.ADD_MULTI_DOWNTASK);
+                            intent.setPackage(DownloadService.PACKAGE);
+                            startService(intent);
+//                    bindService(intent, downConn, BIND_AUTO_CREATE);
+                        }
+                        {
+                            Logger.e("TAG", "获取轮询命令服务：" + new Date().toString());
+                            CmdpollBean cmdpollBean = new CmdpollBean();
+                            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(cmdpollBean)), baseHandler, 0);
 
-            Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
-            PlaylistBean playlistBean = DownloadService.getPlaylistBean();
-            Logger.e("启动获取播放列表--下载列表状态:" + DownloadService.getDownloadListStatusStr());
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), baseHandler, 1);
+                            Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
+                            PlaylistBean playlistBean = DownloadService.getPlaylistBean();
+                            Logger.e("启动获取播放列表--下载列表状态:" + DownloadService.getDownloadListStatusStr());
+                            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), baseHandler, 1);
 
-            Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());
-            RequestBean requestBean = new RequestBean();
-            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
-            if (!TextUtils.isEmpty(beanStr)) {
-                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
-                requestBean.appId = bean.appId;
-                requestBean.trCode = bean.trCode;
-                requestBean.trVersion = bean.trVersion;
-                requestBean.cityCode = bean.cityCode;
-                requestBean.brchCode = bean.brchCode;
-                requestBean.clientVersion = bean.clientVersion;
-                requestBean.terminalId = bean.terminalId;
-                requestBean.uniqueId = bean.uniqueId;
+                            Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());
+                            RequestBean requestBean = new RequestBean();
+                            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
+                            if (!TextUtils.isEmpty(beanStr)) {
+                                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                                requestBean.appId = bean.appId;
+                                requestBean.trCode = bean.trCode;
+                                requestBean.trVersion = bean.trVersion;
+                                requestBean.cityCode = bean.cityCode;
+                                requestBean.brchCode = bean.brchCode;
+                                requestBean.clientVersion = bean.clientVersion;
+                                requestBean.terminalId = bean.terminalId;
+                                requestBean.uniqueId = bean.uniqueId;
+                            }
+                            requestBean.timestamp = System.currentTimeMillis();
+                            requestBean.flowNum = 0;
+                            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), baseHandler, 2);
+                        }
+                    }
+                });
             }
-            requestBean.timestamp = System.currentTimeMillis();
-            requestBean.flowNum = 0;
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), baseHandler, 2);
-        }
+        }, 5000);
+
+
+//        stopServices();
+////        startService(new Intent(this, TimeCmdService.class));
+//        {
+//            Intent intent = new Intent(this, TimeCmdService.class);
+//            bindService(intent, cmdConn, BIND_AUTO_CREATE);
+//        }
+//        {
+//            Intent intent = new Intent();
+//            intent.putExtra("type", type);
+//            intent.setAction(DownloadService.ADD_MULTI_DOWNTASK);
+//            intent.setPackage(DownloadService.PACKAGE);
+////            startService(intent);
+//            bindService(intent, downConn, BIND_AUTO_CREATE);
+//        }
+//        {
+//            Logger.e("TAG", "获取轮询命令服务：" + new Date().toString());
+//            CmdpollBean cmdpollBean = new CmdpollBean();
+//            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(cmdpollBean)), baseHandler, 0);
+//
+//            Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
+//            PlaylistBean playlistBean = DownloadService.getPlaylistBean();
+//            Logger.e("启动获取播放列表--下载列表状态:" + DownloadService.getDownloadListStatusStr());
+//            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), baseHandler, 1);
+//
+//            Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());
+//            RequestBean requestBean = new RequestBean();
+//            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
+//            if (!TextUtils.isEmpty(beanStr)) {
+//                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+//                requestBean.appId = bean.appId;
+//                requestBean.trCode = bean.trCode;
+//                requestBean.trVersion = bean.trVersion;
+//                requestBean.cityCode = bean.cityCode;
+//                requestBean.brchCode = bean.brchCode;
+//                requestBean.clientVersion = bean.clientVersion;
+//                requestBean.terminalId = bean.terminalId;
+//                requestBean.uniqueId = bean.uniqueId;
+//            }
+//            requestBean.timestamp = System.currentTimeMillis();
+//            requestBean.flowNum = 0;
+//            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), baseHandler, 2);
+//        }
     }
 
     private void startDownloadService() {
@@ -199,7 +255,7 @@ public class BaseActivity extends AppCompatActivity {
             try {
                 action = intent.getAction();
             } catch (Exception e) {
-                Logger.e(e.toString());
+                Logger.e("1", e.toString());
             }
             if (TextUtils.equals(action, CONNECTIVITY_CHANGE_ACTION)) {
                 netType = getNetworkType();
@@ -235,7 +291,9 @@ public class BaseActivity extends AppCompatActivity {
         }
         stopServices();
         Utils.changeIntent(this);
+
     }
+
 
     @Override
     protected void onResume() {
@@ -395,7 +453,7 @@ public class BaseActivity extends AppCompatActivity {
             try {
                 action = intent.getAction();
             } catch (Exception e) {
-                Logger.e(e.toString());
+                Logger.e("2", e.toString());
             }
             if (action != null) {
                 switch (action) {

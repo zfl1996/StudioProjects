@@ -461,10 +461,13 @@ public class DownloadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = null;
+        if (intent == null) {
+            return super.onStartCommand(intent, flags, startId);
+        }
         try {
             action = intent.getAction();
         } catch (Exception e) {
-            Logger.e(e.toString());
+            Logger.e("3",e.toString());
         }
         if (action == null) {
             return super.onStartCommand(intent, flags, startId);

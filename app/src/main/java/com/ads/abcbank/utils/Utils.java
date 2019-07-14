@@ -22,6 +22,7 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -65,6 +66,12 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.internal.Util;
 
 /**
  * @date 2019/5/4
@@ -842,7 +849,7 @@ public class Utils {
                     return true;
                 } else {
                     allList.remove(bodyBean);
-                    removeDownloadTask(context,bodyBean.id);
+                    removeDownloadTask(context, bodyBean.id);
                     allList.add(i, bean);
                     return true;
                 }
@@ -1275,5 +1282,44 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    private static ExecutorService executorService;
+
+    public static ExecutorService getExecutorService() {
+        if (executorService == null) {
+            synchronized (Utils.class) {
+                if (executorService == null) {
+                    executorService = newFixedThreadPool(10);
+                }
+            }
+        }
+        return executorService;
+    }
+
+    private static ExecutorService newFixedThreadPool(int nThreads) {
+        return new ThreadPoolExecutor(nThreads, nThreads,
+                0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>());
+    }
+
+    public static void closeRunningService(Context context) {
+        @SuppressLint("ServiceCast") android.app.ActivityManager activityManager = (android.app.ActivityManager) context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        List<android.app.ActivityManager.RunningServiceInfo> serviceList = activityManager.getRunningServices(Integer.MAX_VALUE);
+
+        for (int i = 0; i < serviceList.size(); i++) {
+            if (serviceList.get(i).service.getClassName().startsWith("com.ads.abcbank.")
+                    && !serviceList.get(i).service.getClassName().equalsIgnoreCase("com.ads.abcbank.service.downloadservice")) {
+                android.app.ActivityManager.RunningServiceInfo serviceInfo = serviceList.get(i);
+                Intent intent = new Intent();
+                intent.setComponent(serviceInfo.service);
+                try {
+                    context.stopService(intent);
+                } catch (Exception e) {
+                }
+            }
+        }
+
     }
 }

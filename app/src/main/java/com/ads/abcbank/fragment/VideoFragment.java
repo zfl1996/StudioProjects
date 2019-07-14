@@ -71,8 +71,10 @@ public class VideoFragment extends BaseTempFragment {
             } catch (Exception e) {
                 Logger.e(e.toString());
             }
-            playerSeekTo();
-            content.startVideo();
+            if (content != null && getUserVisibleHint()) {
+                playerSeekTo();
+                content.startVideo();
+            }
         }
     }
 

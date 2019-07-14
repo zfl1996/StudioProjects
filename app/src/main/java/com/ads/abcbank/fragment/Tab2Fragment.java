@@ -24,10 +24,12 @@ public class Tab2Fragment extends BaseTabFragment {
     private View view;
     private PresetBean.LoanRate bean;
     private TempView tempView;
+    private TextView tvBottom;
 
     @Override
     public View initView(LayoutInflater inflater) {
         view = inflater.inflate(R.layout.fragment_tab1, null);
+        tvBottom = view.findViewById(R.id.tv_bottom);
         return view;
     }
 
@@ -97,6 +99,9 @@ public class Tab2Fragment extends BaseTabFragment {
                 }
             });
         }
+        if (tvBottom != null) {
+            tvBottom.setText(bean.rem);
+        }
     }
 
     @Override
@@ -113,8 +118,8 @@ public class Tab2Fragment extends BaseTabFragment {
         try {
             if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
                 view.findViewById(R.id.ll_root).setBackgroundResource(Utils.isDirectionVertical(context) ? R.mipmap.presetbg_v : R.mipmap.presetbg_h2);
-                if (Utils.isDirectionVertical(context)){
-                    view.findViewById(R.id.ll_root).setPadding(0,120,0,0);
+                if (Utils.isDirectionVertical(context)) {
+                    view.findViewById(R.id.ll_root).setPadding(0, 120, 0, 0);
                 }
             }
             initData();
@@ -134,8 +139,8 @@ public class Tab2Fragment extends BaseTabFragment {
         if (isVisibleToUser) {
             if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
                 view.findViewById(R.id.ll_root).setBackgroundResource(Utils.isDirectionVertical(context) ? R.mipmap.presetbg_v : R.mipmap.presetbg_h2);
-                if (Utils.isDirectionVertical(context)){
-                    view.findViewById(R.id.ll_root).setPadding(0,120,0,0);
+                if (Utils.isDirectionVertical(context)) {
+                    view.findViewById(R.id.ll_root).setPadding(0, 120, 0, 0);
                 }
             }
             initData();

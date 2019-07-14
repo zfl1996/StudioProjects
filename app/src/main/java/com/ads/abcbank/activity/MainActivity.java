@@ -68,13 +68,20 @@ public class MainActivity extends BaseActivity implements IMainView {
     private String[] terminals = {"TV", "poster", "led", "smartDev"};
     private String[] terminalsValue = {"电视机", "海报屏", "门楣屏", "互动屏"};
     private String[] screens = {"水平", "垂直"};
-    private String[][] frames = {{"模板1", "模板4", "模板5", "模板6"}, {"模板2", "模板3"}};
-    private String[][][] contents = {{{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}},
-            {{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}}};
+    //    private String[][] frames = {{"模板1", "模板4", "模板5", "模板6"}, {"模板2", "模板3"}};
+//    private String[][][] contents = {{{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}},
+//            {{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}}};
+//
+//    private int[][] tempImages = {{R.mipmap.icon_temp1, R.mipmap.icon_temp4, R.mipmap.icon_temp5, R.mipmap.icon_temp6},
+//            {R.mipmap.icon_temp2, R.mipmap.icon_temp3}};
+//    private String[][] tempValues = {{"1", "4", "5", "6"}, {"2", "3"}};
+    private String[][] frames = {{"通用模板", "全屏模板"}, {"通用模板", "全屏模板", "公示模板"}};
+    private String[][][] contents = {{{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}},
+            {{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}}};
 
-    private int[][] tempImages = {{R.mipmap.icon_temp1, R.mipmap.icon_temp4, R.mipmap.icon_temp5, R.mipmap.icon_temp6},
-            {R.mipmap.icon_temp2, R.mipmap.icon_temp3}};
-    private String[][] tempValues = {{"1", "4", "5", "6"}, {"2", "3"}};
+    private int[][] tempImages = {{R.mipmap.icon_temp1, R.mipmap.icon_temp5},
+            {R.mipmap.icon_temp2, R.mipmap.icon_temp3, R.mipmap.icon_temp3}};
+    private String[][] tempValues = {{"1", "5"}, {"2", "3", "7"}};
     private int tPosition, sPosition, fPosition, cPosition;
     private Map<String, String> conMap = new HashMap<>();
 
@@ -462,6 +469,9 @@ public class MainActivity extends BaseActivity implements IMainView {
                                 case "6":
                                     intent.setClass(MainActivity.this, Temp6Activity.class);
                                     break;
+                                case "7":
+                                    intent.setClass(MainActivity.this, Temp7Activity.class);
+                                    break;
                                 default:
                                     break;
                             }
@@ -494,7 +504,7 @@ public class MainActivity extends BaseActivity implements IMainView {
                 }
             }, 2000);
 
-            if(Utils.IS_TEST){
+            if (Utils.IS_TEST) {
                 String beanStr = Utils.get(MainActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
                 Intent intent = new Intent();
                 if (TextUtils.isEmpty(beanStr)) {
@@ -520,6 +530,9 @@ public class MainActivity extends BaseActivity implements IMainView {
                         case "6":
                             intent.setClass(MainActivity.this, Temp6Activity.class);
                             break;
+                        case "7":
+                            intent.setClass(MainActivity.this, Temp7Activity.class);
+                            break;
                         default:
                             break;
                     }
@@ -543,7 +556,7 @@ public class MainActivity extends BaseActivity implements IMainView {
             }
         } else {
             ToastUtil.showToastLong(this, "注册失败");
-            if(Utils.IS_TEST){
+            if (Utils.IS_TEST) {
                 if (bean != null && TextUtils.isEmpty(bean.data.frameSetNo)) {
                     bean.data.frameSetNo = Utils.get(MainActivity.this, Utils.KEY_FRAME_SET_NO, "1").toString();
                 }

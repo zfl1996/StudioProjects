@@ -64,13 +64,20 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
     private String[] terminals = {"TV", "poster", "led", "smartDev"};
     private String[] terminalsValue = {"电视机", "海报屏", "门楣屏", "互动屏"};
     private String[] screens = {"水平", "垂直"};
-    private String[][] frames = {{"模板1", "模板4", "模板5", "模板6"}, {"模板2", "模板3"}};
-    private String[][][] contents = {{{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}},
-            {{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}}};
+    //    private String[][] frames = {{"模板1", "模板4", "模板5", "模板6"}, {"模板2", "模板3"}};
+//    private String[][][] contents = {{{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}},
+//            {{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}}};
+//
+//    private int[][] tempImages = {{R.mipmap.icon_temp1, R.mipmap.icon_temp4, R.mipmap.icon_temp5, R.mipmap.icon_temp6},
+//            {R.mipmap.icon_temp2, R.mipmap.icon_temp3}};
+//    private String[][] tempValues = {{"1", "4", "5", "6"}, {"2", "3"}};
+    private String[][] frames = {{"通用模板", "全屏模板"}, {"通用模板", "全屏模板", "公示模板"}};
+    private String[][][] contents = {{{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}},
+            {{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}}};
 
-    private int[][] tempImages = {{R.mipmap.icon_temp1, R.mipmap.icon_temp4, R.mipmap.icon_temp5, R.mipmap.icon_temp6},
-            {R.mipmap.icon_temp2, R.mipmap.icon_temp3}};
-    private String[][] tempValues = {{"1", "4", "5", "6"}, {"2", "3"}};
+    private int[][] tempImages = {{R.mipmap.icon_temp1, R.mipmap.icon_temp5},
+            {R.mipmap.icon_temp2, R.mipmap.icon_temp3, R.mipmap.icon_temp3}};
+    private String[][] tempValues = {{"1", "5"}, {"2", "3", "7"}};
     private int tPosition, sPosition, fPosition, cPosition;
     private Map<String, String> conMap = new HashMap<>();
 
@@ -261,16 +268,16 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                 case "2":
                     fToPosition = 0;
                     break;
-                case "4":
+                case "5":
                 case "3":
                     fToPosition = 1;
                     break;
-                case "5":
+                case "7":
                     fToPosition = 2;
                     break;
-                case "6":
-                    fToPosition = 3;
-                    break;
+//                case "6":
+//                    fToPosition = 3;
+//                    break;
                 default:
                     break;
             }
@@ -372,6 +379,8 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
 
         Utils.put(this, Utils.KEY_FRAME_SET_NO, bean.data.frameSetNo);
         Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+
+        Utils.showProgressDialog(this);
         mainPresenter.register(JSONObject.parseObject(JSONObject.toJSONString(bean)));
     }
 
@@ -412,6 +421,9 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
             case "6":
                 start = "T";
                 break;
+            case "7":
+                start = "M,H,P,N,E,L,R";
+                break;
             default:
                 break;
         }
@@ -448,6 +460,9 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                             break;
                         case "6":
                             intent.setClass(ReInitActivity.this, Temp6Activity.class);
+                            break;
+                        case "7":
+                            intent.setClass(ReInitActivity.this, Temp7Activity.class);
                             break;
                         default:
                             break;
@@ -539,12 +554,15 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                                 case "6":
                                     intent.setClass(ReInitActivity.this, Temp6Activity.class);
                                     break;
+                                case "7":
+                                    intent.setClass(ReInitActivity.this, Temp7Activity.class);
+                                    break;
                                 default:
                                     break;
                             }
                         }
-                        Utils.put(ReInitActivity.this,Utils.KEY_PLAY_LIST,"");
-                        Utils.put(ReInitActivity.this,Utils.KEY_PLAY_LIST_DOWNLOAD,"");
+                        Utils.put(ReInitActivity.this, Utils.KEY_PLAY_LIST, "");
+                        Utils.put(ReInitActivity.this, Utils.KEY_PLAY_LIST_DOWNLOAD, "");
                         startActivity(intent);
                         finish();
                     }
@@ -568,10 +586,47 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
             HandlerUtil.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    ActivityManager.getInstance().finishAllActivity();
-                    System.exit(0);
+//                    ActivityManager.getInstance().finishAllActivity();
+//                    System.exit(0);
                 }
             }, 2000);
+
+            if (Utils.IS_TEST) {
+                String beanStr = Utils.get(ReInitActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
+                Intent intent = new Intent();
+                if (TextUtils.isEmpty(beanStr)) {
+                    intent.setClass(ReInitActivity.this, ReInitActivity.class);
+                } else {
+                    RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                    switch (bean.data.frameSetNo) {
+                        case "1":
+                            intent.setClass(ReInitActivity.this, Temp1Activity.class);
+                            break;
+                        case "2":
+                            intent.setClass(ReInitActivity.this, Temp2Activity.class);
+                            break;
+                        case "3":
+                            intent.setClass(ReInitActivity.this, Temp3Activity.class);
+                            break;
+                        case "4":
+                            intent.setClass(ReInitActivity.this, Temp4Activity.class);
+                            break;
+                        case "5":
+                            intent.setClass(ReInitActivity.this, Temp5Activity.class);
+                            break;
+                        case "6":
+                            intent.setClass(ReInitActivity.this, Temp6Activity.class);
+                            break;
+                        case "7":
+                            intent.setClass(ReInitActivity.this, Temp7Activity.class);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                startActivity(intent);
+                finish();
+            }
         }
     }
 
@@ -588,6 +643,14 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
             }
         } else {
             ToastUtil.showToastLong(this, "注册失败");
+            if (Utils.IS_TEST) {
+                if (bean != null && TextUtils.isEmpty(bean.data.frameSetNo)) {
+                    bean.data.frameSetNo = Utils.get(ReInitActivity.this, Utils.KEY_FRAME_SET_NO, "1").toString();
+                }
+                Utils.put(ReInitActivity.this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+
+                mainPresenter.init(JSONObject.parseObject(JSONObject.toJSONString(bean)));
+            }
             return;
         }
         if (resultBean != null && !TextUtils.isEmpty(resultBean.resCode) && "0".equals(resultBean.resCode)) {

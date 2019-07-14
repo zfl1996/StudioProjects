@@ -20,18 +20,26 @@
             android:background="#fff"
             android:orientation="horizontal" />
 
-        <com.ads.abcbank.view.MarqueeVerticalTextView
-            android:id="@+id/marqueeTv"
+        <!--<com.ads.abcbank.view.MarqueeVerticalTextView-->
+        <!--android:id="@+id/marqueeTv"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:background="@drawable/icon_bottom"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:paddingLeft="@dimen/bottom_padding2"-->
+        <!--android:paddingRight="@dimen/bottom_padding2"-->
+        <!--app:mvTextColor="#fff"-->
+        <!--app:mvTextSize="@dimen/text_big_super" />-->
+        <com.ads.abcbank.view.AutoPollRecyclerView
+            android:id="@+id/rv_recycleView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:background="@drawable/icon_bottom"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/bottom_padding2"
-            android:paddingRight="@dimen/bottom_padding2"
-            app:mvTextColor="#fff"
-            app:mvTextSize="@dimen/text_big_super" />
-
+            android:minHeight="90px"
+            android:paddingLeft="20px"
+            android:paddingRight="20px"
+            android:singleLine="true" />
     </LinearLayout>
 
     <View
@@ -40,4 +48,5 @@
         android:layout_height="100px"
         android:layout_gravity="left|bottom"
         android:onClick="toMainView" />
+
 </FrameLayout>

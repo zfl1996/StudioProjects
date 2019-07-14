@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.activity.Temp1Activity;
 import com.ads.abcbank.activity.Temp2Activity;
 import com.ads.abcbank.activity.Temp3Activity;
 import com.ads.abcbank.activity.Temp5Activity;
@@ -54,7 +55,8 @@ public class TempView extends LinearLayout {
     private String type;
     private ViewPager viewpager;
     private List<Fragment> fragmentList = new ArrayList<>();
-    private List<PlaylistBodyBean> playlistBean;
+    private List<PlaylistBodyBean> playlistBean = new ArrayList<>();
+    private List<PlaylistBodyBean> txtlistBean = new ArrayList<>();
     private ImageView image;
     private boolean needUpdate;
     private WillPagerAdapter willPagerAdapter;
@@ -69,7 +71,22 @@ public class TempView extends LinearLayout {
             String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
             try {
                 if (!TextUtils.isEmpty(json)) {
-                    playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+                    try {
+                        playlistBean.clear();
+                        txtlistBean.clear();
+                        List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
+                        for (int i = 0; i < playlistBodyBeans.size(); i++) {
+                            PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
+                            String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                            if ("txt".equals(suffix)) {
+                                txtlistBean.add(bodyBean);
+                            } else {
+                                playlistBean.add(bodyBean);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Logger.e("解析播放列表出错" + json);
+                    }
                 }
             } catch (Exception e) {
                 Logger.e(e.toString());
@@ -106,7 +123,19 @@ public class TempView extends LinearLayout {
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
         if (!TextUtils.isEmpty(json)) {
             try {
-                playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+                playlistBean.clear();
+                txtlistBean.clear();
+                List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
+                for (int i = 0; i < playlistBodyBeans.size(); i++) {
+                    PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
+                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                    if ("txt".equals(suffix)) {
+                        txtlistBean.add(bodyBean);
+                    } else {
+                        playlistBean.add(bodyBean);
+                    }
+                }
+//                playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
             } catch (Exception e) {
                 Logger.e("解析播放列表出错" + json);
             }
@@ -165,6 +194,14 @@ public class TempView extends LinearLayout {
             fragmentList.add(imageFragment);
         }
         reSetAdapter();
+        Activity activity = (Activity) getContext();
+        if (activity != null) {
+            if(activity instanceof Temp1Activity){
+                ((Temp1Activity)activity).updateTxtBeans(txtlistBean);
+            }else if(activity instanceof Temp2Activity){
+                ((Temp2Activity)activity).updateTxtBeans(txtlistBean);
+            }
+        }
     }
 
     private int errFileSum = 0;
@@ -432,7 +469,7 @@ public class TempView extends LinearLayout {
     }
 
     private synchronized int addTempViewList() {
-        if (playlistBean == null) {
+        if (playlistBean == null || playlistBean.size() == 0) {
             return -1;
         }
         fragmentList.clear();
@@ -482,7 +519,18 @@ public class TempView extends LinearLayout {
             String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
             try {
                 if (!TextUtils.isEmpty(json)) {
-                    playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+                    playlistBean.clear();
+                    txtlistBean.clear();
+                    List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
+                    for (int i = 0; i < playlistBodyBeans.size(); i++) {
+                        PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
+                        String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                        if ("txt".equals(suffix)) {
+                            txtlistBean.add(bodyBean);
+                        } else {
+                            playlistBean.add(bodyBean);
+                        }
+                    }
                 }
                 setType(type);
             } catch (Exception e) {
@@ -490,6 +538,16 @@ public class TempView extends LinearLayout {
                 Logger.e("出错，播放列表记录：" + json);
                 nextPlay();
             }
+//            try {
+//                if (!TextUtils.isEmpty(json)) {
+//                    playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+//                }
+//                setType(type);
+//            } catch (Exception e) {
+//                Logger.e(e.toString());
+//                Logger.e("出错，播放列表记录：" + json);
+//                nextPlay();
+//            }
         } else {
 
             int current = viewpager.getCurrentItem();
@@ -518,9 +576,29 @@ public class TempView extends LinearLayout {
                 } else {
                     fragmentList.clear();
                     String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
+
+
                     if (!TextUtils.isEmpty(json)) {
-                        playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+                        try {
+                            playlistBean.clear();
+                            txtlistBean.clear();
+                            List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
+                            for (int i = 0; i < playlistBodyBeans.size(); i++) {
+                                PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
+                                String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                                if ("txt".equals(suffix)) {
+                                    txtlistBean.add(bodyBean);
+                                } else {
+                                    playlistBean.add(bodyBean);
+                                }
+                            }
+                        } catch (Exception e) {
+                            Logger.e("解析播放列表出错" + json);
+                        }
                     }
+//                    if (!TextUtils.isEmpty(json)) {
+//                        playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
+//                    }
                     setType(type);
                 }
             } else {

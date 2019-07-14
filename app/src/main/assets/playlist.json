@@ -62,7 +62,8 @@
             "QRTip": "扫码了解详情3"
           }
         ]
-      },{
+      },
+      {
         "id": "awerdfd001",
         "name": "企业宣传片推销.mp4",
         "playDate": "20190108 08:00",
@@ -72,6 +73,24 @@
         "md5": "bf3ad7fsae9qer0wry1rempewmvpwi0v",
         "lastModified": "20180201 21:08:59",
         "downloadLink": "https://vd2.bdstatic.com/mda-jg6nsxds6n449p1c/sc/mda-jg6nsxds6n449p1c.mp4",
+        "QRCode": [
+          {
+            "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail1.html?fromList=1&storeId=$storeId&terminalId=$terminalId",
+            "QRPosInDial": "9",
+            "QRTip": "扫码了解详情1"
+          }
+        ]
+      },
+      {
+        "id": "awerdfd0023",
+        "name": "aaa.txt",
+        "playDate": "20190108 08:00",
+        "stopDate": "20200803 14:05",
+        "downloadTimeslice": "1,2,3,4,5,6,7-00:00-1440",
+        "contentType": "MH0",
+        "md5": "bf3ad7fsae9qer0wry1rempewmvpwi0v",
+        "lastModified": "20180201 21:08:59",
+        "downloadLink": "https://dzs.qisuu.la/txt/31357.txt",
         "QRCode": [
           {
             "QRLink": "https://webank.abchina.com/mmsp-xs/webank/html/custormer/nobleMetal/metalDetail1.html?fromList=1&storeId=$storeId&terminalId=$terminalId",

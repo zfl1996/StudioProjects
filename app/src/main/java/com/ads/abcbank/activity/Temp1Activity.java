@@ -2,14 +2,12 @@ package com.ads.abcbank.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
-import com.ads.abcbank.bean.PlaylistBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.service.DownloadService;
@@ -22,7 +20,6 @@ import com.ads.abcbank.view.BaseActivity;
 //import com.ads.abcbank.view.HorizontalListView;
 //import com.ads.abcbank.view.HorizontalListViewAdapter;
 import com.ads.abcbank.view.BaseTempFragment;
-import com.ads.abcbank.view.MarqueeTextView;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.PresetView;
 import com.ads.abcbank.view.TempView;
@@ -30,7 +27,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,13 +59,8 @@ public class Temp1Activity extends BaseActivity implements IView {
         setContentView(R.layout.activity_temp1);
         setiView(this);
 
-        HandlerUtil.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                initViews();
-                startServices("M,H,P,N,E,L,R");
-            }
-        }, 100);
+        initViews();
+        startServices("M,H,P,N,E,L,R");
     }
 
     private Handler handler = new Handler();
@@ -124,7 +115,8 @@ public class Temp1Activity extends BaseActivity implements IView {
         tvTemp = findViewById(R.id.tv_temp);
 //        marqueeTextView.invalidate();
         handler.post(timeRunnable);
-        tvTemp.setType("M,H,P,N,E,L,R");
+//        tvTemp.setType("M,H,P,N,E,L,R");
+        tvTemp.setType("W,M,H,P,N,E,L,R");
         tvTemp.getImage().setVisibility(View.GONE);
         tempPresenter = new TempPresenter(this, this);
 //        if (marqueeTextView != null) {
@@ -132,13 +124,17 @@ public class Temp1Activity extends BaseActivity implements IView {
 //        }
         presetView.updatePresetDate();
 
-        for (int i = 0; i < 10; i++) {
-            list.add("    中国农业银行欢迎您！    ");
+        if (list.size() == 0) {
+            for (int i = 0; i < 6; i++) {
+                list.add("中国农业银行欢迎您！");
+            }
         }
-        autoPollAdapter = new AutoPollAdapter(this, list);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        autoPollAdapter = new AutoPollAdapter(Temp1Activity.this, list);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(Temp1Activity.this, LinearLayoutManager.HORIZONTAL, false));
         mRecyclerView.setAdapter(autoPollAdapter);
+
         mRecyclerView.start();
+
         BaseTempFragment.tempView = tvTemp;
     }
 
@@ -162,7 +158,8 @@ public class Temp1Activity extends BaseActivity implements IView {
             @Override
             public void run() {
                 initViews();
-                startServices("M,H,P,N,E,L,R");
+//                startServices("M,H,P,N,E,L,R");
+                startServices("W,M,H,P,N,E,L,R");
             }
         }, 100);
 //        if (marqueeTextView != null) {
@@ -232,12 +229,12 @@ public class Temp1Activity extends BaseActivity implements IView {
                 }
             }
         }
-        if (!isSimpleTxt(listString)) {
+        if (!isSameTxt(listString)) {
             updateTextList(listString);
         }
     }
 
-    private boolean isSimpleTxt(List<String> listString) {
+    private boolean isSameTxt(List<String> listString) {
         if (listString.size() == 0) {
             return true;
         }
@@ -261,7 +258,9 @@ public class Temp1Activity extends BaseActivity implements IView {
                 list.addAll(listString);
             }
         }
-        autoPollAdapter.notifyDataSetChanged();
+        if (autoPollAdapter != null) {
+            autoPollAdapter.notifyDataSetChanged();
+        }
         if (mRecyclerView != null) {
             mRecyclerView.start();
         }
