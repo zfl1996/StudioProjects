@@ -108,14 +108,6 @@
             android:paddingLeft="20px"
             android:paddingRight="20px"
             android:singleLine="true" />
-        <!--<com.ads.abcbank.view.HorizontalListView-->
-        <!--android:id="@+id/hlv_main"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="80px"-->
-        <!--android:background="@drawable/icon_bottom"-->
-        <!--android:fadingEdge="none"-->
-        <!--android:paddingLeft="@dimen/bottom_padding"-->
-        <!--android:paddingRight="@dimen/bottom_padding" />-->
     </LinearLayout>
 
     <View

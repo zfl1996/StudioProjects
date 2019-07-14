@@ -9,8 +9,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.bean.PlaylistBean;
+import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.presenter.TempPresenter;
+import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.HandlerUtil;
+import com.ads.abcbank.utils.Logger;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.AutoPollAdapter;
 import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
@@ -21,8 +26,11 @@ import com.ads.abcbank.view.MarqueeTextView;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.PresetView;
 import com.ads.abcbank.view.TempView;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,10 +57,6 @@ public class Temp1Activity extends BaseActivity implements IView {
     private AutoPollAdapter autoPollAdapter;
     private List<String> list = new ArrayList<>();
 
-//    private HorizontalListView hListView;
-//    private HorizontalListViewAdapter hListViewAdapter;
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +71,6 @@ public class Temp1Activity extends BaseActivity implements IView {
             }
         }, 100);
     }
-
 
     private Handler handler = new Handler();
 
@@ -128,17 +131,6 @@ public class Temp1Activity extends BaseActivity implements IView {
 //            marqueeTextView.startScroll();
 //        }
         presetView.updatePresetDate();
-//        List<String> stringList = new ArrayList<>();
-//        stringList.add("    中国农业银行欢迎您！        ");
-//        stringList.add("    中国农业银行欢迎您！        ");
-//        stringList.add("    中国农业银行欢迎您！        ");
-//        stringList.add("    中国农业银行欢迎您！        ");
-//        stringList.add("    中国农业银行欢迎您！        ");
-//        stringList.add("    中国农业银行欢迎您！        ");
-//        stringList.add("    中国农业银行欢迎您！        ");
-//        stringList.add("    中国农业银行欢迎您！        ");
-//        HorizontalListViewAdapter adapter = new HorizontalListViewAdapter(this,stringList);
-//        hListView.setAdapter(adapter);
 
         for (int i = 0; i < 10; i++) {
             list.add("    中国农业银行欢迎您！    ");
@@ -223,6 +215,67 @@ public class Temp1Activity extends BaseActivity implements IView {
         if (presetView != null) {
             presetView.updatePresetDate();
         }
+    }
+
+    public void updateTxtBeans(List<PlaylistBodyBean> beans) {
+        List<String> listString = new ArrayList<>();
+        for (int i = 0; i < beans.size(); i++) {
+            PlaylistBodyBean bean = beans.get(i);
+            if (Utils.isInPlayTime(bean)) {
+                try {
+                    File file = new File(DownloadService.downloadFilePath, bean.name);
+                    if (file.exists()) {
+                        listString.add(Utils.getTxtString(this, bean.name));
+                    }
+                } catch (Exception e) {
+                    Logger.e("TXT ERROR", e.toString());
+                }
+            }
+        }
+        if (!isSimpleTxt(listString)) {
+            updateTextList(listString);
+        }
+    }
+
+    private boolean isSimpleTxt(List<String> listString) {
+        if (listString.size() == 0) {
+            return true;
+        }
+        return JSON.toJSONString(listString).equals(JSON.toJSONString(list));
+    }
+
+    private void updateTextList(List<String> listString) {
+        if (mRecyclerView != null) {
+            mRecyclerView.stop();
+        }
+        list.clear();
+        list.addAll(listString);
+        long length = getListTxtLength(list);
+        if (length == 0) {
+            for (int i = 0; i < 6; i++) {
+                list.add("中国农业银行欢迎您！");
+            }
+        } else if (length < 60) {
+            int s = (int) (60 / length) + 1;
+            for (int i = 0; i < s; i++) {
+                list.addAll(listString);
+            }
+        }
+        autoPollAdapter.notifyDataSetChanged();
+        if (mRecyclerView != null) {
+            mRecyclerView.start();
+        }
+    }
+
+    private long getListTxtLength(List<String> listString) {
+        if (listString == null) {
+            return 0;
+        }
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < listString.size(); i++) {
+            stringBuffer.append(listString.get(i));
+        }
+        return stringBuffer.length();
     }
 
 }
