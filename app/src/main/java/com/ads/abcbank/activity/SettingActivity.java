@@ -96,9 +96,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private void initDatas() {
         tvSubmit.setOnClickListener(this);
         back.setOnClickListener(this);
-        etCmd.setText(Utils.get(this, Utils.KEY_TIME_CMD, "5").toString());
-        etPlaylist.setText(Utils.get(this, Utils.KEY_TIME_PLAYLIST, "20").toString());
-        etPreset.setText(Utils.get(this, Utils.KEY_TIME_PRESET, "30").toString());
+        etCmd.setText(Utils.get(this, Utils.KEY_TIME_CMD, Utils.KEY_TIME_CMD_TIME + "").toString());
+        etPlaylist.setText(Utils.get(this, Utils.KEY_TIME_PLAYLIST, Utils.KEY_TIME_PLAYLIST_TIME + "").toString());
+        etPreset.setText(Utils.get(this, Utils.KEY_TIME_PRESET, Utils.KEY_TIME_PRESET_TIME + "").toString());
         etTabImg.setText(Utils.get(this, Utils.KEY_TIME_TAB_IMG, "5").toString());
         etTabPreset.setText(Utils.get(this, Utils.KEY_TIME_TAB_PRESET, "5").toString());
         etPdf.setText(Utils.get(this, Utils.KEY_TIME_TAB_PDF, "5").toString());

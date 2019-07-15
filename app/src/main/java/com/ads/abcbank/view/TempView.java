@@ -196,10 +196,10 @@ public class TempView extends LinearLayout {
         reSetAdapter();
         Activity activity = (Activity) getContext();
         if (activity != null) {
-            if(activity instanceof Temp1Activity){
-                ((Temp1Activity)activity).updateTxtBeans(txtlistBean);
-            }else if(activity instanceof Temp2Activity){
-                ((Temp2Activity)activity).updateTxtBeans(txtlistBean);
+            if (activity instanceof Temp1Activity) {
+                ((Temp1Activity) activity).updateTxtBeans(txtlistBean);
+            } else if (activity instanceof Temp2Activity) {
+                ((Temp2Activity) activity).updateTxtBeans(txtlistBean);
             }
         }
     }
@@ -636,7 +636,6 @@ public class TempView extends LinearLayout {
             // TODO Auto-generated method stub
             Fragment fragment = null;
             try {
-                fragment = new Fragment();
                 if (mList.get(position) instanceof BaseTempFragment) {
                     fragment = BaseTempFragment.newInstance((BaseTempFragment) mList.get(position));
                 } else if (mList.get(position) instanceof BaseTabFragment) {
@@ -644,6 +643,9 @@ public class TempView extends LinearLayout {
                 }
             } catch (Exception e) {
                 Logger.e(e.toString());
+            }
+            if (fragment == null) {
+                fragment = new Fragment();
             }
             return fragment;
         }

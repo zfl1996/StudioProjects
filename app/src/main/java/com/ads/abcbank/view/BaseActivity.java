@@ -21,12 +21,14 @@ import android.widget.ProgressBar;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.activity.ReInitActivity;
+import com.ads.abcbank.activity.Temp1Activity;
 import com.ads.abcbank.bean.CmdpollBean;
 import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.bean.CmdresultBean;
 import com.ads.abcbank.bean.PlaylistBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.bean.RequestBean;
+import com.ads.abcbank.service.CmdService;
 import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.service.TimeCmdService;
 import com.ads.abcbank.utils.ActivityManager;
@@ -135,7 +137,7 @@ public class BaseActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         stopServices();
-                        startService(new Intent(BaseActivity.this, TimeCmdService.class));
+//                        startService(new Intent(BaseActivity.this, TimeCmdService.class));
 //                {
 //                    Intent intent = new Intent(BaseActivity.this, TimeCmdService.class);
 //                    bindService(intent, cmdConn, BIND_AUTO_CREATE);
@@ -148,34 +150,34 @@ public class BaseActivity extends AppCompatActivity {
                             startService(intent);
 //                    bindService(intent, downConn, BIND_AUTO_CREATE);
                         }
-                        {
-                            Logger.e("TAG", "获取轮询命令服务：" + new Date().toString());
-                            CmdpollBean cmdpollBean = new CmdpollBean();
-                            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(cmdpollBean)), baseHandler, 0);
-
-                            Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
-                            PlaylistBean playlistBean = DownloadService.getPlaylistBean();
-                            Logger.e("启动获取播放列表--下载列表状态:" + DownloadService.getDownloadListStatusStr());
-                            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), baseHandler, 1);
-
-                            Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());
-                            RequestBean requestBean = new RequestBean();
-                            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
-                            if (!TextUtils.isEmpty(beanStr)) {
-                                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
-                                requestBean.appId = bean.appId;
-                                requestBean.trCode = bean.trCode;
-                                requestBean.trVersion = bean.trVersion;
-                                requestBean.cityCode = bean.cityCode;
-                                requestBean.brchCode = bean.brchCode;
-                                requestBean.clientVersion = bean.clientVersion;
-                                requestBean.terminalId = bean.terminalId;
-                                requestBean.uniqueId = bean.uniqueId;
-                            }
-                            requestBean.timestamp = System.currentTimeMillis();
-                            requestBean.flowNum = 0;
-                            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), baseHandler, 2);
-                        }
+//                        {
+//                            Logger.e("TAG", "获取轮询命令服务：" + new Date().toString());
+//                            CmdpollBean cmdpollBean = new CmdpollBean();
+//                            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(cmdpollBean)), baseHandler, 0);
+//
+//                            Logger.e("TAG", "启动获取播放列表：" + new Date().toString());
+//                            PlaylistBean playlistBean = DownloadService.getPlaylistBean();
+//                            Logger.e("启动获取播放列表--下载列表状态:" + DownloadService.getDownloadListStatusStr());
+//                            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(playlistBean)), baseHandler, 1);
+//
+//                            Logger.e("TAG", "启动获取预设汇率列表服务：" + new Date().toString());
+//                            RequestBean requestBean = new RequestBean();
+//                            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
+//                            if (!TextUtils.isEmpty(beanStr)) {
+//                                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+//                                requestBean.appId = bean.appId;
+//                                requestBean.trCode = bean.trCode;
+//                                requestBean.trVersion = bean.trVersion;
+//                                requestBean.cityCode = bean.cityCode;
+//                                requestBean.brchCode = bean.brchCode;
+//                                requestBean.clientVersion = bean.clientVersion;
+//                                requestBean.terminalId = bean.terminalId;
+//                                requestBean.uniqueId = bean.uniqueId;
+//                            }
+//                            requestBean.timestamp = System.currentTimeMillis();
+//                            requestBean.flowNum = 0;
+//                            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), baseHandler, 2);
+//                        }
                     }
                 });
             }
@@ -291,7 +293,6 @@ public class BaseActivity extends AppCompatActivity {
         }
         stopServices();
         Utils.changeIntent(this);
-
     }
 
 
@@ -299,6 +300,17 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         startDownloadService();
+        if (this instanceof IView) {
+            startHandler();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (this instanceof IView) {
+            stopHandler();
+        }
     }
 
     @Override
@@ -376,74 +388,74 @@ public class BaseActivity extends AppCompatActivity {
         }
     };
 
-    @SuppressLint("HandlerLeak")
-    private Handler baseHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    Logger.e("getCmdPoll", "获取轮询命令返回数据====" + msg.obj);
-                    if (msg.obj != null) {
-                        Utils.put(BaseActivity.this, Utils.KEY_CMD_POLL, msg.obj);
-                        try {
-                            getCmdResult(JSON.parseObject(msg.obj.toString(), CmdpollResultBean.class));
-                        } catch (Exception e) {
-                            ToastUtil.showToastLong(BaseActivity.this, "获取轮询命令返回结果异常：" + msg.obj.toString());
-                            Logger.e("获取轮询命令返回结果异常：" + msg.obj.toString());
-                        }
-                    }
-                    break;
-                case 1:
-                    Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
-                    if (Utils.IS_TEST) {
-                        msg.obj = Utils.getStringFromAssets("playlist.json", BaseActivity.this).toString();
-                        FileUtil.writeJsonToFile(msg.obj.toString());
-                        if (Utils.getNewPlayList(BaseActivity.this, msg.obj.toString())) {
-                            if (getiView() != null) {
-                                getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
-                            } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
-                                ((IView) ActivityManager.getInstance().getTopActivity()).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
-                            }
-                        }
-                        return;
-                    }
-                    if (msg.obj != null) {
-                        FileUtil.writeJsonToFile(msg.obj.toString());
-                        if (Utils.getNewPlayList(BaseActivity.this, msg.obj.toString())) {
-                            if (getiView() != null) {
-                                getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
-                            } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
-                                ((IView) ActivityManager.getInstance().getTopActivity()).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
-                            }
-                        }
-                    }
-                    break;
-                case 2:
-                    if (Utils.IS_TEST) {
-                        msg.obj = Utils.getStringFromAssets("json.json", BaseActivity.this);
-                        Utils.put(BaseActivity.this, Utils.KEY_PRESET, msg.obj.toString());
-                        if (getiView() != null) {
-                            getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
-                        } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
-                            ((IView) ActivityManager.getInstance().getTopActivity()).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
-                        }
-                        return;
-                    }
-                    if (msg.obj != null) {
-                        Utils.put(BaseActivity.this, Utils.KEY_PRESET, msg.obj.toString());
-                        if (getiView() != null) {
-                            getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
-                        } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
-                            ((IView) ActivityManager.getInstance().getTopActivity()).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
-                        }
-
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
+//    @SuppressLint("HandlerLeak")
+//    private Handler baseHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            switch (msg.what) {
+//                case 0:
+//                    Logger.e("getCmdPoll", "获取轮询命令返回数据====" + msg.obj);
+//                    if (msg.obj != null) {
+//                        Utils.put(BaseActivity.this, Utils.KEY_CMD_POLL, msg.obj);
+//                        try {
+//                            getCmdResult(JSON.parseObject(msg.obj.toString(), CmdpollResultBean.class));
+//                        } catch (Exception e) {
+//                            ToastUtil.showToastLong(BaseActivity.this, "获取轮询命令返回结果异常：" + msg.obj.toString());
+//                            Logger.e("获取轮询命令返回结果异常：" + msg.obj.toString());
+//                        }
+//                    }
+//                    break;
+//                case 1:
+//                    Logger.e("getPlayList", "获取播放列表返回数据====" + msg.obj);
+//                    if (Utils.IS_TEST) {
+//                        msg.obj = Utils.getStringFromAssets("playlist.json", BaseActivity.this).toString();
+//                        FileUtil.writeJsonToFile(msg.obj.toString());
+//                        if (Utils.getNewPlayList(BaseActivity.this, msg.obj.toString())) {
+//                            if (getiView() != null) {
+//                                getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+//                            } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
+//                                ((IView) ActivityManager.getInstance().getTopActivity()).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+//                            }
+//                        }
+//                        return;
+//                    }
+//                    if (msg.obj != null) {
+//                        FileUtil.writeJsonToFile(msg.obj.toString());
+//                        if (Utils.getNewPlayList(BaseActivity.this, msg.obj.toString())) {
+//                            if (getiView() != null) {
+//                                getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+//                            } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
+//                                ((IView) ActivityManager.getInstance().getTopActivity()).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+//                            }
+//                        }
+//                    }
+//                    break;
+//                case 2:
+//                    if (Utils.IS_TEST) {
+//                        msg.obj = Utils.getStringFromAssets("json.json", BaseActivity.this);
+//                        Utils.put(BaseActivity.this, Utils.KEY_PRESET, msg.obj.toString());
+//                        if (getiView() != null) {
+//                            getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+//                        } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
+//                            ((IView) ActivityManager.getInstance().getTopActivity()).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+//                        }
+//                        return;
+//                    }
+//                    if (msg.obj != null) {
+//                        Utils.put(BaseActivity.this, Utils.KEY_PRESET, msg.obj.toString());
+//                        if (getiView() != null) {
+//                            getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+//                        } else if (ActivityManager.getInstance().getTopActivity() instanceof IView) {
+//                            ((IView) ActivityManager.getInstance().getTopActivity()).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+//                        }
+//
+//                    }
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
+//    };
 
     private class DownloadStatus extends BroadcastReceiver {
 
@@ -468,6 +480,133 @@ public class BaseActivity extends AppCompatActivity {
                         break;
                 }
             }
+        }
+    }
+
+    @SuppressLint("HandlerLeak")
+    public static Handler baseHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Activity activity = ActivityManager.getInstance().getTopActivity();
+            switch (msg.what) {
+                case 0: {
+                    int handlerTime = Utils.getNumberForString(Utils.get(activity, Utils.KEY_TIME_CMD, Utils.KEY_TIME_CMD_TIME + "").toString(), Utils.KEY_TIME_CMD_TIME);
+                    baseHandler.postDelayed(cmdRunnable, handlerTime * 60 * 1000);
+                    Logger.e("getCmdPoll", "获取cmdpoll轮询命令返回数据====" + msg.obj);
+                    if (msg.obj != null) {
+                        Utils.put(activity, Utils.KEY_CMD_POLL, msg.obj.toString());
+                        if (activity instanceof BaseActivity) {
+                            ((BaseActivity) activity).getCmdResult(JSON.parseObject(msg.obj.toString(), CmdpollResultBean.class));
+                        }
+                    }
+                }
+                break;
+                case 1: {
+                    int handlerTime = Utils.getNumberForString(Utils.get(activity, Utils.KEY_TIME_PLAYLIST, Utils.KEY_TIME_PLAYLIST_TIME + "").toString(), Utils.KEY_TIME_PLAYLIST_TIME);
+                    baseHandler.postDelayed(playlistRunnable, handlerTime * 60 * 1000);
+                    if (Utils.IS_TEST) {
+                        msg.obj = Utils.getStringFromAssets("playlist.json", activity).toString();
+                        FileUtil.writeJsonToFile(msg.obj.toString());
+                        if (Utils.getNewPlayList(activity, msg.obj.toString())) {
+                            if (activity != null && activity instanceof IView) {
+                                ((IView) activity).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+                            } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+                                ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+                            }
+                        }
+                        return;
+                    }
+                    if (msg.obj != null) {
+                        FileUtil.writeJsonToFile(msg.obj.toString());
+                        if (activity instanceof BaseActivity) {
+                            if (Utils.getNewPlayList(activity, msg.obj.toString())) {
+                                if (activity != null && activity instanceof IView) {
+                                    ((IView) activity).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+                                } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+                                    ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+                case 2: {
+                    int handlerTime = Utils.getNumberForString(Utils.get(activity, Utils.KEY_TIME_PRESET, Utils.KEY_TIME_PRESET_TIME + "").toString(), Utils.KEY_TIME_PRESET_TIME);
+                    baseHandler.postDelayed(presetRunnable, handlerTime * 60 * 1000);
+                    if (Utils.IS_TEST) {
+                        msg.obj = Utils.getStringFromAssets("json.json", activity);
+                        Utils.put(activity, Utils.KEY_PRESET, msg.obj.toString());
+                        if (activity != null && activity instanceof IView) {
+                            ((IView) activity).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+                        } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+                            ((BaseActivity) activity).getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+                        }
+                        return;
+                    }
+                    if (msg.obj != null) {
+                        Utils.put(ActivityManager.getInstance().getTopActivity(), Utils.KEY_PRESET, msg.obj.toString());
+                        if (activity != null && activity instanceof IView) {
+                            ((IView) activity).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+                        } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+                            ((BaseActivity) activity).getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+                        }
+                    }
+                }
+                break;
+                default:
+                    break;
+            }
+        }
+    };
+    public static Runnable cmdRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(new CmdpollBean())), baseHandler, 0);
+        }
+    };
+    public static Runnable playlistRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(DownloadService.getPlaylistBean())), baseHandler, 1);
+        }
+    };
+    public static Runnable presetRunnable = new Runnable() {
+        @Override
+        public void run() {
+            RequestBean requestBean = new RequestBean();
+            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
+            if (!TextUtils.isEmpty(beanStr)) {
+                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                requestBean.appId = bean.appId;
+                requestBean.trCode = bean.trCode;
+                requestBean.trVersion = bean.trVersion;
+                requestBean.cityCode = bean.cityCode;
+                requestBean.brchCode = bean.brchCode;
+                requestBean.clientVersion = bean.clientVersion;
+                requestBean.terminalId = bean.terminalId;
+                requestBean.uniqueId = bean.uniqueId;
+            }
+            requestBean.timestamp = System.currentTimeMillis();
+            requestBean.flowNum = 0;
+            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), baseHandler, 2);
+        }
+    };
+
+    public void startHandler() {
+        try {
+            baseHandler.post(cmdRunnable);
+            baseHandler.post(playlistRunnable);
+            baseHandler.post(presetRunnable);
+        } catch (Exception e) {
+        }
+    }
+
+    public void stopHandler() {
+        try {
+            baseHandler.removeCallbacks(cmdRunnable);
+            baseHandler.removeCallbacks(playlistRunnable);
+            baseHandler.removeCallbacks(presetRunnable);
+        } catch (Exception e) {
         }
     }
 }

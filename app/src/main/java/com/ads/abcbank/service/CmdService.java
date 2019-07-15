@@ -43,7 +43,7 @@ public class CmdService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (ActivityManager.getInstance().getTopActivity() != null) {
-            startService(new Intent(CmdService.this, TimeCmdService.class));
+//            startService(new Intent(CmdService.this, TimeCmdService.class));
             String timeCmd = Utils.get(CmdService.this, Utils.KEY_TIME_CMD, "5").toString();
             String timePlaylist = Utils.get(CmdService.this, Utils.KEY_TIME_PLAYLIST, "20").toString();
             String timePreset = Utils.get(CmdService.this, Utils.KEY_TIME_PRESET, "30").toString();

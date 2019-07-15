@@ -93,13 +93,13 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
         Utils.put(this, Utils.KEY_TIME_CURRENT_PRESET, "1");
 
         if (TextUtils.isEmpty(Utils.get(this, Utils.KEY_TIME_CMD, "").toString())) {
-            Utils.put(this, Utils.KEY_TIME_CMD, "5");
+            Utils.put(this, Utils.KEY_TIME_CMD, Utils.KEY_TIME_CMD_TIME + "");
         }
         if (TextUtils.isEmpty(Utils.get(this, Utils.KEY_TIME_PLAYLIST, "").toString())) {
-            Utils.put(this, Utils.KEY_TIME_PLAYLIST, "20");
+            Utils.put(this, Utils.KEY_TIME_PLAYLIST, Utils.KEY_TIME_PLAYLIST_TIME + "");
         }
         if (TextUtils.isEmpty(Utils.get(this, Utils.KEY_TIME_PRESET, "").toString())) {
-            Utils.put(this, Utils.KEY_TIME_PRESET, "30");
+            Utils.put(this, Utils.KEY_TIME_PRESET, Utils.KEY_TIME_PRESET_TIME + "");
         }
         if (TextUtils.isEmpty(Utils.get(this, Utils.KEY_TIME_FILE, "").toString())) {
             Utils.put(this, Utils.KEY_TIME_FILE, "30");
