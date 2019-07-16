@@ -131,7 +131,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         mLogContainer.setBackgroundColor(Color.argb(0x33, 0X00, 0x00, 0x00));
         int widthPixels = context.getResources().getDisplayMetrics().widthPixels;
         int heightPixels = context.getResources().getDisplayMetrics().heightPixels;
-        LayoutParams layoutParams = new LayoutParams(widthPixels / 2, heightPixels / 3, Gravity.CENTER);
+        LayoutParams layoutParams = new LayoutParams(widthPixels / 2, heightPixels / 3, Gravity.BOTTOM);
         mLogContainer.setLayoutParams(layoutParams);
         mLogContainer.setVisibility(GONE);
 
@@ -140,7 +140,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         mPlaylistLogContainer.setOrientation(LinearLayout.VERTICAL);
         mPlaylistLogContainer.setBackgroundColor(Color.argb(0x33, 0X00, 0x00, 0x00));
 
-        LayoutParams layoutParams2 = new LayoutParams((widthPixels > heightPixels) ? widthPixels : heightPixels, heightPixels / 3, Gravity.CENTER);
+        LayoutParams layoutParams2 = new LayoutParams((widthPixels > heightPixels) ? widthPixels / 2 : heightPixels / 2, heightPixels / 3, Gravity.CENTER | Gravity.RIGHT);
         mPlaylistLogContainer.setLayoutParams(layoutParams2);
         mPlaylistLogContainer.setVisibility(GONE);
 
@@ -363,7 +363,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         playlistTableView.setPlaylistBeanList(playListStr);
     }
 
-    public static void updateDownloadlistView(List<DownloadBean> playListStr) {
+    public static void updateDownloadlistView(List<PlaylistBodyBean> playListStr) {
         downloadlistTableView.setPlaylistBeanList(playListStr);
     }
 
@@ -595,9 +595,9 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             mSrcView = decorView.getChildAt(0);
             decorView.removeView(mSrcView);
             me.addView(mSrcView, 0);
-            me.addView(mLogContainer, 1);
-            me.addView(mPlaylistLogContainer, 2);
-            me.addView(mDownloadLogContainer, 3);
+            me.addView(mPlaylistLogContainer, 1);
+            me.addView(mDownloadLogContainer, 2);
+            me.addView(mLogContainer, 3);
             decorView.addView(me);
         }
     }
@@ -647,7 +647,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            return child == mLogContainer || child == mPlaylistLogContainer|| child == mDownloadLogContainer;
+            return child == mLogContainer;
         }
 
         @Override
@@ -688,7 +688,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
             margin.setMargins(x, y, x + margin.width, y + margin.height);
             LayoutParams layoutParams = new LayoutParams(margin);
             mPlaylistLogContainer.setLayoutParams(layoutParams);
-        }else {
+        } else {
             MarginLayoutParams margin = new MarginLayoutParams(mDownloadLogContainer.getLayoutParams());
             margin.setMargins(x, y, x + margin.width, y + margin.height);
             LayoutParams layoutParams = new LayoutParams(margin);
@@ -764,6 +764,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         }
         clearClick();
     }
+
     private void loggerDownSwitch() {
         if (mDownloadLogContainer.getVisibility() == GONE) {
             mDownloadLogContainer.setVisibility(VISIBLE);
@@ -772,6 +773,7 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
         }
         clearClick();
     }
+
     private void checkFilter(long dis, float y) {
         if (mLogContainer.getVisibility() == GONE) {
             return;

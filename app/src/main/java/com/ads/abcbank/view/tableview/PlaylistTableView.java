@@ -33,7 +33,7 @@ public class PlaylistTableView extends LinearLayout {
     RecyclerView rvPlaylist;
 
     HorizontalScrollView headerScroll;
-
+    FixedGridLayoutManager manager;
     PlaylistTableViewAdapter clubAdapter;
     Context mContext;
 
@@ -81,14 +81,17 @@ public class PlaylistTableView extends LinearLayout {
             playlistBeanList = new ArrayList<>();
         }
         try {
+            clubAdapter = null;
             clubAdapter = new PlaylistTableViewAdapter(mContext, playlistBeanList);
-            FixedGridLayoutManager manager = new FixedGridLayoutManager();
+            manager = new FixedGridLayoutManager();
             manager.setTotalColumnCount(1);
             rvPlaylist.setLayoutManager(manager);
             rvPlaylist.setAdapter(clubAdapter);
+            rvPlaylist.removeItemDecoration(rvPlaylist.getItemDecorationAt(0));
             rvPlaylist.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
             clubAdapter.notifyDataSetChanged();
         } catch (Exception e) {
+            clubAdapter = null;
             Logger.e(e.toString());
         }
     }

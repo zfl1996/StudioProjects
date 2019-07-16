@@ -117,14 +117,6 @@ public class DownloadService extends Service {
                         ">>>downloadLink=" + task.getUrl() + "，异常信息：" + realCause);
             }
 
-            /*if (cause.equals(EndCause.COMPLETED)) {
-                File downloadFile = new File(downloadPath + task.getFilename());
-                if (!downloadFile.exists()) {
-                    startTasks(true);
-                } else {
-                    openAndroidFile(downloadPath + task.getFilename());
-                }
-            }*/
         }
 
         @Override
@@ -145,15 +137,16 @@ public class DownloadService extends Service {
 
         @Override
         public void taskStart(@NonNull DownloadTask task, @NonNull Listener1Assist.Listener1Model model) {
-            TaskTagUtil.saveStatus(task, "taskStart");
+            TaskTagUtil.saveStatus(task, "下载中");
             DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
             if (downloadBean != null) {
                 downloadBean.started = dateToString();
-                downloadBean.status = "taskStart";
+                downloadBean.status = "下载中";
                 startTime = System.currentTimeMillis();
                 addDowloadBean(downloadBean);
+                Utils.recordDownloadStatus(mContext, downloadBean);
                 Logger.e(TAG, task.getFilename() + "开始下载");
-                Logger.updateDownloadlistView( getPlaylistBean().data.items);
+                Logger.updateDownloadlistView(Utils.getDownLoadListBean(mContext));
             }
         }
 
@@ -167,19 +160,21 @@ public class DownloadService extends Service {
         public void connected(@NonNull DownloadTask task, int blockCount, long currentOffset, long totalLength) {
             DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
             if (downloadBean != null) {
-                downloadBean.status = "connected";
+                downloadBean.status = "下载中";
                 addDowloadBean(downloadBean);
+                Utils.recordDownloadStatus(mContext, downloadBean);
                 TaskTagUtil.saveStatus(task, "connected");
             }
         }
 
         @Override
         public void progress(@NonNull DownloadTask task, long currentOffset, long totalLength) {
-            TaskTagUtil.saveStatus(task, "progress");
+            TaskTagUtil.saveStatus(task, "下载中");
             DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
             if (downloadBean != null) {
-                downloadBean.status = "progress";
+                downloadBean.status = "下载中";
                 addDowloadBean(downloadBean);
+                Utils.recordDownloadStatus(mContext, downloadBean);
                 TaskTagUtil.saveOffset(task, currentOffset);
                 TaskTagUtil.saveTotal(task, totalLength);
             }
@@ -240,7 +235,7 @@ public class DownloadService extends Service {
                                 allDownResultBean = JSON.parseObject(json, PlaylistResultBean.class);
                             }
                             if (allDownResultBean != null && allDownResultBean.data != null && allDownResultBean.data.items != null) {
-                                for (int i = 0; i < allDownResultBean.data.items.size(); i++) {
+                                /*for (int i = 0; i < allDownResultBean.data.items.size(); i++) {
                                     if (allDownResultBean.data.items.get(i).id.equals(downloadBean.id) &&
                                             allDownResultBean.data.items.get(i).name.equals(task.getFilename())) {
                                         allDownResultBean.data.items.remove(i);
@@ -248,17 +243,26 @@ public class DownloadService extends Service {
                                     }
                                 }
                                 Utils.put(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, JSONObject.toJSONString(allDownResultBean));
+                               */
                                 Utils.fileDownload(DownloadService.this, downloadBean);
                             }
                         }
                     } else if (cause.equals(EndCause.ERROR)) {
+                        downloadBean.started = "";
+                        downloadBean.secUsed = "";
+                        downloadBean.status = "待下载";
                         try {
                             getPlaylistBean().data.items.remove(downloadBean);
                             removeTask(downloadBean.id);
                         } catch (Exception e) {
                             Logger.e(TAG, e.toString());
                         }
+                    } else {
+                        downloadBean.started = "";
+                        downloadBean.secUsed = "";
+                        downloadBean.status = "待下载";
                     }
+                    Utils.recordDownloadStatus(mContext, downloadBean);
                     Logger.e(task.getFilename() + "--下载开始时间:" + downloadBean.started);
                     Logger.e(task.getFilename() + "--下载状态:" + downloadBean.status);
                     Logger.e(task.getFilename() + "--下载用时:" + downloadBean.secUsed);
@@ -266,7 +270,8 @@ public class DownloadService extends Service {
             } catch (Exception e) {
                 Logger.e(e.toString());
             }
-            Logger.updateDownloadlistView( getPlaylistBean().data.items);
+
+            Logger.updateDownloadlistView(Utils.getDownLoadListBean(mContext));
         }
 
         private File getDownloadFile(@NonNull DownloadTask task) {
@@ -392,7 +397,7 @@ public class DownloadService extends Service {
                     addUpdateTask(updateFileName, updateUrl);
                 } else if (task.getFilename() != null && task.getFilename().toLowerCase().endsWith(".apk")) {
                     openAndroidFile(downloadApkPath + task.getFilename());
-                 }
+                }
             } else {
                 Logger.e(TAG, task.getFilename() + "下载出错，>>>downloadLink=" + task.getUrl() + "，异常信息：" + realCause);
             }
@@ -467,7 +472,7 @@ public class DownloadService extends Service {
         try {
             action = intent.getAction();
         } catch (Exception e) {
-            Logger.e("3",e.toString());
+            Logger.e("3", e.toString());
         }
         if (action == null) {
             return super.onStartCommand(intent, flags, startId);
@@ -498,10 +503,11 @@ public class DownloadService extends Service {
                 stopTasks();
                 break;
             case DELETE_FILE_12:
-                clear12(rootPath + "/files/");
-                clear12(rootPath + "/conf/");
-                clear12(rootPath + "/zip/");
-                clear12(rootPath + "/temp/");
+                clear12(downloadPath);
+                clear12(downloadApkPath);
+                clear12(downloadImagePath);
+                clear12(downloadFilePath);
+                clear12(downloadVideoPath);
                 break;
             case START_QUEUE_DOWNTASK:
                 boolean needStart = false;
@@ -609,7 +615,7 @@ public class DownloadService extends Service {
                     }
                 }
             }
-            playlistResultBean.data.items.removeAll(finished);
+//            playlistResultBean.data.items.removeAll(finished);
         }
         if (playlistResultBean == null || playlistResultBean.data == null || playlistResultBean.data.items == null) {
             return;
@@ -862,6 +868,10 @@ public class DownloadService extends Service {
         }
         if (needRemovedTask != null) {
             FileUtil.deleteFile(downloadPath + needRemovedTask.getFilename());
+            FileUtil.deleteFile(downloadApkPath + needRemovedTask.getFilename());
+            FileUtil.deleteFile(downloadImagePath + needRemovedTask.getFilename());
+            FileUtil.deleteFile(downloadFilePath + needRemovedTask.getFilename());
+            FileUtil.deleteFile(downloadVideoPath + needRemovedTask.getFilename());
             OkDownload.with().downloadDispatcher().cancel(needRemovedTask.getId());
             OkDownload.with().breakpointStore().remove(needRemovedTask.getId());
             builder.unbind(needRemovedTask);

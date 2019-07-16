@@ -25,14 +25,15 @@ import java.util.List;
 public class DownloadlistTableView extends LinearLayout {
     private View rootView;
     private int scrollX;
-    private TextView txtContentType, txtXelUrl, txtPlayTime, txtIsUrg,txtPlayStatus;
+    private TextView txtContentType, txtXelUrl, txtPlayTime, txtIsUrg, txtPlayStatus;
+    private FixedGridLayoutManager manager;
 
-    public void setPlaylistBeanList(List<DownloadBean> playlistBeanList) {
+    public void setPlaylistBeanList(List<PlaylistBodyBean> playlistBeanList) {
         this.playlistBeanList = playlistBeanList;
         setUpRecyclerView();
     }
 
-    List<DownloadBean> playlistBeanList;
+    List<PlaylistBodyBean> playlistBeanList;
 
     RecyclerView rvPlaylist;
 
@@ -95,14 +96,17 @@ public class DownloadlistTableView extends LinearLayout {
             playlistBeanList = new ArrayList<>();
         }
         try {
+            clubAdapter = null;
             clubAdapter = new DownloadlistTableViewAdapter(mContext, playlistBeanList);
-            FixedGridLayoutManager manager = new FixedGridLayoutManager();
+            manager = new FixedGridLayoutManager();
             manager.setTotalColumnCount(1);
             rvPlaylist.setLayoutManager(manager);
             rvPlaylist.setAdapter(clubAdapter);
+            rvPlaylist.removeItemDecoration(rvPlaylist.getItemDecorationAt(0));
             rvPlaylist.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL));
             clubAdapter.notifyDataSetChanged();
         } catch (Exception e) {
+            clubAdapter = null;
             Logger.e(e.toString());
         }
     }

@@ -11,16 +11,18 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.utils.FileUtil;
+import com.ads.abcbank.utils.Utils;
 
 import java.util.List;
 
 public class DownloadlistTableViewAdapter extends RecyclerView.Adapter<DownloadlistTableViewAdapter.PlaylistTableViewHolder> {
     private static final int TYPE_ROW = 0;
     private static final int TYPE_ROW_COLORFUL = 1;
-    List<DownloadBean> downloadlistBeanList;
+    List<PlaylistBodyBean> downloadlistBeanList;
     private Context context;
 
-    public DownloadlistTableViewAdapter(Context context, List<DownloadBean> downloadlistBeanList) {
+    public DownloadlistTableViewAdapter(Context context, List<PlaylistBodyBean> downloadlistBeanList) {
         this.context = context;
         this.downloadlistBeanList = downloadlistBeanList;
     }
@@ -45,13 +47,28 @@ public class DownloadlistTableViewAdapter extends RecyclerView.Adapter<Downloadl
             return new PlaylistTableViewHolder(view);
         }
     }
+
     @Override
     public void onBindViewHolder(PlaylistTableViewHolder holder, int position) {
-        DownloadBean bodyBean = downloadlistBeanList.get(position);
+        PlaylistBodyBean bodyBean = downloadlistBeanList.get(position);
         holder.txtId.setText(bodyBean.id == null ? "" : bodyBean.id);
         holder.txtName.setText(bodyBean.name == null ? "" : bodyBean.name);
-        holder.txtPlayStatus.setText(bodyBean.status == null ? "等待下载" : bodyBean.status);
+
+        String status = "待下载";
+        if (bodyBean.status == null) {
+
+        } else if ("finish".equals(bodyBean.status)) {
+            if(Utils.getFileExistType(bodyBean.name)>0){
+                status = "已下载";
+            }
+        } else if ("CANCELED".equalsIgnoreCase(bodyBean.status) || "ERROR".equalsIgnoreCase(bodyBean.status)) {
+            status = "待下载";
+        } else {
+            status = bodyBean.status;
+        }
+        holder.txtPlayStatus.setText(status);
     }
+
     @Override
     public int getItemCount() {
         return downloadlistBeanList.size();

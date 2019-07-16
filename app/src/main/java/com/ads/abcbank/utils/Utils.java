@@ -242,6 +242,18 @@ public class Utils {
         SharedPreferencesCompat.apply(editor);
     }
 
+    public static List<PlaylistBodyBean> getDownLoadListBean(Context mContext) {
+        String json = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, "").toString();
+        PlaylistResultBean allDownResultBean = null;
+        if (!TextUtils.isEmpty(json)) {
+            allDownResultBean = JSON.parseObject(json, PlaylistResultBean.class);
+        }
+        if (allDownResultBean != null && allDownResultBean.data != null && allDownResultBean.data.items != null) {
+            return allDownResultBean.data.items;
+        }
+        return null;
+    }
+
     /**
      * 创建一个解决SharedPreferencesCompat.apply方法的一个兼容类
      */
@@ -1188,6 +1200,29 @@ public class Utils {
             JSONObject jsonObject = JSONObject.parseObject(JSONObject.toJSONString(downloadBean));
             jsonArray.add(jsonObject);
             put(context, KEY_PLAY_LIST_DOWNLOAD_FINISH, JSONArray.toJSONString(jsonArray));
+        }
+    }
+
+    public static void recordDownloadStatus(Context mContext, DownloadBean downloadBean) {
+        if (downloadBean == null) {
+            return;
+        }
+        String json = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, "").toString();
+        PlaylistResultBean allDownResultBean = null;
+        if (!TextUtils.isEmpty(json)) {
+            allDownResultBean = JSON.parseObject(json, PlaylistResultBean.class);
+        }
+        if (allDownResultBean != null && allDownResultBean.data != null && allDownResultBean.data.items != null) {
+            for (int i = 0; i < allDownResultBean.data.items.size(); i++) {
+                if (allDownResultBean.data.items.get(i).id.equals(downloadBean.id) &&
+                        allDownResultBean.data.items.get(i).name.equals(downloadBean.name)) {
+                    allDownResultBean.data.items.get(i).started = downloadBean.started;
+                    allDownResultBean.data.items.get(i).secUsed = downloadBean.secUsed;
+                    allDownResultBean.data.items.get(i).status = downloadBean.status;
+                    break;
+                }
+            }
+            Utils.put(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, JSONObject.toJSONString(allDownResultBean));
         }
     }
 

@@ -10,6 +10,7 @@ import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.JZMediaIjk;
 import com.ads.abcbank.utils.Logger;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.AutoVideoPlayer;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.JZMediaSystemAssertFolder;
@@ -62,7 +63,7 @@ public class VideoFragment extends BaseTempFragment {
                     content.setUp(jzDataSource
                             , JzvdStd.SCREEN_NORMAL);
                     content.setMediaInterface(jzMediaSystemAssertFolder);
-                } else {
+                } else if (Utils.getFileExistType(bean.name) > 0 && Utils.checkMd5(context, bean)) {
                     jzMediaIjk = new JZMediaIjk(content);
                     currentUrl = DownloadService.downloadVideoPath + bean.name;
                     content.setUp(currentUrl, "", Jzvd.SCREEN_NORMAL);
@@ -143,7 +144,7 @@ public class VideoFragment extends BaseTempFragment {
 //            getViews();
 //            initData();
 //        } else
-            if (content != null && getUserVisibleHint()) {
+        if (content != null && getUserVisibleHint()) {
             playerSeekTo();
             content.startVideo();
         }

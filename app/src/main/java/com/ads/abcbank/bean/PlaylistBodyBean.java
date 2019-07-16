@@ -20,6 +20,9 @@ public class PlaylistBodyBean extends RequestBean {
     public String lastModified;
     public String downloadLink;
     public String onClickLink;
+    public String started;
+    public String secUsed;
+    public String status;
     public List<QR> QRCode;
 
     public static class QR {
