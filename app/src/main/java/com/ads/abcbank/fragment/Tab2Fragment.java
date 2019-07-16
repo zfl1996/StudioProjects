@@ -28,7 +28,11 @@ public class Tab2Fragment extends BaseTabFragment {
 
     @Override
     public View initView(LayoutInflater inflater) {
-        view = inflater.inflate(R.layout.fragment_tab1, null);
+        if(Utils.isNotFirst(getActivity())){
+            view = inflater.inflate(R.layout.fragment_preset_tab2, null);
+        }else{
+            view = inflater.inflate(R.layout.fragment_tab1, null);
+        }
         tvBottom = view.findViewById(R.id.tv_bottom);
         return view;
     }
@@ -116,12 +120,6 @@ public class Tab2Fragment extends BaseTabFragment {
     public void onResume() {
         super.onResume();
         try {
-            if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
-                view.findViewById(R.id.ll_root).setBackgroundResource(Utils.isDirectionVertical(context) ? R.mipmap.presetbg_v : R.mipmap.presetbg_h2);
-                if (Utils.isDirectionVertical(context)) {
-                    view.findViewById(R.id.ll_root).setPadding(0, 120, 0, 0);
-                }
-            }
             initData();
             if (getUserVisibleHint()) {
                 handler.postDelayed(runnable, delayTime);
@@ -137,12 +135,6 @@ public class Tab2Fragment extends BaseTabFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if (tempView != null && view != null && view.findViewById(R.id.ll_root) != null) {
-                view.findViewById(R.id.ll_root).setBackgroundResource(Utils.isDirectionVertical(context) ? R.mipmap.presetbg_v : R.mipmap.presetbg_h2);
-                if (Utils.isDirectionVertical(context)) {
-                    view.findViewById(R.id.ll_root).setPadding(0, 120, 0, 0);
-                }
-            }
             initData();
             handler.postDelayed(runnable, delayTime);
         } else {

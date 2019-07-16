@@ -119,12 +119,12 @@ public class WebViewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack(); //goBack()表示返回WebView的上一页面
-        } else {
-            super.onBackPressed();
-            Utils.changeIntent(this);
-        }
+//        if (webView.canGoBack()) {
+//            webView.goBack(); //goBack()表示返回WebView的上一页面
+//        } else {
+//            super.onBackPressed();
+//            Utils.changeIntent(this);
+//        }
     }
 }
 

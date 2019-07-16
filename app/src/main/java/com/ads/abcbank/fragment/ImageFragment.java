@@ -16,6 +16,7 @@ import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTempFragment;
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 
@@ -39,7 +40,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     public void initData() {
         if (bean != null && view != null && isVisiable) {
             try {
-                Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadImagePath + bean.name)));
+                Utils.loadImage(content, new File(DownloadService.downloadImagePath + bean.name));
             } catch (Exception e) {
                 Utils.loadImage(content, "");
             }
@@ -70,7 +71,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
         if (isVisibleToUser) {
             if (bean != null) {
                 try {
-                    Utils.loadImage(content, Uri.fromFile(new File(DownloadService.downloadImagePath + bean.name)));
+                    Utils.loadImage(content, new File(DownloadService.downloadImagePath + bean.name));
                 } catch (Exception e) {
                     Utils.loadImage(content, "");
                 }
@@ -81,6 +82,11 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
             handler.postDelayed(runnable, delayTime);
 //        } else {
 //            handler.removeCallbacks(runnable);
+        } else {
+            try {
+                Glide.clear(content);
+            } catch (Exception e) {
+            }
         }
     }
 

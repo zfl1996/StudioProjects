@@ -216,13 +216,15 @@ public abstract class BaseTempFragment extends Fragment {
                         "UTF-8", "H", "0", Color.BLACK, Color.WHITE,
                         null, logoBitmap, 0.2F);
                 iv.setImageBitmap(qrCodeBitmap);
+                qrCodeBitmap.recycle();
             } else {
                 Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink, 130,
                         "UTF-8", "H", "0", Color.BLACK, Color.WHITE,
                         null, logoBitmap, 0.2F);
                 iv.setImageBitmap(qrCodeBitmap);
+                qrCodeBitmap.recycle();
             }
-
+            logoBitmap.recycle();
             if (i==0) {
                 iv.setImageResource(R.mipmap.abcqrcode);
             } else  if (i==1){

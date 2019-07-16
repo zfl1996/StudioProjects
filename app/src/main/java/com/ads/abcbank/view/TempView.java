@@ -68,29 +68,35 @@ public class TempView extends LinearLayout {
     public void setNeedUpdate(boolean needUpdate) {
         this.needUpdate = needUpdate;
         if (needUpdate) {
-            String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
-            try {
-                if (!TextUtils.isEmpty(json)) {
+
+            Utils.getExecutorService().submit(new Runnable() {
+                @Override
+                public void run() {
+                    String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
                     try {
-                        playlistBean.clear();
-                        txtlistBean.clear();
-                        List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
-                        for (int i = 0; i < playlistBodyBeans.size(); i++) {
-                            PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
-                            String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-                            if ("txt".equals(suffix)) {
-                                txtlistBean.add(bodyBean);
-                            } else {
-                                playlistBean.add(bodyBean);
+                        if (!TextUtils.isEmpty(json)) {
+                            try {
+                                playlistBean.clear();
+                                txtlistBean.clear();
+                                List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
+                                for (int i = 0; i < playlistBodyBeans.size(); i++) {
+                                    PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
+                                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                                    if ("txt".equals(suffix)) {
+                                        txtlistBean.add(bodyBean);
+                                    } else {
+                                        playlistBean.add(bodyBean);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Logger.e("解析播放列表出错" + json);
                             }
                         }
                     } catch (Exception e) {
-                        Logger.e("解析播放列表出错" + json);
+                        Logger.e(e.toString());
                     }
                 }
-            } catch (Exception e) {
-                Logger.e(e.toString());
-            }
+            });
         }
     }
 
@@ -147,6 +153,7 @@ public class TempView extends LinearLayout {
     }
 
     public synchronized void setType(String type) {
+
         errFileSum = 0;
         presetSum = 0;
         this.type = type;
@@ -171,17 +178,17 @@ public class TempView extends LinearLayout {
                     tab2Fragment.setBean(bean.data.loanRate);
                     tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
                     if (bean.data.saveRate.enable) {
-                        tab1Fragment.setTempView(this);
+                        tab1Fragment.setTempView(TempView.this);
                         fragmentList.add(tab1Fragment);
                         presetSum++;
                     }
                     if (bean.data.loanRate.enable) {
-                        tab2Fragment.setTempView(this);
+                        tab2Fragment.setTempView(TempView.this);
                         fragmentList.add(tab2Fragment);
                         presetSum++;
                     }
                     if (bean.data.buyInAndOutForeignExchange.enable) {
-                        tab3Fragment.setTempView(this);
+                        tab3Fragment.setTempView(TempView.this);
                         fragmentList.add(tab3Fragment);
                         presetSum++;
                     }
@@ -190,7 +197,7 @@ public class TempView extends LinearLayout {
         }
         if (fragmentList.size() == 0) {
             ImageFragment imageFragment = new ImageFragment();
-            imageFragment.setTempView(this);
+            imageFragment.setTempView(TempView.this);
             fragmentList.add(imageFragment);
         }
         reSetAdapter();
@@ -685,10 +692,10 @@ public class TempView extends LinearLayout {
                     }
 
                 }
-            } else if (playlistBean != null && position < playlistBean.size()) {
-                willPagerAdapter.setRegisteredFragment(position, mList.get(position));
-                willPagerAdapter.notifyDataSetChanged();
-                return getRegisteredFragment(position);
+//            } else if (playlistBean != null && position < playlistBean.size()) {
+//                willPagerAdapter.setRegisteredFragment(position, mList.get(position));
+//                willPagerAdapter.notifyDataSetChanged();
+//                return getRegisteredFragment(position);
 //                reSetAdapter();
             }
             WeakReference<Fragment> weak = new WeakReference<Fragment>(fragment);
@@ -726,7 +733,11 @@ public class TempView extends LinearLayout {
         }
 
         public Fragment getRegisteredFragment(int position) {
-            return registeredFragments.get(position).get();
+            if(registeredFragments != null && registeredFragments.size() > position && registeredFragments.get(position) != null){
+                return registeredFragments.get(position).get();
+            }else{
+                return new Fragment();
+            }
         }
 
         public void setRegisteredFragment(int position, Fragment fragment) {
@@ -798,6 +809,9 @@ public class TempView extends LinearLayout {
                         presetSum++;
                     }
                 }
+            }
+            if(willPagerAdapter != null){
+                willPagerAdapter.notifyDataSetChanged();
             }
         } catch (Exception e) {
             Logger.e(e.toString());

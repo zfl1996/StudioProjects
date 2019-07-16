@@ -25,6 +25,8 @@ import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.jzvd.JzvdStd;
+
 public class Temp5Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
     private TempView tvTemp;
@@ -34,17 +36,6 @@ public class Temp5Activity extends BaseActivity implements IView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp5);
         tvTemp = findViewById(R.id.tv_temp);
-//        sys_info = findViewById(R.id.sys_info);
-//        sys_info.setText("是否TV：" + SystemUtil.isTv(this) +
-//                "\n是否手机：" + !SystemUtil.isPad(this) +
-//                "\n是否平板：" + SystemUtil.isPad(this) +
-//                "\n系统版本号：" + SystemUtil.getSystemVersion() +
-//                "\n手机型号：" + SystemUtil.getSystemModel() +
-//                "\n手机厂商：" + SystemUtil.getDeviceBrand() +
-//                "\n屏幕DPI：" + SystemUtil.getDensity(this) +
-//                "\n像素宽：" + SystemUtil.getScreenWidth(this) +
-//                "\n像素高：" + SystemUtil.getScreenHeight(this)
-//        );
 
         tvTemp.setType("M,H,P,N,E,L,R");
         tvTemp.getImage().setVisibility(View.GONE);
@@ -65,6 +56,12 @@ public class Temp5Activity extends BaseActivity implements IView {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        JzvdStd.goOnPlayOnPause();
+    }
+
+    @Override
     public void updateMainDate(JSONObject jsonObject) {
         if (tvTemp != null) {
             tvTemp.setNeedUpdate(true);
@@ -78,7 +75,7 @@ public class Temp5Activity extends BaseActivity implements IView {
 
     @Override
     public void updatePresetDate(JSONObject jsonObject) {
-        if(tvTemp != null){
+        if (tvTemp != null) {
             tvTemp.updatePreset();
         }
     }

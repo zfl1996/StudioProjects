@@ -56,7 +56,6 @@ public class TempPresenter {
 
 
     public void init() {
-
         asyncThread.httpService(HTTPContants.CODE_INIT, new JSONObject(), handler, 0);
     }
 

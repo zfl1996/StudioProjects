@@ -37,10 +37,8 @@ import java.util.TimeZone;
 import cn.jzvd.JzvdStd;
 
 public class Temp1Activity extends BaseActivity implements IView {
-//    private MarqueeTextView marqueeTextView;
 
     private int delayDateTime = 60 * 1000;
-    private TempPresenter tempPresenter;
 
     private TextView tvTime;
     private TextView tvDate;
@@ -106,22 +104,14 @@ public class Temp1Activity extends BaseActivity implements IView {
     };
 
     private void initViews() {
-//        marqueeTextView = findViewById(R.id.marqueeTextView);
         mRecyclerView = findViewById(R.id.rv_recycleView);
-//        hListView = findViewById(R.id.hlv_main);
         presetView = findViewById(R.id.pv_preset);
         tvTime = findViewById(R.id.tv_time);
         tvDate = findViewById(R.id.tv_date);
         tvTemp = findViewById(R.id.tv_temp);
-//        marqueeTextView.invalidate();
         handler.post(timeRunnable);
-//        tvTemp.setType("M,H,P,N,E,L,R");
         tvTemp.setType("W,M,H,P,N,E,L,R");
         tvTemp.getImage().setVisibility(View.GONE);
-        tempPresenter = new TempPresenter(this, this);
-//        if (marqueeTextView != null) {
-//            marqueeTextView.startScroll();
-//        }
         presetView.updatePresetDate();
 
         if (list.size() == 0) {
@@ -129,11 +119,17 @@ public class Temp1Activity extends BaseActivity implements IView {
                 list.add("中国农业银行欢迎您！");
             }
         }
-        autoPollAdapter = new AutoPollAdapter(Temp1Activity.this, list);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(Temp1Activity.this, LinearLayoutManager.HORIZONTAL, false));
-        mRecyclerView.setAdapter(autoPollAdapter);
 
-        mRecyclerView.start();
+        Utils.getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                autoPollAdapter = new AutoPollAdapter(Temp1Activity.this, list);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(Temp1Activity.this, LinearLayoutManager.HORIZONTAL, false));
+                mRecyclerView.setAdapter(autoPollAdapter);
+
+                mRecyclerView.start();
+            }
+        });
 
         BaseTempFragment.tempView = tvTemp;
     }
@@ -142,9 +138,6 @@ public class Temp1Activity extends BaseActivity implements IView {
     protected void onPause() {
         super.onPause();
         JzvdStd.goOnPlayOnPause();
-//        if (marqueeTextView != null) {
-//            marqueeTextView.pauseScroll();
-//        }
     }
 
     @Override
@@ -162,9 +155,6 @@ public class Temp1Activity extends BaseActivity implements IView {
                 startServices("W,M,H,P,N,E,L,R");
             }
         }, 100);
-//        if (marqueeTextView != null) {
-//            marqueeTextView.startScroll();
-//        }
         if (mRecyclerView != null) {
             mRecyclerView.start();
         }
@@ -173,18 +163,12 @@ public class Temp1Activity extends BaseActivity implements IView {
     @Override
     protected void onResume() {
         super.onResume();
-//        if (marqueeTextView != null) {
-//            marqueeTextView.resumeScroll();
-//        }
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-//        if (marqueeTextView != null) {
-//            marqueeTextView.stopScroll();
-//        }
         if (mRecyclerView != null) {
             mRecyclerView.stop();
         }
@@ -192,7 +176,6 @@ public class Temp1Activity extends BaseActivity implements IView {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
     }
 
     @Override
@@ -215,23 +198,28 @@ public class Temp1Activity extends BaseActivity implements IView {
     }
 
     public void updateTxtBeans(List<PlaylistBodyBean> beans) {
-        List<String> listString = new ArrayList<>();
-        for (int i = 0; i < beans.size(); i++) {
-            PlaylistBodyBean bean = beans.get(i);
-            if (Utils.isInPlayTime(bean)) {
-                try {
-                    File file = new File(DownloadService.downloadFilePath, bean.name);
-                    if (file.exists()) {
-                        listString.add(Utils.getTxtString(this, bean.name));
+        Utils.getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                List<String> listString = new ArrayList<>();
+                for (int i = 0; i < beans.size(); i++) {
+                    PlaylistBodyBean bean = beans.get(i);
+                    if (Utils.isInPlayTime(bean)) {
+                        try {
+                            File file = new File(DownloadService.downloadFilePath, bean.name);
+                            if (file.exists()) {
+                                listString.add(Utils.getTxtString(Temp1Activity.this, bean.name));
+                            }
+                        } catch (Exception e) {
+                            Logger.e("TXT ERROR", e.toString());
+                        }
                     }
-                } catch (Exception e) {
-                    Logger.e("TXT ERROR", e.toString());
+                }
+                if (!isSameTxt(listString)) {
+                    updateTextList(listString);
                 }
             }
-        }
-        if (!isSameTxt(listString)) {
-            updateTextList(listString);
-        }
+        });
     }
 
     private boolean isSameTxt(List<String> listString) {
@@ -242,28 +230,33 @@ public class Temp1Activity extends BaseActivity implements IView {
     }
 
     private void updateTextList(List<String> listString) {
-        if (mRecyclerView != null) {
-            mRecyclerView.stop();
-        }
-        list.clear();
-        list.addAll(listString);
-        long length = getListTxtLength(list);
-        if (length == 0) {
-            for (int i = 0; i < 6; i++) {
-                list.add("中国农业银行欢迎您！");
-            }
-        } else if (length < 60) {
-            int s = (int) (60 / length) + 1;
-            for (int i = 0; i < s; i++) {
+        HandlerUtil.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mRecyclerView != null) {
+                    mRecyclerView.stop();
+                }
+                list.clear();
                 list.addAll(listString);
+                long length = getListTxtLength(list);
+                if (length == 0) {
+                    for (int i = 0; i < 6; i++) {
+                        list.add("中国农业银行欢迎您！");
+                    }
+                } else if (length < 60) {
+                    int s = (int) (60 / length) + 1;
+                    for (int i = 0; i < s; i++) {
+                        list.addAll(listString);
+                    }
+                }
+                if (autoPollAdapter != null) {
+                    autoPollAdapter.notifyDataSetChanged();
+                }
+                if (mRecyclerView != null) {
+                    mRecyclerView.start();
+                }
             }
-        }
-        if (autoPollAdapter != null) {
-            autoPollAdapter.notifyDataSetChanged();
-        }
-        if (mRecyclerView != null) {
-            mRecyclerView.start();
-        }
+        },100);
     }
 
     private long getListTxtLength(List<String> listString) {

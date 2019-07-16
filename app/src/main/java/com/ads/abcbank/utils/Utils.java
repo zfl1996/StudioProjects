@@ -28,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.activity.Temp1Activity;
 import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
@@ -354,20 +355,21 @@ public class Utils {
                     || "N".equals(getContentTypeStart(imageView.getContext()))) {
                 placeholderId = R.mipmap.bg_port;
             }
-            WeakReference<ImageView> reference = new WeakReference(imageView);
-            ImageView target = reference.get();
-            if (target != null) {
-                target.setImageDrawable(null);
-                if (!TextUtils.isEmpty(url)) {
-                    Glide.with(imageView.getContext()).load(url).placeholder(placeholderId).error(placeholderId).diskCacheStrategy(DiskCacheStrategy.RESULT).dontAnimate().into(target);
-                } else {
-                    imageView.setImageResource(placeholderId);
-                }
+//            WeakReference<ImageView> reference = new WeakReference(imageView);
+//            ImageView target = reference.get();
+//            if (target != null) {
+//                target.setImageDrawable(null);
+            if (!TextUtils.isEmpty(url)) {
+                Glide.with(imageView.getContext()).load(url).placeholder(placeholderId).error(placeholderId).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.ALL).dontAnimate().into(imageView);
+            } else {
+                Bitmap bitmap = readBitMap(imageView.getContext(),placeholderId);
+                imageView.setImageBitmap(bitmap);
             }
+//            }
         }
     }
 
-    public static void loadImage(ImageView imageView, Uri url) {
+    public static void loadImage(ImageView imageView, File file) {
         if (imageView != null) {
             int placeholderId = R.mipmap.bg_land;
             if ("V".equals(getContentTypeMiddle(imageView.getContext()))
@@ -375,16 +377,19 @@ public class Utils {
                     || "N".equals(getContentTypeStart(imageView.getContext()))) {
                 placeholderId = R.mipmap.bg_port;
             }
-            WeakReference<ImageView> reference = new WeakReference(imageView);
-            ImageView target = reference.get();
-            if (target != null) {
-                target.setImageDrawable(null);
-                if (url != null) {
-                    Glide.with(imageView.getContext()).load(url).placeholder(placeholderId).error(placeholderId).diskCacheStrategy(DiskCacheStrategy.RESULT).dontAnimate().into(target);
-                } else {
-                    imageView.setImageResource(placeholderId);
-                }
+//            WeakReference<ImageView> reference = new WeakReference(imageView);
+//            ImageView target = reference.get();
+//            if (target != null) {
+//                target.setImageDrawable(null);
+            if (file != null && file.exists()) {
+//                    Glide.with(imageView.getContext()).load(file).placeholder(placeholderId).error(placeholderId)
+//                            .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.RESULT).dontAnimate().into(imageView);
+                imageView.setImageURI(Uri.fromFile(file));
+            } else {
+                Bitmap bitmap = readBitMap(imageView.getContext(),placeholderId);
+                imageView.setImageBitmap(bitmap);
             }
+//            }
         }
     }
 
@@ -1321,6 +1326,23 @@ public class Utils {
             }
         }
         return false;
+    }
+    public static boolean isNotFirst(Activity activity) {
+        if(activity == null){
+            return true;
+        }
+        return !(activity instanceof Temp1Activity);
+    }
+
+
+    public static Bitmap readBitMap(Context context, int resId) {
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        opt.inPreferredConfig = Bitmap.Config.RGB_565;
+        opt.inPurgeable = true;
+        opt.inInputShareable = true;
+        //获取资源图片
+        InputStream is = context.getResources().openRawResource(resId);
+        return BitmapFactory.decodeStream(is, null, opt);
     }
 
     private static ExecutorService executorService;

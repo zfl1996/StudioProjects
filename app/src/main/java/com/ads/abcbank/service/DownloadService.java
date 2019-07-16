@@ -86,26 +86,6 @@ public class DownloadService extends Service {
     private static List<DownloadTask> taskList = new ArrayList<>();
     private DownloadContext context;
 
-    public class MyBinder extends Binder {
-
-        public DownloadService getService() {
-            return DownloadService.this;
-        }
-    }
-
-    //通过binder实现了 调用者（client）与 service之间的通信
-    private DownloadService.MyBinder binder = new DownloadService.MyBinder();
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        return false;
-    }
-
     private final DownloadContextListener contextListener = new DownloadContextListener() {
         @Override
         public void taskEnd(@NonNull DownloadContext context, @NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, int remainCount) {
@@ -481,18 +461,29 @@ public class DownloadService extends Service {
             case ADD_UPDATE_DOWNTASK:
                 updateFileName = intent.getStringExtra("name");
                 updateUrl = intent.getStringExtra("url");
-                addUpdateTask(updateFileName, updateUrl);
+                Utils.getExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        addUpdateTask(updateFileName, updateUrl);
+                    }
+                });
                 break;
             case ADD_MULTI_DOWNTASK:
-                type = intent.getStringExtra("type");
-                String beanStr = Utils.get(this, Utils.KEY_REGISTER_BEAN, "").toString();
-                if (!TextUtils.isEmpty(beanStr)) {
-                    registerBean = JSON.parseObject(beanStr, RegisterBean.class);
-                }
-                getPlaylistBean();
-                removeAllTasks();
-                addDownloadTasks();
-                startTasks(true);
+                Utils.getExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        type = intent.getStringExtra("type");
+                        String beanStr = Utils.get(DownloadService.this, Utils.KEY_REGISTER_BEAN, "").toString();
+                        if (!TextUtils.isEmpty(beanStr)) {
+                            registerBean = JSON.parseObject(beanStr, RegisterBean.class);
+                        }
+                        getPlaylistBean();
+                        removeAllTasks();
+                        addDownloadTasks();
+                        startTasks(true);
+                    }
+                });
                 break;
 
             case REMOVE_DOWNTASK:
@@ -536,11 +527,11 @@ public class DownloadService extends Service {
         super.onDestroy();
     }
 
-//    @Nullable
-//    @Override
-//    public IBinder onBind(Intent intent) {
-//        return null;
-//    }
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
     /**
      * @param domain 域名

@@ -25,6 +25,8 @@ import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.jzvd.JzvdStd;
+
 public class Temp3Activity extends BaseActivity implements IView {
     private TempPresenter presenter;
     private TempView tvTemp;
@@ -39,6 +41,12 @@ public class Temp3Activity extends BaseActivity implements IView {
         setiView(this);
         startServices("M,H,P,N,E,L,R");
         BaseTempFragment.tempView = tvTemp;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        JzvdStd.goOnPlayOnPause();
     }
 
     @Override

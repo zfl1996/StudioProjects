@@ -6,6 +6,7 @@ import android.content.Context;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.ScreenAdaptation;
+import com.ads.abcbank.utils.Utils;
 
 public class MyApplication extends Application {
     private Context context;
@@ -15,8 +16,14 @@ public class MyApplication extends Application {
         super.onCreate();
         new ScreenAdaptation(this, 1080, 1920).register();
         context = this;
-        registerActivityLifecycleCallbacks(ActivityManager.getInstance());
-        Logger.init(this);
+
+        Utils.getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                registerActivityLifecycleCallbacks(ActivityManager.getInstance());
+                Logger.init(MyApplication.this);
+            }
+        });
     }
 
     public Context getContext() {
