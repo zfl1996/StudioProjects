@@ -17,13 +17,8 @@ public class MyApplication extends Application {
         new ScreenAdaptation(this, 1080, 1920).register();
         context = this;
 
-        Utils.getExecutorService().submit(new Runnable() {
-            @Override
-            public void run() {
-                registerActivityLifecycleCallbacks(ActivityManager.getInstance());
-                Logger.init(MyApplication.this);
-            }
-        });
+        registerActivityLifecycleCallbacks(ActivityManager.getInstance());
+        Logger.init(MyApplication.this);
     }
 
     public Context getContext() {

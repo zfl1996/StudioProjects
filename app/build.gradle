@@ -8,10 +8,10 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.ads.abcbank"
-        minSdkVersion 21
+        minSdkVersion 18
         targetSdkVersion 26
         versionCode 5
-        versionName "190629"
+        versionName "190711"
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86"
         }
