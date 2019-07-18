@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_key"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="top|left"
+        android:lineSpacingExtra="2px"
+        android:paddingBottom="5px"
+        android:paddingTop="5px"
+        android:text="项目"
+        android:textColor="#fff"
+        android:textSize="@dimen/text_small" />
+
+    <View
+        android:layout_width="0.1px"
+        android:layout_height="match_parent"
+        android:background="#fff" />
+
+    <TextView
+        android:id="@+id/tv_value"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingBottom="5px"
+        android:paddingTop="5px"
+        android:text="年利率（%）"
+        android:textColor="#fff"
+        android:textSize="@dimen/text_small" />
+
+    <View
+        android:layout_width="0.1px"
+        android:layout_height="match_parent"
+        android:background="#fff" />
+
+    <TextView
+        android:id="@+id/tv_value2"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingBottom="5px"
+        android:paddingTop="5px"
+        android:text="年利率（%）"
+        android:textColor="#fff"
+        android:textSize="@dimen/text_small" />
+
+    <View
+        android:layout_width="0.1px"
+        android:layout_height="match_parent"
+        android:background="#fff" />
+
+    <TextView
+        android:id="@+id/tv_value3"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingBottom="5px"
+        android:paddingTop="5px"
+        android:text="年利率（%）"
+        android:textColor="#fff"
+        android:textSize="@dimen/text_small" />
+</TableRow>

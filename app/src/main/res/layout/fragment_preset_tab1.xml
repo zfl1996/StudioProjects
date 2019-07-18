@@ -4,126 +4,110 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/presetbg_h1"
-    android:paddingLeft="0px"
-    android:paddingTop="120px"
-    android:paddingRight="0px"
-    android:paddingBottom="0px"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="0,2">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-        <TableRow
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10px"
-            android:layout_marginTop="10px">
+            android:layout_gravity="center"
+            android:ems="1"
+            android:gravity="center"
+            android:text="人民币存款利率"
+            android:textColor="#fff"
+            android:textSize="@dimen/text_big_super" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_item_name"
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:maxLines="1"
-                android:text="项目"
-                android:textColor="#fff"
-                android:textSize="@dimen/tab_text" />
 
-            <View
-                android:layout_width="10px"
-                android:layout_height="1px" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="12"
+        android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_item_name2"
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-
-                android:gravity="center"
-                android:maxLines="1"
-                android:text="年利率（%）"
-                android:textColor="#fff"
-                android:textSize="@dimen/tab_text" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <View
-                android:layout_width="10px"
-                android:layout_height="10px"
-
-                />
-
-            <View
-                android:layout_width="10px"
-                android:layout_height="10px" />
-
-            <View
-                android:layout_width="10px"
-                android:layout_height="10px" />
-        </TableRow>
-
-    </TableLayout>
-
-    <ScrollView
-        android:id="@+id/sv_tab1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingBottom="10px">
-
-        <LinearLayout
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:stretchColumns="0,2">
 
-            <TableLayout
-                android:id="@+id/tl_tab1"
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:background="@color/tab_title">
+
+                <TextView
+                    android:id="@+id/tv_item_name"
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:padding="20px"
+                    android:paddingBottom="20px"
+                    android:text="项目"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/tab_text_big" />
+
+                <View
+                    android:layout_width="0.1px"
+                    android:layout_height="match_parent"
+                    android:background="#fff" />
+
+                <TextView
+                    android:id="@+id/tv_item_name2"
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:padding="20px"
+                    android:paddingBottom="20px"
+                    android:text="年利率（%）"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/tab_text_big" />
+            </TableRow>
+        </TableLayout>
+
+        <ScrollView
+            android:id="@+id/sv_tab1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@color/tab_row1"
+            android:paddingBottom="10px">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:stretchColumns="0,2">
+                android:orientation="vertical">
 
-            </TableLayout>
+                <TableLayout
+                    android:id="@+id/tl_tab1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0,2">
 
-            <TableLayout
-                android:id="@+id/tl_bottom1"
-                android:layout_width="match_parent"
-                android:layout_height="10px"
-                android:stretchColumns="0,2">
+                </TableLayout>
 
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+            </LinearLayout>
 
-                    <View
-                        android:layout_width="10px"
-                        android:layout_height="match_parent" />
+        </ScrollView>
 
-                    <View
-                        android:layout_width="10px"
-                        android:layout_height="match_parent" />
-
-                    <View
-                        android:layout_width="10px"
-                        android:layout_height="match_parent" />
-                </TableRow>
-
-            </TableLayout>
-        </LinearLayout>
-
-    </ScrollView>
-
-    <TextView
-        android:id="@+id/tv_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingBottom="3px"
-        android:paddingTop="5px"
-        android:textColor="#fff"
-        android:textSize="@dimen/text_small" />
+        <TextView
+            android:id="@+id/tv_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="3px"
+            android:background="@color/tab_bottom"
+            android:paddingTop="5px"
+            android:textColor="#fff"
+            android:textSize="@dimen/text_small" />
+    </LinearLayout>
 </LinearLayout>

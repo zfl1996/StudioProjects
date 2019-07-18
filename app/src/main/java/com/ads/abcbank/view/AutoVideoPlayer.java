@@ -3,6 +3,7 @@ package com.ads.abcbank.view;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import com.ads.abcbank.R;
 import com.ads.abcbank.utils.Logger;
 
 import cn.jzvd.JzvdStd;
@@ -37,5 +38,10 @@ public class AutoVideoPlayer extends JzvdStd {
         if (tempView != null) {
             tempView.fileHadDel();
         }
+    }
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.jz_layout_std;
     }
 }

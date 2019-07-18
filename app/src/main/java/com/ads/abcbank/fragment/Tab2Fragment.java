@@ -70,7 +70,13 @@ public class Tab2Fragment extends BaseTabFragment {
         tlTab1.removeAllViews();
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.LoanRate.LoanRateItem item = bean.entry.get(i);
-            View rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_temp1, null);
+            View rowView;
+            if (Utils.isNotFirst(getActivity())) {
+                rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_preset_temp1, null);
+                rowView.setBackgroundColor(i % 2 == 1 ? getResources().getColor(R.color.tab_row1) : getResources().getColor(R.color.tab_row2));
+            } else {
+                rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_temp1, null);
+            }
             final TextView pre = rowView.findViewById(R.id.tv_pre);
             final TextView key = rowView.findViewById(R.id.tv_key);
             final TextView value = rowView.findViewById(R.id.tv_value);

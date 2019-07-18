@@ -28,9 +28,9 @@ public class Tab1Fragment extends BaseTabFragment {
 
     @Override
     public View initView(LayoutInflater inflater) {
-        if(Utils.isNotFirst(getActivity())){
+        if (Utils.isNotFirst(getActivity())) {
             view = inflater.inflate(R.layout.fragment_preset_tab1, null);
-        }else{
+        } else {
             view = inflater.inflate(R.layout.fragment_tab1, null);
         }
         tvBottom = view.findViewById(R.id.tv_bottom);
@@ -69,7 +69,13 @@ public class Tab1Fragment extends BaseTabFragment {
         tlTab1.removeAllViews();
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.SaveRate.SaveRateItem item = bean.entry.get(i);
-            View rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_temp1, null);
+            View rowView;
+            if (Utils.isNotFirst(getActivity())) {
+                rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_preset_temp1, null);
+                rowView.setBackgroundColor(i % 2 == 1 ? getResources().getColor(R.color.tab_row1) : getResources().getColor(R.color.tab_row2));
+            } else {
+                rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_temp1, null);
+            }
             final TextView pre = rowView.findViewById(R.id.tv_pre);
             final TextView key = rowView.findViewById(R.id.tv_key);
             final TextView value = rowView.findViewById(R.id.tv_value);
