@@ -698,15 +698,15 @@ public class DownloadService extends Service {
         stopTasks();
         int speedDownload;
         try {
-            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
+            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "512").toString());
         } catch (Exception e) {
-            speedDownload = 50;
+            speedDownload = 512;
         }
-        if (speedDownload < 50) {
-            speedDownload = 50;
-            Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
-        }
-        int downloadSpeed = speedDownload / 128 + 1;
+//        if (speedDownload < 512) {
+//            speedDownload = 512;
+//            Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "512");
+//        }
+        int downloadSpeed = speedDownload / (6 * 128) + 1;
         if (downloadSpeed <= 0) {
             downloadSpeed = 1;
         }
@@ -768,17 +768,17 @@ public class DownloadService extends Service {
 
         int speedDownload;
         try {
-            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "50").toString());
+            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "512").toString());
         } catch (Exception e) {
-            speedDownload = 500;
+            speedDownload = 512;
         }
-        if (speedDownload < 50) {
-            speedDownload = 50;
-            Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "50");
-        }
+//        if (speedDownload < 50) {
+//            speedDownload = 50;
+//            Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, "512");
+//        }
 //        int downloadSpeed = speedDownload / 8;
         // speedDownload  * 8 / 1024
-        int downloadSpeed = speedDownload / 128 + 1;
+        int downloadSpeed = speedDownload / (6 * 128) + 1;
         isUrg = TextUtils.isEmpty(isUrg) ? "0" : isUrg;
         if (downloadSpeed <= 0) {
             downloadSpeed = 1;

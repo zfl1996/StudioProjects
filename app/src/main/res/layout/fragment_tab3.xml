@@ -26,7 +26,7 @@
                 android:maxLines="1"
                 android:text="货币"
                 android:textColor="#fff"
-                android:textSize="@dimen/tab_text" />
+                android:textSize="@dimen/tab_text_big" />
 
             <View
                 android:layout_width="10px"
@@ -43,7 +43,7 @@
                 android:paddingLeft="20px"
                 android:text="买入汇率"
                 android:textColor="#fff"
-                android:textSize="@dimen/tab_text" />
+                android:textSize="@dimen/tab_text_big" />
 
             <View
                 android:layout_width="10px"
@@ -60,7 +60,7 @@
                 android:maxLines="1"
                 android:text="卖出汇率"
                 android:textColor="#fff"
-                android:textSize="@dimen/tab_text" />
+                android:textSize="@dimen/tab_text_big" />
 
             <View
                 android:layout_width="10px"
@@ -76,7 +76,7 @@
                 android:maxLines="1"
                 android:text="现钞买入\n汇率"
                 android:textColor="#fff"
-                android:textSize="@dimen/tab_text" />
+                android:textSize="@dimen/tab_text_big" />
         </TableRow>
 
         <TableRow
@@ -200,5 +200,5 @@
         android:textColor="#fff"
         android:paddingTop="5px"
         android:paddingBottom="3px"
-        android:textSize="@dimen/text_small" />
+        android:textSize="@dimen/tab_text_big" />
 </LinearLayout>

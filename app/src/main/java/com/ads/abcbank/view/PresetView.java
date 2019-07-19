@@ -89,18 +89,21 @@ public class PresetView extends LinearLayout {
         tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
 
         if (bean.data.saveRate.enable) {
+            tab1Fragment.initData();
             fragmentList.add(tab1Fragment);
             StringBuffer stringBuffer = new StringBuffer(bean.data.saveRate.title);
             stringBuffer.insert(3, "\n");
             listTitle.add(stringBuffer.toString());
         }
         if (bean.data.loanRate.enable) {
+            tab2Fragment.initData();
             fragmentList.add(tab2Fragment);
             StringBuffer stringBuffer = new StringBuffer(bean.data.loanRate.title);
             stringBuffer.insert(3, "\n");
             listTitle.add(stringBuffer.toString());
         }
         if (bean.data.buyInAndOutForeignExchange.enable) {
+            tab3Fragment.initData();
             fragmentList.add(tab3Fragment);
             StringBuffer stringBuffer = new StringBuffer(bean.data.buyInAndOutForeignExchange.title);
             stringBuffer.insert(3, "\n");

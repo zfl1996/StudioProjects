@@ -70,7 +70,7 @@ public class Tab1Fragment extends BaseTabFragment {
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.SaveRate.SaveRateItem item = bean.entry.get(i);
             View rowView;
-            if (Utils.isNotFirst(getActivity())) {
+            if (Utils.isNotFirst(getActivity()) ) {
                 rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_preset_temp1, null);
                 rowView.setBackgroundColor(i % 2 == 1 ? getResources().getColor(R.color.tab_row1) : getResources().getColor(R.color.tab_row2));
             } else {

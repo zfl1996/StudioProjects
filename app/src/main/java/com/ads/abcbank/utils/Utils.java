@@ -29,6 +29,7 @@ import android.widget.ImageView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.activity.Temp1Activity;
+import com.ads.abcbank.activity.Temp5Activity;
 import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PlaylistResultBean;
@@ -362,7 +363,7 @@ public class Utils {
             if (!TextUtils.isEmpty(url)) {
                 Glide.with(imageView.getContext()).load(url).placeholder(placeholderId).error(placeholderId).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.ALL).dontAnimate().into(imageView);
             } else {
-                Bitmap bitmap = readBitMap(imageView.getContext(),placeholderId);
+                Bitmap bitmap = readBitMap(imageView.getContext(), placeholderId);
                 imageView.setImageBitmap(bitmap);
             }
 //            }
@@ -386,7 +387,7 @@ public class Utils {
 //                            .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.RESULT).dontAnimate().into(imageView);
                 imageView.setImageURI(Uri.fromFile(file));
             } else {
-                Bitmap bitmap = readBitMap(imageView.getContext(),placeholderId);
+                Bitmap bitmap = readBitMap(imageView.getContext(), placeholderId);
                 imageView.setImageBitmap(bitmap);
             }
 //            }
@@ -1316,22 +1317,18 @@ public class Utils {
         return timeCmdInt;
     }
 
-    public static boolean isDirectionVertical(Context context) {
-        String beanStr = Utils.get(context, Utils.KEY_REGISTER_BEAN, "").toString();
-
-        if (!TextUtils.isEmpty(beanStr)) {
-            RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
-            if (bean.data.screenDirection != null) {
-                return "V".equals(bean.data.screenDirection);
-            }
-        }
-        return false;
-    }
-    public static boolean isNotFirst(Activity activity) {
-        if(activity == null){
+    public static boolean isDirectionVertical(Activity activity) {
+        if (activity == null) {
             return true;
         }
-        return !(activity instanceof Temp1Activity);
+        return (!(activity instanceof Temp1Activity) && !(activity instanceof Temp5Activity));
+    }
+
+    public static boolean isNotFirst(Activity activity) {
+        if (activity == null) {
+            return false;
+        }
+        return activity instanceof Temp5Activity;
     }
 
 

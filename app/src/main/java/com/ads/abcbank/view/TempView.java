@@ -641,20 +641,20 @@ public class TempView extends LinearLayout {
         @Override
         public Fragment getItem(int position) {
             // TODO Auto-generated method stub
-//            Fragment fragment = null;
-//            if (mList != null && mList.size() > position) {
-//                fragment = mList.get(position);
-//            }
             Fragment fragment = null;
-            try {
-                if (mList.get(position) instanceof BaseTempFragment) {
-                    fragment = BaseTempFragment.newInstance((BaseTempFragment) mList.get(position));
-                } else if (mList.get(position) instanceof BaseTabFragment) {
-                    fragment = BaseTabFragment.newInstance((BaseTabFragment) mList.get(position));
-                }
-            } catch (Exception e) {
-                Logger.e(e.toString());
+            if (mList != null && mList.size() > position) {
+                fragment = mList.get(position);
             }
+//            Fragment fragment = null;
+//            try {
+//                if (mList.get(position) instanceof BaseTempFragment) {
+//                    fragment = BaseTempFragment.newInstance((BaseTempFragment) mList.get(position));
+//                } else if (mList.get(position) instanceof BaseTabFragment) {
+//                    fragment = BaseTabFragment.newInstance((BaseTabFragment) mList.get(position));
+//                }
+//            } catch (Exception e) {
+//                Logger.e(e.toString());
+//            }
             if (fragment == null) {
                 fragment = new Fragment();
             }

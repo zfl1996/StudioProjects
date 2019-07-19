@@ -114,7 +114,7 @@
 
                 <TextView
                     style="@style/row_left"
-                    android:text="文件下载限速(kb/s):" />
+                    android:text="文件下载限速(kbps):" />
 
                 <EditText
                     android:id="@+id/et_downloadspeed"

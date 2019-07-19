@@ -20,7 +20,7 @@
             android:paddingBottom="5px"
             android:paddingLeft="5px"
             android:textColor="#fff"
-            android:textSize="@dimen/text_small" />
+            android:textSize="@dimen/tab_text_super" />
 
         <TextView
             android:id="@+id/tv_key"
@@ -32,7 +32,7 @@
             android:paddingRight="5px"
             android:text="项目"
             android:textColor="#fff"
-            android:textSize="@dimen/text_small" />
+            android:textSize="@dimen/tab_text_super" />
     </LinearLayout>
 
 
@@ -53,5 +53,5 @@
         android:paddingRight="5px"
         android:text="年利率（%）"
         android:textColor="#fff"
-        android:textSize="@dimen/text_small" />
+        android:textSize="@dimen/tab_text_super" />
 </TableRow>

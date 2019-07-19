@@ -196,8 +196,8 @@ public class BaseActivity extends AppCompatActivity {
                 clickTimes++;
             } else {
                 clickTimes = 0;
-                BaseTempFragment.tempView = null;
-                BaseTempFragment.tempView2 = null;
+//                BaseTempFragment.tempView = null;
+//                BaseTempFragment.tempView2 = null;
                 startActivity(new Intent(this, ReInitActivity.class));
                 finish();
             }

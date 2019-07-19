@@ -14,8 +14,8 @@
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10px"
-            android:layout_marginTop="10px">
+            android:layout_marginBottom="15px"
+            android:layout_marginTop="15px">
 
             <TextView
                 android:id="@+id/tv_item_name"
@@ -25,7 +25,7 @@
                 android:maxLines="1"
                 android:text="项目"
                 android:textColor="#fff"
-                android:textSize="@dimen/tab_text" />
+                android:textSize="@dimen/tab_text_big" />
 
             <View
                 android:layout_width="10px"
@@ -40,7 +40,7 @@
                 android:maxLines="1"
                 android:text="年利率（%）"
                 android:textColor="#fff"
-                android:textSize="@dimen/tab_text" />
+                android:textSize="@dimen/tab_text_big" />
         </TableRow>
 
         <TableRow
@@ -121,5 +121,5 @@
         android:paddingBottom="3px"
         android:paddingTop="5px"
         android:textColor="#fff"
-        android:textSize="@dimen/text_small" />
+        android:textSize="@dimen/tab_text_big" />
 </LinearLayout>
