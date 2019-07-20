@@ -14,7 +14,7 @@
         android:paddingTop="5px"
         android:text="项目"
         android:textColor="#fff"
-        android:textSize="@dimen/tab_text_super" />
+        android:textSize="@dimen/tab_text_big" />
 
     <View
         android:layout_width="0.1px"
@@ -31,7 +31,7 @@
         android:paddingTop="5px"
         android:text="年利率（%）"
         android:textColor="#fff"
-        android:textSize="@dimen/tab_text_super" />
+        android:textSize="@dimen/tab_text_big" />
 
     <View
         android:layout_width="0.1px"
@@ -48,7 +48,7 @@
         android:paddingTop="5px"
         android:text="年利率（%）"
         android:textColor="#fff"
-        android:textSize="@dimen/tab_text_super" />
+        android:textSize="@dimen/tab_text_big" />
 
     <View
         android:layout_width="0.1px"

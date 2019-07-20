@@ -360,11 +360,15 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     }
 
     public static void updatePlaylistView(List<PlaylistBodyBean> playListStr) {
-        playlistTableView.setPlaylistBeanList(playListStr);
+        if(playlistTableView != null){
+            playlistTableView.setPlaylistBeanList(playListStr);
+        }
     }
 
     public static void updateDownloadlistView(List<PlaylistBodyBean> playListStr) {
-        downloadlistTableView.setPlaylistBeanList(playListStr);
+        if(downloadlistTableView != null){
+            downloadlistTableView.setPlaylistBeanList(playListStr);
+        }
     }
 
 
