@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/preset_bg_v"
+    android:orientation="vertical"
+    android:paddingTop="110px">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#08ffffff"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="结售汇牌价"
+            android:textColor="#fff"
+            android:textSize="@dimen/text_big_super" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5px"
+                android:layout_marginTop="10px">
+
+                <TextView
+                    android:id="@+id/tv_item_name"
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="19"
+                    android:background="#08ffffff"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingBottom="10px"
+                    android:paddingTop="10px"
+                    android:text="货币"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/tab_text_super" />
+
+                <View
+                    android:layout_width="5px"
+                    android:layout_height="1px" />
+
+                <TextView
+                    android:id="@+id/tv_item_name2"
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="13"
+                    android:background="#08ffffff"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingBottom="10px"
+                    android:paddingTop="10px"
+                    android:text="买入汇率"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/tab_text_super" />
+
+                <View
+                    android:layout_width="5px"
+                    android:layout_height="1px" />
+
+                <TextView
+                    android:id="@+id/tv_item_name3"
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="13"
+                    android:background="#08ffffff"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingBottom="10px"
+                    android:paddingTop="10px"
+                    android:text="卖出汇率"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/tab_text_super" />
+
+                <View
+                    android:layout_width="5px"
+                    android:layout_height="1px" />
+
+                <TextView
+                    android:id="@+id/tv_item_name4"
+                    android:layout_width="0px"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="13"
+                    android:background="#08ffffff"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingBottom="10px"
+                    android:paddingTop="10px"
+                    android:text="现钞买入汇率"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/tab_text_super" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="0px"
+                    android:layout_height="10px"
+                    android:layout_weight="19"
+                    android:background="#08ffffff" />
+
+                <View
+                    android:layout_width="5px"
+                    android:layout_height="10px" />
+
+                <View
+                    android:layout_width="0px"
+                    android:layout_height="10px"
+                    android:layout_weight="13"
+                    android:background="#08ffffff" />
+
+                <View
+                    android:layout_width="5px"
+                    android:layout_height="10px" />
+
+                <View
+                    android:layout_width="0px"
+                    android:layout_height="10px"
+                    android:layout_weight="13"
+                    android:background="#08ffffff" />
+
+                <View
+                    android:layout_width="5px"
+                    android:layout_height="10px" />
+
+                <View
+                    android:layout_width="0px"
+                    android:layout_height="10px"
+                    android:layout_weight="13"
+                    android:background="#08ffffff" />
+            </TableRow>
+
+        </TableLayout>
+
+        <ScrollView
+            android:id="@+id/sv_tab1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingBottom="5px">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TableLayout
+                    android:id="@+id/tl_tab1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <!--android:stretchColumns="0,2,4,6">-->
+
+                </TableLayout>
+
+                <TableLayout
+                    android:id="@+id/tl_bottom1"
+                    android:layout_width="match_parent"
+                    android:layout_height="5px">
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <View
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:layout_weight="19"
+                            android:background="#08ffffff" />
+
+                        <View
+                            android:layout_width="5px"
+                            android:layout_height="match_parent" />
+
+                        <View
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:layout_weight="13"
+                            android:background="#08ffffff" />
+
+                        <View
+                            android:layout_width="5px"
+                            android:layout_height="match_parent" />
+
+                        <View
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:layout_weight="13"
+                            android:background="#08ffffff" />
+
+                        <View
+                            android:layout_width="5px"
+                            android:layout_height="match_parent" />
+
+                        <View
+                            android:layout_width="0px"
+                            android:layout_height="match_parent"
+                            android:layout_weight="13"
+                            android:background="#08ffffff" />
+                    </TableRow>
+
+                </TableLayout>
+            </LinearLayout>
+
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/tv_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#08ffffff"
+            android:gravity="center"
+            android:padding="10px"
+            android:textColor="#fff"
+            android:textSize="@dimen/tab_text_super" />
+    </LinearLayout>
+</LinearLayout>

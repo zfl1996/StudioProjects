@@ -25,15 +25,21 @@ import com.ads.abcbank.activity.Temp1Activity;
 import com.ads.abcbank.activity.Temp2Activity;
 import com.ads.abcbank.activity.Temp3Activity;
 import com.ads.abcbank.activity.Temp5Activity;
+import com.ads.abcbank.activity.Temp7Activity;
 import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.fragment.ImageFragment;
 import com.ads.abcbank.fragment.PdfFragment;
+import com.ads.abcbank.fragment.PresetTab1Fragment;
+import com.ads.abcbank.fragment.PresetTab2Fragment;
+import com.ads.abcbank.fragment.PresetTab3Fragment;
+import com.ads.abcbank.fragment.PresetVTab1Fragment;
+import com.ads.abcbank.fragment.PresetVTab2Fragment;
+import com.ads.abcbank.fragment.PresetVTab3Fragment;
 import com.ads.abcbank.fragment.Tab1Fragment;
 import com.ads.abcbank.fragment.Tab2Fragment;
 import com.ads.abcbank.fragment.Tab3Fragment;
-import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
 import com.ads.abcbank.service.DownloadService;
@@ -141,7 +147,6 @@ public class TempView extends LinearLayout {
                         playlistBean.add(bodyBean);
                     }
                 }
-//                playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
             } catch (Exception e) {
                 Logger.e("解析播放列表出错" + json);
             }
@@ -160,15 +165,15 @@ public class TempView extends LinearLayout {
         if (image == null || viewpager == null) {
             initView();
         }
-        int listType = addTempViewList();
-        if (listType == 0) {
+        addTempViewList();
+//        int listType = addTempViewList();
+//        if (listType == 0) {
             Activity activity = (Activity) getContext();
             if (activity != null) {
-                if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
-                        || activity instanceof Temp5Activity) {
-                    Tab1Fragment tab1Fragment = new Tab1Fragment();
-                    Tab2Fragment tab2Fragment = new Tab2Fragment();
-                    Tab3Fragment tab3Fragment = new Tab3Fragment();
+                if (activity instanceof Temp5Activity) {
+                    PresetTab1Fragment tab1Fragment = new PresetTab1Fragment();
+                    PresetTab2Fragment tab2Fragment = new PresetTab2Fragment();
+                    PresetTab3Fragment tab3Fragment = new PresetTab3Fragment();
                     String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
                     if (TextUtils.isEmpty(json)) {
                         return;
@@ -179,29 +184,63 @@ public class TempView extends LinearLayout {
                     tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
                     if (bean.data.saveRate.enable) {
                         tab1Fragment.setTempView(TempView.this);
+                        tab1Fragment.initData();
                         fragmentList.add(tab1Fragment);
                         presetSum++;
                     }
                     if (bean.data.loanRate.enable) {
                         tab2Fragment.setTempView(TempView.this);
+                        tab2Fragment.initData();
                         fragmentList.add(tab2Fragment);
                         presetSum++;
                     }
                     if (bean.data.buyInAndOutForeignExchange.enable) {
                         tab3Fragment.setTempView(TempView.this);
+                        tab3Fragment.initData();
+                        fragmentList.add(tab3Fragment);
+                        presetSum++;
+                    }
+                } else if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
+                        || activity instanceof Temp7Activity) {
+                    PresetVTab1Fragment tab1Fragment = new PresetVTab1Fragment();
+                    PresetVTab2Fragment tab2Fragment = new PresetVTab2Fragment();
+                    PresetVTab3Fragment tab3Fragment = new PresetVTab3Fragment();
+                    String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
+                    if (TextUtils.isEmpty(json)) {
+                        return;
+                    }
+                    PresetBean bean = JSON.parseObject(json, PresetBean.class);
+                    tab1Fragment.setBean(bean.data.saveRate);
+                    tab2Fragment.setBean(bean.data.loanRate);
+                    tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+                    if (bean.data.saveRate.enable) {
+                        tab1Fragment.setTempView(TempView.this);
+                        tab1Fragment.initData();
+                        fragmentList.add(tab1Fragment);
+                        presetSum++;
+                    }
+                    if (bean.data.loanRate.enable) {
+                        tab2Fragment.setTempView(TempView.this);
+                        tab2Fragment.initData();
+                        fragmentList.add(tab2Fragment);
+                        presetSum++;
+                    }
+                    if (bean.data.buyInAndOutForeignExchange.enable) {
+                        tab3Fragment.setTempView(TempView.this);
+                        tab3Fragment.initData();
                         fragmentList.add(tab3Fragment);
                         presetSum++;
                     }
                 }
             }
-        }
+//        }
         if (fragmentList.size() == 0) {
             ImageFragment imageFragment = new ImageFragment();
             imageFragment.setTempView(TempView.this);
             fragmentList.add(imageFragment);
         }
         reSetAdapter();
-        Activity activity = (Activity) getContext();
+//        Activity activity = (Activity) getContext();
         if (activity != null) {
             if (activity instanceof Temp1Activity) {
                 ((Temp1Activity) activity).updateTxtBeans(txtlistBean);
@@ -279,14 +318,6 @@ public class TempView extends LinearLayout {
                             bodyBean2.isUrg = bodyBean.isUrg;
                             bodyBean2.trCode = (i == currentItem ? "play" : "pause");
                             bodyBeansList.add(bodyBean2);
-//                            playListStr.append("{\tID:" + bodyBean.id + "\t");
-//                            playListStr.append("name:" + bodyBean.name + "\t");
-//                            playListStr.append("contentType:" + bodyBean.contentType + "\t");
-//                            playListStr.append("xelUrl:" + downloadFileFath + "\t");
-//                            playListStr.append("playTime:" + bodyBean.playDate + "-" + bodyBean.stopDate + "\t");
-//                            playListStr.append("isUrg:" + (bodyBean.isUrg == null ? "0" : bodyBean.isUrg) + "\t");
-//                            playListStr.append("playStatus:" + (i == currentItem ? "play" : "pause") + "\t}\t\n");
-                        } else {
                         }
                     }
                 } else {
@@ -331,15 +362,6 @@ public class TempView extends LinearLayout {
                             bodyBean2.isUrg = bodyBean.isUrg;
                             bodyBean2.trCode = (i == currentItem ? "play" : "pause");
                             bodyBeansList.add(bodyBean2);
-//                            playListStr.append("{\tID:" + bodyBean.id + "\t");
-//                            playListStr.append("name:" + bodyBean.name + "\t");
-//                            playListStr.append("contentType:" + bodyBean.contentType + "\t");
-//                            playListStr.append("xelUrl:" + downloadFileFath + "\t");
-//                            playListStr.append("playTime:" + bodyBean.playDate + "-" + bodyBean.stopDate + "\t");
-//                            playListStr.append("isUrg:" + (bodyBean.isUrg == null ? "0" : bodyBean.isUrg) + "\t");
-//                            playListStr.append("playStatus:" + (i == currentItem ? "play" : "pause") + "\t}\t\n");
-
-                        } else {
                         }
                     }
                 }
@@ -603,22 +625,15 @@ public class TempView extends LinearLayout {
                             Logger.e("解析播放列表出错" + json);
                         }
                     }
-//                    if (!TextUtils.isEmpty(json)) {
-//                        playlistBean = JSON.parseArray(json, PlaylistBodyBean.class);
-//                    }
                     setType(type);
                 }
             } else {
                 viewpager.setCurrentItem(next);
             }
             Logger.updatePlaylistView(getPlayListStr(playlistBean));
-//            if (errFileSum > 0) {
-//                setType(type);
-//            }
         }
     }
 
-    //    public class WillPagerAdapter extends FragmentPagerAdapter {
     public class WillPagerAdapter extends MyFragmentPagerAdapter {
         // SparseArray是Hashmap的改良品，其核心是折半查找函数（binarySearch）
         SparseArray<WeakReference<Fragment>> registeredFragments = new SparseArray<WeakReference<Fragment>>();
@@ -737,9 +752,9 @@ public class TempView extends LinearLayout {
         }
 
         public Fragment getRegisteredFragment(int position) {
-            if(registeredFragments != null && registeredFragments.size() > position && registeredFragments.get(position) != null){
+            if (registeredFragments != null && registeredFragments.size() > position && registeredFragments.get(position) != null) {
                 return registeredFragments.get(position).get();
-            }else{
+            } else {
                 return new Fragment();
             }
         }
@@ -755,21 +770,19 @@ public class TempView extends LinearLayout {
         try {
             Activity activity = (Activity) getContext();
             if (activity != null) {
-                if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
-                        || activity instanceof Temp5Activity) {
-
+                if (activity instanceof Temp5Activity) {
                     Fragment oldTab1Fragment = null;
                     Fragment oldTab2Fragment = null;
                     Fragment oldTab3Fragment = null;
                     int tabSum = 0;
                     for (int i = 0; i < fragmentList.size(); i++) {
-                        if (fragmentList.get(i) instanceof Tab1Fragment) {
+                        if (fragmentList.get(i) instanceof PresetTab1Fragment) {
                             oldTab1Fragment = fragmentList.get(i);
                             tabSum++;
-                        } else if (fragmentList.get(i) instanceof Tab2Fragment) {
+                        } else if (fragmentList.get(i) instanceof PresetTab2Fragment) {
                             oldTab2Fragment = fragmentList.get(i);
                             tabSum++;
-                        } else if (fragmentList.get(i) instanceof Tab3Fragment) {
+                        } else if (fragmentList.get(i) instanceof PresetTab3Fragment) {
                             oldTab3Fragment = fragmentList.get(i);
                             tabSum++;
                         }
@@ -786,9 +799,10 @@ public class TempView extends LinearLayout {
                     if (oldTab3Fragment != null) {
                         fragmentList.remove(oldTab3Fragment);
                     }
-                    Tab1Fragment tab1Fragment = new Tab1Fragment();
-                    Tab2Fragment tab2Fragment = new Tab2Fragment();
-                    Tab3Fragment tab3Fragment = new Tab3Fragment();
+
+                    PresetTab1Fragment tab1Fragment = new PresetTab1Fragment();
+                    PresetTab2Fragment tab2Fragment = new PresetTab2Fragment();
+                    PresetTab3Fragment tab3Fragment = new PresetTab3Fragment();
                     String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
                     if (TextUtils.isEmpty(json)) {
                         return;
@@ -798,23 +812,86 @@ public class TempView extends LinearLayout {
                     tab2Fragment.setBean(bean.data.loanRate);
                     tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
                     if (bean.data.saveRate.enable) {
-                        tab1Fragment.setTempView(this);
+                        tab1Fragment.setTempView(TempView.this);
+                        tab1Fragment.initData();
                         fragmentList.add(tab1Fragment);
                         presetSum++;
                     }
                     if (bean.data.loanRate.enable) {
-                        tab2Fragment.setTempView(this);
+                        tab2Fragment.setTempView(TempView.this);
+                        tab2Fragment.initData();
                         fragmentList.add(tab2Fragment);
                         presetSum++;
                     }
                     if (bean.data.buyInAndOutForeignExchange.enable) {
-                        tab3Fragment.setTempView(this);
+                        tab3Fragment.setTempView(TempView.this);
+                        tab3Fragment.initData();
+                        fragmentList.add(tab3Fragment);
+                        presetSum++;
+                    }
+                } else if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
+                        || activity instanceof Temp7Activity) {
+                    Fragment oldTab1Fragment = null;
+                    Fragment oldTab2Fragment = null;
+                    Fragment oldTab3Fragment = null;
+                    int tabSum = 0;
+                    for (int i = 0; i < fragmentList.size(); i++) {
+                        if (fragmentList.get(i) instanceof PresetVTab1Fragment) {
+                            oldTab1Fragment = fragmentList.get(i);
+                            tabSum++;
+                        } else if (fragmentList.get(i) instanceof PresetVTab2Fragment) {
+                            oldTab2Fragment = fragmentList.get(i);
+                            tabSum++;
+                        } else if (fragmentList.get(i) instanceof PresetVTab3Fragment) {
+                            oldTab3Fragment = fragmentList.get(i);
+                            tabSum++;
+                        }
+                    }
+                    if (tabSum > 0 && viewpager.getCurrentItem() >= fragmentList.size() - tabSum) {
+                        viewpager.setCurrentItem(0);
+                    }
+                    if (oldTab1Fragment != null) {
+                        fragmentList.remove(oldTab1Fragment);
+                    }
+                    if (oldTab2Fragment != null) {
+                        fragmentList.remove(oldTab2Fragment);
+                    }
+                    if (oldTab3Fragment != null) {
+                        fragmentList.remove(oldTab3Fragment);
+                    }
+
+                    PresetVTab1Fragment tab1Fragment = new PresetVTab1Fragment();
+                    PresetVTab2Fragment tab2Fragment = new PresetVTab2Fragment();
+                    PresetVTab3Fragment tab3Fragment = new PresetVTab3Fragment();
+                    String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
+                    if (TextUtils.isEmpty(json)) {
+                        return;
+                    }
+                    PresetBean bean = JSON.parseObject(json, PresetBean.class);
+                    tab1Fragment.setBean(bean.data.saveRate);
+                    tab2Fragment.setBean(bean.data.loanRate);
+                    tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+                    if (bean.data.saveRate.enable) {
+                        tab1Fragment.setTempView(TempView.this);
+                        tab1Fragment.initData();
+                        fragmentList.add(tab1Fragment);
+                        presetSum++;
+                    }
+                    if (bean.data.loanRate.enable) {
+                        tab2Fragment.setTempView(TempView.this);
+                        tab2Fragment.initData();
+                        fragmentList.add(tab2Fragment);
+                        presetSum++;
+                    }
+                    if (bean.data.buyInAndOutForeignExchange.enable) {
+                        tab3Fragment.setTempView(TempView.this);
+                        tab3Fragment.initData();
                         fragmentList.add(tab3Fragment);
                         presetSum++;
                     }
                 }
             }
-            if(willPagerAdapter != null){
+            if (willPagerAdapter != null) {
                 willPagerAdapter.notifyDataSetChanged();
             }
         } catch (Exception e) {

@@ -28,39 +28,35 @@ public class Tab2Fragment extends BaseTabFragment {
 
     @Override
     public View initView(LayoutInflater inflater) {
-        if(Utils.isNotFirst(getActivity())){
-            view = inflater.inflate(R.layout.fragment_preset_tab2, null);
-        }else{
-            view = inflater.inflate(R.layout.fragment_tab1, null);
-        }
+        view = inflater.inflate(R.layout.fragment_tab1, null);
         tvBottom = view.findViewById(R.id.tv_bottom);
         return view;
     }
-
-    public void setTempView(TempView tempView) {
-        this.tempView = tempView;
-    }
-
-    public TempView getTempView() {
-        return tempView;
-    }
-
-    public Handler getHandler() {
-        return handler;
-    }
-
-    public void setHandler(Handler handler) {
-        this.handler = handler;
-    }
-
-
-    public Runnable getRunnable() {
-        return runnable;
-    }
-
-    public void setRunnable(Runnable runnable) {
-        this.runnable = runnable;
-    }
+//
+//    public void setTempView(TempView tempView) {
+//        this.tempView = tempView;
+//    }
+//
+//    public TempView getTempView() {
+//        return tempView;
+//    }
+//
+//    public Handler getHandler() {
+//        return handler;
+//    }
+//
+//    public void setHandler(Handler handler) {
+//        this.handler = handler;
+//    }
+//
+//
+//    public Runnable getRunnable() {
+//        return runnable;
+//    }
+//
+//    public void setRunnable(Runnable runnable) {
+//        this.runnable = runnable;
+//    }
 
     @Override
     public void initData() {
@@ -70,13 +66,7 @@ public class Tab2Fragment extends BaseTabFragment {
         tlTab1.removeAllViews();
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.LoanRate.LoanRateItem item = bean.entry.get(i);
-            View rowView;
-            if (Utils.isNotFirst(getActivity())) {
-                rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_preset_temp1, null);
-                rowView.setBackgroundColor(i % 2 == 1 ? getResources().getColor(R.color.tab_row1) : getResources().getColor(R.color.tab_row2));
-            } else {
-                rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_temp1, null);
-            }
+            View rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_temp1, null);
             final TextView pre = rowView.findViewById(R.id.tv_pre);
             final TextView key = rowView.findViewById(R.id.tv_key);
             final TextView value = rowView.findViewById(R.id.tv_value);
@@ -127,11 +117,10 @@ public class Tab2Fragment extends BaseTabFragment {
         super.onResume();
         try {
             initData();
-            if (getUserVisibleHint()) {
-                handler.postDelayed(runnable, delayTime);
-            } else {
-                handler.removeCallbacks(runnable);
-            }
+//            if (getUserVisibleHint()) {
+//                handler.removeCallbacks(runnable);
+//                handler.postDelayed(runnable, delayTime);
+//            }
         } catch (Exception e) {
             Logger.e(e.toString());
         }
@@ -142,32 +131,36 @@ public class Tab2Fragment extends BaseTabFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             initData();
-            handler.postDelayed(runnable, delayTime);
-        } else {
-            handler.removeCallbacks(runnable);
+//            handler.removeCallbacks(runnable);
+//            handler.postDelayed(runnable, delayTime);
+//        } else {
+//            handler.removeCallbacks(runnable);
         }
     }
 
-    private long delayTime = 5000;
-    private Handler handler = new Handler();
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                delayTime = Integer.
-                        parseInt(Utils.
-                                get(getActivity(), Utils.KEY_TIME_TAB_PRESET, "5")
-                                .toString()) * 1000;
-            } catch (Exception e) {
-                delayTime = 5000;
-            }
-            if (getUserVisibleHint() && tempView != null) {
-                tempView.nextPlay();
-            } else {
-                handler.postDelayed(runnable, delayTime);
-            }
-        }
-    };
+//    private long delayTime = 5000;
+//    private Handler handler = new Handler();
+//    private Runnable runnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            try {
+//                delayTime = Integer.
+//                        parseInt(Utils.
+//                                get(context, Utils.KEY_TIME_TAB_IMG, "5")
+//                                .toString()) * 1000;
+//            } catch (Exception e) {
+//                delayTime = 5000;
+//            }
+//            if (getUserVisibleHint() && tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
+//                tempView.nextPlay();
+//                handler.removeCallbacks(runnable);
+//                handler.postDelayed(runnable, delayTime);
+//            } else {
+//                handler.removeCallbacks(runnable);
+//                handler.postDelayed(runnable, delayTime);
+//            }
+//        }
+//    };
 
     @Override
     public Object getBean() {

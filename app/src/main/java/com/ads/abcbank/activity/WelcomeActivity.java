@@ -252,6 +252,7 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("客户端版本过低");
                 if (Utils.existHttpPath(initResultBean.data.downloadLink)) {
+                    Utils.showProgressDialog(this, "正在下载最新版本");
                     Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
                 } else {
                     ToastUtil.showToastLong(mActivity, "下载链接为空或路径非法");

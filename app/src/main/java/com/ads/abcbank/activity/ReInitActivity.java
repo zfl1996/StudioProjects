@@ -59,6 +59,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
     private EditText storeId;
     private TextView tvSubmit;
     private TextView back;
+    private TextView tvTip;
 
     private TestArrayAdapter tAdapter, sAdapter, fAdapter, cAdapter;
     private String[] terminals = {"TV", "poster", "led", "smartDev"};
@@ -77,6 +78,12 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
 
     private int[][] tempImages = {{R.mipmap.icon_temp1, R.mipmap.icon_temp5},
             {R.mipmap.icon_temp2, R.mipmap.icon_temp3, R.mipmap.icon_temp3}};
+    private String[][] tips = {{"用于展示产品营销、价格行情、金融信息、监管宣传、文字滚动、公示公告、人员资质以及执照许可等信息。",
+            "用于展示人员资质、价格行情、公告公示、监管宣传等信息。"},
+            {"用于展示产品营销、价格行情、监管宣传、文字滚动、公示公告、人员资质以及执照许可等信息。",
+                    "用于全屏展示产品营销、价格行情、监管宣传、公示公告、人员资质以及执照许可等信息。",
+                    "该模板不仅展示产品营销、价格行情、金融信息、风险提示、公示公告、人员资质以及执照许可等信息，还可为用户提供周边商圈、线上特惠、二维码墙等模块。用户可点击相关图标跳转至对应页面。"}};
+
     private String[][] tempValues = {{"1", "5"}, {"2", "3", "7"}};
     private int tPosition, sPosition, fPosition, cPosition;
     private Map<String, String> conMap = new HashMap<>();
@@ -118,6 +125,8 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
         storeId = findViewById(R.id.storeId);
         tvSubmit = findViewById(R.id.tv_submit);
         back = findViewById(R.id.back);
+        tvTip = findViewById(R.id.tv_tip);
+
         addListener(cityCode, true);
         addListener(brchCode, true);
         addListener(appIdAddress, true);
@@ -231,6 +240,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                     }
                     fPosition = position;
                     ivTemp.setImageResource(tempImages[sPosition][fPosition]);
+                    tvTip.setText(tips[sPosition][fPosition]);
                 } catch (Exception e) {
                     Logger.e(e.toString());
                 }
@@ -468,8 +478,6 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                             break;
                     }
                 }
-//                Utils.put(ReInitActivity.this,Utils.KEY_PLAY_LIST,"");
-//                Utils.put(ReInitActivity.this,Utils.KEY_PLAY_LIST_DOWNLOAD,"");
                 startActivity(intent);
                 finish();
                 break;

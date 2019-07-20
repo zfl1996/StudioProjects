@@ -108,6 +108,6 @@
             android:paddingBottom="3px"
             android:paddingTop="5px"
             android:textColor="#fff"
-            android:textSize="@dimen/tab_text_big" />
+            android:textSize="@dimen/tab_text_super" />
     </LinearLayout>
 </LinearLayout>

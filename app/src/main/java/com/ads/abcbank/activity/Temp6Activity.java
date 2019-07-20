@@ -19,6 +19,7 @@ import android.view.View;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
+import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.IView;
@@ -35,11 +36,16 @@ public class Temp6Activity extends BaseActivity implements IView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp6);
+        setiView(this);
+
+        initViews();
+        startServices("T");
+    }
+
+    private void initViews() {
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp.setType("T");
         tvTemp.getImage().setVisibility(View.GONE);
-        setiView(this);
-        startServices("T");
         BaseTempFragment.tempView = tvTemp;
     }
 
@@ -50,14 +56,22 @@ public class Temp6Activity extends BaseActivity implements IView {
             BaseTempFragment.tempView = tvTemp;
             tvTemp.setNeedUpdate(true);
         }
-        setiView(this);
-        startServices("T");
+        HandlerUtil.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initViews();
+                startServices("T");
+            }
+        }, 100);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        JzvdStd.goOnPlayOnPause();
+        try {
+            JzvdStd.goOnPlayOnPause();
+        } catch (Exception e) {
+        }
     }
 
     @Override

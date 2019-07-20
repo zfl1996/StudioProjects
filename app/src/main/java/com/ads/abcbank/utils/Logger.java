@@ -360,13 +360,13 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     }
 
     public static void updatePlaylistView(List<PlaylistBodyBean> playListStr) {
-        if(playlistTableView != null){
+        if (playlistTableView != null) {
             playlistTableView.setPlaylistBeanList(playListStr);
         }
     }
 
     public static void updateDownloadlistView(List<PlaylistBodyBean> playListStr) {
-        if(downloadlistTableView != null){
+        if (downloadlistTableView != null) {
             downloadlistTableView.setPlaylistBeanList(playListStr);
         }
     }
@@ -470,6 +470,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     public static void e(String tag, String msg) {
         if (me != null) {
             me.print(Log.ERROR, tag, msg);
+        } else {
+            Log.e(tag, msg);
         }
     }
 

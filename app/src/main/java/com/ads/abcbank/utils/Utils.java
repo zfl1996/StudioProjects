@@ -139,6 +139,14 @@ public class Utils {
                 .s_title), context.getString(R.string.s_loading), true, true);
     }
 
+    public static final void showProgressDialog(Context context, String string) {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+        mProgressDialog = ProgressDialog.show(context, context.getString(R.string
+                .s_title), string, true, true);
+    }
+
     public static final void hideProgressDialog() {
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
@@ -384,7 +392,7 @@ public class Utils {
 //                target.setImageDrawable(null);
             if (file != null && file.exists()) {
 //                    Glide.with(imageView.getContext()).load(file).placeholder(placeholderId).error(placeholderId)
-//                            .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.RESULT).dontAnimate().into(imageView);
+//                            .skipMemoryCache(true).dontAnimate().into(imageView);
                 imageView.setImageURI(Uri.fromFile(file));
             } else {
                 Bitmap bitmap = readBitMap(imageView.getContext(), placeholderId);

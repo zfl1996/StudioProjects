@@ -8,7 +8,8 @@
     <dimen name="text_small">15px</dimen>
     <dimen name="tab_text">16px</dimen>
     <dimen name="tab_text_big">18px</dimen>
-    <dimen name="tab_text_super">25px</dimen>
+    <dimen name="tab_text_sub">26px</dimen>
+    <dimen name="tab_text_super">30px</dimen>
 
     <dimen name="input_height">40px</dimen>
     <dimen name="input_height2">42px</dimen>

@@ -160,7 +160,7 @@
                     android:layout_height="match_parent">
 
                     <View
-                        android:layout_width="10px"
+                        android:layout_width="0px"
                         android:layout_height="match_parent"
                         android:layout_weight="19"
                         android:background="#08ffffff" />

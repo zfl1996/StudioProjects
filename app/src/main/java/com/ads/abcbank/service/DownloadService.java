@@ -710,6 +710,7 @@ public class DownloadService extends Service {
         if (downloadSpeed <= 0) {
             downloadSpeed = 1;
         }
+        createFilePath();
         File parentFile = new File(downloadApkPath);
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority(10)
@@ -719,6 +720,11 @@ public class DownloadService extends Service {
                 .setSyncBufferSize(downloadSpeed)
                 .build();
         task.enqueue(updateListener);
+
+        builder.bindSetTask(task);
+        this.context = builder.build();
+        taskList = Arrays.asList(this.context.getTasks());
+
     }
 
 

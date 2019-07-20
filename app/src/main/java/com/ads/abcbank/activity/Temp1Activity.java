@@ -137,7 +137,10 @@ public class Temp1Activity extends BaseActivity implements IView {
     @Override
     protected void onPause() {
         super.onPause();
-        JzvdStd.goOnPlayOnPause();
+        try {
+            JzvdStd.goOnPlayOnPause();
+        } catch (Exception e) {
+        }
     }
 
     @Override

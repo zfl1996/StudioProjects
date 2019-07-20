@@ -40,6 +40,11 @@ public class Temp2Activity extends BaseActivity implements IView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp2);
         setiView(this);
+
+        initViews();
+        startServices("W,M,H,P,N,E,L,R");
+    }
+    private void initViews() {
         mRecyclerView = findViewById(R.id.rv_recycleView);
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp.setType("M,H,P,N,E,L,R");
@@ -57,13 +62,11 @@ public class Temp2Activity extends BaseActivity implements IView {
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(Temp2Activity.this, LinearLayoutManager.HORIZONTAL, false));
                 mRecyclerView.setAdapter(autoPollAdapter);
                 mRecyclerView.start();
-
             }
         });
-        startServices("W,M,H,P,N,E,L,R");
+
         BaseTempFragment.tempView = tvTemp;
     }
-
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -71,8 +74,14 @@ public class Temp2Activity extends BaseActivity implements IView {
             BaseTempFragment.tempView = tvTemp;
             tvTemp.setNeedUpdate(true);
         }
-//        startServices("W,M,H,P,N,E,L,R");
-        startServices("M,H,P,N,E,L,R");
+        HandlerUtil.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initViews();
+//                startServices("M,H,P,N,E,L,R");
+                startServices("W,M,H,P,N,E,L,R");
+            }
+        }, 100);
         if (mRecyclerView != null) {
             mRecyclerView.start();
         }
@@ -81,7 +90,10 @@ public class Temp2Activity extends BaseActivity implements IView {
     @Override
     protected void onPause() {
         super.onPause();
-        JzvdStd.goOnPlayOnPause();
+        try {
+            JzvdStd.goOnPlayOnPause();
+        } catch (Exception e) {
+        }
     }
 
     @Override

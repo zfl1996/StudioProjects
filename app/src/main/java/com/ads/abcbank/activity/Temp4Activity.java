@@ -19,6 +19,7 @@ import android.view.View;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
+import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.IView;
@@ -37,17 +38,20 @@ public class Temp4Activity extends BaseActivity implements IView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temp4);
+        setiView(this);
+
+        initViews();
+        startServices("H,L,N");
+
+    }
+
+    private void initViews() {
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp2 = findViewById(R.id.tv_temp2);
-
         tvTemp.setType("H,L");
         tvTemp2.setType("N");
-
         tvTemp.getImage().setVisibility(View.GONE);
         tvTemp2.getImage().setVisibility(View.GONE);
-
-        setiView(this);
-        startServices("H,L,N");
         BaseTempFragment.tempView = tvTemp;
     }
 
@@ -58,14 +62,22 @@ public class Temp4Activity extends BaseActivity implements IView {
             BaseTempFragment.tempView = tvTemp;
             tvTemp.setNeedUpdate(true);
         }
-        setiView(this);
-        startServices("H,L,N");
+        HandlerUtil.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initViews();
+                startServices("H,L,N");
+            }
+        }, 100);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        JzvdStd.goOnPlayOnPause();
+        try {
+            JzvdStd.goOnPlayOnPause();
+        } catch (Exception e) {
+        }
     }
 
     @Override
