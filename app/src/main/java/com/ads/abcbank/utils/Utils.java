@@ -104,6 +104,7 @@ public class Utils {
     public static final int KEY_TIME_CMD_TIME = 5;//记录获取cmd命令的分钟数
     public static final int KEY_TIME_PRESET_TIME = 20;//记录获取汇率的分钟数
     public static final int KEY_TIME_PLAYLIST_TIME = 5;//记录获取播放列表的分钟数
+    public static final int KEY_DOWNLOAD_SIZE = 1024;//记录获取播放列表的分钟数
 
     public static final String KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
     public static final String KEY_TIME_CURRENT_PRESET = "timeCurrentPreset";//记录当前获取汇率的分钟数
@@ -391,9 +392,8 @@ public class Utils {
 //            if (target != null) {
 //                target.setImageDrawable(null);
             if (file != null && file.exists()) {
-//                    Glide.with(imageView.getContext()).load(file).placeholder(placeholderId).error(placeholderId)
-//                            .skipMemoryCache(true).dontAnimate().into(imageView);
-                imageView.setImageURI(Uri.fromFile(file));
+                    Glide.with(imageView.getContext()).load(file).placeholder(placeholderId).error(placeholderId).into(imageView);
+//                imageView.setImageURI(Uri.fromFile(file));
             } else {
                 Bitmap bitmap = readBitMap(imageView.getContext(), placeholderId);
                 imageView.setImageBitmap(bitmap);
@@ -1058,26 +1058,29 @@ public class Utils {
             return false;
         }
         PlaylistResultBean bean = JSON.parseObject(jsonString, PlaylistResultBean.class);
-        List<PlaylistBodyBean> bodyBeans = bean.data.items;
-        if (JSONObject.toJSONString(bodyBeans).equals(get(context, KEY_PLAY_LIST, ""))) {
-            return false;
-        } else {
-            List<PlaylistBodyBean> playLists = new ArrayList<>();
-            //将本设备不支持播放的内容过滤掉
-            for (int i = 0; i < bodyBeans.size(); i++) {
-                if (isCanPlay(context, bodyBeans.get(i))) {
-                    playLists.add(bodyBeans.get(i));
-                }
-            }
-            bean.data.items = playLists;
-            megerAllBean(context, JSONObject.toJSONString(bean));
-            //TODO 此处添加下载列表的相关处理并继续执行下载任务
-            megerDownloadBean(context, JSONObject.toJSONString(bean));
-            startDownload(context);
-            put(context, KEY_PLAY_LIST, JSONObject.toJSONString(playLists));
-            return true;
-        }
+        if (bean != null && bean.data != null && bean.data.items != null) {
 
+            List<PlaylistBodyBean> bodyBeans = bean.data.items;//TODO 'java.util.List com.ads.abcbank.bean.PlaylistResultBean$Data.items' on a null object reference
+            if (JSONObject.toJSONString(bodyBeans).equals(get(context, KEY_PLAY_LIST, ""))) {
+                return false;
+            } else {
+                List<PlaylistBodyBean> playLists = new ArrayList<>();
+                //将本设备不支持播放的内容过滤掉
+                for (int i = 0; i < bodyBeans.size(); i++) {
+                    if (isCanPlay(context, bodyBeans.get(i))) {
+                        playLists.add(bodyBeans.get(i));
+                    }
+                }
+                bean.data.items = playLists;
+                megerAllBean(context, JSONObject.toJSONString(bean));
+                //TODO 此处添加下载列表的相关处理并继续执行下载任务
+                megerDownloadBean(context, JSONObject.toJSONString(bean));
+                startDownload(context);
+                put(context, KEY_PLAY_LIST, JSONObject.toJSONString(playLists));
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void startDownload(Context context) {

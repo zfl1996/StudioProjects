@@ -35,7 +35,7 @@ import com.alibaba.fastjson.JSONObject;
 
 public class BaseActivity extends AppCompatActivity {
     private final String CONNECTIVITY_CHANGE_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
-    private NetChangeReceiver netChangeReceiver;//网络状态
+//    private NetChangeReceiver netChangeReceiver;//网络状态
     private int netType = -1;
     private boolean hasNet = false;
     private boolean hasInit = false;
@@ -47,7 +47,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        netChangeReceiver = new NetChangeReceiver();
+//        netChangeReceiver = new NetChangeReceiver();
         mActivity = this;
         if (this instanceof IView) {
             registerDateTransReceiver();
@@ -66,7 +66,7 @@ public class BaseActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(CONNECTIVITY_CHANGE_ACTION);
         filter.setPriority(1000);
-        registerReceiver(netChangeReceiver, filter);
+//        registerReceiver(netChangeReceiver, filter);
     }
 
     public void startServices(String type) {
@@ -103,43 +103,43 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    private class NetChangeReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = null;
-            try {
-                action = intent.getAction();
-            } catch (Exception e) {
-                Logger.e("1", e.toString());
-            }
-            if (TextUtils.equals(action, CONNECTIVITY_CHANGE_ACTION)) {
-                netType = getNetworkType();
-                if (netType == ConnectivityManager.TYPE_WIFI || netType == ConnectivityManager.TYPE_MOBILE) {
-                    if (hasInit && !hasNet) {
-                        if (reInitRunnable != null) {
-                            reInitRunnable.run();
-                        }
-                    }
-                    hasNet = true;
-                } else {
-                    if (!hasInit) {
-                        hasNet = false;
-                    }
-                }
-                hasInit = true;
-            }
-        }
-    }
+//    private class NetChangeReceiver extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = null;
+//            try {
+//                action = intent.getAction();
+//            } catch (Exception e) {
+//                Logger.e("1", e.toString());
+//            }
+//            if (TextUtils.equals(action, CONNECTIVITY_CHANGE_ACTION)) {
+//                netType = getNetworkType();
+//                if (netType == ConnectivityManager.TYPE_WIFI || netType == ConnectivityManager.TYPE_MOBILE) {
+//                    if (hasInit && !hasNet) {
+//                        if (reInitRunnable != null) {
+//                            reInitRunnable.run();
+//                        }
+//                    }
+//                    hasNet = true;
+//                } else {
+//                    if (!hasInit) {
+//                        hasNet = false;
+//                    }
+//                }
+//                hasInit = true;
+//            }
+//        }
+//    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        try {
-            unregisterReceiver(netChangeReceiver);
-        } catch (Exception e) {
-            Logger.e(BaseActivity.class.toString(), e.toString());
-        }
+//        try {
+//            unregisterReceiver(netChangeReceiver);
+//        } catch (Exception e) {
+//            Logger.e(BaseActivity.class.toString(), e.toString());
+//        }
         if (this instanceof IView) {
             try {
                 unregisterReceiver(downloadStatus);

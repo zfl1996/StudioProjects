@@ -414,10 +414,10 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
         end = conMap.get(selectCon);
         switch (selectFra) {
             case "1":
-                start = "M,H,P,N,E,L,R";
+                start = "W,M,H,P,N,E,L,R";
                 break;
             case "2":
-                start = "M,H,P,N,E,L,R";
+                start = "W,M,H,P,N,E,L,R";
                 break;
             case "3":
                 start = "M,H,P,N,E,L,R";
@@ -583,6 +583,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("客户端版本过低");
                 if (Utils.existHttpPath(initResultBean.data.downloadLink)) {
+                    Utils.showProgressDialog(this, "正在下载最新版本");
                     Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
                 } else {
                     ToastUtil.showToastLong(mActivity, "下载链接为空或路径非法");

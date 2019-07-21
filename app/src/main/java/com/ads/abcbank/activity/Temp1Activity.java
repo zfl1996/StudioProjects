@@ -58,7 +58,7 @@ public class Temp1Activity extends BaseActivity implements IView {
         setiView(this);
 
         initViews();
-        startServices("M,H,P,N,E,L,R");
+        startServices("W,M,H,P,N,E,L,R");
     }
 
     private Handler handler = new Handler();

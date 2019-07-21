@@ -152,7 +152,7 @@ public class MainActivity extends BaseActivity implements IMainView {
         addListener(storeId, true);
         {
             cityCode.setText("09");
-            brchCode.setText("093907");
+            brchCode.setText("091512");
             String ip = Utils.getIPAddress(this);
             if (TextUtils.isEmpty(ip)) {
                 appIdAddress.setText("19.168.12.12");
@@ -312,8 +312,13 @@ public class MainActivity extends BaseActivity implements IMainView {
         bean.cityCode = cityCode.getText().toString();
         bean.brchCode = brchCode.getText().toString();
         bean.clientVersion = clientVersion.getText().toString();
-        bean.terminalId = Utils.getMac(this).toLowerCase().replace("-", "")
-                .replace(":", "");
+        String mac = Utils.getMac(this);
+//        if(mac != null){
+            bean.terminalId = mac.toLowerCase().replace("-", "")
+                    .replace(":", "");
+//        }else{
+//            bean.terminalId = "1234567890";
+//        }
         bean.timestamp = System.currentTimeMillis();
         bean.uniqueId = Utils.getUUID(this);
         bean.flowNum = 0;
@@ -370,10 +375,10 @@ public class MainActivity extends BaseActivity implements IMainView {
         end = conMap.get(selectCon);
         switch (selectFra) {
             case "1":
-                start = "M,H,P,N,E,L,R";
+                start = "W,M,H,P,N,E,L,R";
                 break;
             case "2":
-                start = "M,H,P,N,E,L,R";
+                start = "W,M,H,P,N,E,L,R";
                 break;
             case "3":
                 start = "M,H,P,N,E,L,R";
@@ -496,6 +501,7 @@ public class MainActivity extends BaseActivity implements IMainView {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("客户端版本过低");
                 if (Utils.existHttpPath(initResultBean.data.downloadLink)) {
+                    Utils.showProgressDialog(this, "正在下载最新版本");
                     Utils.startUpdateDownloadTask(mActivity, "abcBankModel.apk", initResultBean.data.downloadLink);
                 } else {
                     ToastUtil.showToastLong(mActivity, "下载链接为空或路径非法");

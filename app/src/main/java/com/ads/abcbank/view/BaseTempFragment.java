@@ -270,4 +270,13 @@ public abstract class BaseTempFragment extends Fragment {
         fragment.setBean(baseTempFragment.getBean());
         return fragment;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+//        try {
+//            System.gc();
+//        } catch (Exception e) {
+//        }
+    }
 }

@@ -698,9 +698,9 @@ public class DownloadService extends Service {
         stopTasks();
         int speedDownload;
         try {
-            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "512").toString());
+            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, Utils.KEY_DOWNLOAD_SIZE + "").toString());
         } catch (Exception e) {
-            speedDownload = 512;
+            speedDownload = Utils.KEY_DOWNLOAD_SIZE;
         }
 //        if (speedDownload < 512) {
 //            speedDownload = 512;
@@ -715,9 +715,9 @@ public class DownloadService extends Service {
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority(10)
                 .setFilename(filename)
-                .setFlushBufferSize(downloadSpeed)//下载限速
-                .setReadBufferSize(downloadSpeed)
-                .setSyncBufferSize(downloadSpeed)
+//                .setFlushBufferSize(downloadSpeed)//下载限速
+//                .setReadBufferSize(downloadSpeed)
+//                .setSyncBufferSize(downloadSpeed)
                 .build();
         task.enqueue(updateListener);
 
@@ -774,9 +774,9 @@ public class DownloadService extends Service {
 
         int speedDownload;
         try {
-            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, "512").toString());
+            speedDownload = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, Utils.KEY_DOWNLOAD_SIZE + "").toString());
         } catch (Exception e) {
-            speedDownload = 512;
+            speedDownload = Utils.KEY_DOWNLOAD_SIZE;
         }
 //        if (speedDownload < 50) {
 //            speedDownload = 50;
@@ -793,9 +793,9 @@ public class DownloadService extends Service {
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority("1".equals(isUrg) ? 10 : 0)
                 .setFilename(filename)
-                .setFlushBufferSize(downloadSpeed)//下载限速60kb
-                .setReadBufferSize(downloadSpeed)
-                .setSyncBufferSize(downloadSpeed)
+//                .setFlushBufferSize(downloadSpeed * 2)//下载限速60kb
+//                .setReadBufferSize(downloadSpeed * 2)
+//                .setSyncBufferSize(downloadSpeed * 2)
                 .build();
         builder.bindSetTask(task);
         this.context = builder.build();
