@@ -20,6 +20,7 @@ import android.view.View;
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.utils.HandlerUtil;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.IView;
@@ -41,7 +42,7 @@ public class Temp4Activity extends BaseActivity implements IView {
         setiView(this);
 
         initViews();
-        startServices("H,L,N");
+        startServices(Utils.TYPES_TEMP4);
 
     }
 
@@ -66,7 +67,7 @@ public class Temp4Activity extends BaseActivity implements IView {
             @Override
             public void run() {
                 initViews();
-                startServices("H,L,N");
+                startServices(Utils.TYPES_TEMP4);
             }
         }, 100);
     }

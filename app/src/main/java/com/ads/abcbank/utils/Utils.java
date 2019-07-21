@@ -96,6 +96,7 @@ public class Utils {
     public static final String KEY_CONTENT_TYPE_END = "contentTypeEnd";
     public static final String KEY_REGISTER_BEAN = "registerBean";
     public static final String KEY_CMD_POLL = "cmdPoll";
+    public static final String KEY_PLAY_LIST_TXT = "playListTxt";
 
     public static final String KEY_TIME_CMD = "timeCmd";//记录获取cmd命令的分钟数
     public static final String KEY_TIME_PRESET = "timePreset";//记录获取汇率的分钟数
@@ -118,6 +119,15 @@ public class Utils {
     public static final String KEY_SPEED_DOWNLOAD = "speedDownload";//记录文件下载限制的速度
 
     public static final String KEY_FRAME_SET_NO = "frameSetNo";//记录模板
+
+    public static final String TYPES_TEMP1 = "W,M,H,P,N,Y,E,L,R,A,O,Q";
+    public static final String TYPES_TEMP2 = "W,M,H,P,N,Y,E,L,R,A,O,Q";
+    public static final String TYPES_TEMP3 = "M,H,P,N,Y,E,L,R,A,O,Q";
+    public static final String TYPES_TEMP4 = "H,L,N";
+    public static final String TYPES_TEMP5 = "M,H,P,N,Y,E,L,R,A,O,Q";
+    public static final String TYPES_TEMP6 = "T";
+    public static final String TYPES_TEMP7 = "H,P,N,L,R";
+    public static final String TYPES_TEMP8 = "W,M,Y,E,A,O,Q";
 
     public static String TIME_PLAYLIST;
     public static String TIME_PRESET;

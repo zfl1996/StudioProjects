@@ -109,7 +109,10 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
         if (TextUtils.isEmpty(beanStr)) {
             handler.postDelayed(runnable, 3000);
         } else {
-            mainPresenter.init(JSONObject.parseObject(beanStr));
+            RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+            bean.clientVersion = Utils.getVersionName(this);
+            Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+            mainPresenter.init(JSONObject.parseObject(JSONObject.toJSONString(bean)));
         }
     }
 
@@ -144,6 +147,9 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                         break;
                     case "7":
                         intent.setClass(WelcomeActivity.this, Temp7Activity.class);
+                        break;
+                    case "8":
+                        intent.setClass(WelcomeActivity.this, Temp8Activity.class);
                         break;
                     default:
                         break;
@@ -235,6 +241,9 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                                 case "7":
                                     intent.setClass(WelcomeActivity.this, Temp7Activity.class);
                                     break;
+                                case "8":
+                                    intent.setClass(WelcomeActivity.this, Temp8Activity.class);
+                                    break;
                                 default:
                                     break;
                             }
@@ -298,6 +307,9 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                             break;
                         case "7":
                             intent.setClass(WelcomeActivity.this, Temp7Activity.class);
+                            break;
+                        case "8":
+                            intent.setClass(WelcomeActivity.this, Temp8Activity.class);
                             break;
                         default:
                             break;

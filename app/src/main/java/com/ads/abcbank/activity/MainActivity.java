@@ -66,9 +66,11 @@ public class MainActivity extends BaseActivity implements IMainView {
     private TextView tvTip;
 
     private TestArrayAdapter tAdapter, sAdapter, fAdapter, cAdapter;
-    private String[] terminals = {"TV", "poster", "led", "smartDev"};
-    private String[] terminalsValue = {"电视机", "海报屏", "门楣屏", "互动屏"};
-    private String[] screens = {"水平", "垂直"};
+//    private String[] terminals = {"TV", "poster", "led", "smartDev"};
+//    private String[] terminalsValue = {"电视机", "海报屏", "门楣屏", "互动屏"};
+    private String[] terminals = {"TV", "poster", "smartDev"};
+    private String[] terminalsValue = {"电视机", "海报屏",  "互动屏"};
+    private String[] screens = {"横版", "竖版"};
     //    private String[][] frames = {{"模板1", "模板4", "模板5", "模板6"}, {"模板2", "模板3"}};
 //    private String[][][] contents = {{{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部"}},
 //            {{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}}};
@@ -76,18 +78,20 @@ public class MainActivity extends BaseActivity implements IMainView {
 //    private int[][] tempImages = {{R.mipmap.icon_temp1, R.mipmap.icon_temp4, R.mipmap.icon_temp5, R.mipmap.icon_temp6},
 //            {R.mipmap.icon_temp2, R.mipmap.icon_temp3}};
 //    private String[][] tempValues = {{"1", "4", "5", "6"}, {"2", "3"}};
-    private String[][] frames = {{"通用模板", "全屏模板"}, {"通用模板", "全屏模板", "公示模板"}};
+    private String[][] frames = {{"通用模板", "全屏模板"}, {"通用模板", "全屏模板", "公示模板","营销模板"}};
     private String[][][] contents = {{{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}},
-            {{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}}};
+            {{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}, {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"},
+                    {"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"},{"全部", "信用卡", "大额存单", "贵金属", "理财", "基金"}}};
 
     private int[][] tempImages = {{R.mipmap.icon_temp1, R.mipmap.icon_temp5},
-            {R.mipmap.icon_temp2, R.mipmap.icon_temp3, R.mipmap.icon_temp3}};
+            {R.mipmap.icon_temp2, R.mipmap.icon_temp3, R.mipmap.icon_temp3,R.mipmap.icon_temp2}};
     private String[][] tips = {{"用于展示产品营销、价格行情、金融信息、监管宣传、文字滚动、公示公告、人员资质以及执照许可等信息。",
             "用于展示人员资质、价格行情、公告公示、监管宣传等信息。"},
             {"用于展示产品营销、价格行情、监管宣传、文字滚动、公示公告、人员资质以及执照许可等信息。",
                     "用于全屏展示产品营销、价格行情、监管宣传、公示公告、人员资质以及执照许可等信息。",
-                    "该模板不仅展示产品营销、价格行情、金融信息、风险提示、公示公告、人员资质以及执照许可等信息，还可为用户提供周边商圈、线上特惠、二维码墙等模块。用户可点击相关图标跳转至对应页面。"}};
-    private String[][] tempValues = {{"1", "5"}, {"2", "3", "7"}};
+                    "该模板不仅展示产品营销、价格行情、金融信息、风险提示、公示公告、人员资质以及执照许可等信息，还可为用户提供周边商圈、线上特惠、二维码墙等模块。用户可点击相关图标跳转至对应页面。",
+            "用于展示自营产品、代销产品、营销活动、周边商圈、线上特惠、二维码墙以及文字滚动等信息。"}};
+    private String[][] tempValues = {{"1", "5"}, {"2", "3", "7","8"}};
     private int tPosition, sPosition, fPosition, cPosition;
     private Map<String, String> conMap = new HashMap<>();
 
@@ -375,22 +379,28 @@ public class MainActivity extends BaseActivity implements IMainView {
         end = conMap.get(selectCon);
         switch (selectFra) {
             case "1":
-                start = "W,M,H,P,N,E,L,R";
+                start = Utils.TYPES_TEMP1;
                 break;
             case "2":
-                start = "W,M,H,P,N,E,L,R";
+                start = Utils.TYPES_TEMP2;
                 break;
             case "3":
-                start = "M,H,P,N,E,L,R";
+                start = Utils.TYPES_TEMP3;
                 break;
             case "4":
-                start = "H,L";
+                start = Utils.TYPES_TEMP4;
                 break;
             case "5":
-                start = "M,H,P,N,E,L,R";
+                start = Utils.TYPES_TEMP5;
                 break;
             case "6":
-                start = "T";
+                start = Utils.TYPES_TEMP6;
+                break;
+            case "7":
+                start = Utils.TYPES_TEMP7;
+                break;
+            case "8":
+                start = Utils.TYPES_TEMP8;
                 break;
             default:
                 break;
@@ -485,6 +495,9 @@ public class MainActivity extends BaseActivity implements IMainView {
                                 case "7":
                                     intent.setClass(MainActivity.this, Temp7Activity.class);
                                     break;
+                                case "8":
+                                    intent.setClass(MainActivity.this, Temp8Activity.class);
+                                    break;
                                 default:
                                     break;
                             }
@@ -546,6 +559,9 @@ public class MainActivity extends BaseActivity implements IMainView {
                             break;
                         case "7":
                             intent.setClass(MainActivity.this, Temp7Activity.class);
+                            break;
+                        case "8":
+                            intent.setClass(MainActivity.this, Temp8Activity.class);
                             break;
                         default:
                             break;

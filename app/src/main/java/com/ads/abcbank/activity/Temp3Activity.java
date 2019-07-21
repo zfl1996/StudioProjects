@@ -20,6 +20,7 @@ import android.view.View;
 import com.ads.abcbank.R;
 import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.utils.HandlerUtil;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.IView;
@@ -39,13 +40,13 @@ public class Temp3Activity extends BaseActivity implements IView {
         setiView(this);
 
         initViews();
-        startServices("M,H,P,N,E,L,R");
+        startServices(Utils.TYPES_TEMP3);
 
     }
 
     private void initViews() {
         tvTemp = findViewById(R.id.tv_temp);
-        tvTemp.setType("M,H,P,N,E,L,R");
+        tvTemp.setType(Utils.TYPES_TEMP3);
         tvTemp.getImage().setVisibility(View.GONE);
         BaseTempFragment.tempView = tvTemp;
     }
@@ -70,7 +71,7 @@ public class Temp3Activity extends BaseActivity implements IView {
             @Override
             public void run() {
                 initViews();
-                startServices("M,H,P,N,E,L,R");
+                startServices(Utils.TYPES_TEMP3);
             }
         }, 100);
     }

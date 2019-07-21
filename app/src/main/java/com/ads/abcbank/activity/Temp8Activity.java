@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
-import com.ads.abcbank.presenter.TempPresenter;
 import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Logger;
@@ -18,8 +16,6 @@ import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.view.IView;
-import com.ads.abcbank.view.MarqueeVerticalTextView;
-import com.ads.abcbank.view.MarqueeVerticalTextViewClickListener;
 import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -31,7 +27,7 @@ import java.util.List;
 
 import cn.jzvd.JzvdStd;
 
-public class Temp2Activity extends BaseActivity implements IView {
+public class Temp8Activity extends BaseActivity implements IView {
     private TempView tvTemp;
     private AutoPollRecyclerView mRecyclerView;
     private AutoPollAdapter autoPollAdapter;
@@ -44,15 +40,16 @@ public class Temp2Activity extends BaseActivity implements IView {
         setiView(this);
 
         initViews();
-        startServices(Utils.TYPES_TEMP2);
+        startServices(Utils.TYPES_TEMP8);
     }
+
     private void initViews() {
         mRecyclerView = findViewById(R.id.rv_recycleView);
         tvTemp = findViewById(R.id.tv_temp);
-        tvTemp.setType(Utils.TYPES_TEMP2);
+        tvTemp.setType(Utils.TYPES_TEMP8);
         tvTemp.getImage().setVisibility(View.GONE);
 
-        String listStr = Utils.get(Temp2Activity.this, Utils.KEY_PLAY_LIST_TXT, "").toString();
+        String listStr = Utils.get(Temp8Activity.this, Utils.KEY_PLAY_LIST_TXT, "").toString();
         if (!TextUtils.isEmpty(listStr)) {
             list = JSONArray.parseArray(listStr, String.class);
         }
@@ -64,8 +61,8 @@ public class Temp2Activity extends BaseActivity implements IView {
         Utils.getExecutorService().submit(new Runnable() {
             @Override
             public void run() {
-                autoPollAdapter = new AutoPollAdapter(Temp2Activity.this, list);
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(Temp2Activity.this, LinearLayoutManager.HORIZONTAL, false));
+                autoPollAdapter = new AutoPollAdapter(Temp8Activity.this, list);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(Temp8Activity.this, LinearLayoutManager.HORIZONTAL, false));
                 mRecyclerView.setAdapter(autoPollAdapter);
                 mRecyclerView.start();
             }
@@ -73,6 +70,7 @@ public class Temp2Activity extends BaseActivity implements IView {
 
         BaseTempFragment.tempView = tvTemp;
     }
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -84,7 +82,7 @@ public class Temp2Activity extends BaseActivity implements IView {
             @Override
             public void run() {
                 initViews();
-                startServices(Utils.TYPES_TEMP2);
+                startServices(Utils.TYPES_TEMP8);
             }
         }, 100);
         if (mRecyclerView != null) {
@@ -139,7 +137,7 @@ public class Temp2Activity extends BaseActivity implements IView {
                         try {
                             File file = new File(DownloadService.downloadFilePath, bean.name);
                             if (file.exists()) {
-                                listString.add(Utils.getTxtString(Temp2Activity.this, bean.name));
+                                listString.add(Utils.getTxtString(Temp8Activity.this, bean.name));
                             }
                         } catch (Exception e) {
                             Logger.e("TXT ERROR", e.toString());
@@ -180,7 +178,7 @@ public class Temp2Activity extends BaseActivity implements IView {
                         list.addAll(listString);
                     }
                 }
-                Utils.put(Temp2Activity.this, Utils.KEY_PLAY_LIST_TXT, JSONArray.toJSONString(list));
+                Utils.put(Temp8Activity.this, Utils.KEY_PLAY_LIST_TXT, JSONArray.toJSONString(list));
                 if (autoPollAdapter != null) {
                     autoPollAdapter.notifyDataSetChanged();
                 }

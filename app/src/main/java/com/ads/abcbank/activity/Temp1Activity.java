@@ -3,6 +3,7 @@ package com.ads.abcbank.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import com.ads.abcbank.view.IView;
 import com.ads.abcbank.view.PresetView;
 import com.ads.abcbank.view.TempView;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.File;
@@ -58,7 +60,7 @@ public class Temp1Activity extends BaseActivity implements IView {
         setiView(this);
 
         initViews();
-        startServices("W,M,H,P,N,E,L,R");
+        startServices(Utils.TYPES_TEMP1);
     }
 
     private Handler handler = new Handler();
@@ -110,10 +112,14 @@ public class Temp1Activity extends BaseActivity implements IView {
         tvDate = findViewById(R.id.tv_date);
         tvTemp = findViewById(R.id.tv_temp);
         handler.post(timeRunnable);
-        tvTemp.setType("W,M,H,P,N,E,L,R");
+        tvTemp.setType(Utils.TYPES_TEMP1);
         tvTemp.getImage().setVisibility(View.GONE);
         presetView.updatePresetDate();
 
+        String listStr = Utils.get(Temp1Activity.this, Utils.KEY_PLAY_LIST_TXT, "").toString();
+        if (!TextUtils.isEmpty(listStr)) {
+            list = JSONArray.parseArray(listStr, String.class);
+        }
         if (list.size() == 0) {
             for (int i = 0; i < 6; i++) {
                 list.add("中国农业银行欢迎您！");
@@ -154,8 +160,7 @@ public class Temp1Activity extends BaseActivity implements IView {
             @Override
             public void run() {
                 initViews();
-//                startServices("M,H,P,N,E,L,R");
-                startServices("W,M,H,P,N,E,L,R");
+                startServices(Utils.TYPES_TEMP1);
             }
         }, 100);
         if (mRecyclerView != null) {
@@ -252,6 +257,7 @@ public class Temp1Activity extends BaseActivity implements IView {
                         list.addAll(listString);
                     }
                 }
+                Utils.put(Temp1Activity.this, Utils.KEY_PLAY_LIST_TXT, JSONArray.toJSONString(list));
                 if (autoPollAdapter != null) {
                     autoPollAdapter.notifyDataSetChanged();
                 }
@@ -259,7 +265,7 @@ public class Temp1Activity extends BaseActivity implements IView {
                     mRecyclerView.start();
                 }
             }
-        },100);
+        }, 100);
     }
 
     private long getListTxtLength(List<String> listString) {

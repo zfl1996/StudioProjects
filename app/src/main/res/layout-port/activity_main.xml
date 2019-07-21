@@ -31,7 +31,7 @@
                 android:layout_marginBottom="10px"
                 android:text="模板预览："
                 android:textColor="#fff"
-                android:textSize="@dimen/text_big" />
+                android:textSize="@dimen/text_big_super" />
 
             <ImageView
                 android:id="@+id/iv_temp"
@@ -39,8 +39,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_temp"
                 android:layout_centerInParent="true"
-                android:layout_marginLeft="30px"
-                android:layout_marginRight="10px"
+                android:layout_marginLeft="50px"
+                android:layout_marginRight="30px"
                 android:adjustViewBounds="true"
                 android:src="@mipmap/icon_temp1" />
 
@@ -52,7 +52,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/iv_temp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10px"
+                android:layout_marginTop="30px"
                 android:text="用于展示产品营销、价格行情、金融信息、监管宣传、文字滚动、公示公告、人员资质以及执照许可等信息。"
                 android:textColor="#fff"
                 android:textSize="@dimen/text_normal" />
