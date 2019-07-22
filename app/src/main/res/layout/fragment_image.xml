@@ -13,5 +13,13 @@
         android:maxWidth="90000px"
         android:scaleType="fitCenter" />
 
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/iv_gif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:src="@mipmap/bg_btn"
+        android:visibility="gone" />
+
     <include layout="@layout/item_qrs_layout" />
 </FrameLayout>

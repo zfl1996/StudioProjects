@@ -48,8 +48,8 @@
                 android:id="@+id/tv_tip"
                 android:layout_width="480px"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/iv_temp"
                 android:layout_alignParentLeft="true"
+                android:layout_below="@id/iv_temp"
                 android:layout_marginLeft="100px"
                 android:layout_marginTop="30px"
                 android:text="用于展示产品营销、价格行情、金融信息、监管宣传、文字滚动、公示公告、人员资质以及执照许可等信息。"
@@ -154,7 +154,8 @@
 
                 <Spinner
                     android:id="@+id/contentType"
-                    style="@style/row_right_spinner" />
+                    style="@style/row_right_spinner"
+                    android:clickable="false" />
             </TableRow>
 
             <TableRow>

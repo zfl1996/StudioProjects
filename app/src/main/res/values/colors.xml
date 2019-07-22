@@ -25,8 +25,9 @@
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#212121</color>
     <color name="colorRow">#B2DFDB</color>
-    <color name="tab_title">#0E5DC1</color>
-    <color name="tab_row1">#2F8ECF</color>
-    <color name="tab_row2">#107ECA</color>
-    <color name="tab_bottom">#117FCA</color>
+    <color name="tab_left">#126446</color>
+    <color name="tab_title">#117A63</color>
+    <color name="tab_row1">#329c86</color>
+    <color name="tab_row2">#56a592</color>
+    <color name="tab_bottom">#329c86</color>
 </resources>

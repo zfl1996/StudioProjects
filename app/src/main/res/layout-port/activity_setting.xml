@@ -24,20 +24,21 @@
 
                 <TextView
                     style="@style/row_left"
-                    android:text="获取轮询命令频率(分钟):" />
+                    android:text="播放轮询间隔（单位：分钟）" />
 
                 <EditText
-                    android:id="@+id/et_cmd"
+                    android:id="@+id/et_playlist"
                     style="@style/row_right"
                     android:background="@drawable/edit_background"
                     android:inputType="number" />
             </TableRow>
 
+
             <TableRow>
 
                 <TextView
                     style="@style/row_left"
-                    android:text="获取最新汇率频率(分钟):" />
+                    android:text="预设信息轮询间隔（单位：分钟）" />
 
                 <EditText
                     android:id="@+id/et_preset"
@@ -50,10 +51,10 @@
 
                 <TextView
                     style="@style/row_left"
-                    android:text="获取播放列表频率(分钟):" />
+                    android:text="命令轮询间隔（单位：分钟）" />
 
                 <EditText
-                    android:id="@+id/et_playlist"
+                    android:id="@+id/et_cmd"
                     style="@style/row_right"
                     android:background="@drawable/edit_background"
                     android:inputType="number" />
@@ -63,7 +64,31 @@
 
                 <TextView
                     style="@style/row_left"
-                    android:text="图片类型切换频率(秒):" />
+                    android:text="文件下载限速(kbps):" />
+
+                <EditText
+                    android:id="@+id/et_downloadspeed"
+                    style="@style/row_right"
+                    android:inputType="number" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="金融小店ID" />
+
+                <EditText
+                    android:id="@+id/storeId"
+                    style="@style/row_right"
+                    android:inputType="number" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/row_left"
+                    android:text="图片轮换时间（单位：秒）" />
 
                 <EditText
                     android:id="@+id/et_tab_img"
@@ -72,7 +97,7 @@
                     android:inputType="number" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:visibility="gone">
 
                 <TextView
                     style="@style/row_left"
@@ -85,7 +110,7 @@
                     android:inputType="number" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:visibility="gone">
 
                 <TextView
                     style="@style/row_left"
@@ -102,7 +127,7 @@
 
                 <TextView
                     style="@style/row_left"
-                    android:text="过期文件保存期限(天):" />
+                    android:text="无效文件自动清理时间（单位：天）" />
 
                 <EditText
                     android:id="@+id/et_file"
@@ -110,32 +135,32 @@
                     android:inputType="number" />
             </TableRow>
 
-            <TableRow>
-
-                <TextView
-                    style="@style/row_left"
-                    android:text="文件下载限速(kbps):" />
-
-                <EditText
-                    android:id="@+id/et_downloadspeed"
-                    style="@style/row_right"
-                    android:inputType="number" />
-            </TableRow>
 
             <TableRow android:layout_marginTop="50px">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="20px" />
+                <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="20px" />-->
+                <TextView
+                    android:id="@+id/back"
+                    style="@style/row_left"
+                    android:layout_width="90px"
+                    android:layout_height="40px"
+                    android:layout_marginBottom="5px"
+                    android:layout_marginLeft="180px"
+                    android:layout_marginRight="0px"
+                    android:background="@drawable/btn_background"
+                    android:gravity="center"
+                    android:text="@string/s_back" />
 
                 <TextView
                     android:id="@+id/tv_submit"
                     style="@style/row_left"
-                    android:layout_width="200px"
+                    android:layout_width="9px"
                     android:layout_height="40px"
-                    android:layout_marginLeft="20px"
-                    android:layout_marginRight="20px"
                     android:layout_marginBottom="5px"
+                    android:layout_marginLeft="50px"
+                    android:layout_marginRight="50px"
                     android:background="@drawable/btn_background"
                     android:gravity="center"
                     android:onClick="onRegister"
@@ -145,19 +170,19 @@
         </TableLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/back"
-        android:layout_width="120px"
-        android:layout_height="80px"
-        android:layout_marginLeft="20px"
-        android:layout_marginTop="20px"
-        android:background="@drawable/corner_view"
-        android:gravity="center_vertical"
-        android:paddingLeft="10px"
-        android:paddingTop="5px"
-        android:paddingRight="10px"
-        android:paddingBottom="5px"
-        android:text="@string/s_back"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/text_big_super" />
+    <!--<TextView-->
+        <!--android:id="@+id/back"-->
+        <!--android:layout_width="120px"-->
+        <!--android:layout_height="80px"-->
+        <!--android:layout_marginLeft="20px"-->
+        <!--android:layout_marginTop="20px"-->
+        <!--android:background="@drawable/corner_view"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:paddingLeft="10px"-->
+        <!--android:paddingTop="5px"-->
+        <!--android:paddingRight="10px"-->
+        <!--android:paddingBottom="5px"-->
+        <!--android:text="@string/s_back"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="@dimen/text_big_super" />-->
 </FrameLayout>

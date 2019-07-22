@@ -156,6 +156,7 @@
 
                 <Spinner
                     android:id="@+id/contentType"
+                    android:clickable="false"
                     style="@style/row_right_spinner" />
             </TableRow>
 

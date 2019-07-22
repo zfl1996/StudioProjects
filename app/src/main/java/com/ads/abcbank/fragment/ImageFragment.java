@@ -24,6 +24,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     private View view;
     private ImageView content;
     private PlaylistBodyBean bean;
+    private View ivGif;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -34,6 +35,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
 
     private void getViews() {
         content = view.findViewById(R.id.content);
+        ivGif = view.findViewById(R.id.iv_gif);
     }
 
     @Override
@@ -45,9 +47,11 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
                 Utils.loadImage(content, "");
             }
             if (!TextUtils.isEmpty(bean.onClickLink)) {
-                view.setOnClickListener(this);
+                ivGif.setVisibility(View.VISIBLE);
+                ivGif.setOnClickListener(this);
             } else {
-                view.setOnClickListener(null);
+                ivGif.setVisibility(View.GONE);
+                ivGif.setOnClickListener(null);
             }
         } else {
             Utils.loadImage(content, "");

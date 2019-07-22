@@ -107,4 +107,5 @@ dependencies {
     implementation files('libs/commons-validator-1.6.jar')
     implementation files('libs/commons-validator-1.6-javadoc.jar')
     implementation files('libs/commons-validator-1.6-tests.jar')
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.1'
 }

@@ -37,7 +37,7 @@ public class AutoPollRecyclerView extends RecyclerView {
         public void run() {
             AutoPollRecyclerView recyclerView = mReference.get();
             if (recyclerView != null && recyclerView.running && recyclerView.canRun) {
-                recyclerView.scrollBy(4, 0);
+                recyclerView.scrollBy(2, 0);
                 recyclerView.postDelayed(recyclerView.autoPollTask, recyclerView.TIME_AUTO_POLL);
             }
         }

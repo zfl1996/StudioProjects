@@ -14,7 +14,7 @@
     <dimen name="input_height">40px</dimen>
     <dimen name="input_height2">42px</dimen>
     <dimen name="input_width">300px</dimen>
-    <dimen name="space_height">10px</dimen>
+    <dimen name="space_height">20px</dimen>
 
     <dimen name="padding_left">130px</dimen>
     <dimen name="padding_top">80px</dimen>

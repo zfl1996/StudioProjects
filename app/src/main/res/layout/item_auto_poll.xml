@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     android:paddingBottom="6px"
     android:paddingLeft="20px"
-    android:paddingRight="20px"
+    android:paddingRight="100px"
     android:paddingTop="5px">
 
     <TextView

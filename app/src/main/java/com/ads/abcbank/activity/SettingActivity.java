@@ -13,10 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.KeyboardWindow;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
     private LinearLayout llRoot;
@@ -28,6 +31,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private EditText etPdf;
     private EditText etFile;
     private EditText etDownloadspeed;
+    private EditText storeId;
     private TextView tvSubmit;
     private TextView back;
 
@@ -53,6 +57,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         etDownloadspeed = findViewById(R.id.et_downloadspeed);
         tvSubmit = findViewById(R.id.tv_submit);
         back = findViewById(R.id.back);
+        storeId = findViewById(R.id.storeId);
         addListener(etCmd, true);
         addListener(etPreset, true);
         addListener(etPlaylist, true);
@@ -61,6 +66,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         addListener(etPdf, true);
         addListener(etFile, true);
         addListener(etDownloadspeed, true);
+        String beanStr = Utils.get(this, Utils.KEY_REGISTER_BEAN, "").toString();
+        if (!TextUtils.isEmpty(beanStr)) {
+            RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+            storeId.setText(bean.data.storeId);
+        }
     }
 
     @SuppressWarnings("ALL")
@@ -153,6 +163,16 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     Utils.put(this, Utils.KEY_SPEED_DOWNLOAD, etDownloadspeed.getText().toString());
                 } else {
                     ToastUtil.showToast(this, "数据不能为空");
+                }
+                if (TextUtils.isEmpty(storeId.getText().toString())) {
+                    ToastUtil.showToast(this, "数据不能为空");
+                    return;
+                }
+                String beanStr = Utils.get(this, Utils.KEY_REGISTER_BEAN, "").toString();
+                if (!TextUtils.isEmpty(beanStr)) {
+                    RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+                    bean.data.storeId = storeId.getText().toString();
+                    Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
                 }
                 finish();
                 break;

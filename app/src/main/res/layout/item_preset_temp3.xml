@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="#08ffffff"
-        android:gravity="center_vertical|left"
+        android:gravity="center"
         android:lineSpacingExtra="2px"
         android:padding="5px"
         android:text="项目"
