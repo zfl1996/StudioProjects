@@ -47,7 +47,7 @@ public class PresetView extends LinearLayout {
     private Tab1Fragment tab1Fragment;
     private Tab2Fragment tab2Fragment;
     private Tab3Fragment tab3Fragment;
-    private int delayTime = 10 * 1000;
+    private int delayTime = 30 * 1000;
     private Context context;
     private PresetPagerAdapter presetPagerAdapter;
 
@@ -111,6 +111,7 @@ public class PresetView extends LinearLayout {
         }
 
         setTabWidth(tablayout);
+        handler.removeCallbacks(runnable);
         handler.postDelayed(runnable, delayTime);
 
 
@@ -175,6 +176,7 @@ public class PresetView extends LinearLayout {
                 } catch (Exception e) {
                     Logger.e(e.toString());
                 }
+                handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable, delayTime);
             }
         } catch (Exception e) {
@@ -200,7 +202,7 @@ public class PresetView extends LinearLayout {
             }
             try {
                 delayTime = Integer.parseInt(
-                        Utils.get(context, Utils.KEY_TIME_TAB_PRESET, "5")
+                        Utils.get(context, Utils.KEY_TIME_TAB_PRESET, Utils.KEY_TIME_PRESET_DEFAULT + "")
                                 .toString()) * 1000;
             } catch (Exception e) {
                 Logger.e(e.toString());
@@ -216,6 +218,7 @@ public class PresetView extends LinearLayout {
             } catch (Exception e) {
                 Logger.e(e.toString());
             }
+            handler.removeCallbacks(runnable);
             handler.postDelayed(runnable, delayTime);
         }
     };

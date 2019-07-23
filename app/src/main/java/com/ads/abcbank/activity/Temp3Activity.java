@@ -47,7 +47,7 @@ public class Temp3Activity extends BaseActivity implements IView {
     private void initViews() {
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp.setType(Utils.TYPES_TEMP3);
-        tvTemp.getImage().setVisibility(View.GONE);
+//        tvTemp.getImage().setVisibility(View.GONE);
         BaseTempFragment.tempView = tvTemp;
     }
 

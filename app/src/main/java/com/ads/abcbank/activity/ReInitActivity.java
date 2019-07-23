@@ -181,6 +181,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
         screenDirection.setAdapter(sAdapter);
         frameSetNo.setAdapter(fAdapter);
         contentType.setAdapter(cAdapter);
+        contentType.setEnabled(false);
         terminalType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -231,6 +232,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                 try {
                     cAdapter = new TestArrayAdapter(ReInitActivity.this, contents[sPosition][position]);
                     contentType.setAdapter(cAdapter);
+                    contentType.setEnabled(false);
                     if (cToPosition != -1) {
                         if (!cToPositioned) {
                             cToPositioned = true;

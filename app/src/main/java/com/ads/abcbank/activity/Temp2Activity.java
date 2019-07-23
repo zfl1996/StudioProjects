@@ -50,8 +50,8 @@ public class Temp2Activity extends BaseActivity implements IView {
         mRecyclerView = findViewById(R.id.rv_recycleView);
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp.setType(Utils.TYPES_TEMP2);
-        tvTemp.getImage().setVisibility(View.GONE);
-
+//        tvTemp.getImage().setVisibility(View.GONE);
+        mRecyclerView.getBackground().setAlpha(179);
         String listStr = Utils.get(Temp2Activity.this, Utils.KEY_PLAY_LIST_TXT, "").toString();
         if (!TextUtils.isEmpty(listStr)) {
             list = JSONArray.parseArray(listStr, String.class);

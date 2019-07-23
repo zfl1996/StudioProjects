@@ -51,7 +51,7 @@ public class Temp4Activity extends BaseActivity implements IView {
         tvTemp2 = findViewById(R.id.tv_temp2);
         tvTemp.setType("H,L");
         tvTemp2.setType("N");
-        tvTemp.getImage().setVisibility(View.GONE);
+//        tvTemp.getImage().setVisibility(View.GONE);
         tvTemp2.getImage().setVisibility(View.GONE);
         BaseTempFragment.tempView = tvTemp;
     }

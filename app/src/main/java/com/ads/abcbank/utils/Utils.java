@@ -107,6 +107,8 @@ public class Utils {
     public static final int KEY_TIME_PLAYLIST_TIME = 5;//记录获取播放列表的分钟数
     public static final int KEY_DOWNLOAD_SIZE = 1024;//记录获取播放列表的分钟数
 
+    public static final int KEY_TIME_PRESET_DEFAULT = 30;//切换汇率tab的秒数默认值
+
     public static final String KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
     public static final String KEY_TIME_CURRENT_PRESET = "timeCurrentPreset";//记录当前获取汇率的分钟数
     public static final String KEY_TIME_CURRENT_PLAYLIST = "timeCurrentPlaylist";//记录当前获取播放列表的分钟数

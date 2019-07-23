@@ -212,6 +212,7 @@ public class MainActivity extends BaseActivity implements IMainView {
         screenDirection.setAdapter(sAdapter);
         frameSetNo.setAdapter(fAdapter);
         contentType.setAdapter(cAdapter);
+        contentType.setEnabled(false);
         terminalType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -257,6 +258,7 @@ public class MainActivity extends BaseActivity implements IMainView {
                 try {
                     cAdapter = new TestArrayAdapter(MainActivity.this, contents[sPosition][position]);
                     contentType.setAdapter(cAdapter);
+                    contentType.setEnabled(false);
                     contentType.setSelection(0);
                     fPosition = position;
                     ivTemp.setImageResource(tempImages[sPosition][fPosition]);

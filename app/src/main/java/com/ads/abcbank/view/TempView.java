@@ -157,27 +157,29 @@ public class TempView extends LinearLayout {
         image.setImageResource(src);
     }
 
-    public synchronized void setType(String type) {
+    public synchronized void setType(final String type) {
+        if (fragmentList.size() == 0 && image != null) {
+            image.setVisibility(VISIBLE);
+            Utils.loadImage(image, "");
+        }
 
         errFileSum = 0;
         presetSum = 0;
-        this.type = type;
+        TempView.this.type = type;
         if (image == null || viewpager == null) {
             initView();
         }
         addTempViewList();
 //        int listType = addTempViewList();
 //        if (listType == 0) {
-            Activity activity = (Activity) getContext();
-            if (activity != null) {
-                if (activity instanceof Temp5Activity) {
-                    PresetTab1Fragment tab1Fragment = new PresetTab1Fragment();
-                    PresetTab2Fragment tab2Fragment = new PresetTab2Fragment();
-                    PresetTab3Fragment tab3Fragment = new PresetTab3Fragment();
-                    String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
-                    if (TextUtils.isEmpty(json)) {
-                        return;
-                    }
+        Activity activity = (Activity) getContext();
+        if (activity != null) {
+            if (activity instanceof Temp5Activity) {
+                PresetTab1Fragment tab1Fragment = new PresetTab1Fragment();
+                PresetTab2Fragment tab2Fragment = new PresetTab2Fragment();
+                PresetTab3Fragment tab3Fragment = new PresetTab3Fragment();
+                String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
+                if (!TextUtils.isEmpty(json)) {
                     PresetBean bean = JSON.parseObject(json, PresetBean.class);
                     tab1Fragment.setBean(bean.data.saveRate);
                     tab2Fragment.setBean(bean.data.loanRate);
@@ -200,15 +202,14 @@ public class TempView extends LinearLayout {
                         fragmentList.add(tab3Fragment);
                         presetSum++;
                     }
-                } else if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
-                        || activity instanceof Temp7Activity) {
-                    PresetVTab1Fragment tab1Fragment = new PresetVTab1Fragment();
-                    PresetVTab2Fragment tab2Fragment = new PresetVTab2Fragment();
-                    PresetVTab3Fragment tab3Fragment = new PresetVTab3Fragment();
-                    String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
-                    if (TextUtils.isEmpty(json)) {
-                        return;
-                    }
+                }
+            } else if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
+                    || activity instanceof Temp7Activity) {
+                PresetVTab1Fragment tab1Fragment = new PresetVTab1Fragment();
+                PresetVTab2Fragment tab2Fragment = new PresetVTab2Fragment();
+                PresetVTab3Fragment tab3Fragment = new PresetVTab3Fragment();
+                String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
+                if (!TextUtils.isEmpty(json)) {
                     PresetBean bean = JSON.parseObject(json, PresetBean.class);
                     tab1Fragment.setBean(bean.data.saveRate);
                     tab2Fragment.setBean(bean.data.loanRate);
@@ -233,20 +234,25 @@ public class TempView extends LinearLayout {
                     }
                 }
             }
+        }
 //        }
         if (fragmentList.size() == 0) {
             ImageFragment imageFragment = new ImageFragment();
             imageFragment.setTempView(TempView.this);
             fragmentList.add(imageFragment);
         }
-        reSetAdapter();
-//        Activity activity = (Activity) getContext();
-        if (activity != null) {
-            if (activity instanceof Temp1Activity) {
-                ((Temp1Activity) activity).updateTxtBeans(txtlistBean);
-            } else if (activity instanceof Temp2Activity) {
-                ((Temp2Activity) activity).updateTxtBeans(txtlistBean);
+
+        try {
+            reSetAdapter();
+            if (activity != null) {
+                if (activity instanceof Temp1Activity) {
+                    ((Temp1Activity) activity).updateTxtBeans(txtlistBean);
+                } else if (activity instanceof Temp2Activity) {
+                    ((Temp2Activity) activity).updateTxtBeans(txtlistBean);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -254,6 +260,9 @@ public class TempView extends LinearLayout {
     private int presetSum = 0;
 
     private void reSetAdapter() {
+        if (image != null) {
+            image.setVisibility(GONE);
+        }
         willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
         if (viewpager != null) {
             viewpager.setAdapter(willPagerAdapter);
@@ -763,9 +772,11 @@ public class TempView extends LinearLayout {
             WeakReference<Fragment> weak = new WeakReference<Fragment>(fragment);
             registeredFragments.put(position, weak);
         }
+
     }
 
     public synchronized void updatePreset() {
+
         presetSum = 0;
         try {
             Activity activity = (Activity) getContext();
@@ -804,30 +815,29 @@ public class TempView extends LinearLayout {
                     PresetTab2Fragment tab2Fragment = new PresetTab2Fragment();
                     PresetTab3Fragment tab3Fragment = new PresetTab3Fragment();
                     String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
-                    if (TextUtils.isEmpty(json)) {
-                        return;
-                    }
-                    PresetBean bean = JSON.parseObject(json, PresetBean.class);
-                    tab1Fragment.setBean(bean.data.saveRate);
-                    tab2Fragment.setBean(bean.data.loanRate);
-                    tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
-                    if (bean.data.saveRate.enable) {
-                        tab1Fragment.setTempView(TempView.this);
-                        tab1Fragment.initData();
-                        fragmentList.add(tab1Fragment);
-                        presetSum++;
-                    }
-                    if (bean.data.loanRate.enable) {
-                        tab2Fragment.setTempView(TempView.this);
-                        tab2Fragment.initData();
-                        fragmentList.add(tab2Fragment);
-                        presetSum++;
-                    }
-                    if (bean.data.buyInAndOutForeignExchange.enable) {
-                        tab3Fragment.setTempView(TempView.this);
-                        tab3Fragment.initData();
-                        fragmentList.add(tab3Fragment);
-                        presetSum++;
+                    if (!TextUtils.isEmpty(json)) {
+                        PresetBean bean = JSON.parseObject(json, PresetBean.class);
+                        tab1Fragment.setBean(bean.data.saveRate);
+                        tab2Fragment.setBean(bean.data.loanRate);
+                        tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+                        if (bean.data.saveRate.enable) {
+                            tab1Fragment.setTempView(TempView.this);
+                            tab1Fragment.initData();
+                            fragmentList.add(tab1Fragment);
+                            presetSum++;
+                        }
+                        if (bean.data.loanRate.enable) {
+                            tab2Fragment.setTempView(TempView.this);
+                            tab2Fragment.initData();
+                            fragmentList.add(tab2Fragment);
+                            presetSum++;
+                        }
+                        if (bean.data.buyInAndOutForeignExchange.enable) {
+                            tab3Fragment.setTempView(TempView.this);
+                            tab3Fragment.initData();
+                            fragmentList.add(tab3Fragment);
+                            presetSum++;
+                        }
                     }
                 } else if (activity instanceof Temp2Activity || activity instanceof Temp3Activity
                         || activity instanceof Temp7Activity) {
@@ -864,39 +874,56 @@ public class TempView extends LinearLayout {
                     PresetVTab2Fragment tab2Fragment = new PresetVTab2Fragment();
                     PresetVTab3Fragment tab3Fragment = new PresetVTab3Fragment();
                     String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
-                    if (TextUtils.isEmpty(json)) {
-                        return;
-                    }
-                    PresetBean bean = JSON.parseObject(json, PresetBean.class);
-                    tab1Fragment.setBean(bean.data.saveRate);
-                    tab2Fragment.setBean(bean.data.loanRate);
-                    tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
-                    if (bean.data.saveRate.enable) {
-                        tab1Fragment.setTempView(TempView.this);
-                        tab1Fragment.initData();
-                        fragmentList.add(tab1Fragment);
-                        presetSum++;
-                    }
-                    if (bean.data.loanRate.enable) {
-                        tab2Fragment.setTempView(TempView.this);
-                        tab2Fragment.initData();
-                        fragmentList.add(tab2Fragment);
-                        presetSum++;
-                    }
-                    if (bean.data.buyInAndOutForeignExchange.enable) {
-                        tab3Fragment.setTempView(TempView.this);
-                        tab3Fragment.initData();
-                        fragmentList.add(tab3Fragment);
-                        presetSum++;
+                    if (!TextUtils.isEmpty(json)) {
+                        PresetBean bean = JSON.parseObject(json, PresetBean.class);
+                        tab1Fragment.setBean(bean.data.saveRate);
+                        tab2Fragment.setBean(bean.data.loanRate);
+                        tab3Fragment.setBean(bean.data.buyInAndOutForeignExchange);
+                        if (bean.data.saveRate.enable) {
+                            tab1Fragment.setTempView(TempView.this);
+                            tab1Fragment.initData();
+                            fragmentList.add(tab1Fragment);
+                            presetSum++;
+                        }
+                        if (bean.data.loanRate.enable) {
+                            tab2Fragment.setTempView(TempView.this);
+                            tab2Fragment.initData();
+                            fragmentList.add(tab2Fragment);
+                            presetSum++;
+                        }
+                        if (bean.data.buyInAndOutForeignExchange.enable) {
+                            tab3Fragment.setTempView(TempView.this);
+                            tab3Fragment.initData();
+                            fragmentList.add(tab3Fragment);
+                            presetSum++;
+                        }
                     }
                 }
             }
-            if (willPagerAdapter != null) {
-                willPagerAdapter.notifyDataSetChanged();
+            try {
+                if (willPagerAdapter != null) {
+                    willPagerAdapter.notifyDataSetChanged();
+                } else {
+                    willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
+                    if (image == null || viewpager == null) {
+                        initView();
+                    }
+                    if (viewpager != null) {
+                        viewpager.setAdapter(willPagerAdapter);
+                        viewpager.setCurrentItem(0);
+                        try {
+                            willPagerAdapter.notifyDataSetChanged();
+                        } catch (Exception e) {
+                            Logger.e(e.toString());
+                        }
+                    }
+                }
+            } catch (Exception e) {
             }
         } catch (Exception e) {
             Logger.e(e.toString());
         }
+
     }
 
 }

@@ -110,7 +110,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         etPlaylist.setText(Utils.get(this, Utils.KEY_TIME_PLAYLIST, Utils.KEY_TIME_PLAYLIST_TIME + "").toString());
         etPreset.setText(Utils.get(this, Utils.KEY_TIME_PRESET, Utils.KEY_TIME_PRESET_TIME + "").toString());
         etTabImg.setText(Utils.get(this, Utils.KEY_TIME_TAB_IMG, "5").toString());
-        etTabPreset.setText(Utils.get(this, Utils.KEY_TIME_TAB_PRESET, "5").toString());
+        etTabPreset.setText(Utils.get(this, Utils.KEY_TIME_TAB_PRESET, Utils.KEY_TIME_PRESET_DEFAULT+"").toString());
         etPdf.setText(Utils.get(this, Utils.KEY_TIME_TAB_PDF, "5").toString());
         etFile.setText(Utils.get(this, Utils.KEY_TIME_FILE, "30").toString());
         etDownloadspeed.setText(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, Utils.KEY_DOWNLOAD_SIZE + "").toString());

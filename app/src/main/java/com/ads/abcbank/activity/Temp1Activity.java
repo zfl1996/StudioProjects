@@ -113,7 +113,7 @@ public class Temp1Activity extends BaseActivity implements IView {
         tvTemp = findViewById(R.id.tv_temp);
         handler.post(timeRunnable);
         tvTemp.setType(Utils.TYPES_TEMP1);
-        tvTemp.getImage().setVisibility(View.GONE);
+//        tvTemp.getImage().setVisibility(View.GONE);
         presetView.updatePresetDate();
 
         String listStr = Utils.get(Temp1Activity.this, Utils.KEY_PLAY_LIST_TXT, "").toString();

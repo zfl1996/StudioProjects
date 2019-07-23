@@ -47,7 +47,7 @@ public class Temp8Activity extends BaseActivity implements IView {
         mRecyclerView = findViewById(R.id.rv_recycleView);
         tvTemp = findViewById(R.id.tv_temp);
         tvTemp.setType(Utils.TYPES_TEMP8);
-        tvTemp.getImage().setVisibility(View.GONE);
+//        tvTemp.getImage().setVisibility(View.GONE);
 
         String listStr = Utils.get(Temp8Activity.this, Utils.KEY_PLAY_LIST_TXT, "").toString();
         if (!TextUtils.isEmpty(listStr)) {

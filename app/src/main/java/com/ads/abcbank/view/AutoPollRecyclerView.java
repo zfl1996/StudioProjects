@@ -54,7 +54,7 @@ public class AutoPollRecyclerView extends RecyclerView {
                 running = true;
                 postDelayed(autoPollTask, TIME_AUTO_POLL);
             }
-        },1000);
+        }, 1000);
 //        if (running)
 //            stop();
 //        canRun = true;
