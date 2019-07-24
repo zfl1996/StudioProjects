@@ -3,6 +3,7 @@ package com.ads.abcbank.fragment;
 import android.graphics.Color;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -28,6 +29,7 @@ public class Tab1Fragment extends BaseTabFragment {
 
     @Override
     public View initView(LayoutInflater inflater) {
+        Log.e("Tab1Fragment","initView");
         view = inflater.inflate(R.layout.fragment_tab1, null);
         tvBottom = view.findViewById(R.id.tv_bottom);
         return view;
@@ -107,7 +109,7 @@ public class Tab1Fragment extends BaseTabFragment {
     public void setBean(Object bean) {
         if (bean instanceof PresetBean.SaveRate) {
             this.bean = (PresetBean.SaveRate) bean;
-            initData();
+//            initData();
         }
     }
 
@@ -115,8 +117,7 @@ public class Tab1Fragment extends BaseTabFragment {
     public void onResume() {
         super.onResume();
         try {
-
-            initData();
+//            initData();
 //            if (getUserVisibleHint()) {
 //                handler.removeCallbacks(runnable);
 //                handler.postDelayed(runnable, delayTime);
@@ -130,7 +131,7 @@ public class Tab1Fragment extends BaseTabFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            initData();
+//            initData();
 //            handler.removeCallbacks(runnable);
 //            handler.postDelayed(runnable, delayTime);
 //        } else {

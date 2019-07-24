@@ -63,9 +63,9 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void registerDateTransReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(CONNECTIVITY_CHANGE_ACTION);
-        filter.setPriority(1000);
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction(CONNECTIVITY_CHANGE_ACTION);
+//        filter.setPriority(1000);
 //        registerReceiver(netChangeReceiver, filter);
     }
 
@@ -331,7 +331,7 @@ public class BaseActivity extends AppCompatActivity {
                         }
                         return;
                     }
-                    if (msg.obj != null) {
+                    if (msg.obj != null && !TextUtils.isEmpty(msg.obj.toString())) {
                         Utils.put(ActivityManager.getInstance().getTopActivity(), Utils.KEY_PRESET, msg.obj.toString());
                         if (activity != null && activity instanceof IView) {
                             ((IView) activity).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));

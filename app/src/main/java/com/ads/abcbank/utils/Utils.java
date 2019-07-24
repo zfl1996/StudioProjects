@@ -105,10 +105,11 @@ public class Utils {
     public static final int KEY_TIME_CMD_TIME = 15;//记录获取cmd命令的分钟数
     public static final int KEY_TIME_PRESET_TIME = 15;//记录获取汇率的分钟数
     public static final int KEY_TIME_PLAYLIST_TIME = 15;//记录获取播放列表的分钟数
-    public static final int KEY_DOWNLOAD_SIZE = 1024;//下载限速
+    public static final int KEY_DOWNLOAD_SIZE = 512;//下载限速
 
     public static final int KEY_TIME_PRESET_DEFAULT = 30;//切换汇率tab的秒数默认值
-    public static final int KEY_TIME_IMG_DEFAULT = 30;//切换图片tab的秒数默认值
+    public static final int KEY_TIME_IMG_DEFAULT = 20;//切换图片tab的秒数默认值
+    public static final int KEY_TIME_FILE_DEFAULT = 360;//切换图片tab的秒数默认值
 
     public static final String KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
     public static final String KEY_TIME_CURRENT_PRESET = "timeCurrentPreset";//记录当前获取汇率的分钟数
@@ -383,7 +384,7 @@ public class Utils {
 //            if (target != null) {
 //                target.setImageDrawable(null);
             if (!TextUtils.isEmpty(url)) {
-                Glide.with(imageView.getContext()).load(url).placeholder(placeholderId).error(placeholderId).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.ALL).dontAnimate().into(imageView);
+                Glide.with(imageView.getContext()).load(url).asBitmap().placeholder(placeholderId).error(placeholderId).into(imageView);
             } else {
                 Bitmap bitmap = readBitMap(imageView.getContext(), placeholderId);
                 imageView.setImageBitmap(bitmap);
@@ -405,7 +406,7 @@ public class Utils {
 //            if (target != null) {
 //                target.setImageDrawable(null);
             if (file != null && file.exists()) {
-                Glide.with(imageView.getContext()).load(file).placeholder(placeholderId).error(placeholderId).into(imageView);
+                Glide.with(imageView.getContext()).load(file).asBitmap().placeholder(placeholderId).error(placeholderId).into(imageView);
 //                imageView.setImageURI(Uri.fromFile(file));
             } else {
                 Bitmap bitmap = readBitMap(imageView.getContext(), placeholderId);
@@ -766,7 +767,7 @@ public class Utils {
     //过期需要删除的文件
     public static boolean isNeedDel(Context context, PlaylistBodyBean bean) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
-        int timeFile = Integer.parseInt(get(context, KEY_TIME_FILE, "30").toString());
+        int timeFile = Integer.parseInt(get(context, KEY_TIME_FILE, Utils.KEY_TIME_FILE_DEFAULT + "").toString());
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
         c.add(Calendar.DATE, -1 * timeFile);
@@ -1077,6 +1078,10 @@ public class Utils {
     //得到播放列表后的处理，返回是否需要更新播放列表
     public static boolean getNewPlayList(Context context, String jsonString) {
         if (TextUtils.isEmpty(jsonString)) {
+            if (!TextUtils.isEmpty(get(context, KEY_PLAY_LIST, "").toString())) {
+                put(context, KEY_PLAY_LIST, "");
+                return true;
+            }
             return false;
         }
         PlaylistResultBean bean = JSON.parseObject(jsonString, PlaylistResultBean.class);
@@ -1101,6 +1106,9 @@ public class Utils {
                 put(context, KEY_PLAY_LIST, JSONObject.toJSONString(playLists));
                 return true;
             }
+        } else if (!TextUtils.isEmpty(get(context, KEY_PLAY_LIST, "").toString())) {
+            put(context, KEY_PLAY_LIST, "");
+            return true;
         }
         return false;
     }

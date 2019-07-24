@@ -85,7 +85,7 @@ public class PresetTab1Fragment extends BaseTabFragment {
     public void setBean(Object bean) {
         if (bean instanceof PresetBean.SaveRate) {
             this.bean = (PresetBean.SaveRate) bean;
-            initData();
+//            initData();
         }
     }
 
@@ -94,7 +94,7 @@ public class PresetTab1Fragment extends BaseTabFragment {
         super.onResume();
         try {
 
-            initData();
+//            initData();
             if (getUserVisibleHint()) {
                 handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable, delayTime);
@@ -108,7 +108,7 @@ public class PresetTab1Fragment extends BaseTabFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            initData();
+//            initData();
             handler.removeCallbacks(runnable);
             handler.postDelayed(runnable, delayTime);
 //        } else {
@@ -116,7 +116,7 @@ public class PresetTab1Fragment extends BaseTabFragment {
         }
     }
 
-    private long delayTime = 5000;
+    private long delayTime = Utils.KEY_TIME_IMG_DEFAULT * 1000;
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override

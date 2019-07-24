@@ -16,6 +16,7 @@ import android.webkit.WebViewClient;
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseTempFragment;
 
 public class WebFragment extends BaseTempFragment {
@@ -116,7 +117,7 @@ public class WebFragment extends BaseTempFragment {
         }
     }
 
-    private long delayTime = 5000;
+    private long delayTime = Utils.KEY_TIME_IMG_DEFAULT * 1000;
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override

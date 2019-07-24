@@ -75,6 +75,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         addListener(etPdf, true);
         addListener(etFile, true);
         addListener(etDownloadspeed, true);
+        addListener(storeId, true);
         String beanStr = Utils.get(this, Utils.KEY_REGISTER_BEAN, "").toString();
         if (!TextUtils.isEmpty(beanStr)) {
             RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
@@ -121,7 +122,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         etTabImg.setText(Utils.get(this, Utils.KEY_TIME_TAB_IMG, Utils.KEY_TIME_IMG_DEFAULT + "").toString());
         etTabPreset.setText(Utils.get(this, Utils.KEY_TIME_TAB_PRESET, Utils.KEY_TIME_PRESET_DEFAULT + "").toString());
         etPdf.setText(Utils.get(this, Utils.KEY_TIME_TAB_PDF, Utils.KEY_TIME_IMG_DEFAULT + "").toString());
-        etFile.setText(Utils.get(this, Utils.KEY_TIME_FILE, "30").toString());
+        etFile.setText(Utils.get(this, Utils.KEY_TIME_FILE, Utils.KEY_TIME_FILE_DEFAULT + "").toString());
         etDownloadspeed.setText(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, Utils.KEY_DOWNLOAD_SIZE + "").toString());
         etCmd.setSelection(etCmd.getText().toString().length());
     }

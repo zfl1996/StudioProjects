@@ -62,9 +62,8 @@
 
             <TableRow>
 
-                <TextView
-                    style="@style/row_left"
-                    android:text="文件下载限速(kbps):" />
+                <TextView style="@style/row_left"
+                android:text="文件下载限速（kbps）" />
 
                 <EditText
                     android:id="@+id/et_downloadspeed"
@@ -76,6 +75,7 @@
 
                 <TextView
                     style="@style/row_left"
+                    android:paddingRight="15px"
                     android:text="金融小店ID" />
 
                 <EditText

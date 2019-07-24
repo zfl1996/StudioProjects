@@ -102,7 +102,7 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
             Utils.put(this, Utils.KEY_TIME_PRESET, Utils.KEY_TIME_PRESET_TIME + "");
         }
         if (TextUtils.isEmpty(Utils.get(this, Utils.KEY_TIME_FILE, "").toString())) {
-            Utils.put(this, Utils.KEY_TIME_FILE, "30");
+            Utils.put(this, Utils.KEY_TIME_FILE, Utils.KEY_TIME_FILE_DEFAULT + "");
         }
 
         String beanStr = Utils.get(WelcomeActivity.this, Utils.KEY_REGISTER_BEAN, "").toString();
@@ -203,13 +203,18 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                         if (startTime.compareTo(initResultBean.data.serverTime) > 0
                                 || endTime.compareTo(initResultBean.data.serverTime) < 0) {
                             ToastUtil.showToastLong(WelcomeActivity.this, "请调整当前系统时间");
-                            HandlerUtil.postDelayed(new Runnable() {
+                            Utils.getExecutorService().submit(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ActivityManager.getInstance().finishAllActivity();
-                                    System.exit(0);
+                                    HandlerUtil.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ActivityManager.getInstance().finishAllActivity();
+                                            System.exit(0);
+                                        }
+                                    }, 3000);
                                 }
-                            }, 1000);
+                            });
                             return;
                         }
 

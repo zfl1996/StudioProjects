@@ -94,7 +94,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
         }
     }
 
-    private long delayTime = 5000;
+    private long delayTime = Utils.KEY_TIME_IMG_DEFAULT * 1000;
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override

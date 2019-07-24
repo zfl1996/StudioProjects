@@ -3,6 +3,7 @@ package com.ads.abcbank.fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.pdf.PdfRenderer;
+import android.os.Build;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.view.LayoutInflater;
@@ -60,7 +61,7 @@ public class PdfFragment extends BaseTempFragment {
     }
 
     /**
-     * Sets up a {@link android.graphics.pdf.PdfRenderer} and related resources.
+     * Sets up a {@link PdfRenderer} and related resources.
      */
     private void openRenderer(Context context) throws IOException {
         File file = new File(DownloadService.downloadFilePath + bean.name);
@@ -80,7 +81,7 @@ public class PdfFragment extends BaseTempFragment {
         }
     }
 
-    private void closeRenderer() throws IOException {
+    private void closeRenderer() {
         if (null != mCurrentPage) {
             try {
                 mCurrentPage.close();
@@ -98,7 +99,8 @@ public class PdfFragment extends BaseTempFragment {
         if (mFileDescriptor != null) {
             try {
                 mFileDescriptor.close();
-            } catch (IOException e) {
+                mFileDescriptor = null;
+            } catch (Exception e) {
                 Logger.e(e.toString());
             }
         }
@@ -182,7 +184,7 @@ public class PdfFragment extends BaseTempFragment {
         }
     }
 
-    private long delayTime = 5000;
+    private long delayTime = Utils.KEY_TIME_IMG_DEFAULT * 1000;
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override

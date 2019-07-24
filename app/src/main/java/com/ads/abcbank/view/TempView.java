@@ -72,6 +72,9 @@ public class TempView extends LinearLayout {
     }
 
     public void setNeedUpdate(boolean needUpdate) {
+        if (this.needUpdate == needUpdate) {
+            return;
+        }
         this.needUpdate = needUpdate;
         if (needUpdate) {
 
@@ -97,6 +100,9 @@ public class TempView extends LinearLayout {
                             } catch (Exception e) {
                                 Logger.e("解析播放列表出错" + json);
                             }
+                        } else {
+                            playlistBean.clear();
+                            txtlistBean.clear();
                         }
                     } catch (Exception e) {
                         Logger.e(e.toString());
@@ -132,25 +138,34 @@ public class TempView extends LinearLayout {
             Utils.loadImage(image, "");
             addView(view);
         }
-        String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
-        if (!TextUtils.isEmpty(json)) {
-            try {
-                playlistBean.clear();
-                txtlistBean.clear();
-                List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
-                for (int i = 0; i < playlistBodyBeans.size(); i++) {
-                    PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
-                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-                    if ("txt".equals(suffix)) {
-                        txtlistBean.add(bodyBean);
-                    } else {
-                        playlistBean.add(bodyBean);
+
+        Utils.getExecutorService().submit(new Runnable() {
+            @Override
+            public void run() {
+                String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
+                if (!TextUtils.isEmpty(json)) {
+                    try {
+                        playlistBean.clear();
+                        txtlistBean.clear();
+                        List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
+                        for (int i = 0; i < playlistBodyBeans.size(); i++) {
+                            PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
+                            String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                            if ("txt".equals(suffix)) {
+                                txtlistBean.add(bodyBean);
+                            } else {
+                                playlistBean.add(bodyBean);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Logger.e("解析播放列表出错" + json);
                     }
+                } else {
+                    playlistBean.clear();
+                    txtlistBean.clear();
                 }
-            } catch (Exception e) {
-                Logger.e("解析播放列表出错" + json);
             }
-        }
+        });
     }
 
     public void setImageSrc(int src) {
@@ -569,6 +584,9 @@ public class TempView extends LinearLayout {
                             playlistBean.add(bodyBean);
                         }
                     }
+                } else {
+                    playlistBean.clear();
+                    txtlistBean.clear();
                 }
                 setType(type);
             } catch (Exception e) {
@@ -615,7 +633,6 @@ public class TempView extends LinearLayout {
                     fragmentList.clear();
                     String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
 
-
                     if (!TextUtils.isEmpty(json)) {
                         try {
                             playlistBean.clear();
@@ -633,6 +650,9 @@ public class TempView extends LinearLayout {
                         } catch (Exception e) {
                             Logger.e("解析播放列表出错" + json);
                         }
+                    } else {
+                        playlistBean.clear();
+                        txtlistBean.clear();
                     }
                     setType(type);
                 }
