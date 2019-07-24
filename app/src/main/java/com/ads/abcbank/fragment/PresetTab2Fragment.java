@@ -122,10 +122,10 @@ public class PresetTab2Fragment extends BaseTabFragment {
             try {
                 delayTime = Integer.
                         parseInt(Utils.
-                                get(context, Utils.KEY_TIME_TAB_IMG, "5")
+                                get(context, Utils.KEY_TIME_TAB_IMG, Utils.KEY_TIME_IMG_DEFAULT + "")
                                 .toString()) * 1000;
             } catch (Exception e) {
-                delayTime = 5000;
+                delayTime = Utils.KEY_TIME_IMG_DEFAULT * 1000;
             }
             if (getUserVisibleHint() && isVisible() && tempView != null && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                 tempView.nextPlay();

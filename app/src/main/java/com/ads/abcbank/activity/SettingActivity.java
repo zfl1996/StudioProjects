@@ -58,6 +58,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvSubmit = findViewById(R.id.tv_submit);
         back = findViewById(R.id.back);
         storeId = findViewById(R.id.storeId);
+        {
+            etCmd.setEnabled(false);
+            etPreset.setEnabled(false);
+            etPlaylist.setEnabled(false);
+            etTabImg.setEnabled(false);
+            etTabPreset.setEnabled(false);
+            etPdf.setEnabled(false);
+            etDownloadspeed.setEnabled(false);
+        }
         addListener(etCmd, true);
         addListener(etPreset, true);
         addListener(etPlaylist, true);
@@ -109,9 +118,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         etCmd.setText(Utils.get(this, Utils.KEY_TIME_CMD, Utils.KEY_TIME_CMD_TIME + "").toString());
         etPlaylist.setText(Utils.get(this, Utils.KEY_TIME_PLAYLIST, Utils.KEY_TIME_PLAYLIST_TIME + "").toString());
         etPreset.setText(Utils.get(this, Utils.KEY_TIME_PRESET, Utils.KEY_TIME_PRESET_TIME + "").toString());
-        etTabImg.setText(Utils.get(this, Utils.KEY_TIME_TAB_IMG, "5").toString());
-        etTabPreset.setText(Utils.get(this, Utils.KEY_TIME_TAB_PRESET, Utils.KEY_TIME_PRESET_DEFAULT+"").toString());
-        etPdf.setText(Utils.get(this, Utils.KEY_TIME_TAB_PDF, "5").toString());
+        etTabImg.setText(Utils.get(this, Utils.KEY_TIME_TAB_IMG, Utils.KEY_TIME_IMG_DEFAULT + "").toString());
+        etTabPreset.setText(Utils.get(this, Utils.KEY_TIME_TAB_PRESET, Utils.KEY_TIME_PRESET_DEFAULT + "").toString());
+        etPdf.setText(Utils.get(this, Utils.KEY_TIME_TAB_PDF, Utils.KEY_TIME_IMG_DEFAULT + "").toString());
         etFile.setText(Utils.get(this, Utils.KEY_TIME_FILE, "30").toString());
         etDownloadspeed.setText(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, Utils.KEY_DOWNLOAD_SIZE + "").toString());
         etCmd.setSelection(etCmd.getText().toString().length());

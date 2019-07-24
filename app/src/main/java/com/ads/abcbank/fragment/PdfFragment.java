@@ -194,10 +194,10 @@ public class PdfFragment extends BaseTempFragment {
             try {
                 delayTime = Integer.
                         parseInt(Utils.
-                                get(getActivity(), Utils.KEY_TIME_TAB_PDF, "5")
+                                get(getActivity(), Utils.KEY_TIME_TAB_PDF, Utils.KEY_TIME_IMG_DEFAULT + "")
                                 .toString()) * 1000;
             } catch (Exception e) {
-                Logger.e(e.toString());
+                delayTime = Utils.KEY_TIME_IMG_DEFAULT * 1000;
             }
             if (pageNumber < pageTotal - 1) {
                 showPage(pageNumber + 1);
