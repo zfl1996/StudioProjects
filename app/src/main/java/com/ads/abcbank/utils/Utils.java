@@ -404,7 +404,7 @@ public class Utils {
 //            if (target != null) {
 //                target.setImageDrawable(null);
             if (file != null && file.exists()) {
-                    Glide.with(imageView.getContext()).load(file).placeholder(placeholderId).error(placeholderId).into(imageView);
+                Glide.with(imageView.getContext()).load(file).placeholder(placeholderId).error(placeholderId).into(imageView);
 //                imageView.setImageURI(Uri.fromFile(file));
             } else {
                 Bitmap bitmap = readBitMap(imageView.getContext(), placeholderId);
@@ -523,15 +523,24 @@ public class Utils {
      * @return
      */
     public static String getMac(Context context) {
-        String mac = "";
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            mac = getMacDefault(context);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            mac = getMacAddress();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mac = getMacFromHardware();
+//        String mac = "";
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+//            mac = getMacDefault(context);
+//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+//            mac = getMacAddress();
+//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            mac = getMacFromHardware();
+//        }
+//        return mac;
+
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream("/sys/class/net/eth0/address")))) {
+            String ethernetMacAddress = input.readLine();
+            Logger.d("getMac", "Ethernet MAC Address: " + ethernetMacAddress);
+            return ethernetMacAddress;
+        } catch (Exception ex) {
+            Logger.e("getMac", "ex: " + ex);
         }
-        return mac;
+        return "";
     }
 
     @SuppressLint("MissingPermission")
@@ -1122,49 +1131,68 @@ public class Utils {
 
     @SuppressLint("MissingPermission")
     public static String getIPAddress(Context context) {
-        if (context != null && context.getSystemService(Context.CONNECTIVITY_SERVICE) != null) {
-            try {
-                NetworkInfo info = null;
-                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                if (connectivityManager != null) {
-                    try {
-                        info = connectivityManager.getActiveNetworkInfo();
-                    } catch (Exception e) {
-                        Logger.e(e.toString());
-                    }
+//        if (context != null && context.getSystemService(Context.CONNECTIVITY_SERVICE) != null) {
+//            try {
+//                NetworkInfo info = null;
+//                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//                if (connectivityManager != null) {
+//                    try {
+//                        info = connectivityManager.getActiveNetworkInfo();
+//                    } catch (Exception e) {
+//                        Logger.e(e.toString());
+//                    }
+//                }
+//                if (info != null && info.isConnected()) {
+//                    if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
+//                        //当前使用2G/3G/4G网络
+//                        try {
+//                            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+//                                NetworkInterface intf = en.nextElement();
+//                                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+//                                    InetAddress inetAddress = enumIpAddr.nextElement();
+//                                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+//                                        return inetAddress.getHostAddress();
+//                                    }
+//                                }
+//                            }
+//                        } catch (SocketException e) {
+//                            Logger.e(e.toString());
+//                        }
+//                    } else if (info.getType() == ConnectivityManager.TYPE_WIFI) {
+//                        //当前使用无线网络
+//                        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+//                        if (wifiManager != null) {
+//                            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+//                            if (wifiInfo != null) {
+//                                //得到IPV4地址
+//                                String ipAddress = changeToStringIP(wifiInfo.getIpAddress());
+//                                return ipAddress;
+//                            }
+//                        }
+//                    }
+//                }
+//            } catch (Exception e) {
+//                Logger.e(e.toString());
+//            }
+//        }
+        String ipAddress;
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface
+                    .getNetworkInterfaces(); en.hasMoreElements(); ) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf
+                        .getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()) {
+                        ipAddress = inetAddress.getHostAddress().toString();
+                        if (!ipAddress.contains("::"))
+                            return inetAddress.getHostAddress().toString();
+                    } else
+                        continue;
                 }
-                if (info != null && info.isConnected()) {
-                    if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
-                        //当前使用2G/3G/4G网络
-                        try {
-                            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-                                NetworkInterface intf = en.nextElement();
-                                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                                    InetAddress inetAddress = enumIpAddr.nextElement();
-                                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
-                                        return inetAddress.getHostAddress();
-                                    }
-                                }
-                            }
-                        } catch (SocketException e) {
-                            Logger.e(e.toString());
-                        }
-                    } else if (info.getType() == ConnectivityManager.TYPE_WIFI) {
-                        //当前使用无线网络
-                        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-                        if (wifiManager != null) {
-                            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                            if (wifiInfo != null) {
-                                //得到IPV4地址
-                                String ipAddress = changeToStringIP(wifiInfo.getIpAddress());
-                                return ipAddress;
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                Logger.e(e.toString());
             }
+        } catch (Exception ex) {
+            Logger.e("getIPAddress", ex.toString());
         }
         return "";
     }
