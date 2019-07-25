@@ -202,7 +202,7 @@
                     style="@style/row_right" />
             </TableRow>
 
-            <TableRow android:layout_marginTop="50px">
+            <TableRow android:layout_marginTop="20px">
 
                 <View
                     android:layout_width="match_parent"
