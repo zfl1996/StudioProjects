@@ -45,6 +45,7 @@ import com.ads.abcbank.fragment.WebFragment;
 import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
+import com.ads.abcbank.xx.fragment.PdfContFragment;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 
@@ -425,7 +426,8 @@ public class TempView extends LinearLayout {
                                 fragment = new ImageFragment();
                                 break;
                             case "pdf":
-                                fragment = new PdfFragment();
+//                                fragment = new PdfFragment();
+                                fragment = new PdfContFragment();
                                 break;
 //                            case "txt":
 //                                fragment = new TxtFragment();
