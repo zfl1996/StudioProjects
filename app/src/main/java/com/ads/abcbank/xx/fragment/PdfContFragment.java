@@ -37,7 +37,7 @@ public class PdfContFragment extends BaseTempFragment {
     private static final int OPEN = 0x0;
     private RecyclerPagerView rpv;
     private TextView txtHint;
-
+    private Handler readerHandler;
 
     @Override
     protected View initView(LayoutInflater inflater) {
@@ -81,21 +81,6 @@ public class PdfContFragment extends BaseTempFragment {
         initData();
         showQRs(bean);
     }
-
-    void showContent(PdfCacheInfo cacheInfo){
-        BannerAdapter bannerAdapter = new BannerAdapter(context);
-
-        LinearLayoutManager lm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        rpv.setLayoutManager(lm);
-        rpv.setAdapter(bannerAdapter);
-
-
-        bannerAdapter.setDataSource(Arrays.asList( cacheInfo.allCachePaths));
-        rpv.setOnPageChangeListener(new PagerChangeListener(cacheInfo.pageCount));
-        rpv.startPlay();
-    }
-
-
 
     @Override
     public PlaylistBodyBean getBean() {
@@ -150,8 +135,18 @@ public class PdfContFragment extends BaseTempFragment {
         mainHandler.sendMessage(buildMessage(OK, cacheInfo, true));
     }
 
-    Handler readerHandler;
+    private void showContent(PdfCacheInfo cacheInfo){
+        BannerAdapter bannerAdapter = new BannerAdapter(context);
 
+        LinearLayoutManager lm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        rpv.setLayoutManager(lm);
+        rpv.setAdapter(bannerAdapter);
+
+
+        bannerAdapter.setDataSource(Arrays.asList( cacheInfo.allCachePaths));
+        rpv.setOnPageChangeListener(new PagerChangeListener(cacheInfo.pageCount));
+        rpv.startPlay();
+    }
 
     Handler mainHandler = new Handler(){
         @Override
