@@ -387,7 +387,7 @@ public class Utils {
 //            if (target != null) {
 //                target.setImageDrawable(null);
             if (!TextUtils.isEmpty(url)) {
-                Glide.with(imageView.getContext()).load(url).asBitmap().placeholder(placeholderId).error(placeholderId).into(imageView);
+                Glide.with(imageView.getContext()).load(url).asBitmap().skipMemoryCache(true).placeholder(placeholderId).error(placeholderId).into(imageView);
             } else {
                 Bitmap bitmap = readBitMap(imageView.getContext(), placeholderId);
                 imageView.setImageBitmap(bitmap);
@@ -409,7 +409,7 @@ public class Utils {
 //            if (target != null) {
 //                target.setImageDrawable(null);
             if (file != null && file.exists()) {
-                Glide.with(imageView.getContext()).load(file).asBitmap().placeholder(placeholderId).error(placeholderId).into(imageView);
+                Glide.with(imageView.getContext()).load(file).asBitmap().skipMemoryCache(true).placeholder(placeholderId).error(placeholderId).into(imageView);
 //                imageView.setImageURI(Uri.fromFile(file));
             } else {
                 Bitmap bitmap = readBitMap(imageView.getContext(), placeholderId);
