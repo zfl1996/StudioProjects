@@ -133,7 +133,7 @@ public class ImageFragment extends BaseTempFragment implements View.OnClickListe
     public void setBean(PlaylistBodyBean bean) {
         this.bean = bean;
         initData();
-//        showQRs(bean);
+        showQRs(bean);
     }
 
 
