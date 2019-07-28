@@ -25,7 +25,6 @@ import java.util.Arrays;
 
 public class PdfContFragment extends BaseTempFragment {
     private View view;
-//    private ImageView content;
     private PlaylistBodyBean bean;
     private long delayTime = 5000;
     private HandlerThread readerThread;
