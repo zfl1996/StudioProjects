@@ -728,17 +728,31 @@ public class Utils {
             Date endDt;
             Date nowDt = new Date();
             try {
-                startDt = timeFormat.parse(strs[1]);
-                Calendar ca = Calendar.getInstance();
-                ca.setTime(startDt);
-                ca.add(Calendar.MINUTE, Integer.parseInt(strs[2]));
-                endDt = ca.getTime();
+//                startDt = timeFormat.parse(strs[1]);
+//                Calendar ca = Calendar.getInstance();
+//                ca.setTime(startDt);
+//                ca.add(Calendar.MINUTE, Integer.parseInt(strs[2]));
+//                endDt = ca.getTime();
+//
+//                if (timeFormat.format(nowDt).compareTo(timeFormat.format(startDt)) >= 0
+//                        && ((!"00:00".equals(timeFormat.format(endDt)) && timeFormat.format(nowDt).compareTo(timeFormat.format(endDt)) <= 0)
+//                        || "00:00".equals(timeFormat.format(endDt)))) {
+//                    return true;
+//                }
 
-                if (timeFormat.format(nowDt).compareTo(timeFormat.format(startDt)) >= 0
-                        && ((!"00:00".equals(timeFormat.format(endDt)) && timeFormat.format(nowDt).compareTo(timeFormat.format(endDt)) <= 0)
-                        || "00:00".equals(timeFormat.format(endDt)))) {
+                Calendar ca = Calendar.getInstance();
+                long c = ca.getTimeInMillis();
+
+                ca.set(Calendar.HOUR_OF_DAY, Integer.parseInt(strs[1].substring(0, strs[1].indexOf(":"))));
+                ca.set(Calendar.MINUTE, Integer.parseInt(strs[1].substring(strs[1].indexOf(":") + 1)));
+                long s = ca.getTimeInMillis();
+
+                ca.add(Calendar.MINUTE, Integer.parseInt(strs[2]));
+                long e = ca.getTimeInMillis();
+
+                if (c >= s && c <= e)
                     return true;
-                }
+
             } catch (Exception e) {
                 return false;
             }
