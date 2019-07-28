@@ -26,7 +26,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="false"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.WelcomeActivity"
@@ -116,6 +116,7 @@
         <service
             android:name=".service.ProtectPresetService"
             android:exported="false" />
+        <service android:name=".xx.service.CachePdfService" android:exported="false" />
         <service android:name=".service.DownloadService">
             <intent-filter>
                 <action android:name="com.ads.abcbank.downtaskadd" />

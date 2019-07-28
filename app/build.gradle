@@ -99,13 +99,18 @@ dependencies {
     implementation 'com.google.zxing:core:3.3.3'
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     implementation 'cn.jzvd:jiaozivideoplayer:7.0_preview'
-    implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.3'
+    implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
 
-    implementation 'com.liulishuo.okdownload:okdownload:1.0.2'
-    implementation 'com.liulishuo.okdownload:sqlite:1.0.2'
-    implementation 'com.liulishuo.okdownload:okhttp:1.0.2'
+    implementation 'com.liulishuo.okdownload:okdownload:1.0.5'
+    implementation 'com.liulishuo.okdownload:sqlite:1.0.5'
+    implementation 'com.liulishuo.okdownload:okhttp:1.0.5'
     implementation files('libs/commons-validator-1.6.jar')
     implementation files('libs/commons-validator-1.6-javadoc.jar')
     implementation files('libs/commons-validator-1.6-tests.jar')
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.1'
+
+    api('com.arialyy.aria:aria-core:3.6.5'){
+        exclude group: 'com.android.support'
+    }
+    annotationProcessor 'com.arialyy.aria:aria-compiler:3.6.5'
 }
