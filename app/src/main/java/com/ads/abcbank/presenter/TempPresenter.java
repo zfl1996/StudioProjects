@@ -5,11 +5,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
+import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.AsyncThread;
 import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.IView;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 public class TempPresenter {
@@ -43,6 +45,14 @@ public class TempPresenter {
                     Logger.e("getPreset", "获取预设汇率信息返回数据====" + msg.obj);
                     if (msg.obj != null) {
                         Utils.put(context, Utils.KEY_PRESET, msg.obj);
+                        try {
+                            PresetBean bean = JSON.parseObject(msg.obj.toString(), PresetBean.class);
+                            if (!"0".equals(bean.resCode)) {
+                                return;
+                            }
+                        } catch (Exception e) {
+                            return;
+                        }
                         tempView.updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
                     } else {
                         tempView.updatePresetDate(null);

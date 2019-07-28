@@ -105,8 +105,8 @@ public class Logger extends FrameLayout implements Thread.UncaughtExceptionHandl
     private static DownloadlistTableView downloadlistTableView;
     private boolean mAutoScroll = true;
     private boolean mDownLoadAutoScroll = true;
-    private static final int SHORT_CLICK = 3;
-    private static final int LONG_CLICK = 3;
+    private static final int SHORT_CLICK = 4;
+    private static final int LONG_CLICK = 4;
 
     public static void setTag(String tag) {
         Logger.tag = tag;

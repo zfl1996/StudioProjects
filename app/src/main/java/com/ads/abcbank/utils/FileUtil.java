@@ -236,6 +236,7 @@ public class FileUtil {
     }
 
     public static void writeJsonToFile(String json) {
+//        Logger.e("播放列表信息：",json);
 //        try {
 //            String filePath = getDownSave() + "playlist.json";
 //            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true), "UTF-8"));

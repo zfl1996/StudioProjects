@@ -19,6 +19,7 @@ import com.ads.abcbank.activity.ReInitActivity;
 import com.ads.abcbank.bean.CmdpollBean;
 import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.bean.CmdresultBean;
+import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.bean.RequestBean;
 import com.ads.abcbank.service.DownloadService;
@@ -35,7 +36,7 @@ import com.alibaba.fastjson.JSONObject;
 
 public class BaseActivity extends AppCompatActivity {
     private final String CONNECTIVITY_CHANGE_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
-//    private NetChangeReceiver netChangeReceiver;//网络状态
+    //    private NetChangeReceiver netChangeReceiver;//网络状态
     private int netType = -1;
     private boolean hasNet = false;
     private boolean hasInit = false;
@@ -332,6 +333,15 @@ public class BaseActivity extends AppCompatActivity {
                         return;
                     }
                     if (msg.obj != null && !TextUtils.isEmpty(msg.obj.toString())) {
+                        try {
+                            PresetBean bean = JSON.parseObject(msg.obj.toString(), PresetBean.class);
+                            if (!"0".equals(bean.resCode)) {
+                                return;
+                            }
+                        } catch (Exception e) {
+                            return;
+                        }
+
                         Utils.put(ActivityManager.getInstance().getTopActivity(), Utils.KEY_PRESET, msg.obj.toString());
                         if (activity != null && activity instanceof IView) {
                             ((IView) activity).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));

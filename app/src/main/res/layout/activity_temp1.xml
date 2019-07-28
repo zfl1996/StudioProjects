@@ -20,7 +20,7 @@
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="1440"
-                android:background="@mipmap/icon_temp1_header">
+                android:background="@mipmap/bg_topbar">
 
                 <ImageView
                     android:layout_width="@dimen/logo_width"
@@ -28,8 +28,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/logo_padding"
                     android:adjustViewBounds="true"
-                    android:maxHeight="90px"
-                    android:src="@mipmap/icon_temp1_logo" />
+                    android:src="@mipmap/abc_icon" />
             </LinearLayout>
 
             <LinearLayout

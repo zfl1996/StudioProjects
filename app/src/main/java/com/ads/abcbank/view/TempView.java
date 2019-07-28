@@ -278,7 +278,11 @@ public class TempView extends LinearLayout {
         if (image != null) {
             image.setVisibility(GONE);
         }
-        willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
+        if (willPagerAdapter != null) {
+            willPagerAdapter.notifyDataSetChanged();
+        } else {
+            willPagerAdapter = new WillPagerAdapter(((AppCompatActivity) context).getSupportFragmentManager(), fragmentList);
+        }
         if (viewpager != null) {
             viewpager.setAdapter(willPagerAdapter);
             viewpager.setCurrentItem(0);

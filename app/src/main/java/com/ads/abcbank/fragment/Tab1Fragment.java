@@ -122,6 +122,9 @@ public class Tab1Fragment extends BaseTabFragment {
 //                handler.removeCallbacks(runnable);
 //                handler.postDelayed(runnable, delayTime);
 //            }
+            if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                initData();
+            }
         } catch (Exception e) {
             Logger.e(e.toString());
         }
@@ -131,6 +134,9 @@ public class Tab1Fragment extends BaseTabFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                initData();
+            }
 //            initData();
 //            handler.removeCallbacks(runnable);
 //            handler.postDelayed(runnable, delayTime);

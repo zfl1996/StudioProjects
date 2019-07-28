@@ -10,6 +10,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.activity.Temp2Activity;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.Logger;
@@ -22,11 +23,13 @@ public class PresetVTab2Fragment extends BaseTabFragment {
     private PresetBean.LoanRate bean;
     private TempView tempView;
     private TextView tvBottom;
+    private View vEmpty;
 
     @Override
     public View initView(LayoutInflater inflater) {
         view = inflater.inflate(R.layout.fragment_v_tab2, null);
         tvBottom = view.findViewById(R.id.tv_bottom);
+        vEmpty = view.findViewById(R.id.v_empty);
         return view;
     }
 
@@ -61,6 +64,11 @@ public class PresetVTab2Fragment extends BaseTabFragment {
             return;
         }
         tlTab1.removeAllViews();
+        if (vEmpty != null && context != null && context instanceof Temp2Activity) {
+            vEmpty.setVisibility(View.VISIBLE);
+        } else if (vEmpty != null) {
+            vEmpty.setVisibility(View.GONE);
+        }
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.LoanRate.LoanRateItem item = bean.entry.get(i);
             View rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_preset_v_temp1, null);
@@ -115,6 +123,9 @@ public class PresetVTab2Fragment extends BaseTabFragment {
         try {
 //            initData();
             if (getUserVisibleHint()) {
+                if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                    initData();
+                }
                 handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable, delayTime);
             }
@@ -128,6 +139,9 @@ public class PresetVTab2Fragment extends BaseTabFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
 //            initData();
+            if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                initData();
+            }
             handler.removeCallbacks(runnable);
             handler.postDelayed(runnable, delayTime);
         }

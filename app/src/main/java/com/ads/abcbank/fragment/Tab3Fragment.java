@@ -125,6 +125,9 @@ public class Tab3Fragment extends BaseTabFragment {
     public void onResume() {
         super.onResume();
         try {
+            if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                initData();
+            }
 //            initData();
 //            if (getUserVisibleHint()) {
 //                handler.removeCallbacks(runnable);
@@ -139,6 +142,9 @@ public class Tab3Fragment extends BaseTabFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                initData();
+            }
 //            initData();
 //            handler.removeCallbacks(runnable);
 //            handler.postDelayed(runnable, delayTime);

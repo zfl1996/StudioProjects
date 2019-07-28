@@ -3,19 +3,35 @@
     android:id="@+id/ll_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/preset_bg_v"
-    android:orientation="vertical"
-    android:paddingTop="110px">
+    android:background="#2B363F"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="110px"
+        android:background="@mipmap/bg_topbar">
+
+        <ImageView
+            android:layout_width="@dimen/logo_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/logo_padding"
+            android:adjustViewBounds="true"
+            android:src="@mipmap/abc_icon" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
         android:background="#08ffffff"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100px"
             android:layout_gravity="center"
+            android:background="@mipmap/preset_top"
             android:gravity="center"
             android:text="人民币贷款利率"
             android:textColor="#fff"
@@ -145,4 +161,10 @@
             android:textColor="#fff"
             android:textSize="@dimen/tab_text_super" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/v_empty"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:visibility="gone" />
 </LinearLayout>

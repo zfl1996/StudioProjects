@@ -89,5 +89,8 @@ public class Temp6Activity extends BaseActivity implements IView {
 
     @Override
     public void updatePresetDate(JSONObject jsonObject) {
+        if (tvTemp != null) {
+            tvTemp.updatePreset();
+        }
     }
 }

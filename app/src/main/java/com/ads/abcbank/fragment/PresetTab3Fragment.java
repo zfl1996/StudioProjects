@@ -98,6 +98,9 @@ public class PresetTab3Fragment extends BaseTabFragment {
         try {
 //            initData();
             if (getUserVisibleHint()) {
+                if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                    initData();
+                }
                 handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable, delayTime);
             }
@@ -110,6 +113,9 @@ public class PresetTab3Fragment extends BaseTabFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                initData();
+            }
 //            initData();
             handler.removeCallbacks(runnable);
             handler.postDelayed(runnable, delayTime);

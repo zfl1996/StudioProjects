@@ -1,5 +1,6 @@
 package com.ads.abcbank.fragment;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.activity.Temp2Activity;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.Logger;
@@ -22,11 +24,13 @@ public class PresetVTab1Fragment extends BaseTabFragment {
     private PresetBean.SaveRate bean;
     private TempView tempView;
     private TextView tvBottom;
+    private View vEmpty;
 
     @Override
     public View initView(LayoutInflater inflater) {
         view = inflater.inflate(R.layout.fragment_v_tab1, null);
         tvBottom = view.findViewById(R.id.tv_bottom);
+        vEmpty = view.findViewById(R.id.v_empty);
         return view;
     }
 
@@ -60,6 +64,11 @@ public class PresetVTab1Fragment extends BaseTabFragment {
             return;
         }
         tlTab1.removeAllViews();
+        if (vEmpty != null && context != null && context instanceof Temp2Activity) {
+            vEmpty.setVisibility(View.VISIBLE);
+        } else if (vEmpty != null) {
+            vEmpty.setVisibility(View.GONE);
+        }
         for (int i = 0; i < bean.entry.size(); i++) {
             PresetBean.SaveRate.SaveRateItem item = bean.entry.get(i);
             View rowView = LayoutInflater.from(mActivity).inflate(R.layout.item_preset_v_temp1, null);
@@ -115,6 +124,9 @@ public class PresetVTab1Fragment extends BaseTabFragment {
 
 //            initData();
             if (getUserVisibleHint()) {
+                if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                    initData();
+                }
                 handler.removeCallbacks(runnable);
                 handler.postDelayed(runnable, delayTime);
             }
@@ -127,6 +139,9 @@ public class PresetVTab1Fragment extends BaseTabFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+            if (tlTab1 != null && tlTab1.getHeight() == 0) {
+                initData();
+            }
 //            initData();
             handler.removeCallbacks(runnable);
             handler.postDelayed(runnable, delayTime);
