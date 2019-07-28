@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Binder;
 import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
@@ -16,7 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.widget.Toast;
-
 
 import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBean;
@@ -39,7 +37,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.liulishuo.okdownload.DownloadContext;
 import com.liulishuo.okdownload.DownloadContextListener;
 import com.liulishuo.okdownload.DownloadListener;
-import com.liulishuo.okdownload.DownloadSerialQueue;
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.OkDownload;
 import com.liulishuo.okdownload.SpeedCalculator;
@@ -57,7 +54,6 @@ import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 import com.liulishuo.okdownload.core.listener.assist.Listener4SpeedAssistExtend;
 
 import java.io.File;
-import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -792,7 +788,7 @@ public class DownloadService extends Service {
         this.context = builder.build();
         taskList = Arrays.asList(this.context.getTasks());
         maxRate = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, Utils.KEY_DOWNLOAD_SIZE + "").toString());
-        if (maxRate > 512)
+        if (maxRate >= 512)
             maxRate = MAX_RATE;
     }
 

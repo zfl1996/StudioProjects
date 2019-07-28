@@ -22,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.InitResultBean;
@@ -32,7 +31,6 @@ import com.ads.abcbank.presenter.MainPresenter;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Logger;
-import com.ads.abcbank.utils.TaskTagUtil;
 import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
@@ -40,7 +38,6 @@ import com.ads.abcbank.view.IMainView;
 import com.ads.abcbank.view.KeyboardWindow;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.liulishuo.okdownload.DownloadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -164,11 +161,11 @@ public class MainActivity extends BaseActivity implements IMainView {
                 appIdAddress.setText(ip);
             }
 
-        server.setText("testblock.huiyao.mobi/ibcs/player/v1");
-        cdn.setText("testblock.huiyao.mobi");
+//        server.setText("testblock.huiyao.mobi/ibcs/player/v1");
+//        cdn.setText("testblock.huiyao.mobi");
 
-//            server.setText("10.233.93.110:315/ibcs/player/v1");
-////            cdn.setText("10.233.93.110:315");
+            server.setText("10.233.93.110:315/ibcs/player/v1");
+            cdn.setText("10.233.93.110:315");
 //            cdn.setText("10.5.13.64:3128");
 ////            server.setText("10.233.14.37:8080/ibcs/player/v1");
 ////            cdn.setText("10.233.14.37:8080");
