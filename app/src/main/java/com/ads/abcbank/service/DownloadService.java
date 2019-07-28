@@ -30,12 +30,16 @@ import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.TaskTagUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.xx.service.CachePdfService;
+import com.ads.abcbank.xx.utils.Constants;
+import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.liulishuo.okdownload.DownloadContext;
 import com.liulishuo.okdownload.DownloadContextListener;
 import com.liulishuo.okdownload.DownloadListener;
+import com.liulishuo.okdownload.DownloadSerialQueue;
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.OkDownload;
 import com.liulishuo.okdownload.SpeedCalculator;
@@ -53,12 +57,14 @@ import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 import com.liulishuo.okdownload.core.listener.assist.Listener4SpeedAssistExtend;
 
 import java.io.File;
+import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -71,6 +77,7 @@ public class DownloadService extends Service {
     public static final String DELETE_FILE_12 = "com.ads.abcbank.deletefile12";
     public static final String PACKAGE = "com.ads.abcbank";
     public static final String TASKS_CHANGED = "com.ads.abcbank.taskchanged";
+    public static final Integer MAX_RATE = 200;
 
 
     private static final String TAG = "DownloadService";
@@ -85,6 +92,7 @@ public class DownloadService extends Service {
     private String type;
     private static List<DownloadTask> taskList = new ArrayList<>();
     private DownloadContext context;
+    private int maxRate; // bit/ms
 
     private final DownloadContextListener contextListener = new DownloadContextListener() {
         @Override
@@ -93,19 +101,21 @@ public class DownloadService extends Service {
             if (cause.equals(EndCause.COMPLETED)) {
                 Logger.e(TAG, task.getFilename() + "下载完成");
             } else {
-                Logger.e(TAG, task.getFilename() + "下载出错，状态：" + status +
-                        ">>>downloadLink=" + task.getUrl() + "，异常信息：" + realCause);
+                Logger.e(TAG, "-->err，状态：" + task.getFilename() + status +
+                        ">>>downloadLink=" + task.getUrl() + "(" + remainCount + ")，异常信息：" + realCause);
             }
 
         }
 
         @Override
         public void queueEnd(@NonNull DownloadContext context) {
-            if (context.getTasks().length < tasksSize()) {
-                startTasks(true);
-            } else {
-                stopTasks();
-            }
+//            if (context.getTasks().length < tasksSize()) {
+//                startTasks(true);
+//            } else {
+//                stopTasks();
+//            }
+
+            Logger.e(TAG, "queueEnd");
         }
     };
     private DownloadContext.Builder builder;
@@ -122,6 +132,8 @@ public class DownloadService extends Service {
             if (downloadBean != null) {
                 downloadBean.started = dateToString();
                 downloadBean.status = "下载中";
+                if (downloadBean.startTimestamp == 0)
+                    downloadBean.startTimestamp = System.currentTimeMillis();
                 startTime = System.currentTimeMillis();
                 addDowloadBean(downloadBean);
                 Utils.recordDownloadStatus(mContext, downloadBean);
@@ -132,6 +144,7 @@ public class DownloadService extends Service {
 
         @Override
         public void retry(@NonNull DownloadTask task, @NonNull ResumeFailedCause cause) {
+            Logger.e(TAG, task.getFilename() + " --> retry" + cause.toString());
 
             TaskTagUtil.saveStatus(task, "retry");
         }
@@ -147,16 +160,74 @@ public class DownloadService extends Service {
             }
         }
 
+        public String humanReadableBytes(long bytes, boolean si) {
+            int unit = si ? 1000 : 1024;
+            if (bytes < unit) return bytes + " B";
+            int exp = (int) (Math.log(bytes) / Math.log(unit));
+            String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+            return String.format(Locale.ENGLISH, "%.1f %sB", bytes / Math.pow(unit, exp), pre);
+        }
+
         @Override
         public void progress(@NonNull DownloadTask task, long currentOffset, long totalLength) {
             TaskTagUtil.saveStatus(task, "下载中");
             DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
             if (downloadBean != null) {
+
                 downloadBean.status = "下载中";
                 addDowloadBean(downloadBean);
                 Utils.recordDownloadStatus(mContext, downloadBean);
                 TaskTagUtil.saveOffset(task, currentOffset);
                 TaskTagUtil.saveTotal(task, totalLength);
+
+                try{
+
+                    // limit speed to maxRate
+                    long time = System.currentTimeMillis();
+                    long diff = time - downloadBean.startTimestamp;
+                    if(time == downloadBean.startTimestamp) return;
+                    long rate = (currentOffset) / (time - downloadBean.startTimestamp);
+//                long rate2 = (1000*currentOffset) / (time - downloadBean.startTimestamp);
+                    String rs = humanReadableBytes(rate*1000, true);
+//                String rs2 = humanReadableBytes(rate2, true);
+                    float percent = (float) currentOffset / totalLength * 100;
+
+                    Logger.e(TAG, "文件" + task.getFilename() + "---当前progress-" + rate + "kB/s..." + rs + "-" + percent + "%--" + currentOffset + "/" + totalLength);
+                    if (rate > maxRate) {
+                        Utils.getExecutorService().submit(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (time > downloadBean.startTimestamp) {
+                                    stopTasks();
+//                                    task.cancel();
+
+                                    int sleep = (int) (currentOffset / (maxRate) - (time - downloadBean.startTimestamp));
+                                    try{
+
+                                        Logger.e(TAG, "--> pause --" + rate + "/" + rs + "-"
+                                                + percent + "%-" + currentOffset + "-" + sleep + "ms -"
+                                                + (time - downloadBean.startTimestamp)/1000 + "s");
+
+                                        if (sleep > 0)
+                                            Thread.sleep(sleep + 300);
+                                    } catch (InterruptedException e) {
+                                        Logger.e(e.getMessage());
+                                    }
+
+                                    startTasks(true);
+
+//                                    task.enqueue(listener);
+                                }
+
+                            }
+                        });
+                    }
+
+                }
+                catch (Exception ex){
+                    Logger.e(TAG, ex.getMessage());
+                }
             }
 
         }
@@ -188,6 +259,8 @@ public class DownloadService extends Service {
                     }
                 }
             }
+
+
             endTime = System.currentTimeMillis();
             try {
                 DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
@@ -201,6 +274,17 @@ public class DownloadService extends Service {
                         if (!downloadFile.exists()) {
                             startTasks(true);
                         } else {
+                            //--------- cache pdf -------
+                            String dfPath = downloadFile.getAbsolutePath();
+                            String[] extData = ResHelper.getFileExtInfo(dfPath);
+                            if (extData.length > 0 && !ResHelper.isNullOrEmpty(extData[1]) && extData[1].toLowerCase().equals("pdf") ){
+                                Intent serviceIntent = new Intent(mContext, CachePdfService.class);
+
+                                serviceIntent.putExtra(Constants.PDF_CACHE_FILENAME, downloadBean.name);
+                                mContext.startService(serviceIntent);
+                            }
+                            //----------------------
+
                             downloadBean.status = "finish";
                             Logger.e(task.getFilename() + "--下载完成，通知服务端下载完成");
                             Utils.getAsyncThread().httpService(HTTPContants.CODE_DOWNLOAD_FINISH, JSONObject.parseObject(JSONObject.toJSONString(downloadBean)), HandlerUtil.noCheckGet(), 1);
@@ -286,13 +370,16 @@ public class DownloadService extends Service {
         }
     };
 
-    private DownloadListener downloadListener = new DownloadListener4WithSpeed() {
+    private final DownloadListener downloadListener = new DownloadListener4WithSpeed() {
 
         private long totalLength;
         private String readableTotalLength;
+        private long startTime;
 
         @Override
         public void taskStart(@NonNull DownloadTask task) {
+
+            startTime = System.currentTimeMillis();
         }
 
         @Override
@@ -304,7 +391,7 @@ public class DownloadService extends Service {
                     stringBuffer.append(value);
 
                 }
-                Logger.e(TAG, "requestHeaderFields---Key = " + entry.getKey() + ",Value=" + stringBuffer.toString());
+//                Logger.e(TAG, "requestHeaderFields---Key = " + entry.getKey() + ",Value=" + stringBuffer.toString());
             }
 
         }
@@ -318,7 +405,7 @@ public class DownloadService extends Service {
                     stringBuffer.append(value);
 
                 }
-                Logger.e(TAG, "responseHeaderFields---Key = " + entry.getKey() + ",Value=" + stringBuffer.toString());
+//                Logger.e(TAG, "responseHeaderFields---Key = " + entry.getKey() + ",Value=" + stringBuffer.toString());
             }
 
         }
@@ -340,8 +427,39 @@ public class DownloadService extends Service {
             final String progressStatus = readableOffset + "/" + readableTotalLength;
             final String speed = taskSpeed.speed();
             final String progressStatusWithSpeed = progressStatus + "(" + speed + ")";
+//            final long totalBytesRead = taskSpeed.get
 
-            Logger.e("文件" + task.getFilename() + "---当前下载状态及速度---" + progressStatusWithSpeed);
+//            if (taskSpeed.getBytesPerSecondFromBegin() > maxRate)
+//                Utils.getExecutorService().submit(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                        stopTasks();
+//                        long time = System.currentTimeMillis();
+//                        if (time > startTime) {
+//
+//                            int sleep = (int) (currentOffset * 8 * 1000 / maxRate - (time - startTime));
+//                            try{
+//                                Thread.sleep(sleep + 500);
+//                            } catch (InterruptedException e) {
+//                                Logger.e(e.getMessage());
+//                            }
+//
+//                        }
+//                        startTasks(true);
+//
+//                    }
+//                });
+
+
+
+            DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
+
+
+            Logger.e(TAG, "-->speed: " + task.getFilename()
+                    + "---当前状态-(" + speed.substring(0, speed.indexOf(" ")) + ")--" + progressStatusWithSpeed
+                    + "- " + (System.currentTimeMillis() - downloadBean.startTimestamp)/1000 + "s -"
+            );
         }
 
         @Override
@@ -355,8 +473,8 @@ public class DownloadService extends Service {
         }
     };
     DownloadListener combinedListener = new DownloadListenerBunch.Builder()
-            .append(listener)
             .append(downloadListener)
+            .append(listener)
             .build();
     private DownloadListener updateListener = new DownloadListener2() {//更新下载apk
         @Override
@@ -667,17 +785,22 @@ public class DownloadService extends Service {
         final DownloadContext.QueueSet set = new DownloadContext.QueueSet();
         final File parentFile = new File(downloadPath);
         set.setParentPathFile(parentFile);
-        set.setMinIntervalMillisCallbackProcess(200);
+        set.setMinIntervalMillisCallbackProcess(3000);
+
         builder = set.commit();
         builder.setListener(listener);
         this.context = builder.build();
         taskList = Arrays.asList(this.context.getTasks());
+        maxRate = Integer.parseInt(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, Utils.KEY_DOWNLOAD_SIZE + "").toString());
+        if (maxRate > 512)
+            maxRate = MAX_RATE;
     }
 
 
     public void startTasks(boolean isSerial) {
         if (!this.context.isStarted()) {
-            this.context.start(combinedListener, isSerial);
+//            this.context.start(combinedListener, isSerial);
+            this.context.startOnSerial(combinedListener);
         }
 
     }
@@ -685,7 +808,6 @@ public class DownloadService extends Service {
     public void stopTasks() {
         if (this.context.isStarted()) {
             this.context.stop();
-
         }
     }
 
@@ -793,12 +915,18 @@ public class DownloadService extends Service {
         final DownloadTask task = new DownloadTask.Builder(url, parentFile)
                 .setPriority("1".equals(isUrg) ? 10 : 0)
                 .setFilename(filename)
+                .setPreAllocateLength(false)
+                .setMinIntervalMillisCallbackProcess(3000)
+                .setConnectionCount(1)
 //                .setFlushBufferSize(downloadSpeed * 2)//下载限速60kb
 //                .setReadBufferSize(downloadSpeed * 2)
 //                .setSyncBufferSize(downloadSpeed * 2)
                 .build();
+
+
         builder.bindSetTask(task);
         this.context = builder.build();
+
         taskList = Arrays.asList(this.context.getTasks());
         return task;
     }

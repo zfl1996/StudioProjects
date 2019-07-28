@@ -6,4 +6,5 @@ public class DownloadBean extends RequestBean {
     public String started;
     public String secUsed;
     public String status;
+    public long startTimestamp;
 }
