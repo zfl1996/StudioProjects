@@ -1,25 +1,18 @@
 package com.ads.abcbank.xx.fragment;
 
-import android.app.IntentService;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.pdf.PdfRenderer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.os.ParcelFileDescriptor;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
-import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.Logger;
-import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.view.BaseTempFragment;
 import com.ads.abcbank.xx.model.PdfCacheInfo;
 import com.ads.abcbank.xx.service.CachePdfService;
@@ -28,11 +21,7 @@ import com.ads.abcbank.xx.ui.widget.RecyclerPagerView;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 public class PdfContFragment extends BaseTempFragment {
     private View view;
@@ -214,14 +203,19 @@ public class PdfContFragment extends BaseTempFragment {
         public void onPageSelection(int position) {
             int pos = (position%size+1);
 
-            if (pos == size)
+            if (pos == size) {
+                Logger.e(TAG, "pdf play finish");
+
                 mainHandler.postDelayed(() -> {
-                    if (isVisiable && null != tempView && ActivityManager.getInstance().getTopActivity() == tempView.getContext()){
+                    if (isVisiable && null != tempView && ActivityManager.getInstance().getTopActivity() == tempView.getContext()) {
                         tempView.nextPlay();
+
+                        Logger.e(TAG, "tempView.nextPlay");
                     }
                 }, 5000);
+            }
 
-            txtHint.setText(pos + " / " + size + " / " + position);
+//            txtHint.setText(pos + " / " + size + " / " + position);
 //            ToastUtil.showToast(/*imgView.getContext()*/context, (position%size+1) + "/" + size);
         }
     }
