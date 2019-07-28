@@ -255,9 +255,9 @@ public class TempView extends LinearLayout {
         if (fragmentList.size() == 0) {
             ImageFragment imageFragment = new ImageFragment();
             imageFragment.setTempView(TempView.this);
+            imageFragment.setBean(null);
             fragmentList.add(imageFragment);
         }
-
         try {
             reSetAdapter();
             if (activity != null) {
@@ -275,7 +275,7 @@ public class TempView extends LinearLayout {
     private int errFileSum = 0;
     private int presetSum = 0;
 
-    private void reSetAdapter() {
+    private synchronized void reSetAdapter() {
         if (image != null) {
             image.setVisibility(GONE);
         }
@@ -466,7 +466,8 @@ public class TempView extends LinearLayout {
                                 fragment = new ImageFragment();
                                 break;
                             case "pdf":
-                                fragment = new PdfFragment();
+//                                fragment = new PdfFragment();
+                                fragment = new PdfContFragment();
                                 break;
 //                            case "txt":
 //                                fragment = new TxtFragment();

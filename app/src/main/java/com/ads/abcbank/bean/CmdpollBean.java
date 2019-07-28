@@ -10,16 +10,16 @@ public class CmdpollBean extends RequestBean {
     public Data data = new Data();
 
     public static class Data {
-        public String clientCode;
-        public String clientErrMessage;
+        public String clientCode = "0";
+        public String clientErrMessage = "";
     }
 
-    public CmdpollBean(){
+    public CmdpollBean() {
         String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
         if (!TextUtils.isEmpty(beanStr)) {
             RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
             appId = bean.appId;
-            trCode = bean.trCode;
+            trCode = "cmdpoll";
             trVersion = bean.trVersion;
             cityCode = bean.cityCode;
             brchCode = bean.brchCode;

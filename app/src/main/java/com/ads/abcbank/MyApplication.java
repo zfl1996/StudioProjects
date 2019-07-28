@@ -18,7 +18,7 @@ public class MyApplication extends Application {
         context = this;
 
         registerActivityLifecycleCallbacks(ActivityManager.getInstance());
-        Logger.init(MyApplication.this);
+//        Logger.init(MyApplication.this);
     }
 
     public Context getContext() {

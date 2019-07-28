@@ -237,14 +237,14 @@ public class FileUtil {
 
     public static void writeJsonToFile(String json) {
 //        Logger.e("播放列表信息：",json);
-//        try {
-//            String filePath = getDownSave() + "playlist.json";
-//            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true), "UTF-8"));
-//            bw.write(json);
-//            bw.flush();
-//        } catch (IOException e) {
-//            Logger.e(TAG, "write json to file failed");
-//        }
+        try {
+            String filePath = getDownSave() + "playlist.json";
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true), "UTF-8"));
+            bw.write(json);
+            bw.flush();
+        } catch (IOException e) {
+            Logger.e(TAG, "write json to file failed");
+        }
     }
 
     /**

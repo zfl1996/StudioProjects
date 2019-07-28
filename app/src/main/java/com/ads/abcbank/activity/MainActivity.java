@@ -316,6 +316,7 @@ public class MainActivity extends BaseActivity implements IMainView {
         bean = new RegisterBean();
         bean.appId = appId.getText().toString();
         bean.trCode = "register";
+        bean.trVersion = "v1";
         bean.cityCode = cityCode.getText().toString();
         bean.brchCode = brchCode.getText().toString();
         bean.clientVersion = clientVersion.getText().toString();

@@ -362,6 +362,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
         bean = new RegisterBean();
         bean.appId = appId.getText().toString();
         bean.trCode = "register";
+        bean.trVersion = "v1";
         bean.cityCode = cityCode.getText().toString();
         bean.brchCode = brchCode.getText().toString();
         bean.clientVersion = clientVersion.getText().toString();

@@ -209,7 +209,8 @@ public abstract class BaseTempFragment extends Fragment {
             ImageView iv = view.findViewById(R.id.iv);
             TextView tips = view.findViewById(R.id.tips);
 
-            Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.movie);
+//            Bitmap logoBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+            Bitmap logoBitmap = null;
             if (Utils.getRegisterBean(context) != null) {
                 Bitmap qrCodeBitmap = QRCodeUtil.createQRCodeBitmap(qr.QRLink.replace("$storeId", Utils.getRegisterBean(context).data.storeId)
                                 .replace("$terminalId", Utils.getRegisterBean(context).terminalId), 130,
@@ -222,11 +223,11 @@ public abstract class BaseTempFragment extends Fragment {
                         null, logoBitmap, 0.2F);
                 iv.setImageBitmap(qrCodeBitmap);
             }
-            if (i==0) {
-                iv.setImageResource(R.mipmap.abcqrcode);
-            } else  if (i==1){
-                iv.setImageResource(R.mipmap.abcqrcode1);
-            }
+//            if (i==0) {
+//                iv.setImageResource(R.mipmap.abcqrcode);
+//            } else  if (i==1){
+//                iv.setImageResource(R.mipmap.abcqrcode1);
+//            }
             tips.setText(qr.QRTip);
             LinearLayout layout = new LinearLayout(context);
             layout.addView(view);
