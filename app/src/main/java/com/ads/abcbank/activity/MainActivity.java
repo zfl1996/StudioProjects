@@ -161,8 +161,8 @@ public class MainActivity extends BaseActivity implements IMainView {
                 appIdAddress.setText(ip);
             }
 
-        server.setText("testblock.huiyao.mobi/ibcs/player/v1");
-        cdn.setText("testblock.huiyao.mobi");
+            server.setText("testblock.huiyao.mobi/ibcs/player/v1");
+            cdn.setText("testblock.huiyao.mobi");
 
 //            server.setText("10.233.93.110:315/ibcs/player/v1");
 //            cdn.setText("10.233.93.110:315");
