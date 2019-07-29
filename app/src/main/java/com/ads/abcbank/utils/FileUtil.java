@@ -236,10 +236,23 @@ public class FileUtil {
     }
 
     public static void writeJsonToFile(String json) {
+////        Logger.e("播放列表信息：",json);
+//        try {
+//            String filePath = getDownSave() + "playlist.json";
+//            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true), "UTF-8"));
+//            bw.write(json);
+//            bw.flush();
+//        } catch (IOException e) {
+//            Logger.e(TAG, "write json to file failed");
+//        }
+        writeJsonToFile(json, true);
+    }
+
+    public static void writeJsonToFile(String json, boolean isAppend) {
 //        Logger.e("播放列表信息：",json);
         try {
             String filePath = getDownSave() + "playlist.json";
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true), "UTF-8"));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, isAppend), "UTF-8"));
             bw.write(json);
             bw.flush();
         } catch (IOException e) {

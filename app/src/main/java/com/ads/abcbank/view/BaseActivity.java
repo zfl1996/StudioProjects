@@ -295,7 +295,7 @@ public class BaseActivity extends AppCompatActivity {
                     baseHandler.postDelayed(playlistRunnable, handlerTime * 60 * 1000);
                     if (Utils.IS_TEST) {
                         msg.obj = Utils.getStringFromAssets("playlist.json", activity).toString();
-                        FileUtil.writeJsonToFile(msg.obj.toString());
+                        FileUtil.writeJsonToFile(msg.obj.toString(), false);
                         if (Utils.getNewPlayList(activity, msg.obj.toString())) {
                             if (activity != null && activity instanceof IView) {
                                 ((IView) activity).updateMainDate(JSONObject.parseObject(msg.obj.toString()));

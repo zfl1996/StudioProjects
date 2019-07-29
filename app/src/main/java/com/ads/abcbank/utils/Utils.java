@@ -111,8 +111,8 @@ public class Utils {
     public static final int KEY_DOWNLOAD_SIZE = 512;//下载限速
 
     public static final int KEY_TIME_PRESET_DEFAULT = 30;//切换汇率tab的秒数默认值
-    public static final int KEY_TIME_IMG_DEFAULT = 20;//切换图片tab的秒数默认值
-    public static final int KEY_TIME_FILE_DEFAULT = 360;//切换图片tab的秒数默认值
+    public static final int KEY_TIME_IMG_DEFAULT = 5;//切换图片tab的秒数默认值
+    public static final int KEY_TIME_FILE_DEFAULT = 60;//切换图片tab的秒数默认值
 
     public static final String KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
     public static final String KEY_TIME_CURRENT_PRESET = "timeCurrentPreset";//记录当前获取汇率的分钟数
