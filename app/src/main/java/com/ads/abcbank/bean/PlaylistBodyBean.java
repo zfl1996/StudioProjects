@@ -1,5 +1,7 @@
 package com.ads.abcbank.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.ads.abcbank.utils.ActivityManager;
@@ -8,7 +10,7 @@ import com.alibaba.fastjson.JSON;
 
 import java.util.List;
 
-public class PlaylistBodyBean extends RequestBean {
+public class PlaylistBodyBean extends RequestBean /*implements Parcelable*/ {
     public String id;
     public String name;
     public String playDate;
@@ -24,6 +26,17 @@ public class PlaylistBodyBean extends RequestBean {
     public String secUsed;
     public String status;
     public List<QR> QRCode;
+
+    /*
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }*/
 
     public static class QR {
         public String QRLink;

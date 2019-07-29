@@ -73,7 +73,7 @@ public class DownloadService extends Service {
     public static final String DELETE_FILE_12 = "com.ads.abcbank.deletefile12";
     public static final String PACKAGE = "com.ads.abcbank";
     public static final String TASKS_CHANGED = "com.ads.abcbank.taskchanged";
-    public static final Integer MAX_RATE = 1024;
+    public static final Integer MAX_RATE = 64;
 
 
     private static final String TAG = "DownloadService";
