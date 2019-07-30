@@ -1,14 +1,11 @@
 package com.ads.abcbank.activity;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.InitResultBean;
@@ -22,13 +19,13 @@ import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IMainView;
+import com.ads.abcbank.xx.activity.TempV2Activity;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class WelcomeActivity extends BaseActivity implements IMainView {
     private MainPresenter mainPresenter;
@@ -131,7 +128,8 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                         intent.setClass(WelcomeActivity.this, Temp1Activity.class);
                         break;
                     case "2":
-                        intent.setClass(WelcomeActivity.this, Temp2Activity.class);
+//                        intent.setClass(WelcomeActivity.this, Temp2Activity.class);
+                        intent.setClass(WelcomeActivity.this, TempV2Activity.class);
                         break;
                     case "3":
                         intent.setClass(WelcomeActivity.this, Temp3Activity.class);
@@ -229,7 +227,8 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                                     intent.setClass(WelcomeActivity.this, Temp1Activity.class);
                                     break;
                                 case "2":
-                                    intent.setClass(WelcomeActivity.this, Temp2Activity.class);
+//                                    intent.setClass(WelcomeActivity.this, Temp2Activity.class);
+                                    intent.setClass(WelcomeActivity.this, TempV2Activity.class);
                                     break;
                                 case "3":
                                     intent.setClass(WelcomeActivity.this, Temp3Activity.class);
@@ -296,7 +295,8 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                             intent.setClass(WelcomeActivity.this, Temp1Activity.class);
                             break;
                         case "2":
-                            intent.setClass(WelcomeActivity.this, Temp2Activity.class);
+//                            intent.setClass(WelcomeActivity.this, Temp2Activity.class);
+                            intent.setClass(WelcomeActivity.this, TempV2Activity.class);
                             break;
                         case "3":
                             intent.setClass(WelcomeActivity.this, Temp3Activity.class);

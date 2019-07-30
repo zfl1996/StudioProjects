@@ -13,7 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
+        android:visibility="gone"
         android:src="@mipmap/bg_port"
         android:maxWidth="90000px"
         android:scaleType="fitCenter" />
+    <TextView android:id="@+id/txtHint"
+        android:textSize="16.0sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3.0dip"
+        android:layout_gravity="right|bottom"/>
 </RelativeLayout>

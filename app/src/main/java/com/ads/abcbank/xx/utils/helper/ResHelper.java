@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 
-import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.xx.utils.Constants;
 
 import java.io.BufferedOutputStream;
@@ -73,6 +72,13 @@ public class ResHelper {
         String[] fileExtInfo = getFileExtInfo(fileName);
 
         return s + fileExtInfo[0] + "/";
+    }
+
+    public static String getRootDir() {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+            return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Constants.ROOT_FILE_NAME + "/";
+        else
+            return null;
     }
 
     public static String getPdfDir() {

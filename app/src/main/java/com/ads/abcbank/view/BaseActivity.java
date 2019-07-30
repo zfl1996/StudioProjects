@@ -23,7 +23,6 @@ import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.bean.RequestBean;
 import com.ads.abcbank.service.DownloadService;
-import com.ads.abcbank.service.TimeCmdService;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
@@ -51,8 +50,8 @@ public class BaseActivity extends AppCompatActivity {
 //        netChangeReceiver = new NetChangeReceiver();
         mActivity = this;
         if (this instanceof IView) {
-            registerDateTransReceiver();
-            registerDowloadStatusReceiver();
+//            registerDateTransReceiver();
+//            registerDowloadStatusReceiver();
         }
     }
 
@@ -143,7 +142,8 @@ public class BaseActivity extends AppCompatActivity {
 //        }
         if (this instanceof IView) {
             try {
-                unregisterReceiver(downloadStatus);
+                if (null != downloadStatus)
+                    unregisterReceiver(downloadStatus);
             } catch (Exception e) {
                 Logger.e(BaseActivity.class.toString(), e.toString());
             }
@@ -156,8 +156,8 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (this instanceof IView) {
-            startDownloadService();
-            startHandler();
+//            startDownloadService();
+//            startHandler();
         }
     }
 
