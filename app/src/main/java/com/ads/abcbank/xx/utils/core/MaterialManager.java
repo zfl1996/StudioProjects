@@ -116,7 +116,7 @@ int i=0;
                     } else {
                         playlist.add(bodyBean);
                     }
-if (i >8 )
+if (i >7 )
                     allPlayItems.add(new PlayItem(bodyBean.md5,
                             BllDataExtractor.getIdentityPath(bodyBean),
                             BllDataExtractor.getIdentityType(bodyBean) ));

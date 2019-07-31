@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
+    android:paddingLeft="8.0dip"
+    android:paddingRight="8.0dip"
     android:background="#08ffffff"
     android:orientation="horizontal">
         <TextView
@@ -21,7 +23,7 @@
         <View
             android:layout_width="5px"
             android:layout_height="match_parent"
-            android:background="#ffffff" />
+            android:background="#08ffffff" />
         <TextView
             android:id="@+id/tv_key"
             android:layout_width="match_parent"
