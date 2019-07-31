@@ -6,6 +6,7 @@
         android:id="@+id/rpSlider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:foregroundGravity="center"
         android:background="@android:color/white"
         android:contentDescription="@null" />
     <ImageView

@@ -14,7 +14,7 @@ import android.view.View;
 
 public class RecyclerPagerView extends RecyclerView implements Handler.Callback {
 
-    private static final long TASK_TIMEOUT = 5000;
+    private static final long TASK_TIMEOUT = 3000;
     public OnPageChangeListener onPageChangeListener;
 
     private final Handler mRecyclerHandler;

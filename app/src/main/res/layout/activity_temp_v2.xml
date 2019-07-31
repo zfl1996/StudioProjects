@@ -35,21 +35,21 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:onClick="toMainView" />
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-        <com.pili.pldroid.player.widget.PLVideoView
-            android:id="@+id/pl_video_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:keepScreenOn="true">
-        </com.pili.pldroid.player.widget.PLVideoView>
+    <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" >-->
+        <!--<com.pili.pldroid.player.widget.PLVideoView-->
+            <!--android:id="@+id/pl_video_view"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:keepScreenOn="true">-->
+        <!--</com.pili.pldroid.player.widget.PLVideoView>-->
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
-    </FrameLayout>
+        <!--<ProgressBar-->
+            <!--android:id="@+id/progress_bar"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"/>-->
+    <!--</FrameLayout>-->
 </RelativeLayout>

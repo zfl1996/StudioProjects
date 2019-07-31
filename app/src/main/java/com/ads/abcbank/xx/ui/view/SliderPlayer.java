@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.ads.abcbank.R;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.SliderAdapter;
+import com.ads.abcbank.xx.ui.adapter.SliderMainAdapter;
 import com.ads.abcbank.xx.ui.widget.RecyclerPagerView;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
 
@@ -24,9 +25,8 @@ public class SliderPlayer extends LinearLayout {
     TextView txtHint;
     RecyclerPagerView rpSlider;
 
-//    List<PlayItem> allPlayItems = new ArrayList<>();
     MaterialManager materialManager;
-    SliderAdapter sliderAdapter;
+    SliderMainAdapter sliderAdapter;
 
     public SliderPlayer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -36,33 +36,32 @@ public class SliderPlayer extends LinearLayout {
     }
 
     private void initPlayer() {
+        // init player view
         View v = LayoutInflater.from(context).inflate(R.layout.widget_ui_sliderplayer, this, true);
 
         imgHolder = findViewById(R.id.imgHolder);
-        rpSlider = findViewById(R.id.rpSlider);
         txtHint = findViewById(R.id.txtHint);
+        rpSlider = findViewById(R.id.rpSlider);
 
-        materialManager = new MaterialManager(context, itemStatusListener);
-        materialManager.initManager();
-    }
-
-    public void start(List<PlayItem> items) {
-        sliderAdapter = new SliderAdapter(context);
+        // init relative to slider data
+        sliderAdapter = new SliderMainAdapter(context);
 
         LinearLayoutManager lm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rpSlider.setLayoutManager(lm);
         rpSlider.setAdapter(sliderAdapter);
 
-        sliderAdapter.addItemDataAndRedraw(items);
-        rpSlider.setOnPageChangeListener(new PagerChangeListener(items.size()));
-        rpSlider.startPlay();
+        // start data process...
+        materialManager = new MaterialManager(context, itemStatusListener);
+        materialManager.initManager();
     }
 
 
     MaterialManager.ItemStatusListener itemStatusListener = new MaterialManager.ItemStatusListener() {
         @Override
         public void onReady(List<PlayItem> items) {
-            start(items);
+            sliderAdapter.addItemDataAndRedraw(items);
+            rpSlider.setOnPageChangeListener(new PagerChangeListener(items.size()));
+            rpSlider.startPlay();
         }
 
         @Override

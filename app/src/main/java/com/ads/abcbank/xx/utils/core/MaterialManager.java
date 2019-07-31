@@ -8,11 +8,13 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
+import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
 
 import java.lang.ref.WeakReference;
@@ -53,7 +55,8 @@ public class MaterialManager {
 
                 switch (msg.what) {
                     case Constants.SLIDER_STATUS_CODE_INIT:
-                        loadPlaylist();
+                        Utils.getExecutorService().submit(() -> loadPlaylist());
+                        Utils.getExecutorService().submit(() -> loadPreset());
 
                         break;
 
@@ -74,25 +77,21 @@ public class MaterialManager {
         playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, null, false));
     }
 
-    private void updateItemStatus(String md5) {
-        itemStatus.put(md5, 1);
+    private void loadPreset() {
+        String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
 
-        for (PlaylistBodyBean bodyBean : playlist) {
-            if (bodyBean.md5.equals(md5)) {
-//                bodyBean.status = "1";
-
-                break;
-            }
+        if (!ResHelper.isNullOrEmpty(json)) {
+            PresetBean bean = JSON.parseObject(json, PresetBean.class);
         }
     }
 
     private void loadPlaylist() {
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
-        if (!TextUtils.isEmpty(json)) {
+        if (!ResHelper.isNullOrEmpty(json)) {
             try {
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
-int i = 0;
+
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
                     itemStatus.put(bodyBean.md5, 0);
 
@@ -102,12 +101,11 @@ int i = 0;
                     } else {
                         playlist.add(bodyBean);
                     }
-                    if (i > 10)
+
                     allPlayItems.add(new PlayItem(bodyBean.md5,
                             BllDataExtractor.getIdentityPath(bodyBean),
                             BllDataExtractor.getIdentityType(bodyBean) ));
 
-                    i++;
                 }
 
                 uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
@@ -118,6 +116,18 @@ int i = 0;
         } else {
             txtlist.clear();
             playlist.clear();
+        }
+    }
+
+    private void updateItemStatus(String md5) {
+        itemStatus.put(md5, 1);
+
+        for (PlaylistBodyBean bodyBean : playlist) {
+            if (bodyBean.md5.equals(md5)) {
+//                bodyBean.status = "1";
+
+                break;
+            }
         }
     }
 

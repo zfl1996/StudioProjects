@@ -16,8 +16,13 @@
         android:id="@+id/videoStub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
         android:inflatedId="@+id/videoContent"
         android:layout="@layout/widget_ui_slider_item_video"/>
+
+    <ViewStub
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <TextView android:id="@+id/txtHint"
         android:textSize="16.0sp"

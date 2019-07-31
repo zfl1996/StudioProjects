@@ -35,8 +35,7 @@ public class SliderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void addItemDataAndRedraw(List<PlayItem> data){
-        dataList.clear();
-//        dataList = data;
+//        dataList.clear();
         dataList.addAll(data);
         notifyDataSetChanged();
     }
@@ -62,7 +61,7 @@ public class SliderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         PlayItem item = dataList.get(position);
         _holder.videoPath = "";
 
-        if (item.getMediaType() == 0)
+        if (item.getMediaType() == 0) {
             Glide.with(mContent)
                     .load(item.getUrl())
                     .placeholder(R.drawable.default_background)
@@ -71,7 +70,8 @@ public class SliderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .dontAnimate()
                     .into(_holder.getImgContent());
-        else if (item.getMediaType() == 2)
+            _holder.imgContent.setVisibility(View.VISIBLE);
+        } else if (item.getMediaType() == 2)
             _holder.videoPath = item.getUrl();
 
         _holder.txtHint.setText("" + position);
@@ -94,7 +94,8 @@ public class SliderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         SliderAdapter.MainViewHolder _holder = (SliderAdapter.MainViewHolder) holder;
 
         if (!ResHelper.isNullOrEmpty(_holder.videoPath)) {
-            _holder.getmVideoView().setDisplayAspectRatio(PLVideoTextureView.ASPECT_RATIO_PAVED_PARENT);
+            _holder.imgContent.setVisibility(View.GONE);
+//            _holder.getmVideoView().setDisplayAspectRatio(PLVideoTextureView.ASPECT_RATIO_PAVED_PARENT);
             _holder.getmVideoView().setVideoPath(_holder.videoPath);
             _holder.getmVideoView().start();
         }

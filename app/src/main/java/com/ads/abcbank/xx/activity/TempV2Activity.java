@@ -26,7 +26,7 @@ public class TempV2Activity extends BaseActivity implements IView {
     AutoPollRecyclerView rvMarqueeView;
     View v_set;
 //    MarqueeView rvMarqueeView;
-    PLVideoView mPlVideoView;
+//    PLVideoView mPlVideoView;
 
     ArrayList<String> data = new ArrayList<String>() {
         {
@@ -46,41 +46,41 @@ public class TempV2Activity extends BaseActivity implements IView {
         setiView(this);
 
         initCtrls();
-        initPlayer();
+//        initPlayer();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mPlVideoView.start();//开始播放
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        mPlVideoView.start();//开始播放
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        mPlVideoView.pause();//暂停播放
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        mPlVideoView.stopPlayback();//释放资源
+//    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mPlVideoView.pause();//暂停播放
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mPlVideoView.stopPlayback();//释放资源
-    }
-
-
-    void initPlayer() {
-        mPlVideoView = findViewById(R.id.pl_video_view);
-        String path = "/storage/emulated/0/ibcsPlayerData/videos/icbcs-jceeezjnk8y7q6kz.mp4";
-//        String path = "http://hc.yinyuetai.com/uploads/videos/common/2B40015FD4683805AAD2D7D35A80F606.mp4?sc=364e86c8a7f42de3&br=783&rd=Android";
-        //设置Video的路径
-        mPlVideoView.setVideoPath(path);
-        //设置MediaController，这里是拷贝官方Demo的MediaController，当然可以自己实现一个
-        mPlVideoView.setMediaController(new MediaController(this));
-        //设置视频预览模式
-        mPlVideoView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_PAVED_PARENT);
-        //设置加载进度的布局
-        mPlVideoView.setBufferingIndicator(findViewById(R.id.progress_bar));
-    }
+//    void initPlayer() {
+//        mPlVideoView = findViewById(R.id.pl_video_view);
+//        String path = "/storage/emulated/0/ibcsPlayerData/videos/icbcs-jceeezjnk8y7q6kz.mp4";
+////        String path = "http://hc.yinyuetai.com/uploads/videos/common/2B40015FD4683805AAD2D7D35A80F606.mp4?sc=364e86c8a7f42de3&br=783&rd=Android";
+//        //设置Video的路径
+//        mPlVideoView.setVideoPath(path);
+//        //设置MediaController，这里是拷贝官方Demo的MediaController，当然可以自己实现一个
+//        mPlVideoView.setMediaController(new MediaController(this));
+//        //设置视频预览模式
+//        mPlVideoView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_PAVED_PARENT);
+//        //设置加载进度的布局
+//        mPlVideoView.setBufferingIndicator(findViewById(R.id.progress_bar));
+//    }
 
     private void initCtrls() {
         sliderPlayer = findViewById(R.id.sliderPlayer);
