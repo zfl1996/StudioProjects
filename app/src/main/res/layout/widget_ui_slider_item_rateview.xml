@@ -29,8 +29,6 @@
         android:layout_below="@+id/txtTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:padding="8.0dip"
         android:background="#08ffffff"
         android:orientation="horizontal">
         <TextView
@@ -38,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_vertical|left"
+            android:gravity="center"
             android:lineSpacingExtra="2px"
             android:paddingBottom="10px"
             android:paddingLeft="10px"
@@ -46,10 +44,6 @@
             android:textColor="#fff"
             android:textSize="@dimen/tab_text_super"
             android:text="项目" />
-        <View
-            android:layout_width="5px"
-            android:layout_height="match_parent"
-            android:background="#08ffffff" />
         <TextView
             android:id="@+id/tv_key"
             android:layout_width="match_parent"
@@ -66,12 +60,21 @@
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvRate"
-        android:background="#2B363F"
+        android:layout_marginTop="5px"
+        android:layout_marginBottom="5px"
+        android:background="#08ffffff"
         android:layout_below="@+id/llTableHeader"
-        android:layout_above="@+id/tv_bottom"
+        android:layout_above="@+id/txtDesc"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:layout_width="5px"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/rvRate"
+        android:layout_alignTop="@id/llTableHeader"
+        android:layout_centerHorizontal="true"
+        android:background="#2B363F"/>
     <TextView
         android:id="@+id/txtDesc"
         android:layout_width="match_parent"
