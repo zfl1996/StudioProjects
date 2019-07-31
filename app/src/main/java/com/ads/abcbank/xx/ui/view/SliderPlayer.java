@@ -27,6 +27,12 @@ public class SliderPlayer extends LinearLayout {
 
     MaterialManager materialManager;
     SliderMainAdapter sliderAdapter;
+    DataStatusListener dataStatusListener;
+
+    public void setDataStatusListener(DataStatusListener dataStatusListener) {
+        this.dataStatusListener = dataStatusListener;
+    }
+
 
     public SliderPlayer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -69,6 +75,18 @@ public class SliderPlayer extends LinearLayout {
             sliderAdapter.addItemDataAndRedraw(item);
             rpSlider.startPlay();
         }
+
+        @Override
+        public void onNewItemsAdded(List<PlayItem> items) {
+            sliderAdapter.addItemDataAndPortionRedraw(items);
+            rpSlider.startPlay();
+        }
+
+        @Override
+        public void onWelcome(List<String> items) {
+            if (null != dataStatusListener)
+                dataStatusListener.onWelcome(items);
+        }
     };
 
     public class PagerChangeListener extends RecyclerPagerView.OnPageChangeListener {
@@ -94,5 +112,8 @@ public class SliderPlayer extends LinearLayout {
 
     }
 
+    public interface DataStatusListener {
+        void onWelcome(List<String> items);
+    }
 
 }

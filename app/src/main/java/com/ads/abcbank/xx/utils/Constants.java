@@ -13,6 +13,8 @@ public class Constants {
     public static final int SLIDER_STATUS_CODE_OK = 0x200;
     public static final int SLIDER_STATUS_CODE_INIT = 0x201;
     public static final int SLIDER_STATUS_CODE_UPDATE = 0x202;
+    public static final int SLIDER_STATUS_CODE_WELCOME = 0x203;
+    public static final int SLIDER_STATUS_CODE_RATE = 0x204;
 
     public static final int SLIDER_HOLDER_IMAGE = 0;
     public static final int SLIDER_HOLDER_PDF = 1;

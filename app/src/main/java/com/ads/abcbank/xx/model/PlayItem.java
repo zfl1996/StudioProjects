@@ -3,7 +3,7 @@ package com.ads.abcbank.xx.model;
 public class PlayItem {
     String md5;
     String url;
-    String attData;
+    Object attData;
     /*
      * 0 -- Image
      * 1 -- PDF
@@ -24,6 +24,11 @@ public class PlayItem {
         this.mediaType = mediaType;
     }
 
+    public PlayItem(int mediaType, Object attData) {
+        this.mediaType = mediaType;
+        this.attData = attData;
+    }
+
     public String getMd5() {
         return md5;
     }
@@ -40,11 +45,11 @@ public class PlayItem {
         this.url = url;
     }
 
-    public String getAttData() {
+    public Object getAttData() {
         return attData;
     }
 
-    public void setAttData(String attData) {
+    public void setAttData(Object attData) {
         this.attData = attData;
     }
 

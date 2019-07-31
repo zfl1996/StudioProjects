@@ -1,4 +1,4 @@
 package com.ads.abcbank.xx.ui.adapter.holder;
 
-public class SliderLoanRateHolder {
+public class SliderRateBuyHolder {
 }

@@ -24,16 +24,16 @@ public class BllDataExtractor {
             case "wmv":
             case "avi":
             case "rmvb":
-                return 2;
+                return Constants.SLIDER_HOLDER_VIDEO;
             case "jpg":
             case "png":
             case "bmp":
             case "jpeg":
-                return 0;
+                return Constants.SLIDER_HOLDER_IMAGE;
             case "pdf":
-                return 1;
+                return Constants.SLIDER_HOLDER_PDF;
             case "txt":
-                return 3;
+                return Constants.SLIDER_HOLDER_TEXT;
             case "wps":
             default:
                 return -1;

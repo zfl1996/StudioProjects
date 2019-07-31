@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.ads.abcbank.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,11 +17,11 @@ import java.util.List;
 
 public class AutoPollAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private final Context mContext;
-    private final List<String> mData;
+    private final List<String> mData = new ArrayList<>();
 
     public AutoPollAdapter(Context context, List<String> list) {
         this.mContext = context;
-        this.mData = list;
+        mData.addAll(list);
     }
 
     @Override

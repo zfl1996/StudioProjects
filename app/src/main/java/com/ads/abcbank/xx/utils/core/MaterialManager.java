@@ -35,7 +35,6 @@ public class MaterialManager {
     String deviceModeData;
     List<PlaylistBodyBean> playlist = new ArrayList<>();
     List<PlaylistBodyBean> txtlist = new ArrayList<>();
-//    List<String> imgArr = new ArrayList<>();
     Map<String, Integer> itemStatus = new HashMap<>();
 
     public MaterialManager(Context context, ItemStatusListener itemStatusListener) {
@@ -57,6 +56,7 @@ public class MaterialManager {
                     case Constants.SLIDER_STATUS_CODE_INIT:
                         Utils.getExecutorService().submit(() -> loadPlaylist());
                         Utils.getExecutorService().submit(() -> loadPreset());
+                        Utils.getExecutorService().submit(() -> getWelcome());
 
                         break;
 
@@ -82,6 +82,21 @@ public class MaterialManager {
 
         if (!ResHelper.isNullOrEmpty(json)) {
             PresetBean bean = JSON.parseObject(json, PresetBean.class);
+
+            List<PlayItem> presetItems = new ArrayList<>();
+
+            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_SAVE,
+                    bean.data.saveRate ) );
+            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_LOAN,
+                    bean.data.loanRate ) );
+            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY,
+                    bean.data.buyInAndOutForeignExchange ) );
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
         }
     }
 
@@ -91,7 +106,7 @@ public class MaterialManager {
             try {
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
-
+int i=0;
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
                     itemStatus.put(bodyBean.md5, 0);
 
@@ -101,11 +116,11 @@ public class MaterialManager {
                     } else {
                         playlist.add(bodyBean);
                     }
-
+if (i >8 )
                     allPlayItems.add(new PlayItem(bodyBean.md5,
                             BllDataExtractor.getIdentityPath(bodyBean),
                             BllDataExtractor.getIdentityType(bodyBean) ));
-
+i++;
                 }
 
                 uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
@@ -117,6 +132,21 @@ public class MaterialManager {
             txtlist.clear();
             playlist.clear();
         }
+    }
+
+    private void getWelcome() {
+        List<String> welcomeItems = new ArrayList<String>() {
+            {
+                add("中国农业银行欢迎您");
+                add("中国农业银行欢迎您");
+                add("中国农业银行欢迎您");
+                add("中国农业银行欢迎您");
+                add("中国农业银行欢迎您");
+                add("中国农业银行欢迎您");
+            }
+        };
+
+        uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME, welcomeItems, true));
     }
 
     private void updateItemStatus(String md5) {
@@ -152,12 +182,12 @@ public class MaterialManager {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            ItemStatusListener _itemStatusListener = getRefListener();
 
             switch (msg.what) {
                 case Constants.SLIDER_STATUS_CODE_INIT:
                     List<PlayItem> allPlayItems = (List<PlayItem>)msg.obj;
 
-                    ItemStatusListener _itemStatusListener = getRefListener();
                     if (null != _itemStatusListener) {
                         _itemStatusListener.onReady(allPlayItems);
 
@@ -166,6 +196,23 @@ public class MaterialManager {
                                     "https://pics0.baidu.com/feed/08f790529822720e8a822cb4f2e03f43f31fabe5.jpeg?token=a031733d29d2483ebcdd70c6d069842c&s=84FA7B849BFB11863488CD3203008091",
                                     0));
                         }, 3000);
+                    }
+
+                    break;
+
+                case Constants.SLIDER_STATUS_CODE_WELCOME:
+                    List<String> welcomeItems = (List<String>) msg.obj;
+
+                    if (null != _itemStatusListener) {
+                        _itemStatusListener.onWelcome(welcomeItems);
+                    }
+
+
+                    break;
+
+                case Constants.SLIDER_STATUS_CODE_RATE:
+                    if (null != _itemStatusListener) {
+                        _itemStatusListener.onNewItemsAdded((List<PlayItem>)msg.obj);
                     }
 
                     break;
@@ -180,6 +227,8 @@ public class MaterialManager {
     public interface ItemStatusListener {
         void onReady(List<PlayItem> items);
         void onNewItemAdded(PlayItem item);
+        void onNewItemsAdded(List<PlayItem> items);
+        void onWelcome(List<String> items);
     }
 
 }

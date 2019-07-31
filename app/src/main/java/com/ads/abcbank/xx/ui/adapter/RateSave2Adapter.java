@@ -2,6 +2,7 @@ package com.ads.abcbank.xx.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
+import com.ads.abcbank.xx.utils.helper.ResHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -44,16 +46,16 @@ public class RateSave2Adapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         RateDoubleHolder _holder = (RateDoubleHolder) holder;
         PresetBean.SaveRate.SaveRateItem rate = dataList.get(position);
+        String pre = ResHelper.isNullOrEmpty(rate.placeholder) ? "" : rate.placeholder.replace("\\t", "\t");
 
-        _holder.txtPre.setText(rate.item);
-        _holder.txtKey.setText(rate.saveRate);
-
+        _holder.txtPre.setText(pre + (ResHelper.isNullOrEmpty(rate.item) ? "" : rate.item));
+        _holder.txtKey.setText(ResHelper.isNullOrEmpty(rate.saveRate) ? "" : rate.saveRate );
     }
 
-    @Override
-    public int getItemViewType(int position){
-        return super.getItemViewType(position);
-    }
+//    @Override
+//    public int getItemViewType(int position){
+//        return super.getItemViewType(position);
+//    }
 
 
     @Override

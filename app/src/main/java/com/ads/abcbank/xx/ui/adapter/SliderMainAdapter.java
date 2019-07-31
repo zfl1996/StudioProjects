@@ -10,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderImageHolder;
+import com.ads.abcbank.xx.ui.adapter.holder.SliderRateSaveHolder;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
@@ -22,6 +24,7 @@ import com.pili.pldroid.player.widget.PLVideoTextureView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
@@ -48,6 +51,13 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemRangeChanged(dataList.size() - 2, 1);
     }
 
+    public void addItemDataAndPortionRedraw(List<PlayItem> dataItem) {
+        dataList.addAll(dataItem);
+
+//        notifyDataSetChanged();
+        notifyItemRangeChanged(dataList.size() - dataItem.size(), dataItem.size());
+    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -55,8 +65,10 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             return new SliderImageHolder(inflater.inflate(R.layout.widget_ui_slider_item_img, parent, false));
         else if (Constants.SLIDER_HOLDER_VIDEO == viewType)
             return new SliderVideoHolder(inflater.inflate(R.layout.widget_ui_slider_item_video, parent, false));
+        else if (Constants.SLIDER_HOLDER_RATE_SAVE == viewType)
+            return new SliderRateSaveHolder(inflater.inflate(R.layout.widget_ui_slider_item_rateview, parent, false));
         else
-            return null;
+            return new SliderImageHolder(inflater.inflate(R.layout.widget_ui_slider_item_img, parent, false));
     }
 
     @Override
@@ -67,6 +79,13 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             SliderImageHolder.showImage(item, ((SliderImageHolder)holder).getImgContent());
         else if (holder instanceof SliderVideoHolder)
             ((SliderVideoHolder) holder).setVideoPath(item.getUrl());
+        else if (holder instanceof SliderRateSaveHolder) {
+            SliderRateSaveHolder _holder = ((SliderRateSaveHolder) holder);
+            SliderRateSaveHolder.showRate((PresetBean.SaveRate)item.getAttData(),
+                    _holder.getTxtDesc(),
+                    _holder.getTxtTitle(),
+                    _holder.getRvRate());
+        }
 
     }
 

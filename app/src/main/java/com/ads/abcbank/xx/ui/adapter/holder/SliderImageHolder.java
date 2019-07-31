@@ -6,6 +6,7 @@ import android.widget.ImageView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.xx.model.PlayItem;
+import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -24,14 +25,15 @@ public class SliderImageHolder extends RecyclerView.ViewHolder {
     }
 
     public static void showImage(PlayItem item, ImageView imageView) {
-        Glide.with(imageView.getContext())
-                .load(item.getUrl())
-                .placeholder(R.drawable.default_background)
-                .error(R.drawable.default_background)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .dontAnimate()
-                .into(imageView);
+        if (!ResHelper.isNullOrEmpty(item.getUrl()))
+            Glide.with(imageView.getContext())
+                    .load(item.getUrl())
+                    .placeholder(R.drawable.default_background)
+                    .error(R.drawable.default_background)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .dontAnimate()
+                    .into(imageView);
     }
 
 }
