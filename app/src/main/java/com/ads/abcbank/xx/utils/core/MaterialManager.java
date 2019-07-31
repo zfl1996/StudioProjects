@@ -92,7 +92,7 @@ public class MaterialManager {
             try {
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
-
+int i = 0;
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
                     itemStatus.put(bodyBean.md5, 0);
 
@@ -102,10 +102,12 @@ public class MaterialManager {
                     } else {
                         playlist.add(bodyBean);
                     }
-
+                    if (i > 10)
                     allPlayItems.add(new PlayItem(bodyBean.md5,
                             BllDataExtractor.getIdentityPath(bodyBean),
                             BllDataExtractor.getIdentityType(bodyBean) ));
+
+                    i++;
                 }
 
                 uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));

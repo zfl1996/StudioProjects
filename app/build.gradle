@@ -63,7 +63,7 @@ android {
         }
     }
 
-    buildToolsVersion '26.0.3'
+//    buildToolsVersion '26.0.3'
     lintOptions {
         checkReleaseBuilds false
         // Or, if you prefer, you can continue to check for errors in release builds,
@@ -108,6 +108,7 @@ dependencies {
     implementation files('libs/commons-validator-1.6-javadoc.jar')
     implementation files('libs/commons-validator-1.6-tests.jar')
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.1'
+    implementation files('libs/pldroid-player-2.1.8.jar')
 
     api('com.arialyy.aria:aria-core:3.6.5'){
         exclude group: 'com.android.support'

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000">
+
+    <ViewStub
+        android:id="@+id/imgStub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inflatedId="@+id/imgContainer"
+        android:layout="@layout/widget_ui_slider_item_img"/>
+
+    <ViewStub
+        android:id="@+id/videoStub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inflatedId="@+id/videoContent"
+        android:layout="@layout/widget_ui_slider_item_video"/>
+
+    <TextView android:id="@+id/txtHint"
+        android:textSize="16.0sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3.0dip"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true" />
+    <include layout="@layout/item_qrs_layout" />
+</RelativeLayout>
