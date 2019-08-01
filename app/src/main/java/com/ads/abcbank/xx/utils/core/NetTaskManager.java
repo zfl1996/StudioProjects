@@ -7,7 +7,6 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.ads.abcbank.bean.CmdpollBean;
-import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.bean.RequestBean;
@@ -16,8 +15,6 @@ import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.Utils;
-import com.ads.abcbank.view.BaseActivity;
-import com.ads.abcbank.view.IView;
 import com.ads.abcbank.xx.utils.Constants;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

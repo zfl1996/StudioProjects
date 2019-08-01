@@ -4,9 +4,8 @@ import android.app.Application;
 import android.content.Context;
 
 import com.ads.abcbank.utils.ActivityManager;
-import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.ScreenAdaptation;
-import com.ads.abcbank.utils.Utils;
+import com.arialyy.aria.core.Aria;
 
 public class MyApplication extends Application {
     private Context context;
@@ -19,6 +18,7 @@ public class MyApplication extends Application {
 
         registerActivityLifecycleCallbacks(ActivityManager.getInstance());
 //        Logger.init(MyApplication.this);
+        Aria.init(this);
     }
 
     public Context getContext() {

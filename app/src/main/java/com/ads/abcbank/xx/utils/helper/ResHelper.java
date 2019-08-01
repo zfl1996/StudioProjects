@@ -74,6 +74,53 @@ public class ResHelper {
         return s + fileExtInfo[0] + "/";
     }
 
+    /**
+     * String[2]
+     * 0 -- ext name
+     * 1 -- save dir
+     * */
+    public static String[] getSavePathDataByUrl(String url) {
+        try{
+
+            String extName = url.substring( url.lastIndexOf(".") );
+            String resDir = "";
+
+            switch (extName) {
+                case "mp4":
+                case "mkv":
+                case "wmv":
+                case "avi":
+                case "rmvb":
+                    resDir = "videos/";
+                    break;
+                case "jpg":
+                case "png":
+                case "bmp":
+                case "jpeg":
+                    resDir = "images/";
+                    break;
+                case "txt":
+                case "pdf":
+                    resDir = "files/";
+                    break;
+                default:
+                    break;
+            }
+
+            if (ResHelper.isNullOrEmpty(resDir))
+                return new String[0];
+
+            return new String[] {
+                    extName,
+                    getRootDir() + resDir
+            };
+
+
+        }catch (Exception ex) {
+            return new String[0];
+        }
+    }
+
     public static String getRootDir() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
             return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Constants.ROOT_FILE_NAME + "/";

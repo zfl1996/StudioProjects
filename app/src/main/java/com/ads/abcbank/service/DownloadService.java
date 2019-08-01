@@ -288,7 +288,7 @@ public class DownloadService extends Service {
                             sendIntent(TASKS_CHANGED);
                         }
 
-                        {
+
                             String json = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, "").toString();
                             PlaylistResultBean allDownResultBean = null;
                             if (!TextUtils.isEmpty(json)) {
@@ -306,7 +306,7 @@ public class DownloadService extends Service {
                                */
                                 Utils.fileDownload(DownloadService.this, downloadBean);
                             }
-                        }
+
                     } else if (cause.equals(EndCause.ERROR)) {
                         downloadBean.started = "";
                         downloadBean.secUsed = "";

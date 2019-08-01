@@ -15,6 +15,7 @@ import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
+import com.ads.abcbank.xx.utils.core.DownloadModule.DownloadStateLisntener;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 public class MaterialManager {
     Context context;
+    DownloadModule downloadModule;
 
     // worker thread
     HandlerThread playerThread;
@@ -38,6 +40,7 @@ public class MaterialManager {
     List<PlaylistBodyBean> playlist = new ArrayList<>();
     List<PlaylistBodyBean> txtlist = new ArrayList<>();
     Map<String, Integer> itemStatus = new HashMap<>();
+
 
     public MaterialManager(Context context, ItemStatusListener itemStatusListener) {
         this.context = context;
@@ -76,7 +79,10 @@ public class MaterialManager {
             }
         };
 
-        playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, null, false));
+        Utils.getExecutorService().submit(() -> {
+            downloadModule = new DownloadModule(context, 512, downloadStateLisntener);
+            playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, null, false));
+        });
     }
 
     public void reload() {
@@ -127,7 +133,7 @@ public class MaterialManager {
             try {
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
-//int i=0;
+
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
                     if (!itemStatus.containsKey(bodyBean.id) || itemStatus.get(bodyBean.id) != 1)
                         continue;
@@ -138,11 +144,11 @@ public class MaterialManager {
                     } else {
                         playlist.add(bodyBean);
                     }
-//if (i >7 )
+
                     allPlayItems.add(new PlayItem(bodyBean.md5,
                             BllDataExtractor.getIdentityPath(bodyBean),
                             BllDataExtractor.getIdentityType(bodyBean) ));
-//i++;
+
                 }
 
                 uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
@@ -244,6 +250,18 @@ public class MaterialManager {
             }
         }
 
+    };
+
+    DownloadModule.DownloadStateLisntener downloadStateLisntener = new DownloadStateLisntener() {
+        @Override
+        public void onSucc(String url, String path) {
+
+        }
+
+        @Override
+        public void onFail(String url, String code) {
+
+        }
     };
 
     public interface ItemStatusListener {

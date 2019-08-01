@@ -29,4 +29,6 @@ public class Constants {
     public static final int NET_MANAGER_DATA_PLAYLIST = 0x1;
     public static final int NET_MANAGER_DATA_PRESET = 0x2;
 
+    public static final String DOWNLOADER_KEY_TASK = "DownloadItem";
+
 }
