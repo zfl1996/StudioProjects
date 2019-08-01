@@ -50,8 +50,8 @@ public class BaseActivity extends AppCompatActivity {
 //        netChangeReceiver = new NetChangeReceiver();
         mActivity = this;
         if (this instanceof IView) {
-//            registerDateTransReceiver();
-//            registerDowloadStatusReceiver();
+            registerDateTransReceiver();
+            registerDowloadStatusReceiver();
         }
     }
 
@@ -156,8 +156,8 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (this instanceof IView) {
-//            startDownloadService();
-//            startHandler();
+            startDownloadService();
+            startHandler();
         }
     }
 

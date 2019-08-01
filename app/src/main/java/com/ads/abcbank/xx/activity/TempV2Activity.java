@@ -14,9 +14,6 @@ import com.ads.abcbank.view.IView;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.alibaba.fastjson.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TempV2Activity extends BaseActivity implements IView {
     private static final String TAG = "TempV2Activity";
 
