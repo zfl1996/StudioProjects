@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.text.TextUtils;
 
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PresetBean;
@@ -82,20 +81,21 @@ public class MaterialManager {
 
         if (!ResHelper.isNullOrEmpty(json)) {
             PresetBean bean = JSON.parseObject(json, PresetBean.class);
+            if (null == bean || !"0".equals(bean.resCode))
+                return;
 
             List<PlayItem> presetItems = new ArrayList<>();
 
-            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_SAVE,
-                    bean.data.saveRate ) );
-            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_LOAN,
-                    bean.data.loanRate ) );
-            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY,
-                    bean.data.buyInAndOutForeignExchange ) );
+            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_SAVE, bean.data.saveRate ) );
+            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_LOAN, bean.data.loanRate ) );
+            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange ) );
+
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
         }
     }
