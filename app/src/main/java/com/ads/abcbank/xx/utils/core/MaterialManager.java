@@ -5,7 +5,9 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 
+import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.Logger;
@@ -15,6 +17,7 @@ import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -105,14 +108,29 @@ public class MaterialManager {
     }
 
     private void loadPlaylist() {
+        String jsonFinish = Utils.get(context, Utils.KEY_PLAY_LIST_DOWNLOAD_FINISH, "").toString();
+        if (!TextUtils.isEmpty(jsonFinish)) {
+            JSONArray jsonArray = JSON.parseArray(jsonFinish);
+
+            for (int i = 0; i < jsonArray.size(); i++) {
+                DownloadBean bean = JSON.parseObject(jsonArray.getString(i), DownloadBean.class);
+
+                if (null != bean) {
+                    itemStatus.put(bean.id, 1);
+                }
+            }
+//            playlistResultBean.data.items.removeAll(finished);
+        }
+
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
         if (!ResHelper.isNullOrEmpty(json)) {
             try {
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
-int i=0;
+//int i=0;
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
-                    itemStatus.put(bodyBean.md5, 0);
+                    if (!itemStatus.containsKey(bodyBean.id) || itemStatus.get(bodyBean.id) != 1)
+                        continue;
 
                     String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
                     if ("txt".equals(suffix)) {
@@ -120,11 +138,11 @@ int i=0;
                     } else {
                         playlist.add(bodyBean);
                     }
-if (i >7 )
+//if (i >7 )
                     allPlayItems.add(new PlayItem(bodyBean.md5,
                             BllDataExtractor.getIdentityPath(bodyBean),
                             BllDataExtractor.getIdentityType(bodyBean) ));
-i++;
+//i++;
                 }
 
                 uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
