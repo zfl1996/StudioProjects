@@ -3,28 +3,19 @@ package com.ads.abcbank.xx.ui.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderImageHolder;
+import com.ads.abcbank.xx.ui.adapter.holder.SliderRateBuyHolder;
+import com.ads.abcbank.xx.ui.adapter.holder.SliderRateLoanHolder;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderRateSaveHolder;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
-import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
-import com.ads.abcbank.xx.utils.helper.ResHelper;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.pili.pldroid.player.widget.PLVideoTextureView;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
@@ -32,7 +23,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private Context mContent;
     private List<PlayItem> dataList = new ArrayList<>();
     private LayoutInflater inflater;
-    private static SliderAdapter.BannerRecyclerViewClickListener clickListener;
+//    private Handler uiHandler = new Handler(Looper.getMainLooper());
 
     public SliderMainAdapter(Context mContent) {
         this.mContent = mContent;
@@ -66,7 +57,11 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         else if (Constants.SLIDER_HOLDER_VIDEO == viewType)
             return new SliderVideoHolder(inflater.inflate(R.layout.widget_ui_slider_item_video, parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_SAVE == viewType)
-            return new SliderRateSaveHolder(inflater.inflate(R.layout.widget_ui_slider_item_rateview, parent, false));
+            return new SliderRateSaveHolder(inflater.inflate(R.layout.widget_ui_slider_item_rateview_nor, parent, false));
+        else if (Constants.SLIDER_HOLDER_RATE_LOAN == viewType)
+            return new SliderRateLoanHolder(inflater.inflate(R.layout.widget_ui_slider_item_rateview_nor, parent, false));
+        else if (Constants.SLIDER_HOLDER_RATE_BUY == viewType)
+            return new SliderRateBuyHolder(inflater.inflate(R.layout.widget_ui_slider_item_rateview_quad, parent, false));
         else
             return new SliderImageHolder(inflater.inflate(R.layout.widget_ui_slider_item_img, parent, false));
     }
@@ -82,6 +77,20 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         else if (holder instanceof SliderRateSaveHolder) {
             SliderRateSaveHolder _holder = ((SliderRateSaveHolder) holder);
             SliderRateSaveHolder.showRate((PresetBean.SaveRate)item.getAttData(),
+                    _holder.getTxtDesc(),
+                    _holder.getTxtTitle(),
+                    _holder.getRvRate());
+        }
+        else if (holder instanceof SliderRateLoanHolder) {
+            SliderRateLoanHolder _holder = (SliderRateLoanHolder)holder;
+            SliderRateLoanHolder.showRate((PresetBean.LoanRate)item.getAttData(),
+                    _holder.getTxtDesc(),
+                    _holder.getTxtTitle(),
+                    _holder.getRvRate());
+        }
+        else if (holder instanceof SliderRateBuyHolder) {
+            SliderRateBuyHolder _holder = (SliderRateBuyHolder)holder;
+            SliderRateBuyHolder.showRate((PresetBean.BIAOFE)item.getAttData(),
                     _holder.getTxtDesc(),
                     _holder.getTxtTitle(),
                     _holder.getRvRate());

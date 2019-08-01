@@ -2,7 +2,6 @@ package com.ads.abcbank.xx.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,14 +46,15 @@ public class RateSave4Adapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         RateSave4Adapter.RateQuadHolder _holder = (RateSave4Adapter.RateQuadHolder) holder;
         PresetBean.BIAOFE.BIAOFEItem rate = dataList.get(position);
 
-        if (!ResHelper.isNullOrEmpty(rate.placeholder)) {
+        if (null != rate.placeholder) {
             _holder.getTxtKey().setText(rate.placeholder.replace("\\t", "\t") + rate.currCName);
         } else {
             _holder.getTxtKey().setText(rate.currCName);
         }
-        _holder.getTxtVal().setText(rate.buyPrice);
-        _holder.getTxtVal2().setText(rate.sellPrice);
-        _holder.getTxtVal3().setText(rate.cashPrice);
+
+        _holder.getTxtVal().setText(ResHelper.isNullOrEmpty(rate.buyPrice) ? "" : rate.buyPrice );
+        _holder.getTxtVal2().setText(ResHelper.isNullOrEmpty(rate.sellPrice) ? "" : rate.sellPrice);
+        _holder.getTxtVal3().setText(ResHelper.isNullOrEmpty(rate.cashPrice) ? "" : rate.cashPrice);
 
     }
 

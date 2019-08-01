@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
+import com.ads.abcbank.xx.utils.helper.ResHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -42,11 +43,13 @@ public class RateSave3Adapter  extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        RateSave2Adapter.RateDoubleHolder _holder = (RateSave2Adapter.RateDoubleHolder) holder;
-        PresetBean.LoanRate.LoanRateItem rate = dataList.get(position);
 
-        _holder.txtPre.setText(rate.item);
-        _holder.txtKey.setText(rate.loanRate);
+        RateSave3Adapter.RateDoubleHolder _holder = (RateSave3Adapter.RateDoubleHolder) holder;
+        PresetBean.LoanRate.LoanRateItem rate = dataList.get(position);
+        String pre = (null == rate.placeholder) ? "" : rate.placeholder.replace("\\t", "\t");
+
+        _holder.txtPre.setText(pre + (ResHelper.isNullOrEmpty(rate.item) ? "" : rate.item));
+        _holder.txtKey.setText(ResHelper.isNullOrEmpty(rate.loanRate) ? "" : rate.loanRate );
 
     }
 
