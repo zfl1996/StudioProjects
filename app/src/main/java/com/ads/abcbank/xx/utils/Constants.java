@@ -24,4 +24,9 @@ public class Constants {
     public static final int SLIDER_HOLDER_RATE_LOAN = 5;
     public static final int SLIDER_HOLDER_RATE_BUY = 6;
 
+    public static final int NET_MANAGER_INIT = 0x300;
+    public static final int NET_MANAGER_DATA_CMDPOLL = 0x0;
+    public static final int NET_MANAGER_DATA_PLAYLIST = 0x1;
+    public static final int NET_MANAGER_DATA_PRESET = 0x2;
+
 }

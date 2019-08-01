@@ -12,6 +12,7 @@ import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
+import com.ads.abcbank.xx.utils.core.NetTaskManager;
 import com.alibaba.fastjson.JSONObject;
 
 public class TempV2Activity extends BaseActivity implements IView {
@@ -49,16 +50,19 @@ public class TempV2Activity extends BaseActivity implements IView {
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
+        sliderPlayer.reload();
         Logger.e(TAG, jsonObject.toJSONString());
     }
 
     @Override
     public void updateBottomDate(JSONObject jsonObject) {
+        sliderPlayer.reload();
         Logger.e(TAG, jsonObject.toJSONString());
     }
 
     @Override
     public void updatePresetDate(JSONObject jsonObject) {
+        sliderPlayer.reload();
         Logger.e(TAG, jsonObject.toJSONString());
     }
 }

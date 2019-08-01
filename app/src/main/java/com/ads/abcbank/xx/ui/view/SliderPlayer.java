@@ -41,6 +41,10 @@ public class SliderPlayer extends LinearLayout {
         initPlayer();
     }
 
+    public void reload() {
+        materialManager.reload();
+    }
+
     private void initPlayer() {
         // init player view
         View v = LayoutInflater.from(context).inflate(R.layout.widget_ui_sliderplayer, this, true);

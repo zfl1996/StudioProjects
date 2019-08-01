@@ -30,6 +30,7 @@ import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
+import com.ads.abcbank.xx.utils.core.NetTaskManager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -44,6 +45,8 @@ public class BaseActivity extends AppCompatActivity {
     public static Activity mActivity;
     private DownloadStatus downloadStatus;
 
+    NetTaskManager netTaskManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +55,29 @@ public class BaseActivity extends AppCompatActivity {
         if (this instanceof IView) {
             registerDateTransReceiver();
             registerDowloadStatusReceiver();
+
+
+            netTaskManager = new NetTaskManager(this, new NetTaskManager.NetTaskListener() {
+                @Override
+                public void onPlaylistArrived(JSONObject jsonObject) {
+                    Activity activity = ActivityManager.getInstance().getTopActivity();
+                      if (activity != null && activity instanceof IView) {
+                          ((IView) activity).updateMainDate(jsonObject);
+                      } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+                          ((BaseActivity) activity).getiView().updateMainDate(jsonObject);
+                      }
+                }
+
+                @Override
+                public void onPresetArrived(JSONObject jsonObject) {
+                    Activity activity = ActivityManager.getInstance().getTopActivity();
+                       if (activity != null && activity instanceof IView) {
+                           ((IView) activity).updatePresetDate(jsonObject);
+                       } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+                           ((BaseActivity) activity).getiView().updatePresetDate(jsonObject);
+                       }
+                }
+            });
         }
     }
 
@@ -262,7 +288,7 @@ public class BaseActivity extends AppCompatActivity {
                         Logger.e("有文件下载完成播放列表即将更新" + getiView());
                         if (getiView() != null) {
                             Logger.e("有文件下载完成播放列表正在更新");
-                            getiView().updateMainDate(new JSONObject());
+//                            getiView().updateMainDate(new JSONObject());
                         }
                         break;
                     default:
@@ -272,139 +298,143 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    public static Handler baseHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            Activity activity = ActivityManager.getInstance().getTopActivity();
-            switch (msg.what) {
-                case 0: {
-                    int handlerTime = Utils.getNumberForString(Utils.get(activity, Utils.KEY_TIME_CMD, Utils.KEY_TIME_CMD_TIME + "").toString(), Utils.KEY_TIME_CMD_TIME);
-                    baseHandler.postDelayed(cmdRunnable, handlerTime * 60 * 1000);
-                    Logger.e("getCmdPoll", "获取cmdpoll轮询命令返回数据====" + msg.obj);
-                    if (msg.obj != null) {
-                        Utils.put(activity, Utils.KEY_CMD_POLL, msg.obj.toString());
-                        if (activity instanceof BaseActivity) {
-                            ((BaseActivity) activity).getCmdResult(JSON.parseObject(msg.obj.toString(), CmdpollResultBean.class));
-                        }
-                    }
-                }
-                break;
-                case 1: {
-                    int handlerTime = Utils.getNumberForString(Utils.get(activity, Utils.KEY_TIME_PLAYLIST, Utils.KEY_TIME_PLAYLIST_TIME + "").toString(), Utils.KEY_TIME_PLAYLIST_TIME);
-                    baseHandler.postDelayed(playlistRunnable, handlerTime * 60 * 1000);
-                    if (Utils.IS_TEST) {
-                        msg.obj = Utils.getStringFromAssets("playlist.json", activity).toString();
-                        FileUtil.writeJsonToFile(msg.obj.toString(), false);
-                        if (Utils.getNewPlayList(activity, msg.obj.toString())) {
-                            if (activity != null && activity instanceof IView) {
-                                ((IView) activity).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
-                            } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
-                                ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
-                            }
-                        }
-                        return;
-                    }
-                    if (msg.obj != null) {
-                        FileUtil.writeJsonToFile(msg.obj.toString());
-                        if (activity instanceof BaseActivity) {
-                            if (Utils.getNewPlayList(activity, msg.obj.toString())) {
-                                if (activity != null && activity instanceof IView) {
-                                    ((IView) activity).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
-                                } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
-                                    ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
-                                }
-                            }
-                        }
-                    }
-                }
-                break;
-                case 2: {
-                    int handlerTime = Utils.getNumberForString(Utils.get(activity, Utils.KEY_TIME_PRESET, Utils.KEY_TIME_PRESET_TIME + "").toString(), Utils.KEY_TIME_PRESET_TIME);
-                    baseHandler.postDelayed(presetRunnable, handlerTime * 60 * 1000);
-                    if (Utils.IS_TEST) {
-                        msg.obj = Utils.getStringFromAssets("json.json", activity);
-                        Utils.put(activity, Utils.KEY_PRESET, msg.obj.toString());
-                        if (activity != null && activity instanceof IView) {
-                            ((IView) activity).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
-                        } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
-                            ((BaseActivity) activity).getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
-                        }
-                        return;
-                    }
-                    if (msg.obj != null && !TextUtils.isEmpty(msg.obj.toString())) {
-                        try {
-                            PresetBean bean = JSON.parseObject(msg.obj.toString(), PresetBean.class);
-                            if (!"0".equals(bean.resCode)) {
-                                return;
-                            }
-                        } catch (Exception e) {
-                            return;
-                        }
-
-                        Utils.put(ActivityManager.getInstance().getTopActivity(), Utils.KEY_PRESET, msg.obj.toString());
-                        if (activity != null && activity instanceof IView) {
-                            ((IView) activity).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
-                        } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
-                            ((BaseActivity) activity).getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
-                        }
-                    }
-                }
-                break;
-                default:
-                    break;
-            }
-        }
-    };
-    public static Runnable cmdRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(new CmdpollBean())), baseHandler, 0);
-        }
-    };
-    public static Runnable playlistRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(DownloadService.getPlaylistBean())), baseHandler, 1);
-        }
-    };
-    public static Runnable presetRunnable = new Runnable() {
-        @Override
-        public void run() {
-            RequestBean requestBean = new RequestBean();
-            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
-            if (!TextUtils.isEmpty(beanStr)) {
-                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
-                requestBean.appId = bean.appId;
-                requestBean.trCode = bean.trCode;
-                requestBean.trVersion = bean.trVersion;
-                requestBean.cityCode = bean.cityCode;
-                requestBean.brchCode = bean.brchCode;
-                requestBean.clientVersion = bean.clientVersion;
-                requestBean.terminalId = bean.terminalId;
-                requestBean.uniqueId = bean.uniqueId;
-            }
-            requestBean.timestamp = System.currentTimeMillis();
-            requestBean.flowNum = 0;
-            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), baseHandler, 2);
-        }
-    };
+//    @SuppressLint("HandlerLeak")
+//    public static Handler baseHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            Activity activity = ActivityManager.getInstance().getTopActivity();
+//            switch (msg.what) {
+//                case 0: {
+//                    int handlerTime = Utils.getNumberForString(Utils.get(activity, Utils.KEY_TIME_CMD, Utils.KEY_TIME_CMD_TIME + "").toString(), Utils.KEY_TIME_CMD_TIME);
+//                    baseHandler.postDelayed(cmdRunnable, handlerTime * 60 * 1000);
+//                    Logger.e("getCmdPoll", "获取cmdpoll轮询命令返回数据====" + msg.obj);
+//                    if (msg.obj != null) {
+//                        Utils.put(activity, Utils.KEY_CMD_POLL, msg.obj.toString());
+//                        if (activity instanceof BaseActivity) {
+//                            ((BaseActivity) activity).getCmdResult(JSON.parseObject(msg.obj.toString(), CmdpollResultBean.class));
+//                        }
+//                    }
+//                }
+//                break;
+//                case 1: {
+//                    int handlerTime = Utils.getNumberForString(Utils.get(activity, Utils.KEY_TIME_PLAYLIST, Utils.KEY_TIME_PLAYLIST_TIME + "").toString(), Utils.KEY_TIME_PLAYLIST_TIME);
+//                    baseHandler.postDelayed(playlistRunnable, handlerTime * 60 * 1000);
+//                    if (Utils.IS_TEST) {
+//                        msg.obj = Utils.getStringFromAssets("playlist.json", activity).toString();
+//                        FileUtil.writeJsonToFile(msg.obj.toString(), false);
+//                        if (Utils.getNewPlayList(activity, msg.obj.toString())) {
+//                            if (activity != null && activity instanceof IView) {
+//                                ((IView) activity).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+//                            } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+//                                ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+//                            }
+//                        }
+//                        return;
+//                    }
+//                    if (msg.obj != null) {
+//                        FileUtil.writeJsonToFile(msg.obj.toString());
+//                        if (activity instanceof BaseActivity) {
+//                            if (Utils.getNewPlayList(activity, msg.obj.toString())) {
+//                                if (activity != null && activity instanceof IView) {
+//                                    ((IView) activity).updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+//                                } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+//                                    ((BaseActivity) activity).getiView().updateMainDate(JSONObject.parseObject(msg.obj.toString()));
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                break;
+//                case 2: {
+//                    int handlerTime = Utils.getNumberForString(Utils.get(activity, Utils.KEY_TIME_PRESET, Utils.KEY_TIME_PRESET_TIME + "").toString(), Utils.KEY_TIME_PRESET_TIME);
+//                    baseHandler.postDelayed(presetRunnable, handlerTime * 60 * 1000);
+//                    if (Utils.IS_TEST) {
+//                        msg.obj = Utils.getStringFromAssets("json.json", activity);
+//                        Utils.put(activity, Utils.KEY_PRESET, msg.obj.toString());
+//                        if (activity != null && activity instanceof IView) {
+//                            ((IView) activity).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+//                        } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+//                            ((BaseActivity) activity).getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+//                        }
+//                        return;
+//                    }
+//                    if (msg.obj != null && !TextUtils.isEmpty(msg.obj.toString())) {
+//                        try {
+//                            PresetBean bean = JSON.parseObject(msg.obj.toString(), PresetBean.class);
+//                            if (!"0".equals(bean.resCode)) {
+//                                return;
+//                            }
+//                        } catch (Exception e) {
+//                            return;
+//                        }
+//
+//                        Utils.put(ActivityManager.getInstance().getTopActivity(), Utils.KEY_PRESET, msg.obj.toString());
+//                        if (activity != null && activity instanceof IView) {
+//                            ((IView) activity).updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+//                        } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
+//                            ((BaseActivity) activity).getiView().updatePresetDate(JSONObject.parseObject(msg.obj.toString()));
+//                        }
+//                    }
+//                }
+//                break;
+//                default:
+//                    break;
+//            }
+//        }
+//    };
+//    public static Runnable cmdRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            Utils.getAsyncThread().httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(new CmdpollBean())), baseHandler, 0);
+//        }
+//    };
+//    public static Runnable playlistRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            Utils.getAsyncThread().httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(DownloadService.getPlaylistBean())), baseHandler, 1);
+//        }
+//    };
+//    public static Runnable presetRunnable = new Runnable() {
+//        @Override
+//        public void run() {
+//            RequestBean requestBean = new RequestBean();
+//            String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
+//            if (!TextUtils.isEmpty(beanStr)) {
+//                RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
+//                requestBean.appId = bean.appId;
+//                requestBean.trCode = bean.trCode;
+//                requestBean.trVersion = bean.trVersion;
+//                requestBean.cityCode = bean.cityCode;
+//                requestBean.brchCode = bean.brchCode;
+//                requestBean.clientVersion = bean.clientVersion;
+//                requestBean.terminalId = bean.terminalId;
+//                requestBean.uniqueId = bean.uniqueId;
+//            }
+//            requestBean.timestamp = System.currentTimeMillis();
+//            requestBean.flowNum = 0;
+//            Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), baseHandler, 2);
+//        }
+//    };
 
     public void startHandler() {
-        try {
-            baseHandler.post(cmdRunnable);
-            baseHandler.post(playlistRunnable);
-            baseHandler.post(presetRunnable);
-        } catch (Exception e) {
-        }
+//        try {
+//            baseHandler.post(cmdRunnable);
+//            baseHandler.post(playlistRunnable);
+//            baseHandler.post(presetRunnable);
+//        } catch (Exception e) {
+//        }
+        netTaskManager.initNetManager();
+
     }
 
     public void stopHandler() {
-        try {
-            baseHandler.removeCallbacks(cmdRunnable);
-            baseHandler.removeCallbacks(playlistRunnable);
-            baseHandler.removeCallbacks(presetRunnable);
-        } catch (Exception e) {
-        }
+//        try {
+//            baseHandler.removeCallbacks(cmdRunnable);
+//            baseHandler.removeCallbacks(playlistRunnable);
+//            baseHandler.removeCallbacks(presetRunnable);
+//        } catch (Exception e) {
+//        }
+
+        netTaskManager.cancalTask();
     }
 }

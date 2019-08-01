@@ -52,18 +52,18 @@ public class MaterialManager {
                 super.handleMessage(msg);
 
                 switch (msg.what) {
+
+                    case Constants.SLIDER_STATUS_CODE_UPDATE:
+//                        if (msg.obj instanceof String) {
+//                            String md5 = (String)msg.obj;
+//                            updateItemStatus(md5);
+//                        }
+
+//                        break;
                     case Constants.SLIDER_STATUS_CODE_INIT:
                         Utils.getExecutorService().submit(() -> loadPlaylist());
                         Utils.getExecutorService().submit(() -> loadPreset());
                         Utils.getExecutorService().submit(() -> getWelcome());
-
-                        break;
-
-                    case Constants.SLIDER_STATUS_CODE_UPDATE:
-                        if (msg.obj instanceof String) {
-                            String md5 = (String)msg.obj;
-                            updateItemStatus(md5);
-                        }
 
                         break;
 
@@ -74,6 +74,10 @@ public class MaterialManager {
         };
 
         playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, null, false));
+    }
+
+    public void reload() {
+        playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_UPDATE, null, false));
     }
 
     private void loadPreset() {
