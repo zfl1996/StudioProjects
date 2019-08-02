@@ -16,11 +16,11 @@ public class DownloadModule {
     private DownloadStateLisntener downloadStateLisntener;
 
     public DownloadModule(Context context, int maxRate, DownloadStateLisntener downloadStateLisntener) {
-        Aria.get(mContext).getDownloadConfig().setMaxSpeed(maxRate);
-        Aria.download(this).register();
-
         this.downloadStateLisntener = downloadStateLisntener;
         this.mContext = context;
+
+        Aria.get(mContext).getDownloadConfig().setMaxSpeed(maxRate);
+        Aria.download(this).register();
     }
 
     @Download.onWait void onWait(DownloadTask task) {
@@ -86,7 +86,8 @@ public class DownloadModule {
                 .loadGroup(urls)
                 .addHeader("Accept-Encoding", "gzip, deflate")
                 .setDirPath(path)
-                .setSubFileName(paths)
+                .setFileSize(2)
+//                .setSubFileName(paths)
                 .resetState()
                 .start();
     }

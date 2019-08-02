@@ -82,8 +82,8 @@ public class ResHelper {
     public static String[] getSavePathDataByUrl(String url) {
         try{
 
-            String extName = url.substring( url.lastIndexOf(".") );
-            String resDir = "";
+            String extName = url.substring( url.lastIndexOf(".") + 1 );
+            String resDir = "files/";
 
             switch (extName) {
                 case "mp4":
@@ -107,12 +107,13 @@ public class ResHelper {
                     break;
             }
 
-            if (ResHelper.isNullOrEmpty(resDir))
+            if (ResHelper.isNullOrEmpty(extName))
                 return new String[0];
 
             return new String[] {
                     extName,
-                    getRootDir() + resDir
+//                    getRootDir(),
+                    resDir
             };
 
 

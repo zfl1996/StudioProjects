@@ -25,9 +25,9 @@ public class AbcResourceService extends IntentService {
         if (null == downloadItem || ResHelper.isNullOrEmpty(downloadItem.getUrl()))
             return;
 
-        String[] savePathData = ResHelper.getSavePathDataByUrl(downloadItem.getUrl());
-        if (savePathData.length <= 0)
-            return;
+//        String[] savePathData = ResHelper.getSavePathDataByUrl(downloadItem.getUrl());
+//        if (savePathData.length <= 0)
+//            return;
 
 //        Aria.download(this).register();
 //        Aria.download(this)

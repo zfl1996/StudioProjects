@@ -433,7 +433,7 @@ public class MainActivity extends BaseActivity implements IMainView {
                 return;
             }
             if ("0".equals(initResultBean.resCode)) {
-                ToastUtil.showToastLong(this, "初始化成功");
+//                ToastUtil.showToast(this, "初始化成功");
 
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");

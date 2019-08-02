@@ -15,6 +15,7 @@ public class Constants {
     public static final int SLIDER_STATUS_CODE_UPDATE = 0x202;
     public static final int SLIDER_STATUS_CODE_WELCOME = 0x203;
     public static final int SLIDER_STATUS_CODE_RATE = 0x204;
+    public static final int SLIDER_STATUS_CODE_PROGRESS = 0x205;
 
     public static final int SLIDER_HOLDER_IMAGE = 0;
     public static final int SLIDER_HOLDER_PDF = 1;
@@ -23,6 +24,11 @@ public class Constants {
     public static final int SLIDER_HOLDER_RATE_SAVE = 4;
     public static final int SLIDER_HOLDER_RATE_LOAN = 5;
     public static final int SLIDER_HOLDER_RATE_BUY = 6;
+
+
+    public static final int SLIDER_PROGRESS_CODE_PRE = 0x0;
+    public static final int SLIDER_PROGRESS_CODE_FILE = 0x1;
+    public static final int SLIDER_PROGRESS_CODE_PRESET = 0x2;
 
     public static final int NET_MANAGER_INIT = 0x300;
     public static final int NET_MANAGER_DATA_CMDPOLL = 0x0;

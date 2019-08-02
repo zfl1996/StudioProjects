@@ -86,8 +86,10 @@ public class NetTaskManager {
     }
 
     public void initNetManager() {
-        timer.schedule(timerTask, 15*60*1000, 15*60*1000 );
-        netHandler.sendMessage(buildMessage(Constants.NET_MANAGER_INIT, null, false));
+        Utils.getExecutorService().submit(() -> {
+            timer.schedule(timerTask, 15*60*1000, 15*60*1000 );
+            netHandler.sendMessage(buildMessage(Constants.NET_MANAGER_INIT, null, false));
+        });
     }
 
     public void cancalTask() {

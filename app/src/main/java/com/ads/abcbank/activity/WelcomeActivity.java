@@ -174,7 +174,7 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                 return;
             }
             if ("0".equals(initResultBean.resCode)) {
-                ToastUtil.showToastLong(this, "初始化成功");
+//                ToastUtil.showToastLong(this, "初始化成功");
 
                 HandlerUtil.postDelayed(new Runnable() {
                     @Override

@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.InitResultBean;
@@ -513,7 +512,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                 return;
             }
             if ("0".equals(initResultBean.resCode)) {
-                ToastUtil.showToastLong(this, "初始化成功");
+                ToastUtil.showToast(this, "初始化成功");
 
 
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");

@@ -23,6 +23,8 @@ public class TempV2Activity extends BaseActivity implements IView {
     AutoPollRecyclerView rvMarqueeView;
     View v_set;
 
+    NetTaskManager netTaskManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +47,19 @@ public class TempV2Activity extends BaseActivity implements IView {
 
             new Handler().postDelayed(() -> rvMarqueeView.setVisibility(View.VISIBLE), 100);
         } );
+
+
+        netTaskManager = new NetTaskManager(this, new NetTaskManager.NetTaskListener() {
+            @Override
+            public void onPlaylistArrived(JSONObject jsonObject) {
+            }
+
+            @Override
+            public void onPresetArrived(JSONObject jsonObject) {
+            }
+        });
+
+        netTaskManager.initNetManager();
 
     }
 

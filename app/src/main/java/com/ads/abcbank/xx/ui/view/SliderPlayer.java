@@ -1,6 +1,7 @@
 package com.ads.abcbank.xx.ui.view;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
@@ -12,9 +13,9 @@ import android.widget.TextView;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.xx.model.PlayItem;
-import com.ads.abcbank.xx.ui.adapter.SliderAdapter;
 import com.ads.abcbank.xx.ui.adapter.SliderMainAdapter;
 import com.ads.abcbank.xx.ui.widget.RecyclerPagerView;
+import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class SliderPlayer extends LinearLayout {
     ImageView imgHolder;
     TextView txtHint;
     RecyclerPagerView rpSlider;
+    LinearLayout llProgress;
 
     MaterialManager materialManager;
     SliderMainAdapter sliderAdapter;
@@ -52,6 +54,7 @@ public class SliderPlayer extends LinearLayout {
         imgHolder = findViewById(R.id.imgHolder);
         txtHint = findViewById(R.id.txtHint);
         rpSlider = findViewById(R.id.rpSlider);
+        llProgress = findViewById(R.id.llProgress);
 
         // init relative to slider data
         sliderAdapter = new SliderMainAdapter(context);
@@ -72,24 +75,48 @@ public class SliderPlayer extends LinearLayout {
             sliderAdapter.addItemDataAndRedraw(items);
             rpSlider.setOnPageChangeListener(new PagerChangeListener(items.size()));
             rpSlider.startPlay();
+
+//            llProgress.setVisibility(GONE);
         }
 
         @Override
         public void onNewItemAdded(PlayItem item) {
             sliderAdapter.addItemDataAndRedraw(item);
             rpSlider.startPlay();
+
+//            llProgress.setVisibility(GONE);
         }
 
         @Override
         public void onNewItemsAdded(List<PlayItem> items) {
             sliderAdapter.addItemDataAndPortionRedraw(items);
             rpSlider.startPlay();
+
+            llProgress.setVisibility(GONE);
         }
 
         @Override
         public void onWelcome(List<String> items) {
             if (null != dataStatusListener)
                 dataStatusListener.onWelcome(items);
+        }
+
+        @Override
+        public void onProgress(int code) {
+            switch (code) {
+                case Constants.SLIDER_PROGRESS_CODE_PRE:
+                    txtHint.setText("初始化播放列表");
+
+                    break;
+
+                case Constants.SLIDER_PROGRESS_CODE_PRESET:
+                     new Handler().postDelayed(() ->txtHint.setText("准备汇率数据"), 1200 );
+
+                    break;
+
+                default:
+                    break;
+            }
         }
     };
 

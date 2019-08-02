@@ -65,7 +65,7 @@ public class MaterialManager {
 //                            updateItemStatus(md5);
 //                        }
 
-//                        break;
+                        break;
                     case Constants.SLIDER_STATUS_CODE_INIT:
                         Utils.getExecutorService().submit(() -> loadPlaylist());
                         Utils.getExecutorService().submit(() -> loadPreset());
@@ -86,10 +86,12 @@ public class MaterialManager {
     }
 
     public void reload() {
-        playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_UPDATE, null, false));
+//        playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_UPDATE, null, false));
     }
 
     private void loadPreset() {
+        uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRESET, true));
+
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
 
         if (!ResHelper.isNullOrEmpty(json)) {
@@ -114,6 +116,8 @@ public class MaterialManager {
     }
 
     private void loadPlaylist() {
+        uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRE, true));
+
         String jsonFinish = Utils.get(context, Utils.KEY_PLAY_LIST_DOWNLOAD_FINISH, "").toString();
         if (!TextUtils.isEmpty(jsonFinish)) {
             JSONArray jsonArray = JSON.parseArray(jsonFinish);
@@ -133,10 +137,21 @@ public class MaterialManager {
             try {
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
+                List<String> waitForDownload = new ArrayList<>();
+                List<String> waitForDownloadFilePath = new ArrayList<>();
+
 
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
-                    if (!itemStatus.containsKey(bodyBean.id) || itemStatus.get(bodyBean.id) != 1)
+                    if (!itemStatus.containsKey(bodyBean.id) || itemStatus.get(bodyBean.id) != 1) {
+                        String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
+                        if (pathSegments.length <= 0)
+                            continue;
+
+                        waitForDownload.add(bodyBean.downloadLink);
+                        waitForDownloadFilePath.add(pathSegments[1] + bodyBean.md5 + "." + pathSegments[0]);
+
                         continue;
+                    }
 
                     String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
                     if ("txt".equals(suffix)) {
@@ -151,6 +166,7 @@ public class MaterialManager {
 
                 }
 
+                downloadModule.start(waitForDownload, ResHelper.getRootDir(), waitForDownloadFilePath);
                 uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
 
             } catch (Exception e) {
@@ -245,6 +261,11 @@ public class MaterialManager {
 
                     break;
 
+                case Constants.SLIDER_STATUS_CODE_PROGRESS:
+                    _itemStatusListener.onProgress((int)msg.obj);
+
+                    break;
+
                 default:
                     break;
             }
@@ -269,6 +290,7 @@ public class MaterialManager {
         void onNewItemAdded(PlayItem item);
         void onNewItemsAdded(List<PlayItem> items);
         void onWelcome(List<String> items);
+        void onProgress(int code);
     }
 
 }

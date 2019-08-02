@@ -583,21 +583,21 @@ public class DownloadService extends Service {
                 });
                 break;
             case ADD_MULTI_DOWNTASK:
-                Utils.getExecutorService().submit(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        type = intent.getStringExtra("type");
-                        String beanStr = Utils.get(DownloadService.this, Utils.KEY_REGISTER_BEAN, "").toString();
-                        if (!TextUtils.isEmpty(beanStr)) {
-                            registerBean = JSON.parseObject(beanStr, RegisterBean.class);
-                        }
-                        getPlaylistBean();
-                        removeAllTasks();
-                        addDownloadTasks();
-                        startTasks(true);
-                    }
-                });
+//                Utils.getExecutorService().submit(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                        type = intent.getStringExtra("type");
+//                        String beanStr = Utils.get(DownloadService.this, Utils.KEY_REGISTER_BEAN, "").toString();
+//                        if (!TextUtils.isEmpty(beanStr)) {
+//                            registerBean = JSON.parseObject(beanStr, RegisterBean.class);
+//                        }
+//                        getPlaylistBean();
+//                        removeAllTasks();
+//                        addDownloadTasks();
+//                        startTasks(true);
+//                    }
+//                });
                 break;
 
             case REMOVE_DOWNTASK:

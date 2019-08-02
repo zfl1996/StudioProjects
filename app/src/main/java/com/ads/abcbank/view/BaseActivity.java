@@ -1,6 +1,5 @@
 package com.ads.abcbank.view;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,22 +15,14 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.ads.abcbank.activity.ReInitActivity;
-import com.ads.abcbank.bean.CmdpollBean;
 import com.ads.abcbank.bean.CmdpollResultBean;
 import com.ads.abcbank.bean.CmdresultBean;
-import com.ads.abcbank.bean.PresetBean;
-import com.ads.abcbank.bean.RegisterBean;
-import com.ads.abcbank.bean.RequestBean;
 import com.ads.abcbank.service.DownloadService;
-import com.ads.abcbank.utils.ActivityManager;
-import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.ToastUtil;
 import com.ads.abcbank.utils.Utils;
-import com.ads.abcbank.xx.utils.core.NetTaskManager;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 public class BaseActivity extends AppCompatActivity {
@@ -45,8 +36,6 @@ public class BaseActivity extends AppCompatActivity {
     public static Activity mActivity;
     private DownloadStatus downloadStatus;
 
-    NetTaskManager netTaskManager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,27 +46,6 @@ public class BaseActivity extends AppCompatActivity {
             registerDowloadStatusReceiver();
 
 
-            netTaskManager = new NetTaskManager(this, new NetTaskManager.NetTaskListener() {
-                @Override
-                public void onPlaylistArrived(JSONObject jsonObject) {
-                    Activity activity = ActivityManager.getInstance().getTopActivity();
-                      if (activity != null && activity instanceof IView) {
-                          ((IView) activity).updateMainDate(jsonObject);
-                      } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
-                          ((BaseActivity) activity).getiView().updateMainDate(jsonObject);
-                      }
-                }
-
-                @Override
-                public void onPresetArrived(JSONObject jsonObject) {
-                    Activity activity = ActivityManager.getInstance().getTopActivity();
-                       if (activity != null && activity instanceof IView) {
-                           ((IView) activity).updatePresetDate(jsonObject);
-                       } else if (activity != null && activity instanceof BaseActivity && ((BaseActivity) activity).getiView() != null) {
-                           ((BaseActivity) activity).getiView().updatePresetDate(jsonObject);
-                       }
-                }
-            });
         }
     }
 
@@ -423,7 +391,7 @@ public class BaseActivity extends AppCompatActivity {
 //            baseHandler.post(presetRunnable);
 //        } catch (Exception e) {
 //        }
-        netTaskManager.initNetManager();
+//        netTaskManager.initNetManager();
 
     }
 
@@ -435,6 +403,6 @@ public class BaseActivity extends AppCompatActivity {
 //        } catch (Exception e) {
 //        }
 
-        netTaskManager.cancalTask();
+//        netTaskManager.cancalTask();
     }
 }
