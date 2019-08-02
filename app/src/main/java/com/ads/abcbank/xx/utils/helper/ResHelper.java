@@ -1,6 +1,7 @@
 package com.ads.abcbank.xx.utils.helper;
 
 import android.graphics.Bitmap;
+import android.graphics.DrawFilter;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 
@@ -72,6 +73,11 @@ public class ResHelper {
         String[] fileExtInfo = getFileExtInfo(fileName);
 
         return s + fileExtInfo[0] + "/";
+    }
+
+    public static String getSavePath(String url, String fileKey) {
+        String[] fd = getSavePathDataByUrl(url);
+        return getRootDir() + fd[1] + fileKey + "." + fd[0];
     }
 
     /**

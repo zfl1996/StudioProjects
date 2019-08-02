@@ -12,6 +12,7 @@ import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IView;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
+import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.NetTaskManager;
 import com.alibaba.fastjson.JSONObject;
 
@@ -52,10 +53,14 @@ public class TempV2Activity extends BaseActivity implements IView {
         netTaskManager = new NetTaskManager(this, new NetTaskManager.NetTaskListener() {
             @Override
             public void onPlaylistArrived(JSONObject jsonObject) {
+                if (null != sliderPlayer)
+                    sliderPlayer.reload(Constants.NET_MANAGER_DATA_PLAYLIST);
             }
 
             @Override
             public void onPresetArrived(JSONObject jsonObject) {
+                if (null != sliderPlayer)
+                    sliderPlayer.reload(Constants.NET_MANAGER_DATA_PRESET);
             }
         });
 
@@ -65,19 +70,19 @@ public class TempV2Activity extends BaseActivity implements IView {
 
     @Override
     public void updateMainDate(JSONObject jsonObject) {
-        sliderPlayer.reload();
+//        sliderPlayer.reload(Constants.);
         Logger.e(TAG, jsonObject.toJSONString());
     }
 
     @Override
     public void updateBottomDate(JSONObject jsonObject) {
-        sliderPlayer.reload();
+//        sliderPlayer.reload();
         Logger.e(TAG, jsonObject.toJSONString());
     }
 
     @Override
     public void updatePresetDate(JSONObject jsonObject) {
-        sliderPlayer.reload();
+//        sliderPlayer.reload();
         Logger.e(TAG, jsonObject.toJSONString());
     }
 }

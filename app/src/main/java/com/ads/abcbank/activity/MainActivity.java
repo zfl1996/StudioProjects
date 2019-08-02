@@ -516,7 +516,7 @@ public class MainActivity extends BaseActivity implements IMainView {
                         startActivity(intent);
                         finish();
                     }
-                }, 2000);
+                }, 10);
             } else if ("-1".equals(initResultBean.resCode)) {
                 ToastUtil.showToastLong(this, initResultBean.resMessage);
                 Logger.e("服务器主动拒绝");

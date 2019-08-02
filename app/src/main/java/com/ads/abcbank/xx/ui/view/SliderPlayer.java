@@ -43,8 +43,8 @@ public class SliderPlayer extends LinearLayout {
         initPlayer();
     }
 
-    public void reload() {
-        materialManager.reload();
+    public void reload(int resCode) {
+        materialManager.reload(resCode);
     }
 
     private void initPlayer() {
@@ -75,24 +75,18 @@ public class SliderPlayer extends LinearLayout {
             sliderAdapter.addItemDataAndRedraw(items);
             rpSlider.setOnPageChangeListener(new PagerChangeListener(items.size()));
             rpSlider.startPlay();
-
-//            llProgress.setVisibility(GONE);
         }
 
         @Override
         public void onNewItemAdded(PlayItem item) {
             sliderAdapter.addItemDataAndRedraw(item);
             rpSlider.startPlay();
-
-//            llProgress.setVisibility(GONE);
         }
 
         @Override
         public void onNewItemsAdded(List<PlayItem> items) {
             sliderAdapter.addItemDataAndPortionRedraw(items);
             rpSlider.startPlay();
-
-            llProgress.setVisibility(GONE);
         }
 
         @Override
@@ -110,7 +104,12 @@ public class SliderPlayer extends LinearLayout {
                     break;
 
                 case Constants.SLIDER_PROGRESS_CODE_PRESET:
-                     new Handler().postDelayed(() ->txtHint.setText("准备汇率数据"), 1200 );
+                     new Handler().postDelayed(() ->txtHint.setText("准备汇率数据"), 800 );
+
+                    break;
+
+                case Constants.SLIDER_PROGRESS_CODE_OK:
+                    llProgress.setVisibility(GONE);
 
                     break;
 
@@ -134,11 +133,11 @@ public class SliderPlayer extends LinearLayout {
         @Override
         public void onPageSelection(int position) {
 
-            int pos = size == 0 ? 0 : (position%size+1);
-
-            if (pos == size) {
-                txtHint.setText(pos + " / " + size + " / " + position);
-            }
+//            int pos = size == 0 ? 0 : (position%size+1);
+//
+//            if (pos == size) {
+//                txtHint.setText(pos + " / " + size + " / " + position);
+//            }
         }
 
     }

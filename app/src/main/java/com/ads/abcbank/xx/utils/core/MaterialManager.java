@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MaterialManager {
     Context context;
@@ -39,8 +40,8 @@ public class MaterialManager {
     String deviceModeData;
     List<PlaylistBodyBean> playlist = new ArrayList<>();
     List<PlaylistBodyBean> txtlist = new ArrayList<>();
-    Map<String, Integer> itemStatus = new HashMap<>();
-
+//    Map<String, Integer> itemStatus = new HashMap<>();
+    ConcurrentHashMap<String, Integer> itemStatus = new ConcurrentHashMap<>();
 
     public MaterialManager(Context context, ItemStatusListener itemStatusListener) {
         this.context = context;
@@ -60,16 +61,28 @@ public class MaterialManager {
                 switch (msg.what) {
 
                     case Constants.SLIDER_STATUS_CODE_UPDATE:
-//                        if (msg.obj instanceof String) {
-//                            String md5 = (String)msg.obj;
-//                            updateItemStatus(md5);
-//                        }
+                        int resCode = (int)msg.obj;
+                        if ()
 
                         break;
                     case Constants.SLIDER_STATUS_CODE_INIT:
                         Utils.getExecutorService().submit(() -> loadPlaylist());
                         Utils.getExecutorService().submit(() -> loadPreset());
                         Utils.getExecutorService().submit(() -> getWelcome());
+
+                        break;
+
+                    case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
+                        String[] downInfo = (String[]) msg.obj;
+
+                        Utils.getExecutorService().submit(() -> {
+                            itemStatus.put(downInfo[0], 1);
+                            PlayItem playItem = new PlayItem(downInfo[0],
+                                    downInfo[1],
+                                    BllDataExtractor.getIdentityType(downInfo[1]) );
+
+                            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, playItem, true));
+                        });
 
                         break;
 
@@ -85,8 +98,8 @@ public class MaterialManager {
         });
     }
 
-    public void reload() {
-//        playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_UPDATE, null, false));
+    public void reload(int resCode) {
+        playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_UPDATE, resCode, false));
     }
 
     private void loadPreset() {
@@ -113,6 +126,8 @@ public class MaterialManager {
 
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
         }
+
+        uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_OK, true));
     }
 
     private void loadPlaylist() {
@@ -137,8 +152,8 @@ public class MaterialManager {
             try {
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
-                List<String> waitForDownload = new ArrayList<>();
-                List<String> waitForDownloadFilePath = new ArrayList<>();
+//                List<String> waitForDownload = new ArrayList<>();
+//                List<String> waitForDownloadFilePath = new ArrayList<>();
 
 
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
@@ -147,8 +162,10 @@ public class MaterialManager {
                         if (pathSegments.length <= 0)
                             continue;
 
-                        waitForDownload.add(bodyBean.downloadLink);
-                        waitForDownloadFilePath.add(pathSegments[1] + bodyBean.md5 + "." + pathSegments[0]);
+//                        waitForDownload.add(bodyBean.downloadLink);
+//                        waitForDownloadFilePath.add(pathSegments[1] + bodyBean.md5 + "." + pathSegments[0]);
+
+                        downloadModule.start(bodyBean.downloadLink, ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id), bodyBean.id);
 
                         continue;
                     }
@@ -160,13 +177,13 @@ public class MaterialManager {
                         playlist.add(bodyBean);
                     }
 
-                    allPlayItems.add(new PlayItem(bodyBean.md5,
+                    allPlayItems.add(new PlayItem(bodyBean.id,
                             BllDataExtractor.getIdentityPath(bodyBean),
                             BllDataExtractor.getIdentityType(bodyBean) ));
 
                 }
 
-                downloadModule.start(waitForDownload, ResHelper.getRootDir(), waitForDownloadFilePath);
+//                downloadModule.start(waitForDownload, ResHelper.getRootDir(), waitForDownloadFilePath);
                 uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
 
             } catch (Exception e) {
@@ -234,12 +251,6 @@ public class MaterialManager {
 
                     if (null != _itemStatusListener) {
                         _itemStatusListener.onReady(allPlayItems);
-
-                        uiHandler.postDelayed(() -> {
-                            _itemStatusListener.onNewItemAdded( new PlayItem("sds",
-                                    "https://pics0.baidu.com/feed/08f790529822720e8a822cb4f2e03f43f31fabe5.jpeg?token=a031733d29d2483ebcdd70c6d069842c&s=84FA7B849BFB11863488CD3203008091",
-                                    0));
-                        }, 3000);
                     }
 
                     break;
@@ -262,7 +273,14 @@ public class MaterialManager {
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_PROGRESS:
-                    _itemStatusListener.onProgress((int)msg.obj);
+                    if (null != _itemStatusListener)
+                        _itemStatusListener.onProgress((int)msg.obj);
+
+                    break;
+
+                case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
+                    if (null != _itemStatusListener)
+                        _itemStatusListener.onNewItemAdded((PlayItem)msg.obj);
 
                     break;
 
@@ -275,8 +293,9 @@ public class MaterialManager {
 
     DownloadModule.DownloadStateLisntener downloadStateLisntener = new DownloadStateLisntener() {
         @Override
-        public void onSucc(String url, String path) {
-
+        public void onSucc(String identity, String url, String path) {
+            playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, new String[]{
+                identity, url, path }, false));
         }
 
         @Override

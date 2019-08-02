@@ -63,12 +63,12 @@ public class DownloadModule {
 
     @Download.onTaskComplete void taskComplete(DownloadTask task) {
         if (null != downloadStateLisntener) {
-            downloadStateLisntener.onSucc(task.getKey(), task.getFilePath());
+            downloadStateLisntener.onSucc(task.getExtendField(), task.getKey(), task.getFilePath());
         }
     }
 
 
-    public void start(String url, String path) {
+    public void start(String url, String path, String identity) {
         this.mUrl = url;
 
         Aria.download(this)
@@ -76,6 +76,7 @@ public class DownloadModule {
                 .addHeader("Accept-Encoding", "gzip, deflate")
                 .useServerFileName(true)
                 .setFilePath(path)
+                .setExtendField(identity)
                 .resetState()
                 .start();
     }
@@ -107,7 +108,7 @@ public class DownloadModule {
     }
 
     public interface DownloadStateLisntener {
-        public void onSucc(String url, String path);
+        public void onSucc(String identity, String url, String path);
         public void onFail(String url, String code);
     }
 }
