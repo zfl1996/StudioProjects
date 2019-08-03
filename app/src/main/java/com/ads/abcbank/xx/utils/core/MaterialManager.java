@@ -95,14 +95,14 @@ public class MaterialManager {
 
                             int identityType = BllDataExtractor.getIdentityType(suffix);
 
-                            if (identityType == Constants.SLIDER_HOLDER_VIDEO
-                                || identityType == Constants.SLIDER_HOLDER_PDF ) {
-                                try {
-                                    Thread.sleep(3000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
+//                            if (identityType == Constants.SLIDER_HOLDER_VIDEO
+//                                || identityType == Constants.SLIDER_HOLDER_PDF ) {
+//                                try {
+//                                    Thread.sleep(3000);
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
 
                             String[] ids = itemStatus.keySet().toArray(new String[0]);
                             Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
