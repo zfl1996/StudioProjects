@@ -3,8 +3,12 @@ package com.ads.abcbank.xx.utils.core;
 import android.content.Context;
 import android.util.Log;
 
+import com.ads.abcbank.utils.Logger;
 import com.arialyy.annotations.Download;
+import com.arialyy.annotations.DownloadGroup;
 import com.arialyy.aria.core.Aria;
+import com.arialyy.aria.core.download.DownloadEntity;
+import com.arialyy.aria.core.download.DownloadGroupTask;
 import com.arialyy.aria.core.download.DownloadTask;
 
 import java.util.List;
@@ -19,7 +23,7 @@ public class DownloadModule {
         this.downloadStateLisntener = downloadStateLisntener;
         this.mContext = context;
 
-        Aria.get(mContext).getDownloadConfig().setMaxSpeed(maxRate);
+        Aria.get(mContext).getDownloadConfig().setMaxSpeed(maxRate).setConvertSpeed(true);
         Aria.download(this).register();
     }
 
@@ -63,7 +67,23 @@ public class DownloadModule {
 
     @Download.onTaskComplete void taskComplete(DownloadTask task) {
         if (null != downloadStateLisntener) {
-            downloadStateLisntener.onSucc(task.getExtendField(), task.getKey(), task.getFilePath());
+            downloadStateLisntener.onSucc(/*task.getExtendField(), */task.getKey(), task.getFilePath());
+        }
+    }
+
+    @DownloadGroup.onSubTaskComplete void subTaskComplete(DownloadGroupTask groupTask, DownloadEntity subEntity) {
+        if (null != downloadStateLisntener) {
+            if (subEntity.isComplete()) {
+
+                long time = System.currentTimeMillis();
+                Logger.e(TAG, subEntity.getFilePath()
+                        + " at: " + subEntity.getCompleteTime()
+                        + "=" + time
+                        + "-->" + subEntity.getPercent()
+                        + " speed:" + subEntity.getConvertSpeed() + "(" + subEntity.getSpeed() + ")"
+                );
+                downloadStateLisntener.onSucc(/*task.getExtendField(), */subEntity.getKey(), subEntity.getFilePath());
+            }
         }
     }
 
@@ -76,7 +96,7 @@ public class DownloadModule {
                 .addHeader("Accept-Encoding", "gzip, deflate")
                 .useServerFileName(true)
                 .setFilePath(path)
-                .setExtendField(identity)
+//                .setExtendField(identity)
                 .resetState()
                 .start();
     }
@@ -88,7 +108,7 @@ public class DownloadModule {
                 .addHeader("Accept-Encoding", "gzip, deflate")
                 .setDirPath(path)
                 .setFileSize(2)
-//                .setSubFileName(paths)
+                .setSubFileName(paths)
                 .resetState()
                 .start();
     }
@@ -108,7 +128,7 @@ public class DownloadModule {
     }
 
     public interface DownloadStateLisntener {
-        public void onSucc(String identity, String url, String path);
+        public void onSucc(/*String identity, */String url, String path);
         public void onFail(String url, String code);
     }
 }

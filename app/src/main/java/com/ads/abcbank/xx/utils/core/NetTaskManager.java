@@ -54,10 +54,10 @@ public class NetTaskManager {
                 super.handleMessage(msg);
 
                 switch (msg.what) {
-                    case Constants.NET_MANAGER_INIT:
-                        Utils.getExecutorService().submit(() -> reqAllData());
-
-                        break;
+//                    case Constants.NET_MANAGER_INIT:
+//                        Utils.getExecutorService().submit(() -> reqAllData());
+//
+//                        break;
 
                     case Constants.NET_MANAGER_DATA_CMDPOLL:
                         parseCmdPoll(msg.obj);
@@ -87,8 +87,9 @@ public class NetTaskManager {
 
     public void initNetManager() {
         Utils.getExecutorService().submit(() -> {
+            reqAllData();
             timer.schedule(timerTask, 15*60*1000, 15*60*1000 );
-            netHandler.sendMessage(buildMessage(Constants.NET_MANAGER_INIT, null, false));
+//            netHandler.sendMessage(buildMessage(Constants.NET_MANAGER_INIT, null, false));
         });
     }
 
@@ -135,10 +136,10 @@ public class NetTaskManager {
     private void reqAllData() {
         Utils.getAsyncThread()
                 .httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(new CmdpollBean())),
-                        netHandler, 0);
+                        netHandler, Constants.NET_MANAGER_DATA_CMDPOLL);
         Utils.getAsyncThread()
                 .httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(DownloadService.getPlaylistBean())),
-                        netHandler, 1);
+                        netHandler, Constants.NET_MANAGER_DATA_PLAYLIST);
         retrievePreset();
     }
 
@@ -158,7 +159,7 @@ public class NetTaskManager {
         }
         requestBean.timestamp = System.currentTimeMillis();
         requestBean.flowNum = 0;
-        Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), netHandler, 2);
+        Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), netHandler, Constants.NET_MANAGER_DATA_PRESET);
     }
 
     Message buildMessage(int w, Object obj, boolean isMain) {

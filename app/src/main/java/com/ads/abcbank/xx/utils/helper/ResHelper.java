@@ -1,7 +1,6 @@
 package com.ads.abcbank.xx.utils.helper;
 
 import android.graphics.Bitmap;
-import android.graphics.DrawFilter;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 
@@ -43,6 +42,9 @@ public class ResHelper {
         return myCaptureFile.getAbsolutePath();
     }
 
+    /*
+    * 返回 [文件名，扩展名]
+    * */
     public static String[] getFileExtInfo(String fileName){
         try{
 
@@ -247,6 +249,21 @@ public class ResHelper {
 
     public static File getFileByPath(String filePath) {
         return isNullOrEmpty(filePath) ? null : new File(filePath);
+    }
+
+    public static String join(String[] arr, String sep)
+    {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (String item : arr)
+        {
+            if (first)
+                first = false;
+            else
+                sb.append(sep);
+            sb.append(item);
+        }
+        return sb.toString();
     }
 
 }

@@ -609,18 +609,20 @@ public class MainActivity extends BaseActivity implements IMainView {
             return;
         }
         if (resultBean != null && !TextUtils.isEmpty(resultBean.resCode) && "0".equals(resultBean.resCode)) {
-            ToastUtil.showToastLong(this, "注册成功");
-            HandlerUtil.postDelayed(new Runnable() {
-                @Override
-                public void run() {
+
+            Utils.showProgressDialog(this);
+//            ToastUtil.showToastLong(this, "注册成功");
+//            HandlerUtil.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
                     if (bean != null && TextUtils.isEmpty(bean.data.frameSetNo)) {
                         bean.data.frameSetNo = Utils.get(MainActivity.this, Utils.KEY_FRAME_SET_NO, "1").toString();
                     }
                     Utils.put(MainActivity.this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
 
                     mainPresenter.init(JSONObject.parseObject(JSONObject.toJSONString(bean)));
-                }
-            }, 2000);
+//                }
+//            }, 10);
         } else if (resultBean != null && !TextUtils.isEmpty(resultBean.resCode) && !TextUtils.isEmpty(resultBean.resMessage)) {
             ToastUtil.showToastLong(this, resultBean.resMessage);
         }

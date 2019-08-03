@@ -16,20 +16,26 @@ public class BllDataExtractor {
      * 4 -- P3
      */
     public static int getIdentityType(PlaylistBodyBean playlistBodyBean) {
-        String resIdentity = getIdentity(playlistBodyBean);
-        String suffix = resIdentity.substring(resIdentity.lastIndexOf(".") + 1).toLowerCase();
+//        String resIdentity = getIdentity(playlistBodyBean);
+        String suffix = playlistBodyBean.downloadLink.substring(playlistBodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();
         return getIdentityType(suffix);
     }
 
-    public static String getIdentityPath(PlaylistBodyBean playlistBodyBean){
-        String resIdentity = getIdentity(playlistBodyBean);
-        String suffix = resIdentity.substring(resIdentity.lastIndexOf(".") + 1).toLowerCase();
-        if (!ResHelper.isNullOrEmpty(resIdentity)) {
-            return getIdentitySavePath(resIdentity, suffix);
-        }
-
-        return playlistBodyBean.name;
-    }
+//    public static String getIdentityPath(PlaylistBodyBean playlistBodyBean){
+////        String resIdentity = getIdentity(playlistBodyBean);
+////        String suffix = resIdentity.substring(resIdentity.lastIndexOf(".") + 1).toLowerCase();
+////        if (!ResHelper.isNullOrEmpty(resIdentity)) {
+////            return getIdentitySavePath(resIdentity, suffix);
+////        }
+//
+////        String[] pathSegments = ResHelper.getSavePathDataByUrl(playlistBodyBean.downloadLink);
+////        if (pathSegments.length > 0){
+////            ResHelper.getSavePath(playlistBodyBean.downloadLink, playlistBodyBean.id);
+////        }
+//        return ResHelper.getSavePath(playlistBodyBean.downloadLink, playlistBodyBean.id);
+//
+//        return playlistBodyBean.id;
+//    }
 
     /**
      * 根据后缀返回资源类型值

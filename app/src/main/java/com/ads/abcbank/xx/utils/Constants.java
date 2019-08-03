@@ -17,6 +17,7 @@ public class Constants {
     public static final int SLIDER_STATUS_CODE_RATE = 0x204;
     public static final int SLIDER_STATUS_CODE_PROGRESS = 0x205;
     public static final int SLIDER_STATUS_CODE_DOWNSUCC = 0x206;
+    public static final int SLIDER_STATUS_CODE_PDF_CACHED = 0x207;
 
     public static final int SLIDER_HOLDER_IMAGE = 0;
     public static final int SLIDER_HOLDER_PDF = 1;
@@ -37,6 +38,11 @@ public class Constants {
     public static final int NET_MANAGER_DATA_CMDPOLL = 0x0;
     public static final int NET_MANAGER_DATA_PLAYLIST = 0x1;
     public static final int NET_MANAGER_DATA_PRESET = 0x2;
+
+    public static final String MM_STATUS_FINISHED_TASKID = "finished_taskid";
+    public static final String MM_STATUS_KEY_PLAYLIST_INIT = "playlist_status";
+    public static final String MM_STATUS_KEY_PRESET_INIT = "preset_status";
+//    public static final String MM_STATUS_KEY_PLAYLIST_INIT = "init_status";
 
     public static final String DOWNLOADER_KEY_TASK = "DownloadItem";
 

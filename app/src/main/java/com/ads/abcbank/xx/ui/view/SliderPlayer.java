@@ -109,7 +109,10 @@ public class SliderPlayer extends LinearLayout {
                     break;
 
                 case Constants.SLIDER_PROGRESS_CODE_OK:
-                    llProgress.setVisibility(GONE);
+                    if (materialManager.getInitStatus())
+                        llProgress.setVisibility(GONE);
+                    else
+                        txtHint.setText("初次启动，初始化环境");
 
                     break;
 
