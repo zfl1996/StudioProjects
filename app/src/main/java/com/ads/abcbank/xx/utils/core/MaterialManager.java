@@ -59,10 +59,13 @@ public class MaterialManager {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
+                if (null == msg)
+                    return;
 
                 switch (msg.what) {
 
                     case Constants.SLIDER_STATUS_CODE_UPDATE:
+                        Logger.e(TAG, "tid:(SLIDER_STATUS_CODE_UPDATE)" + Thread.currentThread().getId());
                         int resCode = (int)msg.obj;
                         Utils.getExecutorService().submit(() -> {
                             if (resCode == Constants.NET_MANAGER_DATA_PLAYLIST) {
@@ -76,6 +79,7 @@ public class MaterialManager {
 
                         break;
                     case Constants.SLIDER_STATUS_CODE_INIT:
+                        Logger.e(TAG, "tid:(SLIDER_STATUS_CODE_INIT)" + Thread.currentThread().getId());
                         Utils.getExecutorService().submit(() -> loadPlaylist());
                         Utils.getExecutorService().submit(() -> loadPreset());
                         Utils.getExecutorService().submit(() -> getWelcome());
@@ -83,35 +87,15 @@ public class MaterialManager {
                         break;
 
                     case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
-                        String[] downInfo = (String[]) msg.obj;
-                        String _fileKey = downInfo[1].substring(downInfo[1].lastIndexOf("/") + 1,
-                                downInfo[1].lastIndexOf(".") );
-                        if (itemStatus.containsKey(_fileKey) && itemStatus.get(_fileKey) == 1)
-                            return;
-
-                        itemStatus.put(_fileKey, 1);
-
-                        Utils.getExecutorService().submit(() -> {
-                            String fileKey = downInfo[1].substring(downInfo[1].lastIndexOf("/") + 1,
-                                    downInfo[1].lastIndexOf(".") );
-                            String fileName = downInfo[1].substring(downInfo[1].lastIndexOf("/") + 1);
-                            String suffix = downInfo[1].substring(downInfo[1].lastIndexOf(".") + 1);
-
-                            String[] ids = itemStatus.keySet().toArray(new String[0]);
-                            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
-
-                            if (suffix.toLowerCase().equals("pdf")) {
-                                Logger.e(TAG, fileName);
-                                List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey  );
-                                uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PDF_CACHED, list, true));
-                            } else {
-                                PlayItem playItem = new PlayItem(fileKey,
-                                        downInfo[1],
-                                        BllDataExtractor.getIdentityType(suffix) );
-
-                                uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, playItem, true));
+                        String taskStr = "SLIDER_STATUS_CODE_DOWNSUCC-->";
+                        if (msg.obj instanceof String[] ){
+                            String[] downInfo = (String[]) msg.obj;
+                            if (downInfo.length > 1) {
+                                taskStr += downInfo[1];
+                                finishDownload(downInfo[1]);
                             }
-                        });
+                        }
+                        Logger.e(TAG, taskStr);
 
                         break;
 
@@ -125,9 +109,40 @@ public class MaterialManager {
             envStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 0);
             envStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 0);
 
-            downloadModule = new DownloadModule(context, 128, downloadStateLisntener);
+            downloadModule = new DownloadModule(context, 0, downloadStateLisntener);
             playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, null, false));
         });
+    }
+
+    private void finishDownload(String filePath) {
+        String _fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
+                filePath.lastIndexOf(".") );
+        if (itemStatus.containsKey(_fileKey) && itemStatus.get(_fileKey) == 1)
+            return;
+
+        itemStatus.put(_fileKey, 1);
+
+        String[] ids = itemStatus.keySet().toArray(new String[0]);
+        Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
+
+//                        Utils.getExecutorService().submit(() -> {
+        String fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
+                filePath.lastIndexOf(".") );
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        String suffix = filePath.substring(filePath.lastIndexOf(".") + 1);
+
+        if (suffix.toLowerCase().equals("pdf")) {
+            Logger.e(TAG, fileName);
+            List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey  );
+            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PDF_CACHED, list, true));
+        } else {
+            PlayItem playItem = new PlayItem(fileKey,
+                    filePath,
+                    BllDataExtractor.getIdentityType(suffix) );
+
+            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, playItem, true));
+        }
+//                        });
     }
 
     public boolean isInitSuccessed() {
@@ -165,7 +180,6 @@ public class MaterialManager {
     }
 
     private void loadPlaylist() {
-        Logger.e(TAG, "loadPlaylist");
         uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRE, true));
 
         String jsonFinish = Utils.get(context, Constants.MM_STATUS_FINISHED_TASKID, "").toString();
@@ -222,9 +236,12 @@ public class MaterialManager {
                 }
 
                 envStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 1);
-                if (waitForDownload.size() > 0 && waitForDownload.size() == waitForDownloadFilePath.size())
+                if (waitForDownload.size() > 0 && waitForDownload.size() == waitForDownloadFilePath.size()) {
+                    Logger.e(TAG, "tid:(loadPlaylist)" + Thread.currentThread().getId());
                     downloadModule.start(waitForDownload, ResHelper.getRootDir(), waitForDownloadFilePath);
+                }
                 uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
+                Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadFilePath.toArray(), "@@\r\n"));
 
             } catch (Exception e) {
                 Logger.e("解析播放列表出错" + json);
@@ -272,6 +289,8 @@ public class MaterialManager {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             ItemStatusListener _itemStatusListener = getRefListener();
+
+            Logger.e(TAG, "tid:(uiHandler)" + Thread.currentThread().getId());
 
             switch (msg.what) {
                 case Constants.SLIDER_STATUS_CODE_INIT:

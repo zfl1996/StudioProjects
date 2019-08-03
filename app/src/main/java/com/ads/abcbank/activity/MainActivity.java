@@ -176,10 +176,10 @@ public class MainActivity extends BaseActivity implements IMainView {
             storeId.setText("021123");
         }
 
-//        {
-//            server.setText("testblock.huiyao.mobi/ibcs/player/v1");
-//            cdn.setText("testblock.huiyao.mobi");
-//        }
+        {
+            server.setText("testblock.huiyao.mobi/ibcs/player/v1");
+            cdn.setText("testblock.huiyao.mobi");
+        }
     }
 
     @SuppressWarnings("ALL")

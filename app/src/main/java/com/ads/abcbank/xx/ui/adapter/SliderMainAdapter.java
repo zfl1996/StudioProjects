@@ -39,7 +39,8 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void addItemDataAndRedraw(PlayItem dataItem) {
         dataList.add(dataItem);
-        notifyItemRangeChanged(dataList.size() - 2, 1);
+//        notifyItemRangeChanged(dataList.size() - 2, 1);
+        notifyItemRangeChanged(dataList.size() - 1, 1);
     }
 
     public void addItemDataAndPortionRedraw(List<PlayItem> dataItem) {

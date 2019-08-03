@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.ads.abcbank.utils.Logger;
+import com.ads.abcbank.utils.Utils;
+import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.arialyy.annotations.Download;
 import com.arialyy.annotations.DownloadGroup;
 import com.arialyy.aria.core.Aria;
@@ -19,17 +21,18 @@ public class DownloadModule {
     private Context mContext;
     private String mUrl;
     private DownloadStateLisntener downloadStateLisntener;
-    private ConcurrentHashMap<String, Integer> itemStatus = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Integer> waitForFeedback = new ConcurrentHashMap<>();
 
     public DownloadModule(Context context, int maxRate, DownloadStateLisntener downloadStateLisntener) {
         this.downloadStateLisntener = downloadStateLisntener;
         this.mContext = context;
 
         Aria.get(mContext).getDownloadConfig()
-                .setMaxTaskNum(1)
-                .setThreadNum(1)
+//                .setMaxTaskNum(1)
+//                .setThreadNum(1)
                 .setMaxSpeed(maxRate)
-                .setConvertSpeed(true);
+//                .setConvertSpeed(true)
+                ;
         Aria.download(this).register();
     }
 
@@ -78,21 +81,58 @@ public class DownloadModule {
     }
 
     @DownloadGroup.onSubTaskComplete void subTaskComplete(DownloadGroupTask groupTask, DownloadEntity subEntity) {
-        if (null != downloadStateLisntener) {
+        if (null == downloadStateLisntener)
+            return;
+
+        Utils.getExecutorService().submit(() -> {
             if (subEntity.isComplete()) {
                 long time = System.currentTimeMillis();
                 Logger.e(TAG, subEntity.getFilePath()
-                        + " at: " + subEntity.getCompleteTime()
+                        + "(" + isTaskFeedback(subEntity.getKey()) + ") " + subEntity.getKey() + " at: " + subEntity.getCompleteTime()
                         + "=" + time
                         + "-->" + subEntity.getPercent()
-                        + " speed:" + subEntity.getConvertSpeed() + "(" + subEntity.getSpeed() + ")"
+                        + " tid:" + Thread.currentThread().getId() + " (" + subEntity.getSpeed() + ")"
                 );
-                if (!itemStatus.containsKey(subEntity.getKey())){
-                    itemStatus.put(subEntity.getKey(), 1);
+                if (!isTaskFeedback(subEntity.getKey())){
+                    waitForFeedback.put(subEntity.getKey(), 1);
                     downloadStateLisntener.onSucc(subEntity.getKey(), subEntity.getFilePath());
                 }
             }
-        }
+        });
+
+    }
+
+    @DownloadGroup.onTaskComplete void taskComplete(DownloadGroupTask task) {
+
+        long time = System.currentTimeMillis();
+//        task.getEntity().get
+        Logger.e(TAG, "DownloadGroup.onTaskComplete-->"
+                + time + " tid:" + Thread.currentThread().getId() + "\r\n"
+                + ResHelper.join(task.getEntity().getUrls().toArray(new String[task.getEntity().getUrls().size()]), "@@\r\n")
+        );
+
+        if (null == downloadStateLisntener)
+            return;
+
+        Utils.getExecutorService().submit(() -> {
+            List<DownloadEntity> subTasks = task.getEntity().getSubEntities();
+            for (DownloadEntity subtask : subTasks) {
+                if (subtask.isComplete() && !isTaskFeedback(subtask.getKey())) {
+                    waitForFeedback.put(subtask.getKey(), 1);
+                    downloadStateLisntener.onSucc(subtask.getKey(), subtask.getFilePath());
+
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private boolean isTaskFeedback(String fileKey) {
+        return waitForFeedback.containsKey(fileKey) && waitForFeedback.get(fileKey) == 1;
     }
 
 
@@ -110,15 +150,25 @@ public class DownloadModule {
     }
 
     public void start(List<String> urls, String path, List<String> paths) {
+        Logger.e(TAG, "tid:" + Thread.currentThread().getId());
 
-        Aria.download(this)
-                .loadGroup(urls)
-//                .addHeader("Accept-Encoding", "gzip, deflate")
-                .setDirPath(path)
-                .setFileSize(2)
-                .setSubFileName(paths)
-                .resetState()
-                .start();
+        Utils.getExecutorService().submit(() -> {
+            int nums = urls.size();
+            for (int i=0;i<nums;i++) {
+                waitForFeedback.put(urls.get(i), 0);
+            }
+
+            Aria.download(this)
+                    .loadGroup(urls)
+                    .addHeader("Accept-Encoding", "gzip, deflate")
+                    .setDirPath(path)
+                    .setFileSize(114981416)
+                    .setSubFileName(paths)
+                    .resetState()
+                    .start();
+
+            Logger.e(TAG, "tid:" + Thread.currentThread().getId());
+        });
     }
 
     public void stop() {
