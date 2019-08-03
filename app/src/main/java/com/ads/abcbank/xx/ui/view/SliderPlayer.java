@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.SliderMainAdapter;
 import com.ads.abcbank.xx.ui.widget.RecyclerPagerView;
@@ -20,6 +21,8 @@ import com.ads.abcbank.xx.utils.core.MaterialManager;
 import java.util.List;
 
 public class SliderPlayer extends LinearLayout {
+    static String TAG = "SliderPlayer";
+
     Context context;
     ImageView imgHolder;
     TextView txtHint;
@@ -118,9 +121,10 @@ public class SliderPlayer extends LinearLayout {
                     break;
 
                 case Constants.SLIDER_PROGRESS_CODE_OK:
-                    if (materialManager.isInitSuccessed())
+                    Logger.e(TAG, materialManager.isInitSuccessed() ? "materialManager.isInitSuccessed" : "not succ");
+                    if (materialManager.isInitSuccessed()) {
                         llProgress.setVisibility(GONE);
-                    else {
+                    } else {
                         txtHint.setText("初次启动，初始化环境");
                     }
 

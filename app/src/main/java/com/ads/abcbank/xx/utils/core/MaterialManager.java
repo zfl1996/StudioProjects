@@ -141,6 +141,7 @@ public class MaterialManager {
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
 
         if (!ResHelper.isNullOrEmpty(json)) {
+            envStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
 
             PresetBean bean = JSON.parseObject(json, PresetBean.class);
             if (null == bean || !"0".equals(bean.resCode))
@@ -155,7 +156,6 @@ public class MaterialManager {
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
         }
 
-        envStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
         uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS,
                  Constants.SLIDER_PROGRESS_CODE_OK, true));
     }
