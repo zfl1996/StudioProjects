@@ -16,6 +16,8 @@ import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.NetTaskManager;
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.List;
+
 public class TempV2Activity extends BaseActivity implements IView {
     private static final String TAG = "TempV2Activity";
 
@@ -40,14 +42,22 @@ public class TempV2Activity extends BaseActivity implements IView {
         rvMarqueeView = findViewById(R.id.rvMarqueeView);
         v_set = findViewById(R.id.v_set);
 
-        sliderPlayer.setDataStatusListener( items -> {
-            autoPollAdapter = new AutoPollAdapter(TempV2Activity.this, items);
-            rvMarqueeView.setLayoutManager(new LinearLayoutManager(TempV2Activity.this, LinearLayoutManager.HORIZONTAL, false));
-            rvMarqueeView.setAdapter(autoPollAdapter);
-            rvMarqueeView.start();
+        sliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
+            @Override
+            public void onWelcome(List<String> items) {
+                  autoPollAdapter = new AutoPollAdapter(TempV2Activity.this, items);
+                  rvMarqueeView.setLayoutManager(new LinearLayoutManager(TempV2Activity.this, LinearLayoutManager.HORIZONTAL, false));
+                  rvMarqueeView.setAdapter(autoPollAdapter);
+                  rvMarqueeView.start();
 
-            new Handler().postDelayed(() -> rvMarqueeView.setVisibility(View.VISIBLE), 100);
-        } );
+                  new Handler().postDelayed(() -> rvMarqueeView.setVisibility(View.VISIBLE), 100);
+            }
+
+            @Override
+            public void onReady() {
+                netTaskManager.initNetManager();
+            }
+        });
 
 
         netTaskManager = new NetTaskManager(this, new NetTaskManager.NetTaskListener() {
@@ -64,7 +74,7 @@ public class TempV2Activity extends BaseActivity implements IView {
             }
         });
 
-        netTaskManager.initNetManager();
+//        netTaskManager.initNetManager();
 
     }
 

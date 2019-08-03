@@ -1,7 +1,6 @@
 package com.ads.abcbank.xx.ui.view;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
@@ -113,15 +112,20 @@ public class SliderPlayer extends LinearLayout {
                     break;
 
                 case Constants.SLIDER_PROGRESS_CODE_PRESET:
-                     new Handler().postDelayed(() ->txtHint.setText("准备汇率数据"), 800 );
+                    txtHint.setText("准备汇率数据");
+//                     new Handler().postDelayed(() ->txtHint.setText("准备汇率数据"), 800 );
 
                     break;
 
                 case Constants.SLIDER_PROGRESS_CODE_OK:
                     if (materialManager.isInitSuccessed())
                         llProgress.setVisibility(GONE);
-                    else
+                    else {
                         txtHint.setText("初次启动，初始化环境");
+                    }
+
+                    if (null != dataStatusListener)
+                        dataStatusListener.onReady();
 
                     break;
 
@@ -156,6 +160,7 @@ public class SliderPlayer extends LinearLayout {
 
     public interface DataStatusListener {
         void onWelcome(List<String> items);
+        void onReady();
     }
 
 }

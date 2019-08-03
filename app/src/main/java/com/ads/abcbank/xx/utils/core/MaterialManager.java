@@ -93,17 +93,6 @@ public class MaterialManager {
                             String fileName = downInfo[1].substring(downInfo[1].lastIndexOf("/") + 1);
                             String suffix = downInfo[1].substring(downInfo[1].lastIndexOf(".") + 1);
 
-                            int identityType = BllDataExtractor.getIdentityType(suffix);
-
-//                            if (identityType == Constants.SLIDER_HOLDER_VIDEO
-//                                || identityType == Constants.SLIDER_HOLDER_PDF ) {
-//                                try {
-//                                    Thread.sleep(3000);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-
                             String[] ids = itemStatus.keySet().toArray(new String[0]);
                             Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
 
@@ -163,12 +152,6 @@ public class MaterialManager {
             presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_LOAN, bean.data.loanRate ) );
             presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange ) );
 
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
         }
 
@@ -178,21 +161,9 @@ public class MaterialManager {
     }
 
     private void loadPlaylist() {
+        Logger.e(TAG, "loadPlaylist");
         uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRE, true));
 
-//        String jsonFinish = Utils.get(context, Utils.KEY_PLAY_LIST_DOWNLOAD_FINISH, "").toString();
-//        if (!TextUtils.isEmpty(jsonFinish)) {
-//            JSONArray jsonArray = JSON.parseArray(jsonFinish);
-//
-//            for (int i = 0; i < jsonArray.size(); i++) {
-//                DownloadBean bean = JSON.parseObject(jsonArray.getString(i), DownloadBean.class);
-//
-//                if (null != bean) {
-//                    itemStatus.put(bean.id, 1);
-//                }
-//            }
-////            playlistResultBean.data.items.removeAll(finished);
-//        }
         String jsonFinish = Utils.get(context, Constants.MM_STATUS_FINISHED_TASKID, "").toString();
         if (!TextUtils.isEmpty(jsonFinish)) {
             String[] ids = jsonFinish.split(",");
