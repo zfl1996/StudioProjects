@@ -84,6 +84,8 @@ public class MaterialManager {
                         String[] downInfo = (String[]) msg.obj;
                         String _fileKey = downInfo[1].substring(downInfo[1].lastIndexOf("/") + 1,
                                 downInfo[1].lastIndexOf(".") );
+                        if (itemStatus.containsKey(_fileKey) && itemStatus.get(_fileKey) == 1)
+                            return;
 
                         itemStatus.put(_fileKey, 1);
 
@@ -141,7 +143,6 @@ public class MaterialManager {
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
 
         if (!ResHelper.isNullOrEmpty(json)) {
-            envStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
 
             PresetBean bean = JSON.parseObject(json, PresetBean.class);
             if (null == bean || !"0".equals(bean.resCode))
@@ -156,6 +157,7 @@ public class MaterialManager {
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
         }
 
+        envStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
         uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS,
                  Constants.SLIDER_PROGRESS_CODE_OK, true));
     }
