@@ -75,18 +75,27 @@ public class SliderPlayer extends LinearLayout {
             sliderAdapter.addItemDataAndRedraw(items);
             rpSlider.setOnPageChangeListener(new PagerChangeListener(items.size()));
             rpSlider.startPlay();
+
+            if (materialManager.isInitSuccessed())
+                llProgress.setVisibility(GONE);
         }
 
         @Override
         public void onNewItemAdded(PlayItem item) {
             sliderAdapter.addItemDataAndRedraw(item);
             rpSlider.startPlay();
+
+            if (materialManager.isInitSuccessed())
+                llProgress.setVisibility(GONE);
         }
 
         @Override
         public void onNewItemsAdded(List<PlayItem> items) {
             sliderAdapter.addItemDataAndPortionRedraw(items);
             rpSlider.startPlay();
+
+            if (materialManager.isInitSuccessed())
+                llProgress.setVisibility(GONE);
         }
 
         @Override
@@ -109,7 +118,7 @@ public class SliderPlayer extends LinearLayout {
                     break;
 
                 case Constants.SLIDER_PROGRESS_CODE_OK:
-                    if (materialManager.getInitStatus())
+                    if (materialManager.isInitSuccessed())
                         llProgress.setVisibility(GONE);
                     else
                         txtHint.setText("初次启动，初始化环境");

@@ -82,23 +82,28 @@ public class MaterialManager {
 
                     case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
                         String[] downInfo = (String[]) msg.obj;
+                        String _fileKey = downInfo[1].substring(downInfo[1].lastIndexOf("/") + 1,
+                                downInfo[1].lastIndexOf(".") );
+
+                        itemStatus.put(_fileKey, 1);
 
                         Utils.getExecutorService().submit(() -> {
-
-                            String fileName = downInfo[1].substring(downInfo[1].lastIndexOf("/") + 1);
                             String fileKey = downInfo[1].substring(downInfo[1].lastIndexOf("/") + 1,
                                     downInfo[1].lastIndexOf(".") );
+                            String fileName = downInfo[1].substring(downInfo[1].lastIndexOf("/") + 1);
                             String suffix = downInfo[1].substring(downInfo[1].lastIndexOf(".") + 1);
 
-                            if (BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
+                            int identityType = BllDataExtractor.getIdentityType(suffix);
+
+                            if (identityType == Constants.SLIDER_HOLDER_VIDEO
+                                || identityType == Constants.SLIDER_HOLDER_PDF ) {
                                 try {
-                                    Thread.sleep(3500);
+                                    Thread.sleep(3000);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
                             }
 
-                            itemStatus.put(fileKey, 1);
                             String[] ids = itemStatus.keySet().toArray(new String[0]);
                             Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
 
@@ -132,7 +137,7 @@ public class MaterialManager {
         });
     }
 
-    public boolean getInitStatus() {
+    public boolean isInitSuccessed() {
         return envStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) == 1
                 && envStatus.get(Constants.MM_STATUS_KEY_PRESET_INIT) == 1;
     }

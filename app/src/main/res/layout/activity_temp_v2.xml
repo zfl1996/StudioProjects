@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#2B363F">
     <com.ads.abcbank.xx.ui.view.SliderPlayer
         android:id="@+id/sliderPlayer"
         android:layout_width="match_parent"

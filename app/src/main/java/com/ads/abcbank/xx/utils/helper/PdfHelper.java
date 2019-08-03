@@ -100,21 +100,23 @@ public class PdfHelper {
                     try {
                         mPdfRenderer.close();
                     } catch (Exception e) {
-                        Logger.e(e.toString());
+                        Logger.e(TAG, e.toString());
                     }
                 }
                 if (mFileDescriptor != null) {
                     try {
                         mFileDescriptor.close();
                     } catch (IOException e) {
-                        Logger.e(e.toString());
+                        Logger.e(TAG, e.toString());
                     }
                 }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            Logger.e(TAG, e.toString());
         } catch (IOException e) {
             e.printStackTrace();
+            Logger.e(TAG, e.toString());
         }
 
         return list;
