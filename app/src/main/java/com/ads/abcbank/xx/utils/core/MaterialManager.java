@@ -21,7 +21,9 @@ import com.alibaba.fastjson.JSON;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MaterialManager {
@@ -182,9 +184,17 @@ public class MaterialManager {
                 List<PlayItem> allPlayItems = new ArrayList<>();
                 List<String> waitForDownload = new ArrayList<>();
                 List<String> waitForDownloadFilePath = new ArrayList<>();
-
+                Map<String, Integer> waitForFiles = new HashMap<>();
 
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
+                    if (!Utils.isInDownloadTime(bodyBean)
+//                            || itemStatus.containsKey(bodyBean.id)
+                            || waitForFiles.containsKey(bodyBean.downloadLink) )
+                        continue;
+
+                    waitForFiles.put(bodyBean.downloadLink, 0);
+//                    itemStatus.put(bodyBean.id, 0);
+
                     if (!itemStatus.containsKey(bodyBean.id) || itemStatus.get(bodyBean.id) != 1) {
                         String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
                         if (pathSegments.length <= 0)
@@ -212,7 +222,8 @@ public class MaterialManager {
                 }
 
                 envStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 1);
-                downloadModule.start(waitForDownload, ResHelper.getRootDir(), waitForDownloadFilePath);
+                if (waitForDownload.size() > 0 && waitForDownload.size() == waitForDownloadFilePath.size())
+                    downloadModule.start(waitForDownload, ResHelper.getRootDir(), waitForDownloadFilePath);
                 uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
 
             } catch (Exception e) {

@@ -12,18 +12,24 @@ import com.arialyy.aria.core.download.DownloadGroupTask;
 import com.arialyy.aria.core.download.DownloadTask;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DownloadModule {
     String TAG = "DownloadModule";
     private Context mContext;
     private String mUrl;
     private DownloadStateLisntener downloadStateLisntener;
+    private ConcurrentHashMap<String, Integer> itemStatus = new ConcurrentHashMap<>();
 
     public DownloadModule(Context context, int maxRate, DownloadStateLisntener downloadStateLisntener) {
         this.downloadStateLisntener = downloadStateLisntener;
         this.mContext = context;
 
-        Aria.get(mContext).getDownloadConfig().setMaxSpeed(maxRate).setConvertSpeed(true);
+        Aria.get(mContext).getDownloadConfig()
+                .setMaxTaskNum(1)
+                .setThreadNum(1)
+                .setMaxSpeed(maxRate)
+                .setConvertSpeed(true);
         Aria.download(this).register();
     }
 
@@ -74,7 +80,6 @@ public class DownloadModule {
     @DownloadGroup.onSubTaskComplete void subTaskComplete(DownloadGroupTask groupTask, DownloadEntity subEntity) {
         if (null != downloadStateLisntener) {
             if (subEntity.isComplete()) {
-
                 long time = System.currentTimeMillis();
                 Logger.e(TAG, subEntity.getFilePath()
                         + " at: " + subEntity.getCompleteTime()
@@ -82,7 +87,10 @@ public class DownloadModule {
                         + "-->" + subEntity.getPercent()
                         + " speed:" + subEntity.getConvertSpeed() + "(" + subEntity.getSpeed() + ")"
                 );
-                downloadStateLisntener.onSucc(/*task.getExtendField(), */subEntity.getKey(), subEntity.getFilePath());
+                if (!itemStatus.containsKey(subEntity.getKey())){
+                    itemStatus.put(subEntity.getKey(), 1);
+                    downloadStateLisntener.onSucc(subEntity.getKey(), subEntity.getFilePath());
+                }
             }
         }
     }
@@ -105,7 +113,7 @@ public class DownloadModule {
 
         Aria.download(this)
                 .loadGroup(urls)
-                .addHeader("Accept-Encoding", "gzip, deflate")
+//                .addHeader("Accept-Encoding", "gzip, deflate")
                 .setDirPath(path)
                 .setFileSize(2)
                 .setSubFileName(paths)

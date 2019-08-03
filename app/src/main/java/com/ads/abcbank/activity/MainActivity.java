@@ -153,6 +153,9 @@ public class MainActivity extends BaseActivity implements IMainView {
         addListener(cdn, true);
         addListener(storeId, true);
         {
+
+
+
             cityCode.setText("09");
             brchCode.setText("091512");
             String ip = Utils.getIPAddress(this);
@@ -161,17 +164,22 @@ public class MainActivity extends BaseActivity implements IMainView {
             } else {
                 appIdAddress.setText(ip);
             }
-
-            server.setText("testblock.huiyao.mobi/ibcs/player/v1");
-            cdn.setText("testblock.huiyao.mobi");
-
-//            server.setText("10.233.93.110:315/ibcs/player/v1");
-//            cdn.setText("10.233.93.110:315");
-//            cdn.setText("10.5.13.64:3128");
-////            server.setText("10.233.14.37:8080/ibcs/player/v1");
-////            cdn.setText("10.233.14.37:8080");
-            storeId.setText("123");
+//
+//            server.setText("testblock.huiyao.mobi/ibcs/player/v1");
+//            cdn.setText("testblock.huiyao.mobi");
+//
+            server.setText("10.233.93.110:315/ibcs/player/v1");
+            cdn.setText("10.233.93.110:315");
+////            cdn.setText("10.5.13.64:3128");
+//////            server.setText("10.233.14.37:8080/ibcs/player/v1");
+//////            cdn.setText("10.233.14.37:8080");
+            storeId.setText("021123");
         }
+
+//        {
+//            server.setText("testblock.huiyao.mobi/ibcs/player/v1");
+//            cdn.setText("testblock.huiyao.mobi");
+//        }
     }
 
     @SuppressWarnings("ALL")
@@ -332,6 +340,10 @@ public class MainActivity extends BaseActivity implements IMainView {
         bean.uniqueId = Utils.getUUID(this);
         bean.flowNum = 0;
         bean.data.terminalType = getSelectTer();
+
+
+
+
 //        bean.data.screenDirection = getSelectScr();
 //        bean.data.frameSetNo = getSelectFra();
 //        getSelectCon();
