@@ -125,7 +125,7 @@ public class MaterialManager {
             envStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 0);
             envStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 0);
 
-            downloadModule = new DownloadModule(context, 0, downloadStateLisntener);
+            downloadModule = new DownloadModule(context, 128, downloadStateLisntener);
             playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, null, false));
         });
     }
