@@ -44,13 +44,17 @@ public class TempV2Activity extends BaseActivity implements IView {
 
         sliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
             @Override
-            public void onWelcome(List<String> items) {
-                  autoPollAdapter = new AutoPollAdapter(TempV2Activity.this, items);
-                  rvMarqueeView.setLayoutManager(new LinearLayoutManager(TempV2Activity.this, LinearLayoutManager.HORIZONTAL, false));
-                  rvMarqueeView.setAdapter(autoPollAdapter);
-                  rvMarqueeView.start();
+            public void onWelcome(List<String> items, boolean isDefault) {
+                if (isDefault) {
+                    autoPollAdapter = new AutoPollAdapter(TempV2Activity.this, items);
+                    rvMarqueeView.setLayoutManager(new LinearLayoutManager(TempV2Activity.this, LinearLayoutManager.HORIZONTAL, false));
+                    rvMarqueeView.setAdapter(autoPollAdapter);
+                    rvMarqueeView.start();
 
-                  new Handler().postDelayed(() -> rvMarqueeView.setVisibility(View.VISIBLE), 100);
+                    new Handler().postDelayed(() -> rvMarqueeView.setVisibility(View.VISIBLE), 100);
+                } else {
+
+                }
             }
 
             @Override

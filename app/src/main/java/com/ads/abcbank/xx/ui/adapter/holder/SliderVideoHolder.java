@@ -2,7 +2,6 @@ package com.ads.abcbank.xx.ui.adapter.holder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.ads.abcbank.R;
 import com.pili.pldroid.player.widget.PLVideoTextureView;

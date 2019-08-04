@@ -115,17 +115,14 @@ public class DownloadModule {
             return;
 
         Utils.getExecutorService().submit(() -> {
+            Logger.e(TAG, "DownloadGroup.onTaskComplete-->getExecutorService " + System.currentTimeMillis() + " --" + Thread.currentThread().getId());
             List<DownloadEntity> subTasks = task.getEntity().getSubEntities();
             for (DownloadEntity subtask : subTasks) {
                 if (subtask.isComplete() && !isTaskFeedback(subtask.getKey())) {
                     waitForFeedback.put(subtask.getKey(), 1);
                     downloadStateLisntener.onSucc(subtask.getKey(), subtask.getFilePath());
 
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    Logger.e(TAG, "notify --> " + subtask.getKey() + " tid:" + Thread.currentThread().getId() + "");
                 }
             }
         });

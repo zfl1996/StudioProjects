@@ -103,7 +103,12 @@ public class SliderPlayer extends LinearLayout {
         @Override
         public void onWelcome(List<String> items) {
             if (null != dataStatusListener)
-                dataStatusListener.onWelcome(items);
+                dataStatusListener.onWelcome(items, true);
+        }
+
+        @Override
+        public void onNewMsgAdded(List<String> msg) {
+
         }
 
         @Override
@@ -163,7 +168,7 @@ public class SliderPlayer extends LinearLayout {
     }
 
     public interface DataStatusListener {
-        void onWelcome(List<String> items);
+        void onWelcome(List<String> items, boolean isDefault);
         void onReady();
     }
 

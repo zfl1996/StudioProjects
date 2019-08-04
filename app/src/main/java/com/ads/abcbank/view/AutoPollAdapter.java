@@ -17,11 +17,24 @@ import java.util.List;
 
 public class AutoPollAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private final Context mContext;
-    private final List<String> mData = new ArrayList<>();
+    private List<String> mData = new ArrayList<>();
 
     public AutoPollAdapter(Context context, List<String> list) {
         this.mContext = context;
         mData.addAll(list);
+    }
+
+    public void addItemDataAndRedraw(List<String> data, boolean isAppend){
+        if (isAppend) {
+            mData.addAll(data);
+            notifyItemRangeChanged(mData.size() - data.size(), data.size());
+
+        } else {
+            mData.clear();
+            mData.addAll(data);
+            notifyDataSetChanged();
+        }
+
     }
 
     @Override

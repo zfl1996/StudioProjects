@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderImageHolder;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderRateBuyHolder;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    static String TAG = "SliderMainAdapter";
 
     private Context mContent;
     private List<PlayItem> dataList = new ArrayList<>();
@@ -122,6 +124,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             _holder.getVideoContent().setVideoPath(_holder.getVideoPath());
             _holder.getVideoContent().start();
+            Logger.e(TAG, "startPlay --> " + _holder.getVideoPath());
         }
     }
 
@@ -132,6 +135,8 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             _holder.getVideoContent().pause();
             _holder.getVideoContent().stopPlayback();
+
+            Logger.e(TAG, "endPlay --> " + _holder.getVideoPath());
         }
     }
 

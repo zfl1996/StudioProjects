@@ -18,6 +18,7 @@ public class Constants {
     public static final int SLIDER_STATUS_CODE_PROGRESS = 0x205;
     public static final int SLIDER_STATUS_CODE_DOWNSUCC = 0x206;
     public static final int SLIDER_STATUS_CODE_PDF_CACHED = 0x207;
+    public static final int SLIDER_STATUS_CODE_WELCOME_MSG = 0x208;
 
     public static final int SLIDER_HOLDER_IMAGE = 0;
     public static final int SLIDER_HOLDER_PDF = 1;
@@ -40,9 +41,12 @@ public class Constants {
     public static final int NET_MANAGER_DATA_PRESET = 0x2;
 
     public static final String MM_STATUS_FINISHED_TASKID = "finished_taskid";
-    public static final String MM_STATUS_KEY_PLAYLIST_INIT = "playlist_status";
-    public static final String MM_STATUS_KEY_PRESET_INIT = "preset_status";
+    public static final String MM_STATUS_KEY_PLAYLIST_INIT = "playlist_init";
+    public static final String MM_STATUS_KEY_PRESET_INIT = "preset_init";
 //    public static final String MM_STATUS_KEY_PLAYLIST_INIT = "init_status";
+    public static final String MM_STATUS_KEY_PLAYLIST_LOADED = "playlist_status";
+    public static final String MM_STATUS_KEY_STATUS_PRESET_LOADED = "preset_status";
+    public static final String MM_STATUS_KEY_STATUS_WELCOME_LOADED = "welcome_status";
 
     public static final String DOWNLOADER_KEY_TASK = "DownloadItem";
 

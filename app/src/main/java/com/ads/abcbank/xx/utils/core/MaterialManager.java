@@ -39,11 +39,10 @@ public class MaterialManager {
     // bll data
     WeakReference<ItemStatusListener> itemStatusListener = null;
     String deviceModeData;
-    List<PlaylistBodyBean> playlist = new ArrayList<>();
-    List<PlaylistBodyBean> txtlist = new ArrayList<>();
-//    Map<String, Integer> itemStatus = new HashMap<>();
-    ConcurrentHashMap<String, Integer> itemStatus = new ConcurrentHashMap<>();
-    ConcurrentHashMap<String, Integer> envStatus = new ConcurrentHashMap<>();
+//    List<PlaylistBodyBean> playlist = new ArrayList<>();
+//    List<PlaylistBodyBean> txtlist = new ArrayList<>();
+    ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
 
     public MaterialManager(Context context, ItemStatusListener itemStatusListener) {
         this.context = context;
@@ -69,10 +68,10 @@ public class MaterialManager {
                         int resCode = (int)msg.obj;
                         Utils.getExecutorService().submit(() -> {
                             if (resCode == Constants.NET_MANAGER_DATA_PLAYLIST) {
-                                if (envStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) != 1)
+                                if (managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) != 1)
                                     loadPlaylist();
                             } else if(resCode == Constants.NET_MANAGER_DATA_PRESET) {
-                                if (envStatus.get(Constants.MM_STATUS_KEY_PRESET_INIT) != 1)
+                                if (managerStatus.get(Constants.MM_STATUS_KEY_PRESET_INIT) != 1)
                                     loadPreset();
                             }
                         });
@@ -82,7 +81,7 @@ public class MaterialManager {
                         Logger.e(TAG, "tid:(SLIDER_STATUS_CODE_INIT)" + Thread.currentThread().getId());
                         Utils.getExecutorService().submit(() -> loadPlaylist());
                         Utils.getExecutorService().submit(() -> loadPreset());
-                        Utils.getExecutorService().submit(() -> getWelcome());
+                        Utils.getExecutorService().submit(() -> showWelcome(null));
 
                         break;
 
@@ -106,25 +105,31 @@ public class MaterialManager {
         };
 
         Utils.getExecutorService().submit(() -> {
-            envStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 0);
-            envStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 0);
+            managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 0);
+            managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 0);
 
             downloadModule = new DownloadModule(context, 0, downloadStateLisntener);
             playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, null, false));
         });
     }
 
+    /*
+    * 处理资源下载完成通知
+    * */
     private void finishDownload(String filePath) {
+        // 更新素材集状态
         String _fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
                 filePath.lastIndexOf(".") );
-        if (itemStatus.containsKey(_fileKey) && itemStatus.get(_fileKey) == 1)
+        if (materialStatus.containsKey(_fileKey) && materialStatus.get(_fileKey) == 1)
             return;
 
-        itemStatus.put(_fileKey, 1);
+        materialStatus.put(_fileKey, 1);
 
-        String[] ids = itemStatus.keySet().toArray(new String[0]);
+        // 更新已下载素材状态
+        String[] ids = materialStatus.keySet().toArray(new String[0]);
         Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
 
+        // 处理pdf缓存或者通知前端显示
 //                        Utils.getExecutorService().submit(() -> {
         String fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
                 filePath.lastIndexOf(".") );
@@ -146,14 +151,17 @@ public class MaterialManager {
     }
 
     public boolean isInitSuccessed() {
-        return envStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) == 1
-                && envStatus.get(Constants.MM_STATUS_KEY_PRESET_INIT) == 1;
+        return managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) == 1
+                && managerStatus.get(Constants.MM_STATUS_KEY_PRESET_INIT) == 1;
     }
 
     public void reload(int resCode) {
         playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_UPDATE, resCode, false));
     }
 
+    /*
+    * 加载汇率数据
+    * */
     private void loadPreset() {
         uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRESET, true));
 
@@ -174,20 +182,24 @@ public class MaterialManager {
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
         }
 
-        envStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
+        managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
         uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS,
                  Constants.SLIDER_PROGRESS_CODE_OK, true));
     }
 
+    /*
+    * 处理播放列表
+    * */
     private void loadPlaylist() {
         uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRE, true));
 
+        // 同步已下载完成数据项
         String jsonFinish = Utils.get(context, Constants.MM_STATUS_FINISHED_TASKID, "").toString();
         if (!TextUtils.isEmpty(jsonFinish)) {
             String[] ids = jsonFinish.split(",");
             for (String id : ids) {
                 if (!ResHelper.isNullOrEmpty(id))
-                    itemStatus.put(id, 1);
+                    materialStatus.put(id, 1);
             }
         }
 
@@ -199,17 +211,20 @@ public class MaterialManager {
                 List<String> waitForDownload = new ArrayList<>();
                 List<String> waitForDownloadFilePath = new ArrayList<>();
                 Map<String, Integer> waitForFiles = new HashMap<>();
+                List<String> welcomeItems = new ArrayList<>();
 
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
+                    // 过滤非下载时段和已下载项
                     if (!Utils.isInDownloadTime(bodyBean)
-//                            || itemStatus.containsKey(bodyBean.id)
+//                            || materialStatus.containsKey(bodyBean.id)
                             || waitForFiles.containsKey(bodyBean.downloadLink) )
                         continue;
 
                     waitForFiles.put(bodyBean.downloadLink, 0);
-//                    itemStatus.put(bodyBean.id, 0);
+//                    materialStatus.put(bodyBean.id, 0);
 
-                    if (!itemStatus.containsKey(bodyBean.id) || itemStatus.get(bodyBean.id) != 1) {
+                    // 构建待下载数据
+                    if (!materialStatus.containsKey(bodyBean.id) || materialStatus.get(bodyBean.id) != 1) {
                         String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
                         if (pathSegments.length <= 0)
                             continue;
@@ -221,50 +236,68 @@ public class MaterialManager {
                     }
 
                     String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-                    if ("txt".equals(suffix)) {
-                        txtlist.add(bodyBean);
-                    } else {
-                        playlist.add(bodyBean);
-                    }
+//                    if ("txt".equals(suffix)) {
+//                        txtlist.add(bodyBean);
+//                    } else {
+//                        playlist.add(bodyBean);
+//                    }
 
                     if (suffix.equals("pdf")) {
                         allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf"));
-                    } else
+                    } else if(BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
+                        || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
                         allPlayItems.add(new PlayItem(bodyBean.id,
                                 ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id),
-                                BllDataExtractor.getIdentityType(bodyBean) ));
+                                BllDataExtractor.getIdentityType(bodyBean)));
+                    } else if (suffix.equals("txt")) {
+                        String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
+                        if (!ResHelper.isNullOrEmpty(wmsg))
+                            welcomeItems.add(wmsg);
+                    }
                 }
 
-                envStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 1);
+                managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 1);
                 if (waitForDownload.size() > 0 && waitForDownload.size() == waitForDownloadFilePath.size()) {
                     Logger.e(TAG, "tid:(loadPlaylist)" + Thread.currentThread().getId());
                     downloadModule.start(waitForDownload, ResHelper.getRootDir(), waitForDownloadFilePath);
                 }
-                uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
+
+                if (allPlayItems.size() > 0)
+                    uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
+
+                if (welcomeItems.size() > 0)
+                    showWelcome(welcomeItems);
+
                 Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadFilePath.toArray(), "@@\r\n"));
 
             } catch (Exception e) {
                 Logger.e("解析播放列表出错" + json);
             }
         } else {
-            txtlist.clear();
-            playlist.clear();
+
         }
     }
 
-    private void getWelcome() {
-        List<String> welcomeItems = new ArrayList<String>() {
-            {
-                add("中国农业银行欢迎您");
-                add("中国农业银行欢迎您");
-                add("中国农业银行欢迎您");
-                add("中国农业银行欢迎您");
-                add("中国农业银行欢迎您");
-                add("中国农业银行欢迎您");
-            }
-        };
+    private void showWelcome(List<String> welcomeItems) {
+        if (null == welcomeItems || welcomeItems.size() <= 0) {
+            welcomeItems = new ArrayList<String>() {
+                {
+                    add("中国农业银行欢迎您");
+                    add("中国农业银行欢迎您");
+                    add("中国农业银行欢迎您");
+                    add("中国农业银行欢迎您");
+                    add("中国农业银行欢迎您");
+                    add("中国农业银行欢迎您");
+                }
+            };
 
-        uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME, welcomeItems, true));
+            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 0);
+            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME, welcomeItems, true));
+        } else {
+            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 1);
+            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME_MSG, welcomeItems, true));
+        }
+
     }
 
     Message buildMessage(int w, Object obj, boolean isMain) {
@@ -309,6 +342,15 @@ public class MaterialManager {
                         _itemStatusListener.onWelcome(welcomeItems);
                     }
 
+
+                    break;
+
+                case Constants.SLIDER_STATUS_CODE_WELCOME_MSG:
+                    List<String> welcomeMsg = (List<String>) msg.obj;
+
+                    if (null != _itemStatusListener) {
+                        _itemStatusListener.onNewMsgAdded(welcomeMsg);
+                    }
 
                     break;
 
@@ -361,6 +403,7 @@ public class MaterialManager {
         void onNewItemsAdded(List<PlayItem> items);
         void onWelcome(List<String> items);
         void onProgress(int code);
+        void onNewMsgAdded(List<String> msg);
     }
 
 }
