@@ -103,9 +103,7 @@ public class DownloadModule {
     }
 
     @DownloadGroup.onTaskComplete void taskComplete(DownloadGroupTask task) {
-
         long time = System.currentTimeMillis();
-//        task.getEntity().get
         Logger.e(TAG, "DownloadGroup.onTaskComplete-->"
                 + time + " tid:" + Thread.currentThread().getId() + "\r\n"
                 + ResHelper.join(task.getEntity().getUrls().toArray(new String[task.getEntity().getUrls().size()]), "@@\r\n")
@@ -123,6 +121,21 @@ public class DownloadModule {
                     downloadStateLisntener.onSucc(subtask.getKey(), subtask.getFilePath());
 
                     Logger.e(TAG, "notify --> " + subtask.getKey() + " tid:" + Thread.currentThread().getId() + "");
+                }
+            }
+        });
+    }
+
+    @DownloadGroup.onTaskStop void taskStop(DownloadGroupTask task) {
+        Utils.getExecutorService().submit(() -> {
+            Logger.e(TAG, "DownloadGroup.onTaskComplete-->getExecutorService " + System.currentTimeMillis() + " --" + Thread.currentThread().getId());
+            List<DownloadEntity> subTasks = task.getEntity().getSubEntities();
+            for (DownloadEntity subtask : subTasks) {
+                if (subtask.isComplete() && !isTaskFeedback(subtask.getKey())) {
+                    waitForFeedback.put(subtask.getKey(), 1);
+                    downloadStateLisntener.onSucc(subtask.getKey(), subtask.getFilePath());
+
+                    Logger.e(TAG, "onTaskStop --> " + subtask.getKey() + " isComplete:" + subtask.isComplete() + " hasFeedback:" + isTaskFeedback(subtask.getKey()));
                 }
             }
         });
@@ -147,7 +160,7 @@ public class DownloadModule {
     }
 
     public void start(List<String> urls, String path, List<String> paths) {
-        Logger.e(TAG, "tid:" + Thread.currentThread().getId());
+        Logger.e(TAG, "tid:" + Thread.currentThread().getId() + " nums:" + urls.size());
 
         Utils.getExecutorService().submit(() -> {
             int nums = urls.size();
