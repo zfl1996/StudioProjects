@@ -14,6 +14,7 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.SliderMainAdapter;
+import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.ui.widget.RecyclerPagerView;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
@@ -60,6 +61,17 @@ public class SliderPlayer extends LinearLayout {
 
         // init relative to slider data
         sliderAdapter = new SliderMainAdapter(context);
+        sliderAdapter.setPlayStatusListener(new SliderVideoHolder.PlayStatusListener() {
+            @Override
+            public void onStart() {
+                rpSlider.pausePlay();
+            }
+
+            @Override
+            public void onEnd() {
+
+            }
+        });
 
         LinearLayoutManager lm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rpSlider.setLayoutManager(lm);

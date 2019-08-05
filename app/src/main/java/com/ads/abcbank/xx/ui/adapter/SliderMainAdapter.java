@@ -25,7 +25,8 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private Context mContent;
     private List<PlayItem> dataList = new ArrayList<>();
     private LayoutInflater inflater;
-//    private Handler uiHandler = new Handler(Looper.getMainLooper());
+    //    private Handler uiHandler = new Handler(Looper.getMainLooper());
+    private SliderVideoHolder.PlayStatusListener playStatusListener;
 
     public SliderMainAdapter(Context mContent) {
         this.mContent = mContent;
@@ -50,6 +51,10 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 //        notifyDataSetChanged();
         notifyItemRangeChanged(dataList.size() - dataItem.size(), dataItem.size());
+    }
+
+    public void setPlayStatusListener(SliderVideoHolder.PlayStatusListener playStatusListener) {
+        this.playStatusListener = playStatusListener;
     }
 
 
@@ -122,8 +127,15 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (holder instanceof SliderVideoHolder) {
             SliderVideoHolder _holder = (SliderVideoHolder) holder;
 
+            _holder.getVideoContent().setOnCompletionListener( () -> {
+                if (null != playStatusListener)
+                    playStatusListener.onEnd();
+            } );
             _holder.getVideoContent().setVideoPath(_holder.getVideoPath());
             _holder.getVideoContent().start();
+
+            if (null != playStatusListener)
+                playStatusListener.onStart();
             Logger.e(TAG, "startPlay --> " + _holder.getVideoPath());
         }
     }

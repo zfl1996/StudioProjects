@@ -28,4 +28,9 @@ public class SliderVideoHolder  extends RecyclerView.ViewHolder {
     public PLVideoTextureView getVideoContent() {
         return videoContent;
     }
+
+    public interface PlayStatusListener {
+        void onStart();
+        void onEnd();
+    }
 }

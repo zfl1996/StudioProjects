@@ -221,6 +221,10 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
         mRecyclerHandler.sendEmptyMessageDelayed(MSG_PLAY_NEXT,TASK_TIMEOUT);
     }
 
+    public void pausePlay() {
+        isPlaying = false;
+    }
+
     @Override
     public void setAdapter(Adapter adapter) {
         super.setAdapter(adapter);
