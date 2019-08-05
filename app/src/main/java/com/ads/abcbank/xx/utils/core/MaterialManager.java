@@ -39,8 +39,6 @@ public class MaterialManager {
     // bll data
     WeakReference<ItemStatusListener> itemStatusListener = null;
     String deviceModeData;
-//    List<PlaylistBodyBean> playlist = new ArrayList<>();
-//    List<PlaylistBodyBean> txtlist = new ArrayList<>();
     ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
 
@@ -140,12 +138,20 @@ public class MaterialManager {
             Logger.e(TAG, fileName);
             List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey  );
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PDF_CACHED, list, true));
-        } else {
+        } else if (BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
+                || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
             PlayItem playItem = new PlayItem(fileKey,
                     filePath,
                     BllDataExtractor.getIdentityType(suffix) );
 
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, playItem, true));
+        } else if (suffix.toLowerCase().equals("txt")) {
+            String wmsg = ResHelper.readFile2String(filePath);
+            if (!ResHelper.isNullOrEmpty(wmsg)) {
+                List<String> list = new ArrayList<>();
+                list.add(wmsg);
+                uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME_MSG, list, true));
+            }
         }
 //                        });
     }
@@ -240,11 +246,6 @@ public class MaterialManager {
                     }
 
                     String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-//                    if ("txt".equals(suffix)) {
-//                        txtlist.add(bodyBean);
-//                    } else {
-//                        playlist.add(bodyBean);
-//                    }
 
                     if (suffix.equals("pdf")) {
                         allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf"));
