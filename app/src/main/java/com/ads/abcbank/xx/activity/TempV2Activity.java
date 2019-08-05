@@ -44,7 +44,7 @@ public class TempV2Activity extends BaseActivity implements IView {
 
         sliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
             @Override
-            public void onWelcome(List<String> items, boolean isDefault) {
+            public void onWelcome(List<String> items, boolean isDefault, boolean isAppend) {
                 if (isDefault) {
                     autoPollAdapter = new AutoPollAdapter(TempV2Activity.this, items);
                     rvMarqueeView.setLayoutManager(new LinearLayoutManager(TempV2Activity.this, LinearLayoutManager.HORIZONTAL, false));
@@ -53,7 +53,7 @@ public class TempV2Activity extends BaseActivity implements IView {
 
                     new Handler().postDelayed(() -> rvMarqueeView.setVisibility(View.VISIBLE), 100);
                 } else {
-
+                    autoPollAdapter.addItemDataAndRedraw(items, isAppend);
                 }
             }
 

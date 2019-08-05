@@ -155,6 +155,10 @@ public class MaterialManager {
                 && managerStatus.get(Constants.MM_STATUS_KEY_PRESET_INIT) == 1;
     }
 
+    public boolean isMaterialLoaded(String materialCode){
+        return managerStatus.containsKey(materialCode) && managerStatus.get(materialCode) == 1;
+    }
+
     public void reload(int resCode) {
         playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_UPDATE, resCode, false));
     }
@@ -342,14 +346,13 @@ public class MaterialManager {
                         _itemStatusListener.onWelcome(welcomeItems);
                     }
 
-
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_WELCOME_MSG:
                     List<String> welcomeMsg = (List<String>) msg.obj;
 
                     if (null != _itemStatusListener) {
-                        _itemStatusListener.onNewMsgAdded(welcomeMsg);
+                        _itemStatusListener.onNewMsgAdded(welcomeMsg, isMaterialLoaded(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED));
                     }
 
                     break;
@@ -403,7 +406,7 @@ public class MaterialManager {
         void onNewItemsAdded(List<PlayItem> items);
         void onWelcome(List<String> items);
         void onProgress(int code);
-        void onNewMsgAdded(List<String> msg);
+        void onNewMsgAdded(List<String> msg, boolean isAppend);
     }
 
 }
