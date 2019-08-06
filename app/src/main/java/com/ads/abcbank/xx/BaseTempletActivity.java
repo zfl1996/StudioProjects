@@ -10,6 +10,7 @@ import com.ads.abcbank.view.BaseActivity;
 public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected final String TAG = BaseActivity.class.getSimpleName();
+
     protected ProgressDialog mProgressDialog;
     protected AppCompatActivity activity;
     protected Toast toast = null;

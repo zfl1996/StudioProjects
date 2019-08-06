@@ -6,11 +6,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.ads.abcbank.R;
-import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.view.AutoPollAdapter;
 import com.ads.abcbank.view.AutoPollRecyclerView;
-import com.ads.abcbank.view.BaseActivity;
-import com.ads.abcbank.view.IView;
+import com.ads.abcbank.xx.BaseTempletActivity;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.NetTaskManager;
@@ -18,7 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
 
-public class TempV2Activity extends BaseActivity implements IView {
+public class TempV2Activity extends BaseTempletActivity {
     private static final String TAG = "TempV2Activity";
 
     SliderPlayer sliderPlayer;
@@ -29,15 +27,7 @@ public class TempV2Activity extends BaseActivity implements IView {
     NetTaskManager netTaskManager;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_temp_v2);
-        setiView(this);
-
-        initCtrls();
-    }
-
-    private void initCtrls() {
+    protected void initCtrls(Bundle savedInstanceState) {
         sliderPlayer = findViewById(R.id.sliderPlayer);
         rvMarqueeView = findViewById(R.id.rvMarqueeView);
         v_set = findViewById(R.id.v_set);
@@ -78,25 +68,10 @@ public class TempV2Activity extends BaseActivity implements IView {
             }
         });
 
-//        netTaskManager.initNetManager();
-
     }
 
     @Override
-    public void updateMainDate(JSONObject jsonObject) {
-//        sliderPlayer.reload(Constants.);
-        Logger.e(TAG, jsonObject.toJSONString());
-    }
-
-    @Override
-    public void updateBottomDate(JSONObject jsonObject) {
-//        sliderPlayer.reload();
-        Logger.e(TAG, jsonObject.toJSONString());
-    }
-
-    @Override
-    public void updatePresetDate(JSONObject jsonObject) {
-//        sliderPlayer.reload();
-        Logger.e(TAG, jsonObject.toJSONString());
+    protected int getLayoutResourceId() {
+        return R.layout.activity_temp_v2;
     }
 }
