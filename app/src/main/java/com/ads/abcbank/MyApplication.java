@@ -8,20 +8,21 @@ import com.ads.abcbank.utils.ScreenAdaptation;
 import com.arialyy.aria.core.Aria;
 
 public class MyApplication extends Application {
-    private Context context;
+
+    private static MyApplication mInstance;
 
     @Override
     public void onCreate() {
         super.onCreate();
         new ScreenAdaptation(this, 1080, 1920).register();
-        context = this;
+        mInstance = this;
 
         registerActivityLifecycleCallbacks(ActivityManager.getInstance());
 //        Logger.init(MyApplication.this);
         Aria.init(this);
     }
 
-    public Context getContext() {
-        return context;
+    public static Context getAppInstance() {
+        return mInstance;
     }
 }
