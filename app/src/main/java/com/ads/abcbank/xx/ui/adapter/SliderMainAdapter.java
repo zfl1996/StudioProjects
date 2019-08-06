@@ -19,6 +19,8 @@ import com.ads.abcbank.xx.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.pili.pldroid.player.PLOnInfoListener.MEDIA_INFO_VIDEO_RENDERING_START;
+
 public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static String TAG = "SliderMainAdapter";
 
@@ -129,13 +131,17 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             _holder.getVideoContent().setOnCompletionListener( () -> {
                 if (null != playStatusListener)
-                    playStatusListener.onEnd();
+                    playStatusListener.onEnded();
             } );
+
+            _holder.getVideoContent().setOnPreparedListener((int v) -> {
+                if (null != playStatusListener)
+                    playStatusListener.onStarted();
+            });
+
             _holder.getVideoContent().setVideoPath(_holder.getVideoPath());
             _holder.getVideoContent().start();
 
-            if (null != playStatusListener)
-                playStatusListener.onStart();
             Logger.e(TAG, "startPlay --> " + _holder.getVideoPath());
         }
     }
@@ -147,6 +153,9 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             _holder.getVideoContent().pause();
             _holder.getVideoContent().stopPlayback();
+
+            if (null != playStatusListener)
+                playStatusListener.onEnded();
 
             Logger.e(TAG, "endPlay --> " + _holder.getVideoPath());
         }

@@ -53,7 +53,7 @@ public class AbcDownloader {
     }
 
     @Download.onTaskStart void taskStart(DownloadTask task) {
-        Log.d(TAG, "onStart");
+        Log.d(TAG, "onStarted");
     }
 
     @Download.onTaskRunning protected void running(DownloadTask task) {

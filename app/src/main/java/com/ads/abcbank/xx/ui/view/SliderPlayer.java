@@ -63,13 +63,13 @@ public class SliderPlayer extends LinearLayout {
         sliderAdapter = new SliderMainAdapter(context);
         sliderAdapter.setPlayStatusListener(new SliderVideoHolder.PlayStatusListener() {
             @Override
-            public void onStart() {
+            public void onStarted() {
                 rpSlider.pausePlay();
             }
 
             @Override
-            public void onEnd() {
-
+            public void onEnded() {
+                rpSlider.resumePlay();
             }
         });
 

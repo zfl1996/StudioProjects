@@ -225,6 +225,14 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
         isPlaying = false;
     }
 
+    public void resumePlay() {
+        if (isPlaying)
+            return;
+
+        isPlaying = true;
+        showNextPage();
+    }
+
     @Override
     public void setAdapter(Adapter adapter) {
         super.setAdapter(adapter);
