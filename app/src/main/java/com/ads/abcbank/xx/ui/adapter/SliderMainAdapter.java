@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
-import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderImageHolder;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderRateBuyHolder;
@@ -19,21 +18,17 @@ import com.ads.abcbank.xx.utils.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.pili.pldroid.player.PLOnInfoListener.MEDIA_INFO_VIDEO_RENDERING_START;
-
 public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static String TAG = "SliderMainAdapter";
 
     private Context mContent;
     private List<PlayItem> dataList = new ArrayList<>();
     private LayoutInflater inflater;
-    //    private Handler uiHandler = new Handler(Looper.getMainLooper());
     private SliderVideoHolder.PlayStatusListener playStatusListener;
 
     public SliderMainAdapter(Context mContent) {
         this.mContent = mContent;
         this.inflater = LayoutInflater.from(mContent);
-
         this.dataList = dataList;
     }
 
@@ -44,14 +39,12 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void addItemDataAndRedraw(PlayItem dataItem) {
         dataList.add(dataItem);
-//        notifyItemRangeChanged(dataList.size() - 2, 1);
         notifyItemRangeChanged(dataList.size() - 1, 1);
     }
 
     public void addItemDataAndPortionRedraw(List<PlayItem> dataItem) {
         dataList.addAll(dataItem);
 
-//        notifyDataSetChanged();
         notifyItemRangeChanged(dataList.size() - dataItem.size(), dataItem.size());
     }
 
@@ -141,8 +134,6 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             _holder.getVideoContent().setVideoPath(_holder.getVideoPath());
             _holder.getVideoContent().start();
-
-            Logger.e(TAG, "startPlay --> " + _holder.getVideoPath());
         }
     }
 
@@ -156,8 +147,6 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             if (null != playStatusListener)
                 playStatusListener.onEnded();
-
-            Logger.e(TAG, "endPlay --> " + _holder.getVideoPath());
         }
     }
 

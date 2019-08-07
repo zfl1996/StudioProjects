@@ -29,7 +29,6 @@ public class SliderPlayer extends LinearLayout {
     RecyclerPagerView rpSlider;
     LinearLayout llProgress;
 
-//    MaterialManager materialManager;
     SliderMainAdapter sliderAdapter;
     DataStatusListener dataStatusListener;
 
@@ -44,10 +43,6 @@ public class SliderPlayer extends LinearLayout {
         this.context = context;
         initPlayer();
     }
-
-//    public void reload(int resCode) {
-//        materialManager.reload(resCode);
-//    }
 
     private void initPlayer() {
         // init player view
@@ -75,10 +70,6 @@ public class SliderPlayer extends LinearLayout {
         LinearLayoutManager lm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rpSlider.setLayoutManager(lm);
         rpSlider.setAdapter(sliderAdapter);
-
-//        // start data process...
-//        materialManager = new MaterialManager(context, materialItemStatusListener);
-//        materialManager.initManager();
     }
 
     public void onReady(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
@@ -125,7 +116,6 @@ public class SliderPlayer extends LinearLayout {
 
             case Constants.SLIDER_PROGRESS_CODE_PRESET:
                 txtHint.setText("准备汇率数据");
-//                     new Handler().postDelayed(() ->txtHint.setText("准备汇率数据"), 800 );
 
                 break;
 
