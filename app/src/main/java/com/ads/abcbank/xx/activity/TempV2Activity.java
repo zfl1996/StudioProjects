@@ -39,16 +39,6 @@ public class TempV2Activity extends BaseTempletActivity {
                 mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
             }
 
-//            @Override
-//            public void onItemDownloaded(PlayItem item) {
-//                mainSliderPlayer.onNewItemAdded(isMaterialManagerInitSuccessed(), item);
-//            }
-
-//            @Override
-//            public void onNewItemsAdded(List<PlayItem> items) {
-//                mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
-//            }
-
             @Override
             public void onWelcome(List<String> items) {
                 mainSliderPlayer.onWelcome(items);
