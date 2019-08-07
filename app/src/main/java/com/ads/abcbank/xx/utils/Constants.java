@@ -47,6 +47,7 @@ public class Constants {
     public static final String MM_STATUS_KEY_PLAYLIST_LOADED = "playlist_status";
     public static final String MM_STATUS_KEY_STATUS_PRESET_LOADED = "preset_status";
     public static final String MM_STATUS_KEY_STATUS_WELCOME_LOADED = "welcome_status";
+    public static final String MM_KEY_INTEGRATIONPRESET = "integrationPresetData";
 
     public static final String DOWNLOADER_KEY_TASK = "DownloadItem";
 

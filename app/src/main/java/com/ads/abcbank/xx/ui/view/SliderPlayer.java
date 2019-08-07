@@ -32,10 +32,10 @@ public class SliderPlayer extends LinearLayout {
     SliderMainAdapter sliderAdapter;
     DataStatusListener dataStatusListener;
 
+
     public void setDataStatusListener(DataStatusListener dataStatusListener) {
         this.dataStatusListener = dataStatusListener;
     }
-
 
     public SliderPlayer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -57,12 +57,12 @@ public class SliderPlayer extends LinearLayout {
         sliderAdapter = new SliderMainAdapter(context);
         sliderAdapter.setPlayStatusListener(new SliderVideoHolder.PlayStatusListener() {
             @Override
-            public void onStarted() {
+            public void onStartPlay() {
                 rpSlider.pausePlay();
             }
 
             @Override
-            public void onEnded() {
+            public void onPlayFinish() {
                 rpSlider.resumePlay();
             }
         });
@@ -131,6 +131,10 @@ public class SliderPlayer extends LinearLayout {
             default:
                 break;
         }
+    }
+
+    public void setIsIntegrationPresetData(boolean isIntegrationPresetData) {
+        sliderAdapter.setIntegrationPresetData(isIntegrationPresetData);
     }
 
     private void showHintMsg(boolean isMaterialManagerInitSuccessed, String msg) {

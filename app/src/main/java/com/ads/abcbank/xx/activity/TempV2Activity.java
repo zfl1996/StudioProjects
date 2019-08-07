@@ -19,39 +19,39 @@ public class TempV2Activity extends BaseTempletActivity {
 
     @Override
     protected void initCtrls(Bundle savedInstanceState) {
-        sliderPlayer = findViewById(R.id.sliderPlayer);
+        mainSliderPlayer = findViewById(R.id.sliderPlayer);
         rvMarqueeView = findViewById(R.id.rvMarqueeView);
         v_set = findViewById(R.id.v_set);
 
         materialItemStatusListener = new MaterialManager.ItemStatusListener() {
             @Override
             public void onReady(List<PlayItem> items) {
-                sliderPlayer.onReady(isMaterialManagerInitSuccessed(), items);
+                mainSliderPlayer.onReady(isMaterialManagerInitSuccessed(), items);
             }
 
             @Override
             public void onNewItemAdded(PlayItem item) {
-                sliderPlayer.onNewItemAdded(isMaterialManagerInitSuccessed(), item);
+                mainSliderPlayer.onNewItemAdded(isMaterialManagerInitSuccessed(), item);
             }
 
             @Override
             public void onNewItemsAdded(List<PlayItem> items) {
-                sliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
+                mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
             }
 
             @Override
             public void onWelcome(List<String> items) {
-                sliderPlayer.onWelcome(items);
+                mainSliderPlayer.onWelcome(items);
             }
 
             @Override
             public void onNewMsgAdded(List<String> msg, boolean isAppend) {
-                sliderPlayer.onNewMsgAdded(msg, isAppend);
+                mainSliderPlayer.onNewMsgAdded(msg, isAppend);
             }
 
             @Override
             public void onProgress(int code) {
-                sliderPlayer.onProgress(isMaterialManagerInitSuccessed(), code);
+                mainSliderPlayer.onProgress(isMaterialManagerInitSuccessed(), code);
             }
         };
     }
@@ -72,7 +72,7 @@ public class TempV2Activity extends BaseTempletActivity {
     }
 
     @Override
-    protected boolean isPresetSlider() {
+    protected boolean isIntegratedSlider() {
         return true;
     }
 }

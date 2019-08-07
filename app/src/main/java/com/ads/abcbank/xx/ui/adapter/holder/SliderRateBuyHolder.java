@@ -3,6 +3,7 @@ package com.ads.abcbank.xx.ui.adapter.holder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
@@ -13,6 +14,7 @@ public class SliderRateBuyHolder  extends RecyclerView.ViewHolder {
 
     TextView txtDesc, txtTitle;
     RecyclerView rvRate;
+    LinearLayout llHeader;
 
     public SliderRateBuyHolder(View itemView) {
         super(itemView);
@@ -20,11 +22,13 @@ public class SliderRateBuyHolder  extends RecyclerView.ViewHolder {
         txtTitle = itemView.findViewById(R.id.txtTitle);
         txtDesc = itemView.findViewById(R.id.txtDesc);
         rvRate = itemView.findViewById(R.id.rvRate);
+        llHeader = itemView.findViewById(R.id.llHeader);
     }
 
-    public static void showRate(PresetBean.BIAOFE biaofe, TextView txtDesc, TextView txtTitle, RecyclerView rvRate) {
+    public static void showRate(PresetBean.BIAOFE biaofe, TextView txtDesc, TextView txtTitle, RecyclerView rvRate, LinearLayout llHeader, boolean isShowHeader) {
         txtTitle.setText(biaofe.title);
         txtDesc.setText(biaofe.rem);
+        llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
 
         RateSave4Adapter adapter = new RateSave4Adapter(rvRate.getContext());
         adapter.setDataSource(biaofe.entry);
@@ -46,6 +50,10 @@ public class SliderRateBuyHolder  extends RecyclerView.ViewHolder {
 
     public RecyclerView getRvRate() {
         return rvRate;
+    }
+
+    public LinearLayout getLlHeader() {
+        return llHeader;
     }
 
 }

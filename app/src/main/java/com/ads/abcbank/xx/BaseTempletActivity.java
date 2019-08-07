@@ -27,7 +27,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected MaterialManager.ItemStatusListener materialItemStatusListener;
     protected AutoPollAdapter autoPollAdapter;
     protected AutoPollRecyclerView rvMarqueeView;
-    protected SliderPlayer sliderPlayer;
+    protected SliderPlayer mainSliderPlayer;
 
     protected AppCompatActivity activity;
     protected Handler mainHandler = new Handler();
@@ -56,8 +56,9 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             }
         });
 
-        if (null != sliderPlayer)
-            sliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
+        if (null != mainSliderPlayer) {
+            mainSliderPlayer.setIsIntegrationPresetData(isIntegratedSlider());
+            mainSliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
                 @Override
                 public void onWelcome(List<String> items, boolean isDefault, boolean isAppend) {
                     onWelcomeLoaded(items, isDefault, isAppend);
@@ -68,11 +69,11 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
                     netTaskManager.initNetManager();
                 }
             });
-
+        }
 
         // start data process...
         materialManager = new MaterialManager(this, materialItemStatusListener);
-        materialManager.initManager(isPresetSlider());
+        materialManager.initManager(isIntegratedSlider());
     }
 
     protected void reload(int resCode) {
@@ -101,7 +102,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected abstract int getLayoutResourceId();
     protected abstract void onPlaylistLoaded(JSONObject jsonObject);
     protected abstract void onPresetLoaded(JSONObject jsonObject);
-    protected abstract boolean isPresetSlider();
+    protected abstract boolean isIntegratedSlider();
 
 
 }

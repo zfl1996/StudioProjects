@@ -25,6 +25,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private List<PlayItem> dataList = new ArrayList<>();
     private LayoutInflater inflater;
     private SliderVideoHolder.PlayStatusListener playStatusListener;
+    private boolean isIntegrationPresetData;
 
     public SliderMainAdapter(Context mContent) {
         this.mContent = mContent;
@@ -50,6 +51,10 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void setPlayStatusListener(SliderVideoHolder.PlayStatusListener playStatusListener) {
         this.playStatusListener = playStatusListener;
+    }
+
+    public void setIntegrationPresetData(boolean integrationPresetData) {
+        isIntegrationPresetData = integrationPresetData;
     }
 
 
@@ -82,21 +87,22 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             SliderRateSaveHolder.showRate((PresetBean.SaveRate)item.getAttData(),
                     _holder.getTxtDesc(),
                     _holder.getTxtTitle(),
-                    _holder.getRvRate());
-        }
-        else if (holder instanceof SliderRateLoanHolder) {
+                    _holder.getRvRate(),
+                    _holder.getLlHeader(), isIntegrationPresetData);
+        } else if (holder instanceof SliderRateLoanHolder) {
             SliderRateLoanHolder _holder = (SliderRateLoanHolder)holder;
             SliderRateLoanHolder.showRate((PresetBean.LoanRate)item.getAttData(),
                     _holder.getTxtDesc(),
                     _holder.getTxtTitle(),
-                    _holder.getRvRate());
-        }
-        else if (holder instanceof SliderRateBuyHolder) {
+                    _holder.getRvRate(),
+                    _holder.getLlHeader(), isIntegrationPresetData);
+        } else if (holder instanceof SliderRateBuyHolder) {
             SliderRateBuyHolder _holder = (SliderRateBuyHolder)holder;
             SliderRateBuyHolder.showRate((PresetBean.BIAOFE)item.getAttData(),
                     _holder.getTxtDesc(),
                     _holder.getTxtTitle(),
-                    _holder.getRvRate());
+                    _holder.getRvRate(),
+                    _holder.getLlHeader(), isIntegrationPresetData);
         }
 
     }
@@ -124,12 +130,12 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             _holder.getVideoContent().setOnCompletionListener( () -> {
                 if (null != playStatusListener)
-                    playStatusListener.onEnded();
+                    playStatusListener.onPlayFinish();
             } );
 
             _holder.getVideoContent().setOnPreparedListener((int v) -> {
                 if (null != playStatusListener)
-                    playStatusListener.onStarted();
+                    playStatusListener.onStartPlay();
             });
 
             _holder.getVideoContent().setVideoPath(_holder.getVideoPath());
@@ -146,7 +152,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             _holder.getVideoContent().stopPlayback();
 
             if (null != playStatusListener)
-                playStatusListener.onEnded();
+                playStatusListener.onPlayFinish();
         }
     }
 
