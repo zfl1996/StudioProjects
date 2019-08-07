@@ -12,6 +12,7 @@ import com.ads.abcbank.view.AutoPollAdapter;
 import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
+import com.ads.abcbank.xx.utils.core.MaterialManager;
 import com.ads.abcbank.xx.utils.core.NetTaskManager;
 import com.alibaba.fastjson.JSONObject;
 
@@ -21,15 +22,17 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected final String TAG = BaseActivity.class.getSimpleName();
 
+    private NetTaskManager netTaskManager;
+    private MaterialManager materialManager;
+    protected MaterialManager.ItemStatusListener materialItemStatusListener;
+    protected AutoPollAdapter autoPollAdapter;
+    protected AutoPollRecyclerView rvMarqueeView;
+    protected SliderPlayer sliderPlayer;
+
     protected AppCompatActivity activity;
     protected Handler mainHandler = new Handler();
     protected Toast toast = null;
     protected ProgressDialog mProgressDialog;
-
-    protected AutoPollAdapter autoPollAdapter;
-    protected AutoPollRecyclerView rvMarqueeView;
-    protected SliderPlayer sliderPlayer;
-    protected NetTaskManager netTaskManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,19 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
                     netTaskManager.initNetManager();
                 }
             });
+
+
+        // start data process...
+        materialManager = new MaterialManager(this, materialItemStatusListener);
+        materialManager.initManager();
+    }
+
+    protected void reload(int resCode) {
+        materialManager.reload(resCode);
+    }
+
+    protected boolean isMaterialManagerInitSuccessed() {
+        return materialManager.isInitSuccessed();
     }
 
     protected void onWelcomeLoaded(List<String> items, boolean isDefault, boolean isAppend) {
@@ -85,4 +101,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected abstract int getLayoutResourceId();
     protected abstract void onPlaylistLoaded(JSONObject jsonObject);
     protected abstract void onPresetLoaded(JSONObject jsonObject);
+
+
 }

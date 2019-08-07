@@ -223,6 +223,7 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
 
     public void pausePlay() {
         isPlaying = false;
+        mRecyclerHandler.removeMessages(MSG_PLAY_NEXT);
     }
 
     public void resumePlay() {

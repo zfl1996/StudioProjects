@@ -17,7 +17,6 @@ import com.ads.abcbank.xx.ui.adapter.SliderMainAdapter;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.ui.widget.RecyclerPagerView;
 import com.ads.abcbank.xx.utils.Constants;
-import com.ads.abcbank.xx.utils.core.MaterialManager;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class SliderPlayer extends LinearLayout {
     RecyclerPagerView rpSlider;
     LinearLayout llProgress;
 
-    MaterialManager materialManager;
+//    MaterialManager materialManager;
     SliderMainAdapter sliderAdapter;
     DataStatusListener dataStatusListener;
 
@@ -46,9 +45,9 @@ public class SliderPlayer extends LinearLayout {
         initPlayer();
     }
 
-    public void reload(int resCode) {
-        materialManager.reload(resCode);
-    }
+//    public void reload(int resCode) {
+//        materialManager.reload(resCode);
+//    }
 
     private void initPlayer() {
         // init player view
@@ -77,85 +76,77 @@ public class SliderPlayer extends LinearLayout {
         rpSlider.setLayoutManager(lm);
         rpSlider.setAdapter(sliderAdapter);
 
-        // start data process...
-        materialManager = new MaterialManager(context, itemStatusListener);
-        materialManager.initManager();
+//        // start data process...
+//        materialManager = new MaterialManager(context, materialItemStatusListener);
+//        materialManager.initManager();
     }
 
+    public void onReady(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
+        sliderAdapter.addItemDataAndRedraw(items);
+        rpSlider.setOnPageChangeListener(new PagerChangeListener(items.size()));
+        rpSlider.startPlay();
 
-    MaterialManager.ItemStatusListener itemStatusListener = new MaterialManager.ItemStatusListener() {
-        @Override
-        public void onReady(List<PlayItem> items) {
-            sliderAdapter.addItemDataAndRedraw(items);
-            rpSlider.setOnPageChangeListener(new PagerChangeListener(items.size()));
-            rpSlider.startPlay();
+        if (isMaterialManagerInitSuccessed)
+            llProgress.setVisibility(GONE);
+    }
 
-            if (materialManager.isInitSuccessed())
-                llProgress.setVisibility(GONE);
-        }
+    public void onNewItemAdded(boolean isMaterialManagerInitSuccessed, PlayItem item) {
+        sliderAdapter.addItemDataAndRedraw(item);
+        rpSlider.startPlay();
 
-        @Override
-        public void onNewItemAdded(PlayItem item) {
-            sliderAdapter.addItemDataAndRedraw(item);
-            rpSlider.startPlay();
+        if (isMaterialManagerInitSuccessed)
+            llProgress.setVisibility(GONE);
+    }
 
-            if (materialManager.isInitSuccessed())
-                llProgress.setVisibility(GONE);
-        }
+    public void onNewItemsAdded(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
+        sliderAdapter.addItemDataAndPortionRedraw(items);
+        rpSlider.startPlay();
 
-        @Override
-        public void onNewItemsAdded(List<PlayItem> items) {
-            sliderAdapter.addItemDataAndPortionRedraw(items);
-            rpSlider.startPlay();
+        if (isMaterialManagerInitSuccessed)
+            llProgress.setVisibility(GONE);
+    }
 
-            if (materialManager.isInitSuccessed())
-                llProgress.setVisibility(GONE);
-        }
+    public void onWelcome(List<String> items) {
+        if (null != dataStatusListener)
+            dataStatusListener.onWelcome(items, true, false);
+    }
 
-        @Override
-        public void onWelcome(List<String> items) {
-            if (null != dataStatusListener)
-                dataStatusListener.onWelcome(items, true, false);
-        }
+    public void onNewMsgAdded(List<String> msg, boolean isAppend) {
+        if (null != dataStatusListener)
+            dataStatusListener.onWelcome(msg, false, isAppend);
+    }
 
-        @Override
-        public void onNewMsgAdded(List<String> msg, boolean isAppend) {
-            if (null != dataStatusListener)
-                dataStatusListener.onWelcome(msg, false, isAppend);
-        }
+    public void onProgress(boolean isMaterialManagerInitSuccessed, int code) {
+        switch (code) {
+            case Constants.SLIDER_PROGRESS_CODE_PRE:
+                txtHint.setText("初始化播放列表");
 
-        @Override
-        public void onProgress(int code) {
-            switch (code) {
-                case Constants.SLIDER_PROGRESS_CODE_PRE:
-                    txtHint.setText("初始化播放列表");
+                break;
 
-                    break;
-
-                case Constants.SLIDER_PROGRESS_CODE_PRESET:
-                    txtHint.setText("准备汇率数据");
+            case Constants.SLIDER_PROGRESS_CODE_PRESET:
+                txtHint.setText("准备汇率数据");
 //                     new Handler().postDelayed(() ->txtHint.setText("准备汇率数据"), 800 );
 
-                    break;
+                break;
 
-                case Constants.SLIDER_PROGRESS_CODE_OK:
-                    Logger.e(TAG, materialManager.isInitSuccessed() ? "materialManager.isInitSuccessed" : "not succ");
-                    if (materialManager.isInitSuccessed()) {
-                        llProgress.setVisibility(GONE);
-                    } else {
-                        txtHint.setText("初次启动，初始化环境");
-                    }
+            case Constants.SLIDER_PROGRESS_CODE_OK:
+                Logger.e(TAG, isMaterialManagerInitSuccessed ? "materialManager.isMaterialManagerInitSuccessed" : "not succ");
+                if (isMaterialManagerInitSuccessed) {
+                    llProgress.setVisibility(GONE);
+                } else {
+                    txtHint.setText("初次启动，初始化环境");
+                }
 
-                    if (null != dataStatusListener)
-                        dataStatusListener.onReady();
+                if (null != dataStatusListener)
+                    dataStatusListener.onReady();
 
-                    break;
+                break;
 
-                default:
-                    break;
-            }
+            default:
+                break;
         }
-    };
+    }
+
 
     public class PagerChangeListener extends RecyclerPagerView.OnPageChangeListener {
         private int size;

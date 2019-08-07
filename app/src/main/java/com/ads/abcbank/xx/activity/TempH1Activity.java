@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.xx.BaseTempletActivity;
-import com.ads.abcbank.xx.utils.Constants;
 import com.alibaba.fastjson.JSONObject;
 
 public class TempH1Activity extends BaseTempletActivity {
@@ -28,7 +27,7 @@ public class TempH1Activity extends BaseTempletActivity {
 
     @Override
     protected void onPresetLoaded(JSONObject jsonObject) {
-        if (null != sliderPlayer)
-            sliderPlayer.reload(Constants.NET_MANAGER_DATA_PRESET);
+//        if (null != sliderPlayer)
+//            sliderPlayer.reload(Constants.NET_MANAGER_DATA_PRESET);
     }
 }
