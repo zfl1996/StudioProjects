@@ -202,7 +202,7 @@ public class MaterialManager {
             presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange) );
 
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
-        } else  {
+        } else {
 //            managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
         }
 
@@ -379,10 +379,18 @@ public class MaterialManager {
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_RATE:
+                    if (null != _itemStatusListener)
+                        _itemStatusListener.onRate((List<PlayItem>)msg.obj);
+
+                    break;
+
                 case Constants.SLIDER_STATUS_CODE_PDF_CACHED:
-                    if (null != _itemStatusListener) {
-                        _itemStatusListener.onNewItemsAdded((List<PlayItem>)msg.obj);
-                    }
+                    if (null != _itemStatusListener)
+                        _itemStatusListener.onItemPrepared((List<PlayItem>)msg.obj);
+
+//                    if (null != _itemStatusListener) {
+//                        _itemStatusListener.onNewItemsAdded((List<PlayItem>)msg.obj);
+//                    }
 
                     break;
 
@@ -394,7 +402,10 @@ public class MaterialManager {
 
                 case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
                     if (null != _itemStatusListener)
-                        _itemStatusListener.onNewItemAdded((PlayItem)msg.obj);
+                        _itemStatusListener.onItemPrepared(new ArrayList<PlayItem>(){
+                            { add((PlayItem)msg.obj); }
+                        } );
+//                        _itemStatusListener.onItemPrepared((PlayItem)msg.obj);
 
                     break;
 
@@ -421,8 +432,11 @@ public class MaterialManager {
     public interface ItemStatusListener {
         void onProgress(int code);
         void onReady(List<PlayItem> items);
-        void onNewItemAdded(PlayItem item);
-        void onNewItemsAdded(List<PlayItem> items);
+//        void onNewItemAdded(PlayItem item);
+//        void onNewItemsAdded(List<PlayItem> items);
+        void onItemPrepared(List<PlayItem> items);
+//        void onItemPrepared(PlayItem item);
+        void onRate(List<PlayItem> items);
         void onWelcome(List<String> items);
         void onNewMsgAdded(List<String> msg, boolean isAppend);
     }
