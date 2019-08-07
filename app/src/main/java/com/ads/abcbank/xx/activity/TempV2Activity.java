@@ -70,4 +70,9 @@ public class TempV2Activity extends BaseTempletActivity {
     protected void onPresetLoaded(JSONObject jsonObject) {
         reload(Constants.NET_MANAGER_DATA_PRESET);
     }
+
+    @Override
+    protected boolean isPresetSlider() {
+        return true;
+    }
 }

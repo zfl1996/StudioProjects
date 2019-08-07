@@ -37,6 +37,7 @@ public class MaterialManager {
     Handler playerHandler;
 
     // bll data
+    boolean loadPresetData = true;
     WeakReference<ItemStatusListener> itemStatusListener = null;
     String deviceModeData;
     ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
@@ -48,7 +49,8 @@ public class MaterialManager {
     }
 
 
-    public void initManager() {
+    public void initManager(boolean loadPresetData) {
+        this.loadPresetData = loadPresetData;
         playerThread = new HandlerThread("playerThread");
         playerThread.start();
 
@@ -66,10 +68,10 @@ public class MaterialManager {
                         int resCode = (int)msg.obj;
                         Utils.getExecutorService().submit(() -> {
                             if (resCode == Constants.NET_MANAGER_DATA_PLAYLIST) {
-                                if (managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) != 1)
+                                if (managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_LOADED) != 1)
                                     loadPlaylist();
                             } else if(resCode == Constants.NET_MANAGER_DATA_PRESET) {
-                                if (managerStatus.get(Constants.MM_STATUS_KEY_PRESET_INIT) != 1)
+                                if (managerStatus.get(Constants.MM_STATUS_KEY_STATUS_PRESET_LOADED) != 1)
                                     loadPreset();
                             }
                         });
@@ -78,7 +80,8 @@ public class MaterialManager {
                     case Constants.SLIDER_STATUS_CODE_INIT:
                         Logger.e(TAG, "tid:(SLIDER_STATUS_CODE_INIT)" + Thread.currentThread().getId());
                         Utils.getExecutorService().submit(() -> loadPlaylist());
-                        Utils.getExecutorService().submit(() -> loadPreset());
+//                        if (loadPresetData)
+                            Utils.getExecutorService().submit(() -> loadPreset());
                         Utils.getExecutorService().submit(() -> showWelcome(null));
 
                         break;
@@ -105,6 +108,8 @@ public class MaterialManager {
         Utils.getExecutorService().submit(() -> {
             managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 0);
             managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 0);
+            managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 0);
+            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_PRESET_LOADED, 0);
 
             downloadModule = new DownloadModule(context, 0, downloadStateLisntener);
             playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, null, false));
@@ -158,7 +163,7 @@ public class MaterialManager {
 
     public boolean isInitSuccessed() {
         return managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) == 1
-                && managerStatus.get(Constants.MM_STATUS_KEY_PRESET_INIT) == 1;
+                && (!loadPresetData || (loadPresetData && managerStatus.get(Constants.MM_STATUS_KEY_STATUS_PRESET_LOADED) == 1));
     }
 
     public boolean isMaterialLoaded(String materialCode){
@@ -178,6 +183,7 @@ public class MaterialManager {
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
 
         if (!ResHelper.isNullOrEmpty(json)) {
+            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_PRESET_LOADED, 1);
 
             PresetBean bean = JSON.parseObject(json, PresetBean.class);
             if (null == bean || !"0".equals(bean.resCode))
@@ -190,9 +196,12 @@ public class MaterialManager {
             presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange ) );
 
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
+        } else  {
+//            managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
         }
 
         managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
+//        managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
         uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS,
                  Constants.SLIDER_PROGRESS_CODE_OK, true));
     }
@@ -216,6 +225,8 @@ public class MaterialManager {
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
         if (!ResHelper.isNullOrEmpty(json)) {
             try {
+                managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 1);
+
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
                 List<String> waitForDownload = new ArrayList<>();
@@ -261,7 +272,6 @@ public class MaterialManager {
                     }
                 }
 
-                managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 1);
                 if (waitForDownload.size() > 0 && waitForDownload.size() == waitForDownloadFilePath.size()) {
                     Logger.e(TAG, "tid:(loadPlaylist)" + Thread.currentThread().getId());
                     downloadModule.start(waitForDownload, ResHelper.getRootDir(), waitForDownloadFilePath);
@@ -281,6 +291,8 @@ public class MaterialManager {
         } else {
 
         }
+
+        managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 1);
     }
 
     private void showWelcome(List<String> welcomeItems) {

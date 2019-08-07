@@ -110,22 +110,18 @@ public class SliderPlayer extends LinearLayout {
     public void onProgress(boolean isMaterialManagerInitSuccessed, int code) {
         switch (code) {
             case Constants.SLIDER_PROGRESS_CODE_PRE:
-                txtHint.setText("初始化播放列表");
+                showHintMsg(isMaterialManagerInitSuccessed, "初始化播放列表");
 
                 break;
 
             case Constants.SLIDER_PROGRESS_CODE_PRESET:
-                txtHint.setText("准备汇率数据");
+                showHintMsg(isMaterialManagerInitSuccessed, "准备汇率数据");
 
                 break;
 
             case Constants.SLIDER_PROGRESS_CODE_OK:
                 Logger.e(TAG, isMaterialManagerInitSuccessed ? "materialManager.isMaterialManagerInitSuccessed" : "not succ");
-                if (isMaterialManagerInitSuccessed) {
-                    llProgress.setVisibility(GONE);
-                } else {
-                    txtHint.setText("初次启动，初始化环境");
-                }
+                showHintMsg(isMaterialManagerInitSuccessed, "初次启动，初始化环境");
 
                 if (null != dataStatusListener)
                     dataStatusListener.onReady();
@@ -134,6 +130,14 @@ public class SliderPlayer extends LinearLayout {
 
             default:
                 break;
+        }
+    }
+
+    private void showHintMsg(boolean isMaterialManagerInitSuccessed, String msg) {
+        if (isMaterialManagerInitSuccessed) {
+            llProgress.setVisibility(GONE);
+        } else {
+            txtHint.setText("初次启动，初始化环境");
         }
     }
 

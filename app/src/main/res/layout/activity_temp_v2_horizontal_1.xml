@@ -63,13 +63,14 @@
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="match_parent"-->
             <!--android:layout_above="@+id/rvMarqueeView"/>-->
-        <View
+        <com.ads.abcbank.xx.ui.view.SliderPlayer
+            android:id="@+id/sliderPlayer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="@dimen/top_width_right"
-            android:background="#fff" />
+            android:layout_above="@+id/rvMarqueeView"/>
         <com.ads.abcbank.xx.ui.view.SliderPlayer
-            android:id="@+id/sliderPlayer"
+            android:id="@+id/presetSliderPlayer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="@dimen/top_width"

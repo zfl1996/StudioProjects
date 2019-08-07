@@ -1,17 +1,14 @@
 package com.ads.abcbank.xx.utils.core;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
-import com.arialyy.annotations.Download;
 import com.arialyy.annotations.DownloadGroup;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
 import com.arialyy.aria.core.download.DownloadGroupTask;
-import com.arialyy.aria.core.download.DownloadTask;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,48 +33,13 @@ public class DownloadModule {
         Aria.download(this).register();
     }
 
-    @Download.onWait void onWait(DownloadTask task) {
-        Log.d(TAG, "wait ==> " + task.getDownloadEntity().getFileName());
-    }
+    @DownloadGroup.onSubTaskStop void onSubTaskRunning(DownloadGroupTask groupTask, DownloadEntity subEntity) {
+        if (null == downloadStateLisntener)
+            return;
 
-    @Download.onPre protected void onPre(DownloadTask task) {
-        Log.d(TAG, "onPre");
-    }
-
-    @Download.onTaskStart void taskStart(DownloadTask task) {
-        Log.d(TAG, "onStarted");
-    }
-
-    @Download.onTaskRunning protected void running(DownloadTask task) {
-        Log.d(TAG, "running");
-    }
-
-    @Download.onTaskResume void taskResume(DownloadTask task) {
-        Log.d(TAG, "resume");
-    }
-
-    @Download.onTaskStop void taskStop(DownloadTask task) {
-        if (null != downloadStateLisntener) {
-            downloadStateLisntener.onFail(task.getKey(), "stop");
-        }
-    }
-
-    @Download.onTaskCancel void taskCancel(DownloadTask task) {
-        if (null != downloadStateLisntener) {
-            downloadStateLisntener.onFail(task.getKey(), "cancel");
-        }
-    }
-
-    @Download.onTaskFail void taskFail(DownloadTask task) {
-        if (null != downloadStateLisntener) {
-            downloadStateLisntener.onFail(task.getKey(), "fail");
-        }
-    }
-
-    @Download.onTaskComplete void taskComplete(DownloadTask task) {
-        if (null != downloadStateLisntener) {
-            downloadStateLisntener.onSucc(/*task.getExtendField(), */task.getKey(), task.getFilePath());
-        }
+        Utils.getExecutorService().submit(() -> {
+            tryFeedbackTask(subEntity);
+        });
     }
 
     @DownloadGroup.onSubTaskComplete void subTaskComplete(DownloadGroupTask groupTask, DownloadEntity subEntity) {
@@ -85,27 +47,14 @@ public class DownloadModule {
             return;
 
         Utils.getExecutorService().submit(() -> {
-            if (subEntity.isComplete()) {
-                long time = System.currentTimeMillis();
-                Logger.e(TAG, subEntity.getFilePath()
-                        + "(" + isTaskFeedback(subEntity.getKey()) + ") " + subEntity.getKey() + " at: " + subEntity.getCompleteTime()
-                        + "=" + time
-                        + "-->" + subEntity.getPercent()
-                        + " tid:" + Thread.currentThread().getId() + " (" + subEntity.getSpeed() + ")"
-                );
-                if (!isTaskFeedback(subEntity.getKey())){
-                    waitForFeedback.put(subEntity.getKey(), 1);
-                    downloadStateLisntener.onSucc(subEntity.getKey(), subEntity.getFilePath());
-                }
-            }
+            tryFeedbackTask(subEntity);
         });
 
     }
 
     @DownloadGroup.onTaskComplete void taskComplete(DownloadGroupTask task) {
-        long time = System.currentTimeMillis();
         Logger.e(TAG, "DownloadGroup.onTaskComplete-->"
-                + time + " tid:" + Thread.currentThread().getId() + "\r\n"
+                + System.currentTimeMillis() + " tid:" + Thread.currentThread().getId() + "\r\n"
                 + ResHelper.join(task.getEntity().getUrls().toArray(new String[task.getEntity().getUrls().size()]), "@@\r\n")
         );
 
@@ -113,30 +62,24 @@ public class DownloadModule {
             return;
 
         Utils.getExecutorService().submit(() -> {
-            Logger.e(TAG, "DownloadGroup.onTaskComplete-->getExecutorService " + System.currentTimeMillis() + " --" + Thread.currentThread().getId());
             List<DownloadEntity> subTasks = task.getEntity().getSubEntities();
             for (DownloadEntity subtask : subTasks) {
-                if (subtask.isComplete() && !isTaskFeedback(subtask.getKey())) {
-                    waitForFeedback.put(subtask.getKey(), 1);
-                    downloadStateLisntener.onSucc(subtask.getKey(), subtask.getFilePath());
-
-                    Logger.e(TAG, "notify --> " + subtask.getKey() + " tid:" + Thread.currentThread().getId() + "");
-                }
+                tryFeedbackTask(subtask);
             }
         });
     }
 
     @DownloadGroup.onTaskStop void taskStop(DownloadGroupTask task) {
+        Logger.e(TAG, "DownloadGroup.onTaskStop--> " + System.currentTimeMillis() + " --"
+                + Thread.currentThread().getId());
+
+        if (null == downloadStateLisntener)
+            return;
+
         Utils.getExecutorService().submit(() -> {
-            Logger.e(TAG, "DownloadGroup.onTaskComplete-->getExecutorService " + System.currentTimeMillis() + " --" + Thread.currentThread().getId());
             List<DownloadEntity> subTasks = task.getEntity().getSubEntities();
             for (DownloadEntity subtask : subTasks) {
-                if (subtask.isComplete() && !isTaskFeedback(subtask.getKey())) {
-                    waitForFeedback.put(subtask.getKey(), 1);
-                    downloadStateLisntener.onSucc(subtask.getKey(), subtask.getFilePath());
-
-                    Logger.e(TAG, "onTaskStop --> " + subtask.getKey() + " isComplete:" + subtask.isComplete() + " hasFeedback:" + isTaskFeedback(subtask.getKey()));
-                }
+                tryFeedbackTask(subtask);
             }
         });
     }
@@ -145,6 +88,21 @@ public class DownloadModule {
         return waitForFeedback.containsKey(fileKey) && waitForFeedback.get(fileKey) == 1;
     }
 
+    private void tryFeedbackTask(DownloadEntity subEntity) {
+        if (subEntity.isComplete()) {
+            long time = System.currentTimeMillis();
+            Logger.e(TAG, subEntity.getFilePath()
+                    + "(" + isTaskFeedback(subEntity.getKey()) + ") " + subEntity.getKey() + " at: " + subEntity.getCompleteTime()
+                    + "=" + time
+                    + "-->" + subEntity.getPercent()
+                    + " tid:" + Thread.currentThread().getId() + " (" + subEntity.getSpeed() + ")"
+            );
+            if (!isTaskFeedback(subEntity.getKey())) {
+                waitForFeedback.put(subEntity.getKey(), 1);
+                downloadStateLisntener.onSucc(subEntity.getKey(), subEntity.getFilePath());
+            }
+        }
+    }
 
     public void start(String url, String path, String identity) {
         this.mUrl = url;
@@ -168,14 +126,18 @@ public class DownloadModule {
                 waitForFeedback.put(urls.get(i), 0);
             }
 
-            Aria.download(this)
-                    .loadGroup(urls)
-                    .addHeader("Accept-Encoding", "gzip, deflate")
-                    .setDirPath(path)
-                    .setFileSize(114981416)
-                    .setSubFileName(paths)
-                    .resetState()
-                    .start();
+            try {
+                Aria.download(this)
+                        .loadGroup(urls)
+                        .addHeader("Accept-Encoding", "gzip, deflate")
+                        .setDirPath(path)
+                        .setFileSize(114981416)
+                        .setSubFileName(paths)
+                        .resetState()
+                        .start();
+            } catch (Exception e) {
+                Logger.e(TAG, "download task err:" + e.getMessage());
+            }
 
             Logger.e(TAG, "tid:" + Thread.currentThread().getId());
         });

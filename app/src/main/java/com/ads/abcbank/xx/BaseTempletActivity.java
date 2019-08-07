@@ -72,7 +72,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
         // start data process...
         materialManager = new MaterialManager(this, materialItemStatusListener);
-        materialManager.initManager();
+        materialManager.initManager(isPresetSlider());
     }
 
     protected void reload(int resCode) {
@@ -101,6 +101,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected abstract int getLayoutResourceId();
     protected abstract void onPlaylistLoaded(JSONObject jsonObject);
     protected abstract void onPresetLoaded(JSONObject jsonObject);
+    protected abstract boolean isPresetSlider();
 
 
 }
