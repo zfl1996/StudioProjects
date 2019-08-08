@@ -30,7 +30,6 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     public SliderMainAdapter(Context mContent) {
         this.mContent = mContent;
         this.inflater = LayoutInflater.from(mContent);
-        this.dataList = dataList;
     }
 
     public void addItemDataAndRedraw(List<PlayItem> data){
@@ -75,7 +74,9 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int pos) {
+        int itemCount = dataList.size();
+        int position = itemCount > 0 ? pos % itemCount : 0;
         PlayItem item = dataList.get(position);
 
         if (holder instanceof SliderImageHolder)
@@ -109,7 +110,10 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
     @Override
-    public int getItemViewType(int position){
+    public int getItemViewType(int pos){
+        int itemCount = dataList.size();
+        int position = itemCount > 0 ? pos % itemCount : 0;
+
         PlayItem item = dataList.get(position);
         if (null != item)
             return item.getMediaType();
@@ -120,7 +124,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return dataList.size();
+        return dataList.size() > 0 ? Integer.MAX_VALUE : 0;
     }
 
     @Override
