@@ -388,10 +388,6 @@ public class MaterialManager {
                     if (null != _itemStatusListener)
                         _itemStatusListener.onItemPrepared((List<PlayItem>)msg.obj);
 
-//                    if (null != _itemStatusListener) {
-//                        _itemStatusListener.onNewItemsAdded((List<PlayItem>)msg.obj);
-//                    }
-
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_PROGRESS:
@@ -405,7 +401,6 @@ public class MaterialManager {
                         _itemStatusListener.onItemPrepared(new ArrayList<PlayItem>(){
                             { add((PlayItem)msg.obj); }
                         } );
-//                        _itemStatusListener.onItemPrepared((PlayItem)msg.obj);
 
                     break;
 
@@ -432,10 +427,7 @@ public class MaterialManager {
     public interface ItemStatusListener {
         void onProgress(int code);
         void onReady(List<PlayItem> items);
-//        void onNewItemAdded(PlayItem item);
-//        void onNewItemsAdded(List<PlayItem> items);
         void onItemPrepared(List<PlayItem> items);
-//        void onItemPrepared(PlayItem item);
         void onRate(List<PlayItem> items);
         void onWelcome(List<String> items);
         void onNewMsgAdded(List<String> msg, boolean isAppend);

@@ -90,13 +90,6 @@ public class DownloadModule {
 
     private void tryFeedbackTask(DownloadEntity subEntity) {
         if (subEntity.isComplete()) {
-            long time = System.currentTimeMillis();
-            Logger.e(TAG, subEntity.getFilePath()
-                    + "(" + isTaskFeedback(subEntity.getKey()) + ") " + subEntity.getKey() + " at: " + subEntity.getCompleteTime()
-                    + "=" + time
-                    + "-->" + subEntity.getPercent()
-                    + " tid:" + Thread.currentThread().getId() + " (" + subEntity.getSpeed() + ")"
-            );
             if (!isTaskFeedback(subEntity.getKey())) {
                 waitForFeedback.put(subEntity.getKey(), 1);
                 downloadStateLisntener.onSucc(subEntity.getKey(), subEntity.getFilePath());

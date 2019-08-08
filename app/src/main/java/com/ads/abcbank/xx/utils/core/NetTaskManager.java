@@ -61,19 +61,16 @@ public class NetTaskManager {
 
                     case Constants.NET_MANAGER_DATA_CMDPOLL:
                         parseCmdPoll(msg.obj);
-//                        Utils.getExecutorService().submit(() -> parseCmdPoll(msg.obj));
 
                         break;
 
                     case Constants.NET_MANAGER_DATA_PLAYLIST:
                         parsePalyList(msg.obj);
-//                        Utils.getExecutorService().submit(() -> parsePalyList(msg.obj));
 
                         break;
 
                     case Constants.NET_MANAGER_DATA_PRESET:
                         parsePresetData(msg.obj);
-//                        Utils.getExecutorService().submit(() -> parsePresetData(msg.obj));
 
                         break;
 
@@ -89,7 +86,6 @@ public class NetTaskManager {
         Utils.getExecutorService().submit(() -> {
             reqAllData();
             timer.schedule(timerTask, 15*60*1000, 15*60*1000 );
-//            netHandler.sendMessage(buildMessage(Constants.NET_MANAGER_INIT, null, false));
         });
     }
 
