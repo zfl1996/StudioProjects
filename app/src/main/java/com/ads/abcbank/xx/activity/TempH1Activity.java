@@ -23,7 +23,7 @@ public class TempH1Activity extends BaseTempletActivity {
         mainSliderPlayer = findViewById(R.id.sliderPlayer);
 
         presetSliderPlayer = findViewById(R.id.presetSliderPlayer);
-        presetSliderPlayer.setIsIntegrationPresetData(false);
+        presetSliderPlayer.setIsIntegrationMode(false);
 
         materialItemStatusListener = new MaterialManager.ItemStatusListener() {
             @Override

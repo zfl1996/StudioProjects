@@ -57,7 +57,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         });
 
         if (null != mainSliderPlayer) {
-            mainSliderPlayer.setIsIntegrationPresetData(isIntegratedSlider());
+            mainSliderPlayer.setIsIntegrationMode(isIntegratedSlider());
             mainSliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
                 @Override
                 public void onWelcome(List<String> items, boolean isDefault, boolean isAppend) {

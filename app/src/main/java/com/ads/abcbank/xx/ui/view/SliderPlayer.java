@@ -133,7 +133,7 @@ public class SliderPlayer extends LinearLayout {
         }
     }
 
-    public void setIsIntegrationPresetData(boolean isIntegrationPresetData) {
+    public void setIsIntegrationMode(boolean isIntegrationPresetData) {
         sliderAdapter.setIntegrationPresetData(isIntegrationPresetData);
     }
 
