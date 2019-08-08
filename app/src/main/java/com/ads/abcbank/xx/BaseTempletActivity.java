@@ -99,10 +99,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         }
     }
 
-    protected void onRateDataPrepare(List<PlayItem> items){
-        mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
-    }
-
     protected void initCtrls(Bundle savedInstanceState){
 
         materialItemStatusListener = new MaterialManager.ItemStatusListener() {
@@ -136,6 +132,10 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
                 mainSliderPlayer.onProgress(isMaterialManagerInitSuccessed(), code);
             }
         };
+    }
+
+    protected void onRateDataPrepare(List<PlayItem> items){
+        mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
     }
 
     protected abstract int getLayoutResourceId();
