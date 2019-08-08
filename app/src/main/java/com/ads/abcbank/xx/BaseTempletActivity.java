@@ -99,6 +99,10 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         }
     }
 
+    protected void onRateDataPrepare(List<PlayItem> items){
+        mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
+    }
+
     protected void initCtrls(Bundle savedInstanceState){
 
         materialItemStatusListener = new MaterialManager.ItemStatusListener() {
@@ -114,8 +118,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
             @Override
             public void onRate(List<PlayItem> items) {
-//                presetSliderPlayer.onReady(true, items);
-//                mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
                 onRateDataPrepare(items);
             }
 
@@ -135,11 +137,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             }
         };
     }
-    protected void onRateDataPrepare(List<PlayItem> items){
-        mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
-    }
 
-//    protected abstract void initCtrls(Bundle savedInstanceState);
     protected abstract int getLayoutResourceId();
     protected abstract void onPlaylistLoaded(JSONObject jsonObject);
     protected abstract void onPresetLoaded(JSONObject jsonObject);
