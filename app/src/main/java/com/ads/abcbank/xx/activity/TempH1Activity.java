@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.ads.abcbank.R;
 import com.ads.abcbank.xx.BaseTempletActivity;
 import com.ads.abcbank.xx.model.PlayItem;
+import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
 import com.alibaba.fastjson.JSONObject;
@@ -14,10 +15,15 @@ import java.util.List;
 public class TempH1Activity extends BaseTempletActivity {
     private static final String TAG = "TempH1Activity";
 
+    SliderPlayer presetSliderPlayer;
+
     @Override
     protected void initCtrls(Bundle savedInstanceState) {
         rvMarqueeView = findViewById(R.id.rvMarqueeView);
         mainSliderPlayer = findViewById(R.id.sliderPlayer);
+
+        presetSliderPlayer = findViewById(R.id.presetSliderPlayer);
+        presetSliderPlayer.setIsIntegrationPresetData(false);
 
         materialItemStatusListener = new MaterialManager.ItemStatusListener() {
             @Override
@@ -32,6 +38,7 @@ public class TempH1Activity extends BaseTempletActivity {
 
             @Override
             public void onRate(List<PlayItem> items) {
+                presetSliderPlayer.onReady(true, items);
 //                mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
             }
 
