@@ -1,6 +1,7 @@
 package com.ads.abcbank.xx.ui.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
@@ -26,11 +27,13 @@ public class SliderPlayer extends LinearLayout {
     Context context;
     ImageView imgHolder;
     TextView txtHint;
-    RecyclerPagerView rpSlider;
+    RecyclerPagerView recyclerPagerView;
     LinearLayout llProgress;
 
     SliderMainAdapter sliderAdapter;
     DataStatusListener dataStatusListener;
+
+    int displayMode = 0;
 
 
     public void setDataStatusListener(DataStatusListener dataStatusListener) {
@@ -40,6 +43,10 @@ public class SliderPlayer extends LinearLayout {
     public SliderPlayer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
+
+        TypedArray attrArr = context.obtainStyledAttributes(attrs, R.styleable.RecyclerPagerView);
+        displayMode = attrArr.getInt(R.styleable.RecyclerPagerView_displayMode, 0);
+        attrArr.recycle();
         this.context = context;
         initPlayer();
     }
@@ -50,32 +57,34 @@ public class SliderPlayer extends LinearLayout {
 
         imgHolder = findViewById(R.id.imgHolder);
         txtHint = findViewById(R.id.txtHint);
-        rpSlider = findViewById(R.id.rpSlider);
+        recyclerPagerView = findViewById(R.id.rpSlider);
         llProgress = findViewById(R.id.llProgress);
+
+        recyclerPagerView.setDisplayMode(displayMode);
 
         // init relative to slider data
         sliderAdapter = new SliderMainAdapter(context);
         sliderAdapter.setPlayStatusListener(new SliderVideoHolder.PlayStatusListener() {
             @Override
             public void onStartPlay() {
-                rpSlider.pausePlay();
+                recyclerPagerView.pausePlay();
             }
 
             @Override
             public void onPlayFinish() {
-                rpSlider.resumePlay();
+                recyclerPagerView.resumePlay();
             }
         });
 
         LinearLayoutManager lm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        rpSlider.setLayoutManager(lm);
-        rpSlider.setAdapter(sliderAdapter);
+        recyclerPagerView.setLayoutManager(lm);
+        recyclerPagerView.setAdapter(sliderAdapter);
     }
 
     public void onReady(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
         sliderAdapter.addItemDataAndRedraw(items);
-        rpSlider.setOnPageChangeListener(new PagerChangeListener(items.size()));
-        rpSlider.startPlay();
+        recyclerPagerView.setOnPageChangeListener(new PagerChangeListener(items.size()));
+        recyclerPagerView.startPlay();
 
         if (isMaterialManagerInitSuccessed)
             llProgress.setVisibility(GONE);
@@ -83,7 +92,7 @@ public class SliderPlayer extends LinearLayout {
 
     public void onNewItemAdded(boolean isMaterialManagerInitSuccessed, PlayItem item) {
         sliderAdapter.addItemDataAndRedraw(item);
-        rpSlider.startPlay();
+        recyclerPagerView.startPlay();
 
         if (isMaterialManagerInitSuccessed)
             llProgress.setVisibility(GONE);
@@ -91,7 +100,7 @@ public class SliderPlayer extends LinearLayout {
 
     public void onNewItemsAdded(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
         sliderAdapter.addItemDataAndPortionRedraw(items);
-        rpSlider.startPlay();
+        recyclerPagerView.startPlay();
 
         if (isMaterialManagerInitSuccessed)
             llProgress.setVisibility(GONE);

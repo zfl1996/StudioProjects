@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
@@ -14,7 +15,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1440"
             android:background="@mipmap/bg_topbar">
-
             <ImageView
                 android:layout_width="@dimen/logo_width"
                 android:layout_height="wrap_content"
@@ -58,19 +58,16 @@
         android:layout_below="@+id/llTitle"
         android:layout_weight="1"
         android:orientation="horizontal">
-        <!--<com.ads.abcbank.xx.ui.view.SliderPlayer-->
-            <!--android:id="@+id/spMaterial"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_above="@+id/rvMarqueeView"/>-->
         <com.ads.abcbank.xx.ui.view.SliderPlayer
             android:id="@+id/sliderPlayer"
+            app:displayMode="wide"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="@dimen/top_width_right"
             android:layout_above="@+id/rvMarqueeView"/>
         <com.ads.abcbank.xx.ui.view.SliderPlayer
             android:id="@+id/presetSliderPlayer"
+            app:displayMode="narrow"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="@dimen/top_width"

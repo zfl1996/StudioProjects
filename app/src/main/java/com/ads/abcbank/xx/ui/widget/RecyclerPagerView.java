@@ -2,6 +2,7 @@ package com.ads.abcbank.xx.ui.widget;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -11,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+
+import com.ads.abcbank.R;
+import com.ads.abcbank.xx.utils.helper.DPIHelper;
 
 public class RecyclerPagerView extends RecyclerView implements Handler.Callback {
 
@@ -22,10 +26,25 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
     private volatile boolean isPlaying = false;
     private boolean lastIsPlayState = false;
     private int realPosition = -1;
+    private int displayMode = 0;
+    private int screenWidth = 0;
 
-    public RecyclerPagerView(Context context) {
-        this(context,null);
+    public void setDisplayMode(int displayMode) {
+        this.displayMode = displayMode;
+        int sw = Resources.getSystem().getDisplayMetrics().widthPixels;
+
+        if (displayMode == 0)
+            screenWidth = sw;
+        else if (displayMode == 1)
+            screenWidth = (int) Math.floor(sw * (144/192.00)) ;
+        else
+            screenWidth = (int) Math.floor(sw * (48/192.00));
     }
+
+
+//    public RecyclerPagerView(Context context) {
+//        this(context,null);
+//    }
 
     public RecyclerPagerView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs,0);
@@ -72,8 +91,6 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
 
         LinearLayoutManager linearLayoutManager = (LinearLayoutManager) getLayoutManager();
 
-        int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
-
         // views on the screen
         int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
         View lastView = linearLayoutManager.findViewByPosition(lastVisibleItemPosition);
@@ -89,8 +106,9 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
         int scrollDistanceRight = rightMargin - rightEdge;
 
         int targetPosition;
+        int sw = Resources.getSystem().getDisplayMetrics().widthPixels;
 
-        if (Math.abs(velocityX) < 1500) {
+        if (Math.abs(velocityX) < /*1500*/ (int) Math.ceil((1500.00*screenWidth)/sw) ) {
             // The fling is slow -> stay at the current page if we are less than half through,
             // or go to the next page if more than half through
 
@@ -143,7 +161,7 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
 
             LinearLayoutManager linearLayoutManager = (LinearLayoutManager) getLayoutManager();
 
-            int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+//            int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
 
             int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
             View lastView = linearLayoutManager.findViewByPosition(lastVisibleItemPosition);

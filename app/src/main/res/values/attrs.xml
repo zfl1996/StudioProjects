@@ -23,4 +23,11 @@
             <enum name="right" value="2"/>
         </attr>
     </declare-styleable>
+    <declare-styleable name="RecyclerPagerView">
+        <attr name="displayMode">
+            <enum name="fullScreen" value="0" />
+            <enum name="wide" value="1" />
+            <enum name="narrow" value="2" />
+        </attr>
+    </declare-styleable>
 </resources>

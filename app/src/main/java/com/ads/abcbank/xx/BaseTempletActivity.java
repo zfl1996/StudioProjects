@@ -15,6 +15,7 @@ import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
 import com.ads.abcbank.xx.utils.core.NetTaskManager;
+import com.ads.abcbank.xx.utils.helper.DPIHelper;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
@@ -40,6 +41,8 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(this.getLayoutResourceId());
 
+        DPIHelper.setDensity(getResources().getDisplayMetrics().density);
+        DPIHelper.setDefaultDisplay(getWindowManager().getDefaultDisplay());
         initCtrls(savedInstanceState);
         initPlayer();
     }
