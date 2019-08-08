@@ -34,7 +34,9 @@ public class SliderPlayer extends LinearLayout {
     DataStatusListener dataStatusListener;
 
     int displayMode = 0;
-
+    public boolean isIntegrationMode(){
+        return displayMode == 0;
+    }
 
     public void setDataStatusListener(DataStatusListener dataStatusListener) {
         this.dataStatusListener = dataStatusListener;
@@ -42,12 +44,12 @@ public class SliderPlayer extends LinearLayout {
 
     public SliderPlayer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-
+        this.context = context;
 
         TypedArray attrArr = context.obtainStyledAttributes(attrs, R.styleable.RecyclerPagerView);
         displayMode = attrArr.getInt(R.styleable.RecyclerPagerView_displayMode, 0);
         attrArr.recycle();
-        this.context = context;
+
         initPlayer();
     }
 
@@ -64,6 +66,7 @@ public class SliderPlayer extends LinearLayout {
 
         // init relative to slider data
         sliderAdapter = new SliderMainAdapter(context);
+        sliderAdapter.setIntegrationPresetData(isIntegrationMode());
         sliderAdapter.setPlayStatusListener(new SliderVideoHolder.PlayStatusListener() {
             @Override
             public void onStartPlay() {
@@ -84,14 +87,6 @@ public class SliderPlayer extends LinearLayout {
     public void onReady(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
         sliderAdapter.addItemDataAndRedraw(items);
         recyclerPagerView.setOnPageChangeListener(new PagerChangeListener(items.size()));
-        recyclerPagerView.startPlay();
-
-        if (isMaterialManagerInitSuccessed)
-            llProgress.setVisibility(GONE);
-    }
-
-    public void onNewItemAdded(boolean isMaterialManagerInitSuccessed, PlayItem item) {
-        sliderAdapter.addItemDataAndRedraw(item);
         recyclerPagerView.startPlay();
 
         if (isMaterialManagerInitSuccessed)
@@ -140,10 +135,6 @@ public class SliderPlayer extends LinearLayout {
             default:
                 break;
         }
-    }
-
-    public void setIsIntegrationMode(boolean isIntegrationPresetData) {
-        sliderAdapter.setIntegrationPresetData(isIntegrationPresetData);
     }
 
     private void showHintMsg(boolean isMaterialManagerInitSuccessed, String msg) {

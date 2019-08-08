@@ -81,8 +81,7 @@ public class MaterialManager {
                     case Constants.SLIDER_STATUS_CODE_INIT:
                         Logger.e(TAG, "tid:(SLIDER_STATUS_CODE_INIT)" + Thread.currentThread().getId());
                         Utils.getExecutorService().submit(() -> loadPlaylist());
-//                        if (integrationPresetData)
-                            Utils.getExecutorService().submit(() -> loadPreset());
+                        Utils.getExecutorService().submit(() -> loadPreset());
                         Utils.getExecutorService().submit(() -> showWelcome(null));
 
                         break;

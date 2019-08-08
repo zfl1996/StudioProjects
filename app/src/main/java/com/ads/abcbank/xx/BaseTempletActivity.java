@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.Toast;
 
+import com.ads.abcbank.R;
 import com.ads.abcbank.view.AutoPollAdapter;
 import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
@@ -41,6 +42,8 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(this.getLayoutResourceId());
+
+        mainSliderPlayer = findViewById(R.id.sliderPlayer);
 
         DPIHelper.setDensity(getResources().getDisplayMetrics().density);
         DPIHelper.setDefaultDisplay(getWindowManager().getDefaultDisplay());
@@ -97,7 +100,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         });
 
         if (null != mainSliderPlayer) {
-            mainSliderPlayer.setIsIntegrationMode(isIntegratedSlider());
             mainSliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
                 @Override
                 public void onWelcome(List<String> items, boolean isDefault, boolean isAppend) {
@@ -113,7 +115,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
         // start data process...
         materialManager = new MaterialManager(this, materialItemStatusListener);
-        materialManager.initManager(isIntegratedSlider());
+        materialManager.initManager(mainSliderPlayer.isIntegrationMode());
     }
 
     protected boolean isMaterialManagerInitSuccessed() {
@@ -151,6 +153,5 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     }
 
     protected abstract int getLayoutResourceId();
-    protected abstract boolean isIntegratedSlider();
 
 }

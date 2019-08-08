@@ -15,7 +15,6 @@ public class TempV2Activity extends BaseTempletActivity {
 
     @Override
     protected void initCtrls(Bundle savedInstanceState) {
-        mainSliderPlayer = findViewById(R.id.sliderPlayer);
         rvMarqueeView = findViewById(R.id.rvMarqueeView);
         v_set = findViewById(R.id.v_set);
 
@@ -27,8 +26,4 @@ public class TempV2Activity extends BaseTempletActivity {
         return R.layout.activity_temp_v2_vertical_2;
     }
 
-    @Override
-    protected boolean isIntegratedSlider() {
-        return true;
-    }
 }

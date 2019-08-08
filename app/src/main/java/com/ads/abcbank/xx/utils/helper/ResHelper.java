@@ -16,6 +16,10 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class ResHelper {
     public static String savePdfPageFile(Bitmap bm, String fileName, int pageIndex) {
@@ -264,6 +268,45 @@ public class ResHelper {
             sb.append(item);
         }
         return sb.toString();
+    }
+
+    public static String[] getTimeString(SimpleDateFormat dateFormat, SimpleDateFormat timeFormat) {
+        Calendar calendar = Calendar.getInstance();
+        Date date = new Date();
+        calendar.setTime(date);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        int week = calendar.get(Calendar.DAY_OF_WEEK);
+        String weekStr = "";
+        switch (week) {
+            case 1:
+                weekStr = "星期日";
+                break;
+            case 2:
+                weekStr = "星期一";
+                break;
+            case 3:
+                weekStr = "星期二";
+                break;
+            case 4:
+                weekStr = "星期三";
+                break;
+            case 5:
+                weekStr = "星期四";
+                break;
+            case 6:
+                weekStr = "星期五";
+                break;
+            case 7:
+                weekStr = "星期六";
+                break;
+            default:
+                break;
+        }
+
+        return new String[] {
+                timeFormat.format(calendar.getTime()),
+                weekStr + "\n" + dateFormat.format(calendar.getTime())
+        };
     }
 
 }
