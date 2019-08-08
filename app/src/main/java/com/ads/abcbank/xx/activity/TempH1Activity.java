@@ -7,7 +7,6 @@ import com.ads.abcbank.xx.BaseTempletActivity;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.Constants;
-import com.ads.abcbank.xx.utils.core.MaterialManager;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
@@ -25,38 +24,7 @@ public class TempH1Activity extends BaseTempletActivity {
         presetSliderPlayer = findViewById(R.id.presetSliderPlayer);
         presetSliderPlayer.setIsIntegrationMode(false);
 
-        materialItemStatusListener = new MaterialManager.ItemStatusListener() {
-            @Override
-            public void onReady(List<PlayItem> items) {
-                mainSliderPlayer.onReady(isMaterialManagerInitSuccessed(), items);
-            }
-
-            @Override
-            public void onItemPrepared(List<PlayItem> items) {
-                mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
-            }
-
-            @Override
-            public void onRate(List<PlayItem> items) {
-                presetSliderPlayer.onReady(true, items);
-//                mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
-            }
-
-            @Override
-            public void onWelcome(List<String> items) {
-                mainSliderPlayer.onWelcome(items);
-            }
-
-            @Override
-            public void onNewMsgAdded(List<String> msg, boolean isAppend) {
-                mainSliderPlayer.onNewMsgAdded(msg, isAppend);
-            }
-
-            @Override
-            public void onProgress(int code) {
-                mainSliderPlayer.onProgress(isMaterialManagerInitSuccessed(), code);
-            }
-        };
+        super.initCtrls(savedInstanceState);
     }
 
     @Override
@@ -72,6 +40,11 @@ public class TempH1Activity extends BaseTempletActivity {
     @Override
     protected void onPresetLoaded(JSONObject jsonObject) {
         reload(Constants.NET_MANAGER_DATA_PRESET);
+    }
+
+    @Override
+    protected void onRateDataPrepare(List<PlayItem> items){
+        presetSliderPlayer.onReady(true, items);
     }
 
     @Override

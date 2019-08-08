@@ -5,12 +5,8 @@ import android.view.View;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.xx.BaseTempletActivity;
-import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.Constants;
-import com.ads.abcbank.xx.utils.core.MaterialManager;
 import com.alibaba.fastjson.JSONObject;
-
-import java.util.List;
 
 public class TempV2Activity extends BaseTempletActivity {
     private static final String TAG = "TempV2Activity";
@@ -23,6 +19,8 @@ public class TempV2Activity extends BaseTempletActivity {
         rvMarqueeView = findViewById(R.id.rvMarqueeView);
         v_set = findViewById(R.id.v_set);
 
+        super.initCtrls(savedInstanceState);
+/*
         materialItemStatusListener = new MaterialManager.ItemStatusListener() {
             @Override
             public void onReady(List<PlayItem> items) {
@@ -53,7 +51,7 @@ public class TempV2Activity extends BaseTempletActivity {
             public void onProgress(int code) {
                 mainSliderPlayer.onProgress(isMaterialManagerInitSuccessed(), code);
             }
-        };
+        };*/
     }
 
     @Override

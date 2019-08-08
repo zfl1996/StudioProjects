@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.ads.abcbank.view.AutoPollAdapter;
 import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
 import com.ads.abcbank.xx.utils.core.NetTaskManager;
@@ -98,11 +99,50 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         }
     }
 
-    protected abstract void initCtrls(Bundle savedInstanceState);
+    protected void initCtrls(Bundle savedInstanceState){
+
+        materialItemStatusListener = new MaterialManager.ItemStatusListener() {
+            @Override
+            public void onReady(List<PlayItem> items) {
+                mainSliderPlayer.onReady(isMaterialManagerInitSuccessed(), items);
+            }
+
+            @Override
+            public void onItemPrepared(List<PlayItem> items) {
+                mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
+            }
+
+            @Override
+            public void onRate(List<PlayItem> items) {
+//                presetSliderPlayer.onReady(true, items);
+//                mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
+                onRateDataPrepare(items);
+            }
+
+            @Override
+            public void onWelcome(List<String> items) {
+                mainSliderPlayer.onWelcome(items);
+            }
+
+            @Override
+            public void onNewMsgAdded(List<String> msg, boolean isAppend) {
+                mainSliderPlayer.onNewMsgAdded(msg, isAppend);
+            }
+
+            @Override
+            public void onProgress(int code) {
+                mainSliderPlayer.onProgress(isMaterialManagerInitSuccessed(), code);
+            }
+        };
+    }
+    protected void onRateDataPrepare(List<PlayItem> items){
+        mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
+    }
+
+//    protected abstract void initCtrls(Bundle savedInstanceState);
     protected abstract int getLayoutResourceId();
     protected abstract void onPlaylistLoaded(JSONObject jsonObject);
     protected abstract void onPresetLoaded(JSONObject jsonObject);
     protected abstract boolean isIntegratedSlider();
-
 
 }
