@@ -13,6 +13,7 @@ import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
+import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
 import com.ads.abcbank.xx.utils.core.NetTaskManager;
 import com.ads.abcbank.xx.utils.helper.DPIHelper;
@@ -45,61 +46,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         DPIHelper.setDefaultDisplay(getWindowManager().getDefaultDisplay());
         initCtrls(savedInstanceState);
         initPlayer();
-    }
-
-    private void initPlayer() {
-        netTaskManager = new NetTaskManager(this, new NetTaskManager.NetTaskListener() {
-            @Override
-            public void onPlaylistArrived(JSONObject jsonObject) {
-                onPlaylistLoaded(jsonObject);
-            }
-
-            @Override
-            public void onPresetArrived(JSONObject jsonObject) {
-                onPresetLoaded(jsonObject);
-            }
-        });
-
-        if (null != mainSliderPlayer) {
-            mainSliderPlayer.setIsIntegrationMode(isIntegratedSlider());
-            mainSliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
-                @Override
-                public void onWelcome(List<String> items, boolean isDefault, boolean isAppend) {
-                    onWelcomeLoaded(items, isDefault, isAppend);
-                }
-
-                @Override
-                public void onReady() {
-                    netTaskManager.initNetManager();
-                }
-            });
-        }
-
-        // start data process...
-        materialManager = new MaterialManager(this, materialItemStatusListener);
-        materialManager.initManager(isIntegratedSlider());
-    }
-
-    protected void reload(int resCode) {
-        materialManager.reload(resCode);
-    }
-
-    protected boolean isMaterialManagerInitSuccessed() {
-        return materialManager.isInitSuccessed();
-    }
-
-    protected void onWelcomeLoaded(List<String> items, boolean isDefault, boolean isAppend) {
-        if (isDefault) {
-            autoPollAdapter = new AutoPollAdapter(BaseTempletActivity.this, items);
-            rvMarqueeView.setLayoutManager(new LinearLayoutManager(BaseTempletActivity.this,
-                    LinearLayoutManager.HORIZONTAL, false));
-            rvMarqueeView.setAdapter(autoPollAdapter);
-            rvMarqueeView.start();
-
-            mainHandler.postDelayed(() -> rvMarqueeView.setVisibility(View.VISIBLE), 100);
-        } else {
-            autoPollAdapter.addItemDataAndRedraw(items, isAppend);
-        }
     }
 
     protected void initCtrls(Bundle savedInstanceState){
@@ -137,13 +83,74 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         };
     }
 
+    private void initPlayer() {
+        netTaskManager = new NetTaskManager(this, new NetTaskManager.NetTaskListener() {
+            @Override
+            public void onPlaylistArrived(JSONObject jsonObject) {
+                onPlaylistLoaded(jsonObject);
+            }
+
+            @Override
+            public void onPresetArrived(JSONObject jsonObject) {
+                onPresetLoaded(jsonObject);
+            }
+        });
+
+        if (null != mainSliderPlayer) {
+            mainSliderPlayer.setIsIntegrationMode(isIntegratedSlider());
+            mainSliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
+                @Override
+                public void onWelcome(List<String> items, boolean isDefault, boolean isAppend) {
+                    onWelcomeLoaded(items, isDefault, isAppend);
+                }
+
+                @Override
+                public void onReady() {
+                    netTaskManager.initNetManager();
+                }
+            });
+        }
+
+        // start data process...
+        materialManager = new MaterialManager(this, materialItemStatusListener);
+        materialManager.initManager(isIntegratedSlider());
+    }
+
+    protected boolean isMaterialManagerInitSuccessed() {
+        return materialManager.isInitSuccessed();
+    }
+
+    protected void onPlaylistLoaded(JSONObject jsonObject) {
+        reload(Constants.NET_MANAGER_DATA_PLAYLIST);
+    }
+
+    protected void onPresetLoaded(JSONObject jsonObject) {
+        reload(Constants.NET_MANAGER_DATA_PRESET);
+    }
+
+    protected void onWelcomeLoaded(List<String> items, boolean isDefault, boolean isAppend) {
+        if (isDefault) {
+            autoPollAdapter = new AutoPollAdapter(BaseTempletActivity.this, items);
+            rvMarqueeView.setLayoutManager(new LinearLayoutManager(BaseTempletActivity.this,
+                    LinearLayoutManager.HORIZONTAL, false));
+            rvMarqueeView.setAdapter(autoPollAdapter);
+            rvMarqueeView.start();
+
+            mainHandler.postDelayed(() -> rvMarqueeView.setVisibility(View.VISIBLE), 100);
+        } else {
+            autoPollAdapter.addItemDataAndRedraw(items, isAppend);
+        }
+    }
+
     protected void onRateDataPrepare(List<PlayItem> items){
         mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
     }
 
+    protected void reload(int resCode) {
+        materialManager.reload(resCode);
+    }
+
     protected abstract int getLayoutResourceId();
-    protected abstract void onPlaylistLoaded(JSONObject jsonObject);
-    protected abstract void onPresetLoaded(JSONObject jsonObject);
     protected abstract boolean isIntegratedSlider();
 
 }

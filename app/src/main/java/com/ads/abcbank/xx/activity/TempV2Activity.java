@@ -28,16 +28,6 @@ public class TempV2Activity extends BaseTempletActivity {
     }
 
     @Override
-    protected void onPlaylistLoaded(JSONObject jsonObject) {
-        reload(Constants.NET_MANAGER_DATA_PLAYLIST);
-    }
-
-    @Override
-    protected void onPresetLoaded(JSONObject jsonObject) {
-        reload(Constants.NET_MANAGER_DATA_PRESET);
-    }
-
-    @Override
     protected boolean isIntegratedSlider() {
         return true;
     }

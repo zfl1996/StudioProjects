@@ -33,16 +33,6 @@ public class TempH1Activity extends BaseTempletActivity {
     }
 
     @Override
-    protected void onPlaylistLoaded(JSONObject jsonObject) {
-        reload(Constants.NET_MANAGER_DATA_PLAYLIST);
-    }
-
-    @Override
-    protected void onPresetLoaded(JSONObject jsonObject) {
-        reload(Constants.NET_MANAGER_DATA_PRESET);
-    }
-
-    @Override
     protected void onRateDataPrepare(List<PlayItem> items){
         presetSliderPlayer.onReady(true, items);
     }
