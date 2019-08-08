@@ -14,6 +14,7 @@ public class TimeTransformer {
 
     boolean isStart = false;
     ITimeListener timeListener;
+    TimeThread timeThread;
 
     public TimeTransformer(ITimeListener timeListener) {
         this.timeListener = timeListener;
@@ -24,7 +25,14 @@ public class TimeTransformer {
             return;
 
         isStart = true;
-        new TimeThread().start();
+        timeThread = new TimeThread();
+        timeThread.start();
+    }
+
+    public void stop() {
+        timeThread.interrupt();
+
+        isStart = false;
     }
 
     private Handler handler = new Handler(Looper.getMainLooper()){
@@ -59,11 +67,12 @@ public class TimeTransformer {
 
                     handler.sendMessage(msg);
 
-                    Thread.sleep(1000 * 60);
+                    Thread.sleep(1000 * 10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
-            } while (true);
+            } while (!Thread.currentThread().isInterrupted());
         }
     }
 

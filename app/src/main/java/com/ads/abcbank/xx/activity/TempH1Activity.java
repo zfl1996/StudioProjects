@@ -18,6 +18,7 @@ public class TempH1Activity extends BaseTempletActivity {
 
     SliderPlayer presetSliderPlayer;
     TextView txtDate, txtTime;
+    TimeTransformer timeTransformer;
 
     @Override
     protected void initCtrls(Bundle savedInstanceState) {
@@ -27,10 +28,11 @@ public class TempH1Activity extends BaseTempletActivity {
 
         presetSliderPlayer = findViewById(R.id.presetSliderPlayer);
 
-        new TimeTransformer(timeData -> {
+        timeTransformer = new TimeTransformer(timeData -> {
             txtDate.setText(timeData[1]);
             txtTime.setText(timeData[0]);
-        }).start();
+        });
+        timeTransformer.start();
 
         super.initCtrls(savedInstanceState);
     }
@@ -43,6 +45,12 @@ public class TempH1Activity extends BaseTempletActivity {
     @Override
     protected void onRateDataPrepare(List<PlayItem> items){
         presetSliderPlayer.onReady(true, items);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timeTransformer.stop();
     }
 
 }
