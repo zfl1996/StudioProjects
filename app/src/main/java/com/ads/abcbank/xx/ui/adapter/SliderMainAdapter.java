@@ -17,6 +17,7 @@ import com.ads.abcbank.xx.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     static String TAG = "SliderMainAdapter";
@@ -24,8 +25,13 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private Context mContent;
     private List<PlayItem> dataList = new ArrayList<>();
     private LayoutInflater inflater;
-    private SliderVideoHolder.PlayStatusListener playStatusListener;
+    private SliderVideoHolder.VideoStatusListener videoStatusListener;
     private boolean isIntegrationPresetData;
+    private Map<Integer, Integer> rateResourceMap;
+
+    public void setRateResourceMap(Map<Integer, Integer> rateResourceMap) {
+        this.rateResourceMap = rateResourceMap;
+    }
 
     public SliderMainAdapter(Context mContent) {
         this.mContent = mContent;
@@ -37,19 +43,14 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyDataSetChanged();
     }
 
-    public void addItemDataAndRedraw(PlayItem dataItem) {
-        dataList.add(dataItem);
-        notifyItemRangeChanged(dataList.size() - 1, 1);
-    }
-
     public void addItemDataAndPortionRedraw(List<PlayItem> dataItem) {
         dataList.addAll(dataItem);
 
         notifyItemRangeChanged(dataList.size() - dataItem.size(), dataItem.size());
     }
 
-    public void setPlayStatusListener(SliderVideoHolder.PlayStatusListener playStatusListener) {
-        this.playStatusListener = playStatusListener;
+    public void setVideoStatusListener(SliderVideoHolder.VideoStatusListener videoStatusListener) {
+        this.videoStatusListener = videoStatusListener;
     }
 
     public void setIntegrationPresetData(boolean integrationPresetData) {
@@ -64,11 +65,11 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         else if (Constants.SLIDER_HOLDER_VIDEO == viewType)
             return new SliderVideoHolder(inflater.inflate(R.layout.widget_ui_slider_item_video, parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_SAVE == viewType)
-            return new SliderRateSaveHolder(inflater.inflate(R.layout.widget_ui_slider_item_rateview_nor, parent, false));
+            return new SliderRateSaveHolder(inflater.inflate(/*R.layout.widget_ui_slider_item_rateview_nor*/rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_SAVE), parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_LOAN == viewType)
-            return new SliderRateLoanHolder(inflater.inflate(R.layout.widget_ui_slider_item_rateview_nor, parent, false));
+            return new SliderRateLoanHolder(inflater.inflate(/*R.layout.widget_ui_slider_item_rateview_nor*/rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_LOAN), parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_BUY == viewType)
-            return new SliderRateBuyHolder(inflater.inflate(R.layout.widget_ui_slider_item_rateview_quad, parent, false));
+            return new SliderRateBuyHolder(inflater.inflate(/*R.layout.widget_ui_slider_item_rateview_quad*/rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_BUY), parent, false));
         else
             return new SliderImageHolder(inflater.inflate(R.layout.widget_ui_slider_item_img, parent, false));
     }
@@ -133,13 +134,13 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             SliderVideoHolder _holder = (SliderVideoHolder) holder;
 
             _holder.getVideoContent().setOnCompletionListener( () -> {
-                if (null != playStatusListener)
-                    playStatusListener.onPlayFinish();
+                if (null != videoStatusListener)
+                    videoStatusListener.onPlayFinish();
             } );
 
             _holder.getVideoContent().setOnPreparedListener((int v) -> {
-                if (null != playStatusListener)
-                    playStatusListener.onStartPlay();
+                if (null != videoStatusListener)
+                    videoStatusListener.onStartPlay();
             });
 
             _holder.getVideoContent().setVideoPath(_holder.getVideoPath());
@@ -155,8 +156,8 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             _holder.getVideoContent().pause();
             _holder.getVideoContent().stopPlayback();
 
-            if (null != playStatusListener)
-                playStatusListener.onPlayFinish();
+            if (null != videoStatusListener)
+                videoStatusListener.onPlayFinish();
         }
     }
 

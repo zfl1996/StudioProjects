@@ -29,7 +29,7 @@ public class SliderVideoHolder  extends RecyclerView.ViewHolder {
         return videoContent;
     }
 
-    public interface PlayStatusListener {
+    public interface VideoStatusListener {
         void onStartPlay();
         void onPlayFinish();
     }

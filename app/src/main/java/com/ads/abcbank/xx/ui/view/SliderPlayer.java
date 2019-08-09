@@ -19,7 +19,9 @@ import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.ui.widget.RecyclerPagerView;
 import com.ads.abcbank.xx.utils.Constants;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SliderPlayer extends LinearLayout {
     static String TAG = "SliderPlayer";
@@ -45,15 +47,22 @@ public class SliderPlayer extends LinearLayout {
     public SliderPlayer(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        Map<Integer, Integer> rateResourceMap = new HashMap<>();
 
         TypedArray attrArr = context.obtainStyledAttributes(attrs, R.styleable.RecyclerPagerView);
         displayMode = attrArr.getInt(R.styleable.RecyclerPagerView_displayMode, 0);
+        int saveLayoutId = attrArr.getResourceId(R.styleable.RecyclerPagerView_rate_save_layout, R.layout.widget_ui_slider_item_rateview_nor);
+        int loanLayoutId = attrArr.getResourceId(R.styleable.RecyclerPagerView_rate_loan_layout, R.layout.widget_ui_slider_item_rateview_nor);
+        int buyLayoutId = attrArr.getResourceId(R.styleable.RecyclerPagerView_rate_buy_layout, R.layout.widget_ui_slider_item_rateview_quad);
         attrArr.recycle();
 
-        initPlayer();
+        rateResourceMap.put(Constants.SLIDER_HOLDER_RATE_SAVE, saveLayoutId);
+        rateResourceMap.put(Constants.SLIDER_HOLDER_RATE_LOAN, loanLayoutId);
+        rateResourceMap.put(Constants.SLIDER_HOLDER_RATE_BUY, buyLayoutId);
+        initPlayer(rateResourceMap);
     }
 
-    private void initPlayer() {
+    private void initPlayer(Map<Integer, Integer> rateResourceMap) {
         // init player view
         View v = LayoutInflater.from(context).inflate(R.layout.widget_ui_sliderplayer, this, true);
 
@@ -66,8 +75,9 @@ public class SliderPlayer extends LinearLayout {
 
         // init relative to slider data
         sliderAdapter = new SliderMainAdapter(context);
-        sliderAdapter.setIntegrationPresetData(isIntegrationMode());
-        sliderAdapter.setPlayStatusListener(new SliderVideoHolder.PlayStatusListener() {
+        sliderAdapter.setRateResourceMap(rateResourceMap);
+        sliderAdapter.setIntegrationPresetData( isIntegrationMode() );
+        sliderAdapter.setVideoStatusListener(new SliderVideoHolder.VideoStatusListener() {
             @Override
             public void onStartPlay() {
                 recyclerPagerView.pausePlay();

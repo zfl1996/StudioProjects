@@ -58,6 +58,10 @@
         android:layout_below="@+id/llTitle"
         android:layout_weight="1"
         android:orientation="horizontal">
+        <ViewStub
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout="@layout/widget_ui_slider_item_img"/>
         <com.ads.abcbank.xx.ui.view.SliderPlayer
             android:id="@+id/sliderPlayer"
             app:displayMode="wide"

@@ -29,5 +29,8 @@
             <enum name="wide" value="1" />
             <enum name="narrow" value="2" />
         </attr>
+        <attr name="rate_save_layout" format="integer|reference" />
+        <attr name="rate_loan_layout" format="integer|reference" />
+        <attr name="rate_buy_layout" format="integer|reference" />
     </declare-styleable>
 </resources>

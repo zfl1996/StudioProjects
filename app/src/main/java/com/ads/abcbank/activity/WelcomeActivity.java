@@ -295,7 +295,8 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                     RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
                     switch (bean.data.frameSetNo) {
                         case "1":
-                            intent.setClass(WelcomeActivity.this, Temp1Activity.class);
+//                                    intent.setClass(WelcomeActivity.this, Temp1Activity.class);
+                            intent.setClass(WelcomeActivity.this, TempH1Activity.class);
                             break;
                         case "2":
 //                            intent.setClass(WelcomeActivity.this, Temp2Activity.class);
