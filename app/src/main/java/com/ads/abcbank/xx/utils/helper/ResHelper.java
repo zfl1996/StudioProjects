@@ -248,7 +248,7 @@ public class ResHelper {
     }
 
     public static String readFile2String(String filePath) {
-        return readFile2String(getFileByPath(filePath), null);
+        return readFile2String(getFileByPath(filePath), "GBK");
     }
 
     public static File getFileByPath(String filePath) {
