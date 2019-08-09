@@ -25,12 +25,18 @@ public class SliderRateBuyHolder  extends RecyclerView.ViewHolder {
         llHeader = itemView.findViewById(R.id.llHeader);
     }
 
-    public static void showRate(PresetBean.BIAOFE biaofe, TextView txtDesc, TextView txtTitle, RecyclerView rvRate, LinearLayout llHeader, boolean isShowHeader) {
+    public static void showRate(PresetBean.BIAOFE biaofe,
+                                TextView txtDesc,
+                                TextView txtTitle,
+                                RecyclerView rvRate,
+                                LinearLayout llHeader,
+                                boolean isShowHeader,
+                                int itemLayout) {
         txtTitle.setText(biaofe.title);
         txtDesc.setText(biaofe.rem);
         llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
 
-        RateSave4Adapter adapter = new RateSave4Adapter(rvRate.getContext());
+        RateSave4Adapter adapter = new RateSave4Adapter(rvRate.getContext(), itemLayout);
         adapter.setDataSource(biaofe.entry);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(rvRate.getContext());

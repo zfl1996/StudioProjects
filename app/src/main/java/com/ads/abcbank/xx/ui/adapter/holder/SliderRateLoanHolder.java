@@ -25,12 +25,18 @@ public class SliderRateLoanHolder  extends RecyclerView.ViewHolder {
         llHeader = itemView.findViewById(R.id.llHeader);
     }
 
-    public static void showRate(PresetBean.LoanRate loanRate, TextView txtDesc, TextView txtTitle, RecyclerView rvRate, LinearLayout llHeader, boolean isShowHeader) {
+    public static void showRate(PresetBean.LoanRate loanRate,
+                                TextView txtDesc,
+                                TextView txtTitle,
+                                RecyclerView rvRate,
+                                LinearLayout llHeader,
+                                boolean isShowHeader,
+                                int itemLayout) {
         txtTitle.setText(loanRate.title);
         txtDesc.setText(loanRate.rem);
         llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
 
-        RateSave3Adapter adapter = new RateSave3Adapter(rvRate.getContext());
+        RateSave3Adapter adapter = new RateSave3Adapter(rvRate.getContext(), itemLayout);
         adapter.setDataSource(loanRate.entry);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(rvRate.getContext());

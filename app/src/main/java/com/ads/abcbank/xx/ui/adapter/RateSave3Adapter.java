@@ -20,10 +20,12 @@ public class RateSave3Adapter  extends RecyclerView.Adapter<RecyclerView.ViewHol
     private Context mContent;
     private List<PresetBean.LoanRate.LoanRateItem> dataList = new ArrayList<>();
     private LayoutInflater inflater;
+    private int itemLayoutId;
 
-    public RateSave3Adapter(Context mContent) {
+    public RateSave3Adapter(Context mContent, int itemLayoutId) {
         this.mContent = mContent;
         this.inflater = LayoutInflater.from(mContent);
+        this.itemLayoutId = itemLayoutId;
     }
 
     public void setDataSource(List<PresetBean.LoanRate.LoanRateItem> data){
@@ -35,7 +37,7 @@ public class RateSave3Adapter  extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RateSave3Adapter.RateDoubleHolder viewHolder = new RateSave3Adapter.RateDoubleHolder(inflater.inflate(R.layout.widget_ui_slider_item_rate_item_2, parent, false));
+        RateSave3Adapter.RateDoubleHolder viewHolder = new RateSave3Adapter.RateDoubleHolder(inflater.inflate(/*R.layout.widget_ui_slider_item_rate_item_2*/itemLayoutId, parent, false));
         viewHolder.setDelayAdapter(this);
 
         return viewHolder;

@@ -90,21 +90,27 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                     _holder.getTxtDesc(),
                     _holder.getTxtTitle(),
                     _holder.getRvRate(),
-                    _holder.getLlHeader(), isIntegrationPresetData);
+                    _holder.getLlHeader(),
+                    isIntegrationPresetData,
+                    rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_SAVE_ITEM));
         } else if (holder instanceof SliderRateLoanHolder) {
             SliderRateLoanHolder _holder = (SliderRateLoanHolder)holder;
             SliderRateLoanHolder.showRate((PresetBean.LoanRate)item.getAttData(),
                     _holder.getTxtDesc(),
                     _holder.getTxtTitle(),
                     _holder.getRvRate(),
-                    _holder.getLlHeader(), isIntegrationPresetData);
+                    _holder.getLlHeader(),
+                    isIntegrationPresetData,
+                    rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_LOAN_ITEM));
         } else if (holder instanceof SliderRateBuyHolder) {
             SliderRateBuyHolder _holder = (SliderRateBuyHolder)holder;
             SliderRateBuyHolder.showRate((PresetBean.BIAOFE)item.getAttData(),
                     _holder.getTxtDesc(),
                     _holder.getTxtTitle(),
                     _holder.getRvRate(),
-                    _holder.getLlHeader(), isIntegrationPresetData);
+                    _holder.getLlHeader(),
+                    isIntegrationPresetData,
+                    rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_BUY_ITEM));
         }
 
     }

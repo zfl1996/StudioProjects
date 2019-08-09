@@ -20,10 +20,12 @@ public class RateSave2Adapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private Context mContent;
     private List<PresetBean.SaveRate.SaveRateItem> dataList = new ArrayList<>();
     private LayoutInflater inflater;
+    private int itemLayoutId;
 
-    public RateSave2Adapter(Context mContent) {
+    public RateSave2Adapter(Context mContent, int itemLayoutId) {
         this.mContent = mContent;
         this.inflater = LayoutInflater.from(mContent);
+        this.itemLayoutId = itemLayoutId;
     }
 
     public void setDataSource(List<PresetBean.SaveRate.SaveRateItem> data){
@@ -35,7 +37,7 @@ public class RateSave2Adapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RateDoubleHolder viewHolder = new RateDoubleHolder(inflater.inflate(R.layout.widget_ui_slider_item_rate_item_2, parent, false));
+        RateDoubleHolder viewHolder = new RateDoubleHolder(inflater.inflate(/*R.layout.widget_ui_slider_item_rate_item_2*/itemLayoutId, parent, false));
         viewHolder.setDelayAdapter(this);
 
         return viewHolder;
