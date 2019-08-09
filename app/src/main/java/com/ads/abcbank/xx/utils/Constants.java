@@ -27,6 +27,9 @@ public class Constants {
     public static final int SLIDER_HOLDER_RATE_SAVE = 4;
     public static final int SLIDER_HOLDER_RATE_LOAN = 5;
     public static final int SLIDER_HOLDER_RATE_BUY = 6;
+    public static final int SLIDER_HOLDER_RATE_SAVE_ITEM = 7;
+    public static final int SLIDER_HOLDER_RATE_LOAN_ITEM = 8;
+    public static final int SLIDER_HOLDER_RATE_BUY_ITEM = 9;
 
 
     public static final int SLIDER_PROGRESS_CODE_PRE = 0x0;

@@ -32,5 +32,8 @@
         <attr name="rate_save_layout" format="integer|reference" />
         <attr name="rate_loan_layout" format="integer|reference" />
         <attr name="rate_buy_layout" format="integer|reference" />
+        <attr name="rate_save_item_layout" format="integer|reference" />
+        <attr name="rate_loan_item_layout" format="integer|reference" />
+        <attr name="rate_buy_item_layout" format="integer|reference" />
     </declare-styleable>
 </resources>

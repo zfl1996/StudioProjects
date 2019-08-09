@@ -65,11 +65,11 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         else if (Constants.SLIDER_HOLDER_VIDEO == viewType)
             return new SliderVideoHolder(inflater.inflate(R.layout.widget_ui_slider_item_video, parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_SAVE == viewType)
-            return new SliderRateSaveHolder(inflater.inflate(/*R.layout.widget_ui_slider_item_rateview_nor*/rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_SAVE), parent, false));
+            return new SliderRateSaveHolder(inflater.inflate(rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_SAVE), parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_LOAN == viewType)
-            return new SliderRateLoanHolder(inflater.inflate(/*R.layout.widget_ui_slider_item_rateview_nor*/rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_LOAN), parent, false));
+            return new SliderRateLoanHolder(inflater.inflate(rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_LOAN), parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_BUY == viewType)
-            return new SliderRateBuyHolder(inflater.inflate(/*R.layout.widget_ui_slider_item_rateview_quad*/rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_BUY), parent, false));
+            return new SliderRateBuyHolder(inflater.inflate(rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_BUY), parent, false));
         else
             return new SliderImageHolder(inflater.inflate(R.layout.widget_ui_slider_item_img, parent, false));
     }

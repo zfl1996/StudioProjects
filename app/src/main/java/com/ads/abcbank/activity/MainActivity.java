@@ -154,9 +154,6 @@ public class MainActivity extends BaseActivity implements IMainView {
         addListener(cdn, true);
         addListener(storeId, true);
         {
-
-
-
             cityCode.setText("09");
             brchCode.setText("091512");
             String ip = Utils.getIPAddress(this);
@@ -176,11 +173,11 @@ public class MainActivity extends BaseActivity implements IMainView {
 //////            cdn.setText("10.233.14.37:8080");
             storeId.setText("021123");
         }
-//
-//        {
-//            server.setText("testblock.huiyao.mobi/ibcs/player/v1");
-//            cdn.setText("testblock.huiyao.mobi");
-//        }
+
+        {
+            server.setText("testblock.huiyao.mobi/ibcs/player/v1");
+            cdn.setText("testblock.huiyao.mobi");
+        }
     }
 
     @SuppressWarnings("ALL")

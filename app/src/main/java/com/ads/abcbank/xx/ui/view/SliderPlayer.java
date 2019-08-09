@@ -54,11 +54,17 @@ public class SliderPlayer extends LinearLayout {
         int saveLayoutId = attrArr.getResourceId(R.styleable.RecyclerPagerView_rate_save_layout, R.layout.widget_ui_slider_item_rateview_nor);
         int loanLayoutId = attrArr.getResourceId(R.styleable.RecyclerPagerView_rate_loan_layout, R.layout.widget_ui_slider_item_rateview_nor);
         int buyLayoutId = attrArr.getResourceId(R.styleable.RecyclerPagerView_rate_buy_layout, R.layout.widget_ui_slider_item_rateview_quad);
+        int saveItemLayoutId = attrArr.getResourceId(R.styleable.RecyclerPagerView_rate_save_item_layout, R.layout.widget_ui_slider_item_rate_item_2);
+        int loanItemLayoutId = attrArr.getResourceId(R.styleable.RecyclerPagerView_rate_loan_item_layout, R.layout.widget_ui_slider_item_rate_item_2);
+        int buyItemLayoutId = attrArr.getResourceId(R.styleable.RecyclerPagerView_rate_buy_item_layout, R.layout.widget_ui_slider_item_rate_item_4);
         attrArr.recycle();
 
         rateResourceMap.put(Constants.SLIDER_HOLDER_RATE_SAVE, saveLayoutId);
         rateResourceMap.put(Constants.SLIDER_HOLDER_RATE_LOAN, loanLayoutId);
         rateResourceMap.put(Constants.SLIDER_HOLDER_RATE_BUY, buyLayoutId);
+        rateResourceMap.put(Constants.SLIDER_HOLDER_RATE_SAVE_ITEM, saveItemLayoutId);
+        rateResourceMap.put(Constants.SLIDER_HOLDER_RATE_LOAN_ITEM, loanItemLayoutId);
+        rateResourceMap.put(Constants.SLIDER_HOLDER_RATE_BUY_ITEM, buyItemLayoutId);
         initPlayer(rateResourceMap);
     }
 
