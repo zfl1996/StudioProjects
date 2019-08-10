@@ -65,16 +65,37 @@
             android:layout_height="match_parent"
             android:layout_weight="@dimen/top_width_right"
             android:layout_above="@+id/rvMarqueeView"/>
-        <com.ads.abcbank.xx.ui.view.SliderPlayer
-            android:id="@+id/presetSliderPlayer"
-            app:displayMode="narrow"
-            app:rate_save_item_layout="@layout/widget_ui_slider_item_rate_item_2_h1"
-            app:rate_loan_item_layout="@layout/widget_ui_slider_item_rate_item_2_h1"
-            app:rate_buy_item_layout="@layout/widget_ui_slider_item_rate_item_4_h1"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="@dimen/top_width"
-            android:layout_above="@+id/rvMarqueeView"/>
+            android:layout_above="@+id/rvMarqueeView"
+            android:orientation="vertical">
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="75px"
+                android:layout_marginBottom="10px"
+                android:paddingTop="5px"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="#087366"
+                app:tabIndicatorHeight="5px"
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="#FFFFFF"
+                app:tabTextAppearance="@style/TabLayoutTextSizeH1"
+                app:tabTextColor="#FFFFFF" />
+            <com.ads.abcbank.xx.ui.view.SliderPlayer
+                android:id="@+id/presetSliderPlayer"
+                app:displayMode="narrow"
+                app:rate_save_layout="@layout/widget_ui_slider_item_rateview_nor_h1"
+                app:rate_loan_layout="@layout/widget_ui_slider_item_rateview_nor_h1"
+                app:rate_buy_layout="@layout/widget_ui_slider_item_rateview_quad_h1"
+                app:rate_save_item_layout="@layout/widget_ui_slider_item_rate_item_2_h1"
+                app:rate_loan_item_layout="@layout/widget_ui_slider_item_rate_item_2_h1"
+                app:rate_buy_item_layout="@layout/widget_ui_slider_item_rate_item_4_h1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
     </LinearLayout>
     <com.ads.abcbank.view.AutoPollRecyclerView
         android:id="@+id/rvMarqueeView"

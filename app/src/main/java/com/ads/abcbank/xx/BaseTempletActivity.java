@@ -65,8 +65,8 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onRate(List<PlayItem> items) {
-                onRateDataPrepare(items);
+            public void onRate(List<PlayItem> items, List<String> titles) {
+                onRateDataPrepare(items, titles);
             }
 
             @Override
@@ -144,7 +144,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         }
     }
 
-    protected void onRateDataPrepare(List<PlayItem> items){
+    protected void onRateDataPrepare(List<PlayItem> items, List<String> titles){
         mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
     }
 

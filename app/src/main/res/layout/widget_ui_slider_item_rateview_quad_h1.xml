@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#2B363F">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#2B363F">
     <LinearLayout android:id="@+id/llHeader"
-        android:layout_width="match_parent"
-        android:layout_height="110px"
-        android:layout_alignParentTop="true"
-        android:background="@mipmap/bg_topbar">
+                  android:layout_width="match_parent"
+                  android:layout_height="110px"
+                  android:layout_alignParentTop="true"
+                  android:background="@mipmap/bg_topbar">
         <ImageView
             android:layout_width="@dimen/logo_width"
             android:layout_height="wrap_content"
@@ -17,13 +17,14 @@
             android:src="@mipmap/abc_icon" />
     </LinearLayout>
     <TextView android:id="@+id/txtTitle"
-        android:layout_width="match_parent"
-        android:layout_height="100px"
-        android:layout_below="@+id/llHeader"
-        android:gravity="center"
-        android:background="@mipmap/preset_top"
-        android:textColor="#fff"
-        android:textSize="@dimen/text_big_super" />
+              android:layout_width="match_parent"
+              android:layout_height="100px"
+              android:layout_below="@+id/llHeader"
+              android:visibility="gone"
+              android:gravity="center"
+              android:background="@mipmap/preset_top"
+              android:textColor="#fff"
+              android:textSize="@dimen/text_big_super" />
     <LinearLayout
         android:id="@+id/llTableHeader"
         android:layout_below="@+id/txtTitle"
@@ -42,12 +43,12 @@
             android:padding="10px"
             android:text="项目"
             android:textColor="#fff"
-            android:textSize="22px" />
+            android:textSize="@dimen/tab_text_big" />
 
         <View android:id="@+id/vSep1"
-            android:layout_width="5px"
-            android:layout_height="match_parent"
-            android:background="#00ffffff" />
+              android:layout_width="5px"
+              android:layout_height="match_parent"
+              android:background="#00ffffff" />
 
         <TextView
             android:id="@+id/tv_value"
@@ -59,12 +60,12 @@
             android:padding="10px"
             android:text="年利率（%）"
             android:textColor="#fff"
-            android:textSize="22px" />
+            android:textSize="@dimen/tab_text_big" />
 
         <View android:id="@+id/vSep2"
-            android:layout_width="5px"
-            android:layout_height="match_parent"
-            android:background="#00ffffff" />
+              android:layout_width="5px"
+              android:layout_height="match_parent"
+              android:background="#00ffffff" />
 
         <TextView
             android:id="@+id/tv_value2"
@@ -76,12 +77,12 @@
             android:padding="10px"
             android:text="年利率（%）"
             android:textColor="#fff"
-            android:textSize="22px" />
+            android:textSize="@dimen/tab_text_big" />
 
         <View android:id="@+id/vSep3"
-            android:layout_width="5px"
-            android:layout_height="match_parent"
-            android:background="#00ffffff" />
+              android:layout_width="5px"
+              android:layout_height="match_parent"
+              android:background="#00ffffff" />
 
         <TextView
             android:id="@+id/tv_value3"
@@ -93,7 +94,7 @@
             android:padding="10px"
             android:text="年利率（%）"
             android:textColor="#fff"
-            android:textSize="22px" />
+            android:textSize="@dimen/tab_text_big" />
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvRate"
@@ -117,28 +118,34 @@
             android:layout_height="1px"
             android:layout_weight="19"
             android:background="#00000000" />
+
         <View
             android:layout_width="5px"
             android:layout_height="match_parent"
             android:background="#2B363F" />
+
         <TextView
             android:layout_width="0px"
             android:layout_height="1px"
             android:layout_weight="13"
             android:background="#00000000" />
+
         <View
             android:layout_width="5px"
             android:layout_height="match_parent"
             android:background="#2B363F" />
+
         <TextView
             android:layout_width="0px"
             android:layout_height="1px"
             android:layout_weight="13"
             android:background="#00000000" />
+
         <View
             android:layout_width="5px"
             android:layout_height="match_parent"
             android:background="#2B363F" />
+
         <TextView
             android:layout_width="0px"
             android:layout_height="1px"
@@ -154,5 +161,5 @@
         android:gravity="center"
         android:padding="10px"
         android:textColor="#fff"
-        android:textSize="@dimen/tab_text_super" />
+        android:textSize="@dimen/tab_text" />
 </RelativeLayout>

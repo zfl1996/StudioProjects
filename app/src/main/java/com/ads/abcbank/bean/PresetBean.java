@@ -21,12 +21,15 @@ public class PresetBean {
         public BIAOFE buyInAndOutForeignExchange;
     }
 
-    public static class SaveRate {
+    public static class RateBase {
         public String title;
         public boolean enable;
         public String lastModified;
         public String rem;
         public String startDate;
+    }
+
+    public static class SaveRate extends RateBase {
         public List<SaveRateItem> entry = new ArrayList<>();
 
         public static class SaveRateItem {
@@ -39,12 +42,7 @@ public class PresetBean {
         }
     }
 
-    public static class LoanRate {
-        public String title;
-        public boolean enable;
-        public String lastModified;
-        public String rem;
-        public String startDate;
+    public static class LoanRate extends RateBase {
         public List<LoanRateItem> entry = new ArrayList<>();
 
         public static class LoanRateItem {
@@ -57,12 +55,7 @@ public class PresetBean {
         }
     }
 
-    public static class BIAOFE {
-        public String title;
-        public boolean enable;
-        public String lastModified;
-        public String rem;
-        public String startDate;
+    public static class BIAOFE extends RateBase {
         public List<BIAOFEItem> entry = new ArrayList<>();
 
         public static class BIAOFEItem {

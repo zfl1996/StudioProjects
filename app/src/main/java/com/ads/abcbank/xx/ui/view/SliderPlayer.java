@@ -32,6 +32,11 @@ public class SliderPlayer extends LinearLayout {
     RecyclerPagerView recyclerPagerView;
     LinearLayout llProgress;
 
+    public void setPageChangeListener(IPageChangeListener pageChangeListener) {
+        this.pageChangeListener = pageChangeListener;
+    }
+
+    IPageChangeListener pageChangeListener;
     SliderMainAdapter sliderAdapter;
     DataStatusListener dataStatusListener;
 
@@ -102,7 +107,14 @@ public class SliderPlayer extends LinearLayout {
 
     public void onReady(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
         sliderAdapter.addItemDataAndRedraw(items);
-        recyclerPagerView.setOnPageChangeListener(new PagerChangeListener(items.size()));
+        recyclerPagerView.setOnPageChangeListener(new RecyclerPagerView.OnPageChangeListener() {
+            @Override
+            public void onPageSelection(int position) {
+                if (null != pageChangeListener) {
+                    pageChangeListener.onPageSelection(position);
+                }
+            }
+        });
         recyclerPagerView.startPlay();
 
         if (isMaterialManagerInitSuccessed)
@@ -162,27 +174,31 @@ public class SliderPlayer extends LinearLayout {
     }
 
 
-    public class PagerChangeListener extends RecyclerPagerView.OnPageChangeListener {
-        private int size;
-
-        public void setSize(int size) {
-            this.size += size;
-        }
-
-        public PagerChangeListener(int size) {
-            this.size = size;
-        }
-
-        @Override
-        public void onPageSelection(int position) {
-
-//            int pos = size == 0 ? 0 : (position%size+1);
+//    public class PagerChangeListener extends RecyclerPagerView.OnPageChangeListener {
+//        private int size;
 //
-//            if (pos == size) {
-//                txtHint.setText(pos + " / " + size + " / " + position);
-//            }
-        }
+//        public void setSize(int size) {
+//            this.size += size;
+//        }
+//
+//        public PagerChangeListener(int size) {
+//            this.size = size;
+//        }
+//
+//        @Override
+//        public void onPageSelection(int position) {
+//
+////            int pos = size == 0 ? 0 : (position%size+1);
+////
+////            if (pos == size) {
+////                txtHint.setText(pos + " / " + size + " / " + position);
+////            }
+//        }
+//
+//    }
 
+    public interface IPageChangeListener {
+        void onPageSelection(int position);
     }
 
     public interface DataStatusListener {

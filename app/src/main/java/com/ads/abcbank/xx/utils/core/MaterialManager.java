@@ -195,12 +195,17 @@ public class MaterialManager {
                 return;
 
             List<PlayItem> presetItems = new ArrayList<>();
+            List<String> presetTitles = new ArrayList<>();
 
             presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_SAVE, bean.data.saveRate) );
             presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_LOAN, bean.data.loanRate) );
             presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange) );
 
-            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, presetItems, true));
+            presetTitles.add(bean.data.saveRate.title.substring(0, 4) + "\n" + bean.data.saveRate.title.substring(4));
+            presetTitles.add(bean.data.loanRate.title.substring(0, 4) + "\n" + bean.data.loanRate.title.substring(4));
+            presetTitles.add(bean.data.buyInAndOutForeignExchange.title.substring(0, 4) + "\n" + bean.data.buyInAndOutForeignExchange.title.substring(4));
+
+            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, new Object[]{presetItems, presetTitles}, true));
         } else {
 //            managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
         }
@@ -378,8 +383,10 @@ public class MaterialManager {
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_RATE:
-                    if (null != _itemStatusListener)
-                        _itemStatusListener.onRate((List<PlayItem>)msg.obj);
+                    if (null != _itemStatusListener){
+                        Object[] objs = (Object[])msg.obj;
+                        _itemStatusListener.onRate((List<PlayItem>)objs[0], (List<String>) objs[1]);
+                    }
 
                     break;
 
@@ -427,7 +434,7 @@ public class MaterialManager {
         void onProgress(int code);
         void onReady(List<PlayItem> items);
         void onItemPrepared(List<PlayItem> items);
-        void onRate(List<PlayItem> items);
+        void onRate(List<PlayItem> items, List<String> titles);
         void onWelcome(List<String> items);
         void onNewMsgAdded(List<String> msg, boolean isAppend);
     }
