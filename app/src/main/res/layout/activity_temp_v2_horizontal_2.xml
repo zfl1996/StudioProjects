@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    android:background="#2B363F">
+    <com.ads.abcbank.xx.ui.view.SliderPlayer
+        android:id="@+id/sliderPlayer"
+        app:displayMode="fullScreen"
+        app:rate_save_layout="@layout/widget_ui_slider_item_rateview_nor_h2"
+        app:rate_loan_layout="@layout/widget_ui_slider_item_rateview_nor_h2"
+        app:rate_buy_layout="@layout/widget_ui_slider_item_rateview_quad_h2"
+        app:rate_save_item_layout="@layout/widget_ui_slider_item_rate_item_2_h1"
+        app:rate_loan_item_layout="@layout/widget_ui_slider_item_rate_item_2_h1"
+        app:rate_buy_item_layout="@layout/widget_ui_slider_item_rate_item_4_h1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

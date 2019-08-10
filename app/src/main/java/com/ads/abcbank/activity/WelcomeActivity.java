@@ -20,6 +20,7 @@ import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IMainView;
 import com.ads.abcbank.xx.activity.TempH1Activity;
+import com.ads.abcbank.xx.activity.TempH2Activity;
 import com.ads.abcbank.xx.activity.TempV2Activity;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -140,7 +141,8 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                         intent.setClass(WelcomeActivity.this, Temp4Activity.class);
                         break;
                     case "5":
-                        intent.setClass(WelcomeActivity.this, Temp5Activity.class);
+//                        intent.setClass(WelcomeActivity.this, Temp5Activity.class);
+                        intent.setClass(WelcomeActivity.this, TempH2Activity.class);
                         break;
                     case "6":
                         intent.setClass(WelcomeActivity.this, Temp6Activity.class);
@@ -240,7 +242,8 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                                     intent.setClass(WelcomeActivity.this, Temp4Activity.class);
                                     break;
                                 case "5":
-                                    intent.setClass(WelcomeActivity.this, Temp5Activity.class);
+//                                    intent.setClass(WelcomeActivity.this, Temp5Activity.class);
+                                    intent.setClass(WelcomeActivity.this, TempH2Activity.class);
                                     break;
                                 case "6":
                                     intent.setClass(WelcomeActivity.this, Temp6Activity.class);
@@ -309,7 +312,8 @@ public class WelcomeActivity extends BaseActivity implements IMainView {
                             intent.setClass(WelcomeActivity.this, Temp4Activity.class);
                             break;
                         case "5":
-                            intent.setClass(WelcomeActivity.this, Temp5Activity.class);
+//                            intent.setClass(WelcomeActivity.this, Temp5Activity.class);
+                            intent.setClass(WelcomeActivity.this, TempH2Activity.class);
                             break;
                         case "6":
                             intent.setClass(WelcomeActivity.this, Temp6Activity.class);

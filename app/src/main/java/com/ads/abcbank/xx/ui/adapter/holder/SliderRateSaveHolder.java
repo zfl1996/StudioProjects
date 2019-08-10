@@ -35,7 +35,9 @@ public class SliderRateSaveHolder extends RecyclerView.ViewHolder {
                                 int itemLayout) {
         txtTitle.setText(saveRate.title);
         txtDesc.setText(saveRate.rem);
-        llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
+
+        if (null != llHeader)
+            llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
 
         RateSave2Adapter adapter = new RateSave2Adapter(rvRate.getContext(), itemLayout);
         adapter.setDataSource(saveRate.entry);

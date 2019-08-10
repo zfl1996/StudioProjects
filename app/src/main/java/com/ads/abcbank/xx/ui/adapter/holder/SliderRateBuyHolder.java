@@ -34,7 +34,9 @@ public class SliderRateBuyHolder  extends RecyclerView.ViewHolder {
                                 int itemLayout) {
         txtTitle.setText(biaofe.title);
         txtDesc.setText(biaofe.rem);
-        llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
+
+        if (null != llHeader)
+            llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
 
         RateSave4Adapter adapter = new RateSave4Adapter(rvRate.getContext(), itemLayout);
         adapter.setDataSource(biaofe.entry);

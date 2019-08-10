@@ -34,7 +34,9 @@ public class SliderRateLoanHolder  extends RecyclerView.ViewHolder {
                                 int itemLayout) {
         txtTitle.setText(loanRate.title);
         txtDesc.setText(loanRate.rem);
-        llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
+
+        if (null != llHeader)
+            llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
 
         RateSave3Adapter adapter = new RateSave3Adapter(rvRate.getContext(), itemLayout);
         adapter.setDataSource(loanRate.entry);

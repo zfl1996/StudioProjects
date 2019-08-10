@@ -154,4 +154,5 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected abstract int getLayoutResourceId();
 
+
 }

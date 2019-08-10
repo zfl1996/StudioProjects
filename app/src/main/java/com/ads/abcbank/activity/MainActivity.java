@@ -37,6 +37,7 @@ import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IMainView;
 import com.ads.abcbank.view.KeyboardWindow;
 import com.ads.abcbank.xx.activity.TempH1Activity;
+import com.ads.abcbank.xx.activity.TempH2Activity;
 import com.ads.abcbank.xx.activity.TempV2Activity;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -509,7 +510,8 @@ public class MainActivity extends BaseActivity implements IMainView {
                                     intent.setClass(MainActivity.this, Temp4Activity.class);
                                     break;
                                 case "5":
-                                    intent.setClass(MainActivity.this, Temp5Activity.class);
+//                                    intent.setClass(MainActivity.this, Temp5Activity.class);
+                                    intent.setClass(MainActivity.this, TempH2Activity.class);
                                     break;
                                 case "6":
                                     intent.setClass(MainActivity.this, Temp6Activity.class);
@@ -576,7 +578,8 @@ public class MainActivity extends BaseActivity implements IMainView {
                             intent.setClass(MainActivity.this, Temp4Activity.class);
                             break;
                         case "5":
-                            intent.setClass(MainActivity.this, Temp5Activity.class);
+//                            intent.setClass(MainActivity.this, Temp5Activity.class);
+                            intent.setClass(MainActivity.this, TempH2Activity.class);
                             break;
                         case "6":
                             intent.setClass(MainActivity.this, Temp6Activity.class);

@@ -93,6 +93,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="landscape" />
         <activity
+            android:name=".xx.activity.TempH2Activity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".xx.activity.TempV2Activity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
