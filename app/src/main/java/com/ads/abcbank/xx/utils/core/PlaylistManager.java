@@ -51,14 +51,11 @@ public class PlaylistManager {
         plHandler.sendMessage(buildMessage(MSG_OF_PLAYLIST, null, false));
     }
 
-    private /*Map<String, Integer>*/void checkMaterialStatus() {
-//        Map<String, Integer> outtimeItems = new HashMap<>();
-
+    private void checkMaterialStatus() {
         for (MaterialInfo mi : materialInfos) {
             int index = getOuttimeItem(materialInfos, mi);
             if (index != -1) {
                 materialInfos.remove(mi);
-//                outtimeItems.put(mi.getId(), index);
 
                 if (null != playlistStatusListener) {
                     playlistStatusListener.onOuttime(new Pair<>(mi.getId(), index));
@@ -70,8 +67,6 @@ public class PlaylistManager {
                 }
             }
         }
-
-//        return outtimeItems;
     }
 
     private int getOuttimeItem(List<MaterialInfo> materialInfos, MaterialInfo currentItem) {
