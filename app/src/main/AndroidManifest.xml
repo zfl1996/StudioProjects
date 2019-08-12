@@ -100,6 +100,10 @@
             android:name=".xx.activity.TempV2Activity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".xx.activity.TempV21Activity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".service.CmdService"
