@@ -9,6 +9,7 @@ import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.MaterialInfo;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
+import com.ads.abcbank.xx.utils.helper.ResHelper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -75,7 +76,10 @@ public class PlaylistManager {
 
         while (it.hasNext()) {
             MaterialInfo mi = it.next();
-            if (!BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate())) {
+            if (!ResHelper.isNullOrEmpty(mi.getId())
+                    && !ResHelper.isNullOrEmpty(mi.getPlayDate())
+                    && !ResHelper.isNullOrEmpty(mi.getStopDate())
+                    && !BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate())) {
                 Logger.e(TAG, "NotInPlayTime-->" + mi.getId() + " index:" + i + " time:"
                  + mi.getPlayDate() + "-" + mi.getStopDate() );
 
