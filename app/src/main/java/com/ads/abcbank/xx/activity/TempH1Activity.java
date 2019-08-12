@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.BaseTempletActivity;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
@@ -38,12 +39,12 @@ public class TempH1Activity extends BaseTempletActivity {
             txtTime.setText(timeData[0]);
         });
         timeTransformer.start();
-
         super.initCtrls(savedInstanceState);
     }
 
     @Override
     protected int getLayoutResourceId() {
+        type = Utils.TYPES_TEMP1;
         return R.layout.activity_temp_v2_horizontal_1;
     }
 

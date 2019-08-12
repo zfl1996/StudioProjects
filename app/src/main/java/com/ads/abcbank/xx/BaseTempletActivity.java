@@ -1,6 +1,7 @@
 package com.ads.abcbank.xx;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +10,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.activity.ReInitActivity;
 import com.ads.abcbank.view.AutoPollAdapter;
 import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
+import com.ads.abcbank.view.ExitWindow;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.Constants;
@@ -39,6 +42,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected Handler mainHandler = new Handler();
     protected Toast toast = null;
     protected ProgressDialog mProgressDialog;
+    public static String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,5 +167,45 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected abstract int getLayoutResourceId();
 
+    private long mLastClickTime;
+    private int clickTimes;
 
+    public void toMainView(View view) {
+        if ((System.currentTimeMillis() - mLastClickTime) > 1000) {
+            mLastClickTime = System.currentTimeMillis();
+            clickTimes = 0;
+        } else {
+            if (clickTimes < 1) {
+                clickTimes++;
+            } else {
+                clickTimes = 0;
+                startActivity(new Intent(this, ReInitActivity.class));
+                finish();
+            }
+        }
+    }
+
+    private ExitWindow exitWindow;
+
+    public void exitSys(View view) {
+        if ((System.currentTimeMillis() - mLastClickTime) > 1000) {
+            mLastClickTime = System.currentTimeMillis();
+            clickTimes = 0;
+        } else {
+            if (clickTimes < 1) {
+                clickTimes++;
+            } else {
+                clickTimes = 0;
+                if (exitWindow != null) {
+                    exitWindow.dismiss();
+                }
+                exitWindow = new ExitWindow(this);
+                exitWindow.show();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+    }
 }

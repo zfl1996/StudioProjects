@@ -39,6 +39,8 @@ import com.ads.abcbank.view.KeyboardWindow;
 import com.ads.abcbank.xx.activity.TempH1Activity;
 import com.ads.abcbank.xx.activity.TempH2Activity;
 import com.ads.abcbank.xx.activity.TempV21Activity;
+import com.ads.abcbank.xx.activity.TempV22Activity;
+import com.ads.abcbank.xx.activity.TempV23Activity;
 import com.ads.abcbank.xx.activity.TempV2Activity;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -519,10 +521,12 @@ public class MainActivity extends BaseActivity implements IMainView {
                                     intent.setClass(MainActivity.this, Temp6Activity.class);
                                     break;
                                 case "7":
-                                    intent.setClass(MainActivity.this, Temp7Activity.class);
+//                                    intent.setClass(MainActivity.this, Temp7Activity.class);
+                                    intent.setClass(MainActivity.this, TempV22Activity.class);
                                     break;
                                 case "8":
-                                    intent.setClass(MainActivity.this, Temp8Activity.class);
+//                                    intent.setClass(MainActivity.this, Temp8Activity.class);
+                                    intent.setClass(MainActivity.this, TempV23Activity.class);
                                     break;
                                 default:
                                     break;
@@ -588,10 +592,12 @@ public class MainActivity extends BaseActivity implements IMainView {
                             intent.setClass(MainActivity.this, Temp6Activity.class);
                             break;
                         case "7":
-                            intent.setClass(MainActivity.this, Temp7Activity.class);
+//                            intent.setClass(MainActivity.this, Temp7Activity.class);
+                            intent.setClass(MainActivity.this, TempV22Activity.class);
                             break;
                         case "8":
-                            intent.setClass(MainActivity.this, Temp8Activity.class);
+//                            intent.setClass(MainActivity.this, Temp8Activity.class);
+                            intent.setClass(MainActivity.this, TempV23Activity.class);
                             break;
                         default:
                             break;

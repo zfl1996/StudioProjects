@@ -22,11 +22,20 @@
         android:paddingLeft="20px"
         android:paddingRight="20px"
         android:singleLine="true" />
+
+    <View
+        android:id="@+id/v_exit"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:onClick="exitSys" />
+
     <View
         android:id="@+id/v_set"
         android:layout_width="100px"
         android:layout_height="100px"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
         android:onClick="toMainView" />
 </RelativeLayout>

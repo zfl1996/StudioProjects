@@ -67,20 +67,32 @@ public class AutoPollRecyclerView extends RecyclerView {
         removeCallbacks(autoPollTask);
     }
 
+//    @Override
+//    public boolean onTouchEvent(MotionEvent e) {
+//        switch (e.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                if (running)
+//                    stop();
+//                break;
+//            case MotionEvent.ACTION_UP:
+//            case MotionEvent.ACTION_CANCEL:
+//            case MotionEvent.ACTION_OUTSIDE:
+//                if (canRun)
+//                    start();
+//                break;
+//        }
+//        return super.onTouchEvent(e);
+//    }
+
+
     @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        switch (e.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if (running)
-                    stop();
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_OUTSIDE:
-                if (canRun)
-                    start();
-                break;
-        }
-        return super.onTouchEvent(e);
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        return false;
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        return false;
     }
 }

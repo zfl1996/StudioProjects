@@ -88,7 +88,7 @@ public class PdfHelper {
                             list.add(new PlayItem(fileKey + i,
                                     fileAbsPath,
                                     Constants.SLIDER_HOLDER_IMAGE,
-                                    playDate, stopDate));
+                                    playDate, stopDate,null));
                         } catch (Exception ex) {
                             Logger.e(TAG, ex.getMessage());
 

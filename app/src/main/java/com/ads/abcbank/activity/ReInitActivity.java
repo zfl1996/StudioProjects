@@ -33,6 +33,12 @@ import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.view.IMainView;
 import com.ads.abcbank.view.KeyboardWindow;
+import com.ads.abcbank.xx.activity.TempH1Activity;
+import com.ads.abcbank.xx.activity.TempH2Activity;
+import com.ads.abcbank.xx.activity.TempV21Activity;
+import com.ads.abcbank.xx.activity.TempV22Activity;
+import com.ads.abcbank.xx.activity.TempV23Activity;
+import com.ads.abcbank.xx.activity.TempV2Activity;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -465,28 +471,34 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                     RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
                     switch (bean.data.frameSetNo) {
                         case "1":
-                            intent.setClass(ReInitActivity.this, Temp1Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp1Activity.class);
+                            intent.setClass(ReInitActivity.this, TempH1Activity.class);
                             break;
                         case "2":
-                            intent.setClass(ReInitActivity.this, Temp2Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp2Activity.class);
+                            intent.setClass(ReInitActivity.this, TempV2Activity.class);
                             break;
                         case "3":
-                            intent.setClass(ReInitActivity.this, Temp3Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp3Activity.class);
+                            intent.setClass(ReInitActivity.this, TempV21Activity.class);
                             break;
                         case "4":
                             intent.setClass(ReInitActivity.this, Temp4Activity.class);
                             break;
                         case "5":
-                            intent.setClass(ReInitActivity.this, Temp5Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp5Activity.class);
+                            intent.setClass(ReInitActivity.this, TempH2Activity.class);
                             break;
                         case "6":
                             intent.setClass(ReInitActivity.this, Temp6Activity.class);
                             break;
                         case "7":
-                            intent.setClass(ReInitActivity.this, Temp7Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp7Activity.class);
+                            intent.setClass(ReInitActivity.this, TempV22Activity.class);
                             break;
                         case "8":
-                            intent.setClass(ReInitActivity.this, Temp8Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp8Activity.class);
+                            intent.setClass(ReInitActivity.this, TempV23Activity.class);
                             break;
                         default:
                             break;
@@ -564,28 +576,34 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                             RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
                             switch (bean.data.frameSetNo) {
                                 case "1":
-                                    intent.setClass(ReInitActivity.this, Temp1Activity.class);
+//                                    intent.setClass(ReInitActivity.this, Temp1Activity.class);
+                                    intent.setClass(ReInitActivity.this, TempH1Activity.class);
                                     break;
                                 case "2":
-                                    intent.setClass(ReInitActivity.this, Temp2Activity.class);
+//                                    intent.setClass(ReInitActivity.this, Temp2Activity.class);
+                                    intent.setClass(ReInitActivity.this, TempV2Activity.class);
                                     break;
                                 case "3":
-                                    intent.setClass(ReInitActivity.this, Temp3Activity.class);
+//                                    intent.setClass(ReInitActivity.this, Temp3Activity.class);
+                                    intent.setClass(ReInitActivity.this, TempV21Activity.class);
                                     break;
                                 case "4":
                                     intent.setClass(ReInitActivity.this, Temp4Activity.class);
                                     break;
                                 case "5":
-                                    intent.setClass(ReInitActivity.this, Temp5Activity.class);
+//                                    intent.setClass(ReInitActivity.this, Temp5Activity.class);
+                                    intent.setClass(ReInitActivity.this, TempH2Activity.class);
                                     break;
                                 case "6":
                                     intent.setClass(ReInitActivity.this, Temp6Activity.class);
                                     break;
                                 case "7":
-                                    intent.setClass(ReInitActivity.this, Temp7Activity.class);
+//                                    intent.setClass(ReInitActivity.this, Temp7Activity.class);
+                                    intent.setClass(ReInitActivity.this, TempV22Activity.class);
                                     break;
                                 case "8":
-                                    intent.setClass(ReInitActivity.this, Temp8Activity.class);
+//                                    intent.setClass(ReInitActivity.this, Temp8Activity.class);
+                                    intent.setClass(ReInitActivity.this, TempV23Activity.class);
                                     break;
                                 default:
                                     break;
@@ -631,28 +649,34 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                     RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
                     switch (bean.data.frameSetNo) {
                         case "1":
-                            intent.setClass(ReInitActivity.this, Temp1Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp1Activity.class);
+                            intent.setClass(ReInitActivity.this, TempH1Activity.class);
                             break;
                         case "2":
-                            intent.setClass(ReInitActivity.this, Temp2Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp2Activity.class);
+                            intent.setClass(ReInitActivity.this, TempV2Activity.class);
                             break;
                         case "3":
-                            intent.setClass(ReInitActivity.this, Temp3Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp3Activity.class);
+                            intent.setClass(ReInitActivity.this, TempV21Activity.class);
                             break;
                         case "4":
                             intent.setClass(ReInitActivity.this, Temp4Activity.class);
                             break;
                         case "5":
-                            intent.setClass(ReInitActivity.this, Temp5Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp5Activity.class);
+                            intent.setClass(ReInitActivity.this, TempH2Activity.class);
                             break;
                         case "6":
                             intent.setClass(ReInitActivity.this, Temp6Activity.class);
                             break;
                         case "7":
-                            intent.setClass(ReInitActivity.this, Temp7Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp7Activity.class);
+                            intent.setClass(ReInitActivity.this, TempV22Activity.class);
                             break;
                         case "8":
-                            intent.setClass(ReInitActivity.this, Temp8Activity.class);
+//                            intent.setClass(ReInitActivity.this, Temp8Activity.class);
+                            intent.setClass(ReInitActivity.this, TempV23Activity.class);
                             break;
                         default:
                             break;

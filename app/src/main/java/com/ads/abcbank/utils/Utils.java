@@ -113,6 +113,7 @@ public class Utils {
     public static final int KEY_TIME_PRESET_DEFAULT = 30;//切换汇率tab的秒数默认值
     public static final int KEY_TIME_IMG_DEFAULT = 5;//切换图片tab的秒数默认值
     public static final int KEY_TIME_FILE_DEFAULT = 60;//切换图片tab的秒数默认值
+    public static final String KEY_DEFAULT_PWD = "123";//默认退出密码
 
     public static final String KEY_TIME_CURRENT_CMD = "timeCurrentCmd";//记录当前获取cmd命令的分钟数
     public static final String KEY_TIME_CURRENT_PRESET = "timeCurrentPreset";//记录当前获取汇率的分钟数
@@ -122,6 +123,7 @@ public class Utils {
     public static final String KEY_TIME_TAB_IMG = "timeTabImg";//记录切换图片tab的秒数
     public static final String KEY_TIME_TAB_PDF = "timeTabPdf";//记录切换pdf文件的秒数
     public static final String KEY_TIME_FILE = "timeFile";//记录过期文件要手动删除的天数
+    public static final String KEY_EXIT_PWD = "exitPwd";//退出系统的密码
 
     public static final String KEY_SPEED_DOWNLOAD = "speedDownload";//记录文件下载限制的速度
 

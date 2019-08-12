@@ -6,10 +6,8 @@ import android.view.View;
 import com.ads.abcbank.R;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.BaseTempletActivity;
-import com.ads.abcbank.xx.utils.Constants;
-import com.alibaba.fastjson.JSONObject;
 
-public class TempV2Activity extends BaseTempletActivity {
+public class TempV23Activity extends BaseTempletActivity {
     private static final String TAG = "TempV2Activity";
 
     View v_set;
@@ -24,7 +22,7 @@ public class TempV2Activity extends BaseTempletActivity {
 
     @Override
     protected int getLayoutResourceId() {
-        type = Utils.TYPES_TEMP2;
+        type = Utils.TYPES_TEMP8;
         return R.layout.activity_temp_v2_vertical_2;
     }
 

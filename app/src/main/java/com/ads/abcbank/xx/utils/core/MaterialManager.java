@@ -11,6 +11,7 @@ import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
+import com.ads.abcbank.xx.BaseTempletActivity;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
@@ -162,7 +163,7 @@ public class MaterialManager {
             PlayItem playItem = new PlayItem(fileKey,
                     filePath,
                     BllDataExtractor.getIdentityType(suffix),
-                    bodyBean.playDate, bodyBean.stopDate);
+                    bodyBean.playDate, bodyBean.stopDate, bodyBean.onClickLink);
 
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, playItem, true));
         } else if (suffix.toLowerCase().equals("txt")) {
@@ -253,13 +254,36 @@ public class MaterialManager {
                 managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 1);
 
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
+                List<PlaylistBodyBean> playlistBodyBeanLists = new ArrayList<>();//TODO 添加类型过滤
+                {//TODO 添加类型过滤
+                    for (int i = 0; i < playlistBodyBeans.size(); i++) {
+                        PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
+                        if (Utils.isInPlayTime(bodyBean)) {
+                            String contentTypeMiddle = Utils.getContentTypeMiddle(context);
+                            String contentTypeEnd = Utils.getContentTypeEnd(context);
+                            if ("*".equals(contentTypeEnd)) {
+                                if (bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                                        BaseTempletActivity.type.contains(bodyBean.contentType.substring(0, 1))) {
+                                    playlistBodyBeanLists.add(bodyBean);
+                                }
+                            } else {
+                                if (bodyBean.contentType.endsWith(contentTypeEnd) &&
+                                        bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                                        BaseTempletActivity.type.contains(bodyBean.contentType.substring(0, 1))) {
+                                    playlistBodyBeanLists.add(bodyBean);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 List<PlayItem> allPlayItems = new ArrayList<>();
                 List<String> waitForDownloadUrls = new ArrayList<>();
                 List<String> waitForDownloadSavePath = new ArrayList<>();
                 Map<String, Integer> waitForFiles = new HashMap<>();
                 List<String> welcomeItems = new ArrayList<>();
 
-                for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
+                for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {//TODO 添加类型过滤
                     // 过滤非下载时段和已下载项
                     if (!BllDataExtractor.isInDownloadTime(bodyBean)
 //                            || materialStatus.containsKey(bodyBean.id)
@@ -300,7 +324,7 @@ public class MaterialManager {
                         allPlayItems.add(new PlayItem(bodyBean.id,
                                 ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id),
                                 BllDataExtractor.getIdentityType(bodyBean),
-                                bodyBean.playDate, bodyBean.stopDate ));
+                                bodyBean.playDate, bodyBean.stopDate, bodyBean.onClickLink));
                     } else if (suffix.equals("txt")) {
                         String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                         if (!ResHelper.isNullOrEmpty(wmsg))
