@@ -1,7 +1,14 @@
 package com.ads.abcbank.xx.utils;
 
+import android.text.TextUtils;
+
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class BllDataExtractor {
     public static String getIdentity(PlaylistBodyBean playlistBodyBean){
@@ -92,6 +99,80 @@ public class BllDataExtractor {
             default:
                 return ResHelper.getRootDir() + "temp/" + fileName;
         }
+    }
+
+    public static boolean isInPlayTime(String playDate, String stopDate) {
+        try {
+            if (ResHelper.isNullOrEmpty(playDate) || ResHelper.isNullOrEmpty(stopDate)) {
+                return false;
+            }
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
+            String currentDate = simpleDateFormat.format(new Date());
+            if (!TextUtils.isEmpty(playDate) && !TextUtils.isEmpty(stopDate)
+                    && currentDate.compareTo(playDate) >= 0 && currentDate.compareTo(stopDate) < 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            Logger.e(e.toString());
+        }
+        return false;
+    }
+
+
+    //是否在允许下载的时间段内
+    public static boolean isInDownloadTime(PlaylistBodyBean bean) {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        String downloadTimeslice = bean.downloadTimeslice;
+        if (TextUtils.isEmpty(downloadTimeslice)) {
+            return true;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        String[] strs = downloadTimeslice.split("-");
+        int week = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        if (week < 0) {
+            week = 0;
+        }
+        if (week == 0) {
+            week = 7;
+        }
+        if (("," + strs[0] + ",").indexOf("," + week + ",") >= 0) {
+            //判断当前时间是否在工作时间段内
+            Date startDt;
+            Date endDt;
+            Date nowDt = new Date();
+            try {
+//                startDt = timeFormat.parse(strs[1]);
+//                Calendar ca = Calendar.getInstance();
+//                ca.setTime(startDt);
+//                ca.add(Calendar.MINUTE, Integer.parseInt(strs[2]));
+//                endDt = ca.getTime();
+//
+//                if (timeFormat.format(nowDt).compareTo(timeFormat.format(startDt)) >= 0
+//                        && ((!"00:00".equals(timeFormat.format(endDt)) && timeFormat.format(nowDt).compareTo(timeFormat.format(endDt)) <= 0)
+//                        || "00:00".equals(timeFormat.format(endDt)))) {
+//                    return true;
+//                }
+
+                Calendar ca = Calendar.getInstance();
+                long c = ca.getTimeInMillis();
+
+                ca.set(Calendar.HOUR_OF_DAY, Integer.parseInt(strs[1].substring(0, strs[1].indexOf(":"))));
+                ca.set(Calendar.MINUTE, Integer.parseInt(strs[1].substring(strs[1].indexOf(":") + 1)));
+                long s = ca.getTimeInMillis();
+
+                ca.add(Calendar.MINUTE, Integer.parseInt(strs[2]));
+                long e = ca.getTimeInMillis();
+
+                if (c >= s && c <= e)
+                    return true;
+
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
     }
 
 }

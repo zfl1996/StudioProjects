@@ -15,6 +15,7 @@ import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.DownloadModule.DownloadStateLisntener;
+import com.ads.abcbank.xx.utils.helper.IOHelper;
 import com.ads.abcbank.xx.utils.helper.PdfHelper;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
@@ -37,14 +38,15 @@ public class MaterialManager {
     Handler playerHandler;
 
     // bll data
-    WeakReference<ItemStatusListener> itemStatusListener = null;
+    WeakReference<MaterialStatusListener> itemStatusListener = null;
     String deviceModeData;
+    ConcurrentHashMap<String, String> materialData = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
 
-    public MaterialManager(Context context, ItemStatusListener itemStatusListener) {
+    public MaterialManager(Context context, MaterialStatusListener materialStatusListener) {
         this.context = context;
-        this.itemStatusListener = new WeakReference<>(itemStatusListener);
+        this.itemStatusListener = new WeakReference<>(materialStatusListener);
     }
 
 
@@ -92,7 +94,7 @@ public class MaterialManager {
                             String[] downInfo = (String[]) msg.obj;
                             if (downInfo.length > 1) {
                                 taskStr += downInfo[1];
-                                finishDownload(downInfo[1]);
+                                finishDownload(downInfo[0], downInfo[1]);
                             }
                         }
                         Logger.e(TAG, taskStr);
@@ -119,7 +121,16 @@ public class MaterialManager {
     /*
     * 处理资源下载完成通知
     * */
-    private void finishDownload(String filePath) {
+    private void finishDownload(String fileUrl, String filePath) {
+        if (Constants.SYS_CONFIG_IS_CHECKMD5) {
+            if (!materialData.containsKey(fileUrl)
+                   || !IOHelper.fileToMD5(filePath).equals(materialData.get(fileUrl))) {
+                IOHelper.deleteFile(filePath);
+                materialData.remove(fileUrl);
+                return;
+            }
+        }
+
         // 更新素材集状态
         String _fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
                 filePath.lastIndexOf(".") );
@@ -239,14 +250,14 @@ public class MaterialManager {
 
                 List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
-                List<String> waitForDownload = new ArrayList<>();
-                List<String> waitForDownloadFilePath = new ArrayList<>();
+                List<String> waitForDownloadUrls = new ArrayList<>();
+                List<String> waitForDownloadSavePath = new ArrayList<>();
                 Map<String, Integer> waitForFiles = new HashMap<>();
                 List<String> welcomeItems = new ArrayList<>();
 
                 for (PlaylistBodyBean bodyBean:playlistBodyBeans) {
                     // 过滤非下载时段和已下载项
-                    if (!Utils.isInDownloadTime(bodyBean)
+                    if (!BllDataExtractor.isInDownloadTime(bodyBean)
 //                            || materialStatus.containsKey(bodyBean.id)
                             || waitForFiles.containsKey(bodyBean.downloadLink) )
                         continue;
@@ -260,8 +271,14 @@ public class MaterialManager {
                         if (pathSegments.length <= 0)
                             continue;
 
-                        waitForDownload.add(bodyBean.downloadLink);
-                        waitForDownloadFilePath.add(pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
+                        if (!ResHelper.isNullOrEmpty(bodyBean.isUrg) && bodyBean.isUrg.equals("1")) {
+                            waitForDownloadUrls.add(0, bodyBean.downloadLink);
+                            waitForDownloadSavePath.add(0, pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
+                        } else {
+                            waitForDownloadUrls.add(bodyBean.downloadLink);
+                            waitForDownloadSavePath.add(pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
+                        }
+                        materialData.put(bodyBean.downloadLink, bodyBean.md5);
 
                         continue;
                     }
@@ -282,9 +299,9 @@ public class MaterialManager {
                     }
                 }
 
-                if (waitForDownload.size() > 0 && waitForDownload.size() == waitForDownloadFilePath.size()) {
+                if (waitForDownloadUrls.size() > 0 && waitForDownloadUrls.size() == waitForDownloadSavePath.size()) {
                     Logger.e(TAG, "tid:(loadPlaylist)" + Thread.currentThread().getId());
-                    downloadModule.start(waitForDownload, ResHelper.getRootDir(), waitForDownloadFilePath);
+                    downloadModule.start(waitForDownloadUrls, ResHelper.getRootDir(), waitForDownloadSavePath);
                 }
 
                 if (allPlayItems.size() > 0)
@@ -295,7 +312,7 @@ public class MaterialManager {
 
                 if (!isIntegrationPresetData())
                     uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_OK, true));
-                Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadFilePath.toArray(), "@@\r\n"));
+                Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadSavePath.toArray(), "@@\r\n"));
 
             } catch (Exception e) {
                 Logger.e("解析播放列表出错" + json);
@@ -337,7 +354,7 @@ public class MaterialManager {
         return msg;
     }
 
-    ItemStatusListener getRefListener() {
+    MaterialStatusListener getRefListener() {
         if (null != itemStatusListener) {
             return itemStatusListener.get();
         }
@@ -350,7 +367,7 @@ public class MaterialManager {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            ItemStatusListener _itemStatusListener = getRefListener();
+            MaterialStatusListener _materialStatusListener = getRefListener();
 
             Logger.e(TAG, "tid:(uiHandler)" + Thread.currentThread().getId());
 
@@ -358,8 +375,8 @@ public class MaterialManager {
                 case Constants.SLIDER_STATUS_CODE_WELCOME:
                     List<String> welcomeItems = (List<String>) msg.obj;
 
-                    if (null != _itemStatusListener) {
-                        _itemStatusListener.onWelcome(welcomeItems);
+                    if (null != _materialStatusListener) {
+                        _materialStatusListener.onWelcome(welcomeItems);
                     }
 
                     break;
@@ -367,8 +384,8 @@ public class MaterialManager {
                 case Constants.SLIDER_STATUS_CODE_WELCOME_MSG:
                     List<String> welcomeMsg = (List<String>) msg.obj;
 
-                    if (null != _itemStatusListener) {
-                        _itemStatusListener.onNewMsgAdded(welcomeMsg, isMaterialLoaded(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED));
+                    if (null != _materialStatusListener) {
+                        _materialStatusListener.onNewMsgAdded(welcomeMsg, isMaterialLoaded(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED));
                     }
 
                     break;
@@ -376,35 +393,35 @@ public class MaterialManager {
                 case Constants.SLIDER_STATUS_CODE_INIT:
                     List<PlayItem> allPlayItems = (List<PlayItem>)msg.obj;
 
-                    if (null != _itemStatusListener) {
-                        _itemStatusListener.onReady(allPlayItems);
+                    if (null != _materialStatusListener) {
+                        _materialStatusListener.onReady(allPlayItems);
                     }
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_RATE:
-                    if (null != _itemStatusListener){
+                    if (null != _materialStatusListener){
                         Object[] objs = (Object[])msg.obj;
-                        _itemStatusListener.onRate((List<PlayItem>)objs[0], (List<String>) objs[1]);
+                        _materialStatusListener.onRate((List<PlayItem>)objs[0], (List<String>) objs[1]);
                     }
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_PDF_CACHED:
-                    if (null != _itemStatusListener)
-                        _itemStatusListener.onItemPrepared((List<PlayItem>)msg.obj);
+                    if (null != _materialStatusListener)
+                        _materialStatusListener.onItemPrepared((List<PlayItem>)msg.obj);
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_PROGRESS:
-                    if (null != _itemStatusListener)
-                        _itemStatusListener.onProgress((int)msg.obj);
+                    if (null != _materialStatusListener)
+                        _materialStatusListener.onProgress((int)msg.obj);
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
-                    if (null != _itemStatusListener)
-                        _itemStatusListener.onItemPrepared(new ArrayList<PlayItem>(){
+                    if (null != _materialStatusListener)
+                        _materialStatusListener.onItemPrepared(new ArrayList<PlayItem>(){
                             { add((PlayItem)msg.obj); }
                         } );
 
@@ -430,7 +447,7 @@ public class MaterialManager {
         }
     };
 
-    public interface ItemStatusListener {
+    public interface MaterialStatusListener {
         void onProgress(int code);
         void onReady(List<PlayItem> items);
         void onItemPrepared(List<PlayItem> items);

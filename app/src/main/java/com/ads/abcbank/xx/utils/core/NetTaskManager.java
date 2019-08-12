@@ -37,7 +37,7 @@ public class NetTaskManager {
         this.netTaskListener = netTaskListener;
 
         timer = new Timer();
-        timerTask = new TimerTask() {
+        timerTask =  new TimerTask() {
             @Override
             public void run() {
                 Utils.getExecutorService().submit(() -> reqAllData());

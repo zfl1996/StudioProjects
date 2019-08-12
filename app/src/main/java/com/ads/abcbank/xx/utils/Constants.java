@@ -1,6 +1,7 @@
 package com.ads.abcbank.xx.utils;
 
 public class Constants {
+    public final static Boolean SYS_CONFIG_IS_CHECKMD5 = false;
 
     public final static String ROOT_FILE_NAME = "ibcsPlayerData";
     public final static String COMPRESS_FORMAT = ".png";

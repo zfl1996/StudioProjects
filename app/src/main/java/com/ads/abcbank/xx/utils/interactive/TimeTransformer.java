@@ -3,7 +3,6 @@ package com.ads.abcbank.xx.utils.interactive;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.format.DateFormat;
 
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 
@@ -42,7 +41,8 @@ public class TimeTransformer {
             switch (msg.what) {
                 case CODE_OF_TIME_HANDLER:
 
-                    timeListener.onChange((String[])msg.obj);
+                    if (null != timeListener)
+                        timeListener.onChange((String[])msg.obj);
 
                     break;
 

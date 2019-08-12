@@ -32,10 +32,6 @@ public class SliderPlayer extends LinearLayout {
     RecyclerPagerView recyclerPagerView;
     LinearLayout llProgress;
 
-    public void setPageChangeListener(IPageChangeListener pageChangeListener) {
-        this.pageChangeListener = pageChangeListener;
-    }
-
     IPageChangeListener pageChangeListener;
     SliderMainAdapter sliderAdapter;
     DataStatusListener dataStatusListener;
@@ -47,6 +43,10 @@ public class SliderPlayer extends LinearLayout {
 
     public void setDataStatusListener(DataStatusListener dataStatusListener) {
         this.dataStatusListener = dataStatusListener;
+    }
+
+    public void setPageChangeListener(IPageChangeListener pageChangeListener) {
+        this.pageChangeListener = pageChangeListener;
     }
 
     public SliderPlayer(Context context, @Nullable AttributeSet attrs) {

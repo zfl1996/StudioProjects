@@ -28,7 +28,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     private NetTaskManager netTaskManager;
     private MaterialManager materialManager;
-    protected MaterialManager.ItemStatusListener materialItemStatusListener;
+    protected MaterialManager.MaterialStatusListener materialMaterialStatusListener;
     protected AutoPollAdapter autoPollAdapter;
     protected AutoPollRecyclerView rvMarqueeView;
     protected SliderPlayer mainSliderPlayer;
@@ -53,7 +53,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected void initCtrls(Bundle savedInstanceState){
 
-        materialItemStatusListener = new MaterialManager.ItemStatusListener() {
+        materialMaterialStatusListener = new MaterialManager.MaterialStatusListener() {
             @Override
             public void onReady(List<PlayItem> items) {
                 mainSliderPlayer.onReady(isMaterialManagerInitSuccessed(), items);
@@ -114,7 +114,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         }
 
         // start data process...
-        materialManager = new MaterialManager(this, materialItemStatusListener);
+        materialManager = new MaterialManager(this, materialMaterialStatusListener);
         materialManager.initManager(mainSliderPlayer.isIntegrationMode());
     }
 
