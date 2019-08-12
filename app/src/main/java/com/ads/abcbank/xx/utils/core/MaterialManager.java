@@ -269,8 +269,13 @@ public class MaterialManager {
                     waitForFiles.put(bodyBean.downloadLink, 0);
 //                    materialStatus.put(bodyBean.id, 0);
 
+                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                    String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
+
                     // 构建待下载数据
-                    if (!materialStatus.containsKey(bodyBean.id) || materialStatus.get(bodyBean.id) != 1) {
+                    if (!materialStatus.containsKey(bodyBean.id)
+                            || materialStatus.get(bodyBean.id) != 1
+                            || !ResHelper.isExistsFile(savePath) ) {
                         String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
                         if (pathSegments.length <= 0)
                             continue;
@@ -287,7 +292,6 @@ public class MaterialManager {
                         continue;
                     }
 
-                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
 
                     if (suffix.equals("pdf")) {
                         allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf", bodyBean.playDate, bodyBean.stopDate));

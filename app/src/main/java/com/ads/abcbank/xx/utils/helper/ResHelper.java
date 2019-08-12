@@ -186,6 +186,17 @@ public class ResHelper {
         }
     }
 
+
+    public static boolean isExistsFile(String path) {
+        File file = new File(path);
+        if (file == null) return false;
+        // 如果存在，是文件则返回true，是目录则返回false
+        if (file.exists())
+            return file.isFile();
+
+        return false;
+    }
+
     /**
      * 判断文件是否存在，不存在则判断是否创建成功
      *
