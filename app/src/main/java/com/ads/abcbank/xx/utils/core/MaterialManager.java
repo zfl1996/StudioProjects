@@ -290,7 +290,7 @@ public class MaterialManager {
                     String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
 
                     if (suffix.equals("pdf")) {
-                        allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf"));
+                        allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf", bodyBean.playDate, bodyBean.stopDate));
                     } else if(BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
                         || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
                         allPlayItems.add(new PlayItem(bodyBean.id,
