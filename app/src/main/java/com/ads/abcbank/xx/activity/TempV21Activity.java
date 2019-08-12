@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.BaseTempletActivity;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class TempV21Activity extends BaseTempletActivity {
 
     @Override
     protected int getLayoutResourceId() {
+        type = Utils.TYPES_TEMP3;
         return R.layout.activity_temp_v2_vertical_21;
     }
 

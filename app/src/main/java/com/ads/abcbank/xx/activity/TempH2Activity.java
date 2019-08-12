@@ -1,6 +1,7 @@
 package com.ads.abcbank.xx.activity;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.BaseTempletActivity;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public class TempH2Activity extends BaseTempletActivity {
 
     @Override
     protected int getLayoutResourceId() {
+        type = Utils.TYPES_TEMP5;
         return R.layout.activity_temp_v2_horizontal_2;
     }
 

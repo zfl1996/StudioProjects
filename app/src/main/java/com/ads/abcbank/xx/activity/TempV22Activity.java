@@ -6,26 +6,27 @@ import android.view.View;
 import com.ads.abcbank.R;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.BaseTempletActivity;
-import com.ads.abcbank.xx.utils.Constants;
-import com.alibaba.fastjson.JSONObject;
 
-public class TempV2Activity extends BaseTempletActivity {
-    private static final String TAG = "TempV2Activity";
+import java.util.List;
+
+public class TempV22Activity extends BaseTempletActivity {
+    private static final String TAG = "TempV21Activity";
 
     View v_set;
 
     @Override
+    protected int getLayoutResourceId() {
+        type = Utils.TYPES_TEMP7;
+        return R.layout.activity_temp_v2_vertical_21;
+    }
+
+    @Override
     protected void initCtrls(Bundle savedInstanceState) {
-        rvMarqueeView = findViewById(R.id.rvMarqueeView);
         v_set = findViewById(R.id.v_set);
 
         super.initCtrls(savedInstanceState);
     }
 
     @Override
-    protected int getLayoutResourceId() {
-        type = Utils.TYPES_TEMP2;
-        return R.layout.activity_temp_v2_vertical_2;
-    }
-
+    protected void onWelcomeLoaded(List<String> items, boolean isDefault, boolean isAppend) {}
 }

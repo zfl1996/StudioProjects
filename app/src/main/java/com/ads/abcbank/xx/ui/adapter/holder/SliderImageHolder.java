@@ -1,10 +1,15 @@
 package com.ads.abcbank.xx.ui.adapter.holder;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.activity.WebViewActivity;
+import com.ads.abcbank.utils.ActivityManager;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.bumptech.glide.Glide;
@@ -17,11 +22,13 @@ public class SliderImageHolder extends RecyclerView.ViewHolder {
     }
 
     ImageView imgContent;
+    static View ivGif;
 
     public SliderImageHolder(View itemView) {
         super(itemView);
 
         imgContent = itemView.findViewById(R.id.imgContent);
+        ivGif = itemView.findViewById(R.id.iv_gif);
     }
 
     public static void showImage(PlayItem item, ImageView imageView) {
@@ -34,6 +41,17 @@ public class SliderImageHolder extends RecyclerView.ViewHolder {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .dontAnimate()
                     .into(imageView);
+        if (ivGif != null && !TextUtils.isEmpty(item.getClickLink())) {
+            ivGif.setVisibility(View.VISIBLE);
+            ivGif.setOnClickListener(e -> {
+                Intent intent = new Intent(ActivityManager.getInstance().getTopActivity(), WebViewActivity.class);
+                intent.putExtra(Utils.WEBURL, item.getClickLink());
+                ActivityManager.getInstance().getTopActivity().startActivity(intent);
+            });
+        } else if (ivGif != null) {
+            ivGif.setVisibility(View.GONE);
+            ivGif.setOnClickListener(null);
+        }
     }
 
 }
