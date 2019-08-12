@@ -17,7 +17,7 @@ import java.util.List;
 public class PdfHelper {
     static String TAG = "PdfHelper";
 
-    public static List<PlayItem> getCachedPdfImage(String fileName) {
+    public static List<PlayItem> getCachedPdfImage(String fileName, String playDate, String stopDate) {
         String metadata = ResHelper.readFile2String(ResHelper.getPdfMetadataPath(fileName));
 
         List<PlayItem> list = new ArrayList<>();
@@ -36,7 +36,7 @@ public class PdfHelper {
         return list;
     }
 
-    public static List<PlayItem> cachePdfToImage(String fileName, String fileKey) {
+    public static List<PlayItem> cachePdfToImage(String fileName, String fileKey, String playDate, String stopDate) {
         List<PlayItem> list = new ArrayList<>();
 
         if (ResHelper.isNullOrEmpty(fileName))
@@ -85,7 +85,10 @@ public class PdfHelper {
                                 }
                             }
 
-                            list.add(new PlayItem(fileKey + i, fileAbsPath, Constants.SLIDER_HOLDER_IMAGE));
+                            list.add(new PlayItem(fileKey + i,
+                                    fileAbsPath,
+                                    Constants.SLIDER_HOLDER_IMAGE,
+                                    playDate, stopDate));
                         } catch (Exception ex) {
                             Logger.e(TAG, ex.getMessage());
 

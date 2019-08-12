@@ -40,7 +40,7 @@ public class MaterialManager {
     // bll data
     WeakReference<MaterialStatusListener> itemStatusListener = null;
     String deviceModeData;
-    ConcurrentHashMap<String, String> materialData = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, PlaylistBodyBean> waitForDownloadMaterial = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
 
@@ -123,13 +123,15 @@ public class MaterialManager {
     * */
     private void finishDownload(String fileUrl, String filePath) {
         if (Constants.SYS_CONFIG_IS_CHECKMD5) {
-            if (!materialData.containsKey(fileUrl)
-                   || !IOHelper.fileToMD5(filePath).equals(materialData.get(fileUrl))) {
+            if (!waitForDownloadMaterial.containsKey(fileUrl)
+                   || !IOHelper.fileToMD5(filePath).equals(waitForDownloadMaterial.get(fileUrl))) {
                 IOHelper.deleteFile(filePath);
-                materialData.remove(fileUrl);
+                waitForDownloadMaterial.remove(fileUrl);
                 return;
             }
         }
+
+        PlaylistBodyBean bodyBean = waitForDownloadMaterial.get(fileUrl);
 
         // 更新素材集状态
         String _fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
@@ -152,13 +154,15 @@ public class MaterialManager {
 
         if (suffix.toLowerCase().equals("pdf")) {
             Logger.e(TAG, fileName);
-            List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey  );
+            List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey, bodyBean.playDate, bodyBean.stopDate  );
+
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PDF_CACHED, list, true));
         } else if (BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
                 || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
             PlayItem playItem = new PlayItem(fileKey,
                     filePath,
-                    BllDataExtractor.getIdentityType(suffix) );
+                    BllDataExtractor.getIdentityType(suffix),
+                    bodyBean.playDate, bodyBean.stopDate);
 
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, playItem, true));
         } else if (suffix.toLowerCase().equals("txt")) {
@@ -278,7 +282,7 @@ public class MaterialManager {
                             waitForDownloadUrls.add(bodyBean.downloadLink);
                             waitForDownloadSavePath.add(pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
                         }
-                        materialData.put(bodyBean.downloadLink, bodyBean.md5);
+                        waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
 
                         continue;
                     }
@@ -291,7 +295,8 @@ public class MaterialManager {
                         || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
                         allPlayItems.add(new PlayItem(bodyBean.id,
                                 ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id),
-                                BllDataExtractor.getIdentityType(bodyBean)));
+                                BllDataExtractor.getIdentityType(bodyBean),
+                                bodyBean.playDate, bodyBean.stopDate ));
                     } else if (suffix.equals("txt")) {
                         String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                         if (!ResHelper.isNullOrEmpty(wmsg))

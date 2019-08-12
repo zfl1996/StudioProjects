@@ -1,6 +1,7 @@
 package com.ads.abcbank.xx.ui.view;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +23,8 @@ import com.ads.abcbank.xx.utils.Constants;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 public class SliderPlayer extends LinearLayout {
     static String TAG = "SliderPlayer";
@@ -82,6 +85,15 @@ public class SliderPlayer extends LinearLayout {
         recyclerPagerView = findViewById(R.id.rpSlider);
         llProgress = findViewById(R.id.llProgress);
 
+        // set imgholder if not narrow mode
+        if (displayMode != 2) {
+            Configuration conf = getResources().getConfiguration();
+
+            imgHolder.setImageResource(conf.orientation == ORIENTATION_LANDSCAPE ? R.mipmap.bg_land
+                    : R.mipmap.bg_port);
+            imgHolder.setVisibility(View.VISIBLE);
+        }
+
         recyclerPagerView.setDisplayMode(displayMode);
 
         // init relative to slider data
@@ -107,6 +119,7 @@ public class SliderPlayer extends LinearLayout {
 
     public void onReady(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
         sliderAdapter.addItemDataAndRedraw(items);
+
         recyclerPagerView.setOnPageChangeListener(new RecyclerPagerView.OnPageChangeListener() {
             @Override
             public void onPageSelection(int position) {
@@ -123,6 +136,7 @@ public class SliderPlayer extends LinearLayout {
 
     public void onNewItemsAdded(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
         sliderAdapter.addItemDataAndPortionRedraw(items);
+
         recyclerPagerView.startPlay();
 
         if (isMaterialManagerInitSuccessed)
@@ -165,9 +179,14 @@ public class SliderPlayer extends LinearLayout {
         }
     }
 
+    public void onItemOuttime(String id, int index) {
+        sliderAdapter.removeOuttimeItem(id, index);
+    }
+
     private void showHintMsg(boolean isMaterialManagerInitSuccessed, String msg) {
         if (isMaterialManagerInitSuccessed) {
             llProgress.setVisibility(GONE);
+            imgHolder.setVisibility(GONE);
         } else {
             txtHint.setText("初次启动，初始化环境");
         }

@@ -49,6 +49,13 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemRangeChanged(dataList.size() - dataItem.size(), dataItem.size());
     }
 
+    public void removeOuttimeItem(String id, int index) {
+        if (dataList.get(index).getMd5().equals(id)) {
+            dataList.remove(index);
+            notifyItemRangeChanged(index - 1, 1);
+        }
+    }
+
     public void setVideoStatusListener(SliderVideoHolder.VideoStatusListener videoStatusListener) {
         this.videoStatusListener = videoStatusListener;
     }

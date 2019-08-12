@@ -17,6 +17,7 @@ import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
 import com.ads.abcbank.xx.utils.core.NetTaskManager;
+import com.ads.abcbank.xx.utils.core.PlaylistManager;
 import com.ads.abcbank.xx.utils.helper.DPIHelper;
 import com.alibaba.fastjson.JSONObject;
 
@@ -28,10 +29,11 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     private NetTaskManager netTaskManager;
     private MaterialManager materialManager;
-    protected MaterialManager.MaterialStatusListener materialMaterialStatusListener;
+    protected MaterialManager.MaterialStatusListener materialStatusListener;
     protected AutoPollAdapter autoPollAdapter;
     protected AutoPollRecyclerView rvMarqueeView;
     protected SliderPlayer mainSliderPlayer;
+    protected PlaylistManager playlistManager;
 
     protected AppCompatActivity activity;
     protected Handler mainHandler = new Handler();
@@ -53,15 +55,17 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected void initCtrls(Bundle savedInstanceState){
 
-        materialMaterialStatusListener = new MaterialManager.MaterialStatusListener() {
+        materialStatusListener = new MaterialManager.MaterialStatusListener() {
             @Override
             public void onReady(List<PlayItem> items) {
                 mainSliderPlayer.onReady(isMaterialManagerInitSuccessed(), items);
+                playlistManager.addMaterialInfo(items);
             }
 
             @Override
             public void onItemPrepared(List<PlayItem> items) {
                 mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
+                playlistManager.addMaterialInfo(items);
             }
 
             @Override
@@ -114,8 +118,12 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         }
 
         // start data process...
-        materialManager = new MaterialManager(this, materialMaterialStatusListener);
+        materialManager = new MaterialManager(this, materialStatusListener);
         materialManager.initManager(mainSliderPlayer.isIntegrationMode());
+
+        playlistManager = new PlaylistManager(this, (id, index) -> {
+            mainHandler.post(() -> mainSliderPlayer.onItemOuttime(id, index));
+        });
     }
 
     protected boolean isMaterialManagerInitSuccessed() {
@@ -146,6 +154,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected void onRateDataPrepare(List<PlayItem> items, List<String> titles){
         mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
+        playlistManager.addMaterialInfo(items);
     }
 
     protected void reload(int resCode) {

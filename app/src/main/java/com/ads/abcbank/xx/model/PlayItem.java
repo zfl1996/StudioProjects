@@ -14,14 +14,19 @@ public class PlayItem {
     int mediaType;
     int Order;
 
+    String playDate;
+    String stopDate;
+
     public PlayItem() {
 
     }
 
-    public PlayItem(String md5, String url, int mediaType) {
+    public PlayItem(String md5, String url, int mediaType, String playDate, String stopDate) {
         this.md5 = md5;
         this.url = url;
         this.mediaType = mediaType;
+        this.playDate = playDate;
+        this.stopDate = stopDate;
     }
 
     public PlayItem(int mediaType, Object attData) {
@@ -67,5 +72,21 @@ public class PlayItem {
 
     public void setOrder(int order) {
         Order = order;
+    }
+
+    public String getPlayDate() {
+        return playDate;
+    }
+
+    public void setPlayDate(String playDate) {
+        this.playDate = playDate;
+    }
+
+    public String getStopDate() {
+        return stopDate;
+    }
+
+    public void setStopDate(String stopDate) {
+        this.stopDate = stopDate;
     }
 }

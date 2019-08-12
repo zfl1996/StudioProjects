@@ -4,16 +4,21 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.util.Pair;
 
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.MaterialInfo;
+import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class PlaylistManager {
+    final static String TAG = "PlaylistManager";
+
     private static final int MSG_OF_PLAYLIST = 0x001;
+    private static final int MSG_OF_PLAYLIST_ADD = 0x002;
 
     private Context context;
     private HandlerThread plThread;
@@ -21,8 +26,9 @@ public class PlaylistManager {
     private List<MaterialInfo> materialInfos = new ArrayList<>();
     private IPlaylistStatusListener playlistStatusListener;
 
-    public PlaylistManager(Context context) {
+    public PlaylistManager(Context context, IPlaylistStatusListener playlistStatusListener) {
         this.context = context;
+        this.playlistStatusListener = playlistStatusListener;
 
         plThread = new HandlerThread("PlaylistManager");
         plThread.start();
@@ -42,6 +48,14 @@ public class PlaylistManager {
 
                       break;
 
+                  case MSG_OF_PLAYLIST_ADD:
+                      List<PlayItem> list = (List<PlayItem>)msg.obj;
+                      for (PlayItem pi : list) {
+                          materialInfos.add(new MaterialInfo(pi.getMd5(), pi.getPlayDate(), pi.getStopDate()));
+                      }
+
+                      break;
+
                   default:
                       break;
               }
@@ -52,36 +66,35 @@ public class PlaylistManager {
     }
 
     private void checkMaterialStatus() {
-        for (MaterialInfo mi : materialInfos) {
-            int index = getOuttimeItem(materialInfos, mi);
-            if (index != -1) {
-                materialInfos.remove(mi);
+        if (null == playlistStatusListener)
+            return;
 
-                if (null != playlistStatusListener) {
-                    playlistStatusListener.onOuttime(new Pair<>(mi.getId(), index));
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
+        int i = 0;
 
-    private int getOuttimeItem(List<MaterialInfo> materialInfos, MaterialInfo currentItem) {
-        for (int i=0; i<materialInfos.size(); i++) {
-            MaterialInfo mi = materialInfos.get(i);
+        Iterator<MaterialInfo> it = materialInfos.iterator();
+
+        while (it.hasNext()) {
+            MaterialInfo mi = it.next();
             if (!BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate())) {
-                return i;
+                Logger.e(TAG, "NotInPlayTime-->" + mi.getId() + " index:" + i + " time:"
+                 + mi.getPlayDate() + "-" + mi.getStopDate() );
+
+                playlistStatusListener.onOutOfTime(mi.getId(), i);
+                it.remove();
+
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                i++;
             }
         }
-
-        return -1;
     }
 
-    public void addMaterialInfo(MaterialInfo materialInfo) {
-        materialInfos.add(materialInfo);
+    public void addMaterialInfo(List<PlayItem> items) {
+        plHandler.sendMessage( buildMessage(MSG_OF_PLAYLIST_ADD, items, false) );
     }
 
     Message buildMessage(int w, Object obj, boolean isMain) {
@@ -93,6 +106,6 @@ public class PlaylistManager {
     }
 
     public interface IPlaylistStatusListener {
-        void onOuttime(Pair<String, Integer> item);
+        void onOutOfTime(String id, int index);
     }
 }
