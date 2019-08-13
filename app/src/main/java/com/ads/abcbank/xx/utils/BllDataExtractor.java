@@ -119,6 +119,25 @@ public class BllDataExtractor {
         return false;
     }
 
+    public static boolean isInFilter(String filters, PlaylistBodyBean bodyBean, String contentTypeMiddle, String contentTypeEnd) {
+//        String contentTypeMiddle = Utils.getContentTypeMiddle(context);
+//        String contentTypeEnd = Utils.getContentTypeEnd(context);
+        if ("*".equals(contentTypeEnd)) {
+            if (bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                    filters.contains(bodyBean.contentType.substring(0, 1))) {
+                return true;
+            }
+        } else {
+            if (bodyBean.contentType.endsWith(contentTypeEnd) &&
+                    bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
+                    filters.contains(bodyBean.contentType.substring(0, 1))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     //是否在允许下载的时间段内
     public static boolean isInDownloadTime(PlaylistBodyBean bean) {

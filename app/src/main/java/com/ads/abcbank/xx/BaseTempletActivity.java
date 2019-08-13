@@ -42,7 +42,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected Handler mainHandler = new Handler();
     protected Toast toast = null;
     protected ProgressDialog mProgressDialog;
-    public static String type;
+    protected String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +123,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
         // start data process...
         materialManager = new MaterialManager(this, materialStatusListener);
-        materialManager.initManager(mainSliderPlayer.isIntegrationMode());
+        materialManager.initManager(mainSliderPlayer.isIntegrationMode(), type);
 
         playlistManager = new PlaylistManager(this, (id, index) -> {
             mainHandler.post(() -> mainSliderPlayer.onItemOuttime(id, index));

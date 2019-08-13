@@ -11,7 +11,6 @@ import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
-import com.ads.abcbank.xx.BaseTempletActivity;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
@@ -44,6 +43,7 @@ public class MaterialManager {
     ConcurrentHashMap<String, PlaylistBodyBean> waitForDownloadMaterial = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
+    String filters;
 
     public MaterialManager(Context context, MaterialStatusListener materialStatusListener) {
         this.context = context;
@@ -51,7 +51,8 @@ public class MaterialManager {
     }
 
 
-    public void initManager(boolean integrationPresetData) {
+    public void initManager(boolean integrationPresetData, String filters) {
+        this.filters = filters;
         managerStatus.put(Constants.MM_KEY_INTEGRATIONPRESET, integrationPresetData ? 1 : 0);
 
         playerThread = new HandlerThread("playerThread");
@@ -256,39 +257,19 @@ public class MaterialManager {
             try {
                 managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 1);
 
-                List<PlaylistBodyBean> playlistBodyBeans = JSON.parseArray(json, PlaylistBodyBean.class);
-                List<PlaylistBodyBean> playlistBodyBeanLists = new ArrayList<>();//TODO 添加类型过滤
-                {//TODO 添加类型过滤
-                    for (int i = 0; i < playlistBodyBeans.size(); i++) {
-                        PlaylistBodyBean bodyBean = playlistBodyBeans.get(i);
-                        if (Utils.isInPlayTime(bodyBean)) {
-                            String contentTypeMiddle = Utils.getContentTypeMiddle(context);
-                            String contentTypeEnd = Utils.getContentTypeEnd(context);
-                            if ("*".equals(contentTypeEnd)) {
-                                if (bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
-                                        BaseTempletActivity.type.contains(bodyBean.contentType.substring(0, 1))) {
-                                    playlistBodyBeanLists.add(bodyBean);
-                                }
-                            } else {
-                                if (bodyBean.contentType.endsWith(contentTypeEnd) &&
-                                        bodyBean.contentType.substring(1, 2).equals(contentTypeMiddle) &&
-                                        BaseTempletActivity.type.contains(bodyBean.contentType.substring(0, 1))) {
-                                    playlistBodyBeanLists.add(bodyBean);
-                                }
-                            }
-                        }
-                    }
-                }
-
+                List<PlaylistBodyBean> playlistBodyBeanLists = JSON.parseArray(json, PlaylistBodyBean.class);
                 List<PlayItem> allPlayItems = new ArrayList<>();
                 List<String> waitForDownloadUrls = new ArrayList<>();
                 List<String> waitForDownloadSavePath = new ArrayList<>();
                 Map<String, Integer> waitForFiles = new HashMap<>();
                 List<String> welcomeItems = new ArrayList<>();
+                String contentTypeMiddle = Utils.getContentTypeMiddle(context);
+                String contentTypeEnd = Utils.getContentTypeEnd(context);
 
                 for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {//TODO 添加类型过滤
                     // 过滤非下载时段和已下载项
                     if (!BllDataExtractor.isInDownloadTime(bodyBean)
+                            || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
 //                            || materialStatus.containsKey(bodyBean.id)
                             || waitForFiles.containsKey(bodyBean.downloadLink) )
                         continue;
