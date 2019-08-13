@@ -155,7 +155,6 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (holder instanceof SliderVideoHolder) {
             SliderVideoHolder _holder = (SliderVideoHolder) holder;
 
-            _holder.setVideoData(null);
             _holder.getVideoContent().pause();
             _holder.getVideoContent().stopPlayback();
 
