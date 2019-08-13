@@ -20,4 +20,10 @@
         android:layout_gravity="bottom|left"
         android:src="@mipmap/bg_btn"
         android:visibility="gone" />
+    <ViewStub
+        android:id="@+id/qrStub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inflatedId="@+id/qrContainer"
+        android:layout="@layout/item_qrs_layout"/>
 </RelativeLayout>

@@ -26,7 +26,6 @@ public class SliderImageHolder extends RecyclerView.ViewHolder {
     }
 
     ImageView imgContent;
-
     View ivGif;
 
     public SliderImageHolder(View itemView) {
@@ -36,7 +35,7 @@ public class SliderImageHolder extends RecyclerView.ViewHolder {
         ivGif = itemView.findViewById(R.id.iv_gif);
     }
 
-    public static void showImage(PlayItem item, SliderImageHolder holder/*ImageView imageView, View ivGif*/) {
+    public static void showImage(PlayItem item, SliderImageHolder holder) {
         if (!ResHelper.isNullOrEmpty(item.getUrl()))
             Glide.with(holder.getImgContent().getContext())
                     .load(item.getUrl())
