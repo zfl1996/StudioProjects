@@ -3,7 +3,6 @@ package com.ads.abcbank.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,7 +17,6 @@ import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.fragment.ImageFragment;
 import com.ads.abcbank.fragment.PdfFragment;
-import com.ads.abcbank.fragment.TxtFragment;
 import com.ads.abcbank.fragment.VideoFragment;
 import com.ads.abcbank.fragment.WebFragment;
 import com.ads.abcbank.utils.Logger;
@@ -67,15 +65,7 @@ public abstract class BaseTempFragment extends Fragment {
         if (rootView == null) {
             rootView = initView(inflater);
         }
-        llQr1 = rootView.findViewById(R.id.ll_qr1);
-        llQr2 = rootView.findViewById(R.id.ll_qr2);
-        llQr3 = rootView.findViewById(R.id.ll_qr3);
-        llQr4 = rootView.findViewById(R.id.ll_qr4);
-        llQr5 = rootView.findViewById(R.id.ll_qr5);
-        llQr6 = rootView.findViewById(R.id.ll_qr6);
-        llQr7 = rootView.findViewById(R.id.ll_qr7);
-        llQr8 = rootView.findViewById(R.id.ll_qr8);
-        llQr9 = rootView.findViewById(R.id.ll_qr9);
+
         if (bodyBean != null) {
             showQRs(bodyBean);
         }

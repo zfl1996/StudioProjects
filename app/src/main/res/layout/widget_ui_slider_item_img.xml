@@ -24,6 +24,9 @@
         android:id="@+id/qrStub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="100px"
         android:inflatedId="@+id/qrContainer"
-        android:layout="@layout/item_qrs_layout"/>
+        android:layout="@layout/widget_ui_slider_holder_qr_stub"/>
 </RelativeLayout>
