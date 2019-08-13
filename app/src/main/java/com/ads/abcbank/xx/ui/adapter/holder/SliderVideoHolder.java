@@ -15,6 +15,10 @@ import java.util.List;
 
 public class SliderVideoHolder  extends RecyclerView.ViewHolder {
 
+    public PlayItem getPlayItem() {
+        return item;
+    }
+
     PlayItem item;
 //    String videoPath;
     PLVideoTextureView videoContent;
@@ -45,7 +49,7 @@ public class SliderVideoHolder  extends RecyclerView.ViewHolder {
     }
 
     public void showQrs(SliderVideoHolder holder) {
-        if (null != item.getAttData()){
+        if (null != holder.getPlayItem().getAttData()){
             try {
                 List<PlaylistBodyBean.QR> qrs = (List<PlaylistBodyBean.QR>)item.getAttData();
                 View v = holder.getQrStub().inflate();
