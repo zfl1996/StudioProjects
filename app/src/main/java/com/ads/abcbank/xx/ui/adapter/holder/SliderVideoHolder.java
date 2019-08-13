@@ -43,7 +43,7 @@ public class SliderVideoHolder  extends RecyclerView.ViewHolder {
     }
 
     public void showQrs(SliderVideoHolder holder) {
-        if (null != holder.getPlayItem().getAttData()){
+        if (null != holder.getPlayItem() && null != holder.getPlayItem().getAttData()){
             try {
                 List<PlaylistBodyBean.QR> qrs = (List<PlaylistBodyBean.QR>)item.getAttData();
                 View v = holder.getQrStub().inflate();
