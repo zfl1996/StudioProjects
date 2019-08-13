@@ -5,10 +5,13 @@ import android.content.Context;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
+import com.arialyy.annotations.Download;
 import com.arialyy.annotations.DownloadGroup;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
+import com.arialyy.aria.core.download.DownloadGroupTarget;
 import com.arialyy.aria.core.download.DownloadGroupTask;
+import com.arialyy.aria.core.download.DownloadTask;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +34,24 @@ public class DownloadModule {
 //                .setConvertSpeed(true)
                 ;
         Aria.download(this).register();
+    }
+
+    @Download.onTaskStop void taskStop(DownloadTask task) {
+        if (null == downloadStateLisntener)
+            return;
+
+        Utils.getExecutorService().submit(() -> {
+            tryFeedbackTask(task.getEntity());
+        });
+    }
+
+    @Download.onTaskComplete void taskComplete(DownloadTask task) {
+        if (null == downloadStateLisntener)
+            return;
+
+        Utils.getExecutorService().submit(() -> {
+            tryFeedbackTask(task.getEntity());
+        });
     }
 
     @DownloadGroup.onSubTaskStop void onSubTaskRunning(DownloadGroupTask groupTask, DownloadEntity subEntity) {
@@ -97,14 +118,14 @@ public class DownloadModule {
         }
     }
 
-    public void start(String url, String path, String identity) {
+    public void start(String url, String path) {
         this.mUrl = url;
 
         Aria.download(this)
                 .load(url)
                 .addHeader("Accept-Encoding", "gzip, deflate")
                 .useServerFileName(true)
-                .setFilePath(path)
+                .setFilePath(path, true)
 //                .setExtendField(identity)
                 .resetState()
                 .start();
@@ -126,6 +147,7 @@ public class DownloadModule {
                         .setDirPath(path)
                         .setFileSize(114981416)
                         .setSubFileName(paths)
+                        .setGroupAlias("aa")
                         .resetState()
                         .start();
             } catch (Exception e) {

@@ -280,10 +280,22 @@ public class MaterialManager {
                     String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 
+                    // file err.(force delete etc.)
+                    if ((materialStatus.containsKey(bodyBean.id) && materialStatus.get(bodyBean.id) == 1)
+                            && !ResHelper.isExistsFile(savePath)) {
+                        downloadModule.start(bodyBean.downloadLink, savePath);
+                        materialStatus.remove(bodyBean.id);
+//                            String[] ids = materialStatus.keySet().toArray(new String[0]);
+//                            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
+                        Logger.e(TAG, "download -> " + bodyBean.downloadLink);
+
+                        waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
+                        continue;
+                    }
+
                     // 构建待下载数据
                     if (!materialStatus.containsKey(bodyBean.id)
-                            || materialStatus.get(bodyBean.id) != 1
-                            || !ResHelper.isExistsFile(savePath) ) {
+                            || materialStatus.get(bodyBean.id) != 1 ) {
                         String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
                         if (pathSegments.length <= 0)
                             continue;
@@ -296,17 +308,7 @@ public class MaterialManager {
                             waitForDownloadSavePath.add(pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
                         }
 
-                        if (materialStatus.containsKey(bodyBean.id) && materialStatus.get(bodyBean.id) == 1) {
-                            downloadModule.cancel(bodyBean.downloadLink);
-
-                            materialStatus.remove(bodyBean.id);
-//                            String[] ids = materialStatus.keySet().toArray(new String[0]);
-//                            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
-                            Logger.e(TAG, "download -> " + bodyBean.downloadLink);
-                        }
-
                         waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
-
                         continue;
                     }
 
