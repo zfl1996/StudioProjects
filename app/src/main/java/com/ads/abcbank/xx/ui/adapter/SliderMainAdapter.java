@@ -90,7 +90,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (holder instanceof SliderImageHolder)
             SliderImageHolder.showImage(item, (SliderImageHolder)holder);
         else if (holder instanceof SliderVideoHolder)
-            ((SliderVideoHolder) holder).setVideoData(item);
+            ((SliderVideoHolder) holder).setVideoData(item, (SliderVideoHolder) holder);
         else if (holder instanceof SliderRateSaveHolder) {
             SliderRateSaveHolder.showRate((PresetBean.SaveRate)item.getAttData(),
                     (SliderRateSaveHolder) holder,
@@ -144,7 +144,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                     videoStatusListener.onStartPlay();
             });
 
-            _holder.showQrs(_holder);
+//            _holder.showQrs(_holder);
             _holder.getVideoContent().setVideoPath(_holder.getVideoPath());
             _holder.getVideoContent().start();
         }

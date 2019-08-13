@@ -295,6 +295,16 @@ public class MaterialManager {
                             waitForDownloadUrls.add(bodyBean.downloadLink);
                             waitForDownloadSavePath.add(pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
                         }
+
+                        if (materialStatus.containsKey(bodyBean.id) && materialStatus.get(bodyBean.id) == 1) {
+                            downloadModule.cancel(bodyBean.downloadLink);
+
+                            materialStatus.remove(bodyBean.id);
+//                            String[] ids = materialStatus.keySet().toArray(new String[0]);
+//                            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
+                            Logger.e(TAG, "download -> " + bodyBean.downloadLink);
+                        }
+
                         waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
 
                         continue;

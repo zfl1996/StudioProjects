@@ -85,7 +85,7 @@ public class NetTaskManager {
     public void initNetManager() {
         Utils.getExecutorService().submit(() -> {
             reqAllData();
-            timer.schedule(timerTask, 15*60*1000, 15*60*1000 );
+            timer.schedule(timerTask, 1*60*1000, 1*60*1000 );
         });
     }
 

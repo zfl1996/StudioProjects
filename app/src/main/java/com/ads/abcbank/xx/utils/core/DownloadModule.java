@@ -53,7 +53,7 @@ public class DownloadModule {
     }
 
     @DownloadGroup.onTaskComplete void taskComplete(DownloadGroupTask task) {
-        Logger.e(TAG, "DownloadGroup.onTaskComplete-->"
+        Logger.e(TAG, "DownloadGroup.onTaskComplete-->taskKey:" + task.getKey() + " "
                 + System.currentTimeMillis() + " tid:" + Thread.currentThread().getId() + "\r\n"
                 + ResHelper.join(task.getEntity().getUrls().toArray(new String[task.getEntity().getUrls().size()]), "@@\r\n")
         );
@@ -70,7 +70,7 @@ public class DownloadModule {
     }
 
     @DownloadGroup.onTaskStop void taskStop(DownloadGroupTask task) {
-        Logger.e(TAG, "DownloadGroup.onTaskStop--> " + System.currentTimeMillis() + " --"
+        Logger.e(TAG, "DownloadGroup.onTaskStop--> " + task.getKey() + " " + System.currentTimeMillis() + " --"
                 + Thread.currentThread().getId());
 
         if (null == downloadStateLisntener)
