@@ -266,7 +266,7 @@ public class MaterialManager {
                 String contentTypeMiddle = Utils.getContentTypeMiddle(context);
                 String contentTypeEnd = Utils.getContentTypeEnd(context);
 
-                for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {//TODO 添加类型过滤
+                for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {
                     // 过滤非下载时段和已下载项
                     if (!BllDataExtractor.isInDownloadTime(bodyBean)
                             || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
