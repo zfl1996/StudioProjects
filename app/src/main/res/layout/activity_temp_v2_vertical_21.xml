@@ -11,6 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/rvMarqueeView"/>
+
+    <View
+        android:id="@+id/v_exit"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:onClick="exitSys" />
+
     <View
         android:id="@+id/v_set"
         android:layout_width="100px"

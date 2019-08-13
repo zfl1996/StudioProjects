@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00000000"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="100px">
 
 
     <LinearLayout
@@ -18,7 +19,7 @@
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical|left"
+            android:gravity="top|left"
             android:orientation="horizontal" />
 
         <LinearLayout
@@ -26,7 +27,7 @@
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="top|center_horizontal"
             android:orientation="horizontal" />
 
         <LinearLayout
@@ -34,7 +35,7 @@
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical|right"
+            android:gravity="top|right"
             android:orientation="horizontal" />
     </LinearLayout>
 
@@ -80,7 +81,7 @@
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical|left"
+            android:gravity="bottom|left"
             android:orientation="horizontal" />
 
         <LinearLayout
@@ -88,7 +89,7 @@
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="bottom|center_horizontal"
             android:orientation="horizontal" />
 
         <LinearLayout
@@ -96,7 +97,7 @@
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical|right"
+            android:gravity="bottom|right"
             android:orientation="horizontal" />
     </LinearLayout>
 </LinearLayout>

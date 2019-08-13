@@ -60,15 +60,15 @@ public class QRView extends LinearLayout {
             return;
         }
         if (QRCode != null && QRCode.size() > 0) {
-            llQr1.setVisibility(View.INVISIBLE);
-            llQr2.setVisibility(View.INVISIBLE);
-            llQr3.setVisibility(View.INVISIBLE);
-            llQr4.setVisibility(View.INVISIBLE);
-            llQr5.setVisibility(View.INVISIBLE);
-            llQr6.setVisibility(View.INVISIBLE);
-            llQr7.setVisibility(View.INVISIBLE);
-            llQr8.setVisibility(View.INVISIBLE);
-            llQr9.setVisibility(View.INVISIBLE);
+            llQr1.setVisibility(View.GONE);
+            llQr2.setVisibility(View.GONE);
+            llQr3.setVisibility(View.GONE);
+            llQr4.setVisibility(View.GONE);
+            llQr5.setVisibility(View.GONE);
+            llQr6.setVisibility(View.GONE);
+            llQr7.setVisibility(View.GONE);
+            llQr8.setVisibility(View.GONE);
+            llQr9.setVisibility(View.GONE);
             PlaylistBodyBean.QR qr = QRCode.get(0);
             switch (qr.QRPosInDial) {
                 case "1":
@@ -111,15 +111,15 @@ public class QRView extends LinearLayout {
                     break;
             }
         } else {
-            llQr1.setVisibility(View.INVISIBLE);
-            llQr2.setVisibility(View.INVISIBLE);
-            llQr3.setVisibility(View.INVISIBLE);
-            llQr4.setVisibility(View.INVISIBLE);
-            llQr5.setVisibility(View.INVISIBLE);
-            llQr6.setVisibility(View.INVISIBLE);
-            llQr7.setVisibility(View.INVISIBLE);
-            llQr8.setVisibility(View.INVISIBLE);
-            llQr9.setVisibility(View.INVISIBLE);
+            llQr1.setVisibility(View.GONE);
+            llQr2.setVisibility(View.GONE);
+            llQr3.setVisibility(View.GONE);
+            llQr4.setVisibility(View.GONE);
+            llQr5.setVisibility(View.GONE);
+            llQr6.setVisibility(View.GONE);
+            llQr7.setVisibility(View.GONE);
+            llQr8.setVisibility(View.GONE);
+            llQr9.setVisibility(View.GONE);
         }
     }
 

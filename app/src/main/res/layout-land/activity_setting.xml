@@ -134,7 +134,17 @@
                     style="@style/row_right"
                     android:inputType="number" />
             </TableRow>
+            <TableRow>
 
+                <TextView
+                    style="@style/row_left"
+                    android:text="系统退出密码   " />
+
+                <EditText
+                    android:id="@+id/et_exit"
+                    style="@style/row_right"
+                    android:inputType="number" />
+            </TableRow>
 
             <TableRow android:layout_marginTop="50px">
 

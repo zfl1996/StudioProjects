@@ -32,6 +32,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private EditText etFile;
     private EditText etDownloadspeed;
     private EditText storeId;
+    private EditText etExit;
     private TextView tvSubmit;
     private TextView back;
 
@@ -58,15 +59,16 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvSubmit = findViewById(R.id.tv_submit);
         back = findViewById(R.id.back);
         storeId = findViewById(R.id.storeId);
-        {
-            etCmd.setEnabled(false);
-            etPreset.setEnabled(false);
-            etPlaylist.setEnabled(false);
-            etTabImg.setEnabled(false);
-            etTabPreset.setEnabled(false);
-            etPdf.setEnabled(false);
-            etDownloadspeed.setEnabled(false);
-        }
+        etExit = findViewById(R.id.et_exit);
+//        {
+//            etCmd.setEnabled(false);
+//            etPreset.setEnabled(false);
+//            etPlaylist.setEnabled(false);
+//            etTabImg.setEnabled(false);
+//            etTabPreset.setEnabled(false);
+//            etPdf.setEnabled(false);
+//            etDownloadspeed.setEnabled(false);
+//        }
         addListener(etCmd, true);
         addListener(etPreset, true);
         addListener(etPlaylist, true);
@@ -76,6 +78,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         addListener(etFile, true);
         addListener(etDownloadspeed, true);
         addListener(storeId, true);
+        addListener(etExit, true);
         String beanStr = Utils.get(this, Utils.KEY_REGISTER_BEAN, "").toString();
         if (!TextUtils.isEmpty(beanStr)) {
             RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
@@ -124,6 +127,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         etPdf.setText(Utils.get(this, Utils.KEY_TIME_TAB_PDF, Utils.KEY_TIME_IMG_DEFAULT + "").toString());
         etFile.setText(Utils.get(this, Utils.KEY_TIME_FILE, Utils.KEY_TIME_FILE_DEFAULT + "").toString());
         etDownloadspeed.setText(Utils.get(this, Utils.KEY_SPEED_DOWNLOAD, Utils.KEY_DOWNLOAD_SIZE + "").toString());
+        etExit.setText(Utils.get(this, Utils.KEY_EXIT_PWD, Utils.KEY_DEFAULT_PWD + "").toString());
         etCmd.setSelection(etCmd.getText().toString().length());
     }
 
@@ -177,6 +181,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 if (TextUtils.isEmpty(storeId.getText().toString())) {
                     ToastUtil.showToast(this, "数据不能为空");
                     return;
+                }
+                if (!TextUtils.isEmpty(etExit.getText().toString())) {
+                    Utils.put(this, Utils.KEY_EXIT_PWD, etExit.getText().toString());
+                } else {
+                    ToastUtil.showToast(this, "数据不能为空");
                 }
                 String beanStr = Utils.get(this, Utils.KEY_REGISTER_BEAN, "").toString();
                 if (!TextUtils.isEmpty(beanStr)) {
