@@ -26,26 +26,23 @@ public class SliderRateLoanHolder  extends RecyclerView.ViewHolder {
     }
 
     public static void showRate(PresetBean.LoanRate loanRate,
-                                TextView txtDesc,
-                                TextView txtTitle,
-                                RecyclerView rvRate,
-                                LinearLayout llHeader,
+                                SliderRateLoanHolder holder,
                                 boolean isShowHeader,
                                 int itemLayout) {
-        txtTitle.setText(loanRate.title);
-        txtDesc.setText(loanRate.rem);
+        holder.getTxtTitle().setText(loanRate.title);
+        holder.getTxtDesc().setText(loanRate.rem);
 
-        if (null != llHeader)
-            llHeader.setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
+        if (null != holder.getLlHeader())
+            holder.getLlHeader().setVisibility(isShowHeader ? View.VISIBLE : View.GONE);
 
-        RateSave3Adapter adapter = new RateSave3Adapter(rvRate.getContext(), itemLayout);
+        RateSave3Adapter adapter = new RateSave3Adapter(holder.getRvRate().getContext(), itemLayout);
         adapter.setDataSource(loanRate.entry);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(rvRate.getContext());
-        rvRate.setLayoutManager(layoutManager);
-        rvRate.setHasFixedSize(false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(holder.getRvRate().getContext());
+        holder.getRvRate().setLayoutManager(layoutManager);
+        holder.getRvRate().setHasFixedSize(false);
 //        rvRate.addItemDecoration(new DividerItemDecoration(rvRate.getContext(), DividerItemDecoration.VERTICAL));
-        rvRate.setAdapter(adapter);
+        holder.getRvRate().setAdapter(adapter);
     }
 
     public TextView getTxtDesc() {

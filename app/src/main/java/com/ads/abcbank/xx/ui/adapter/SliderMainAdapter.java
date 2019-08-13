@@ -88,34 +88,22 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         PlayItem item = dataList.get(position);
 
         if (holder instanceof SliderImageHolder)
-            SliderImageHolder.showImage(item, ((SliderImageHolder)holder).getImgContent());
+            SliderImageHolder.showImage(item, (SliderImageHolder)holder);
         else if (holder instanceof SliderVideoHolder)
             ((SliderVideoHolder) holder).setVideoPath(item.getUrl());
         else if (holder instanceof SliderRateSaveHolder) {
-            SliderRateSaveHolder _holder = ((SliderRateSaveHolder) holder);
             SliderRateSaveHolder.showRate((PresetBean.SaveRate)item.getAttData(),
-                    _holder.getTxtDesc(),
-                    _holder.getTxtTitle(),
-                    _holder.getRvRate(),
-                    _holder.getLlHeader(),
+                    (SliderRateSaveHolder) holder,
                     isIntegrationPresetData,
                     rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_SAVE_ITEM));
         } else if (holder instanceof SliderRateLoanHolder) {
-            SliderRateLoanHolder _holder = (SliderRateLoanHolder)holder;
             SliderRateLoanHolder.showRate((PresetBean.LoanRate)item.getAttData(),
-                    _holder.getTxtDesc(),
-                    _holder.getTxtTitle(),
-                    _holder.getRvRate(),
-                    _holder.getLlHeader(),
+                    (SliderRateLoanHolder)holder,
                     isIntegrationPresetData,
                     rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_LOAN_ITEM));
         } else if (holder instanceof SliderRateBuyHolder) {
-            SliderRateBuyHolder _holder = (SliderRateBuyHolder)holder;
             SliderRateBuyHolder.showRate((PresetBean.BIAOFE)item.getAttData(),
-                    _holder.getTxtDesc(),
-                    _holder.getTxtTitle(),
-                    _holder.getRvRate(),
-                    _holder.getLlHeader(),
+                    (SliderRateBuyHolder)holder,
                     isIntegrationPresetData,
                     rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_BUY_ITEM));
         }

@@ -22,13 +22,20 @@ public class PlayItem {
 
     }
 
-    public PlayItem(String md5, String url, int mediaType, String playDate, String stopDate, String clickLink) {
+    public PlayItem(String md5,
+                    String url,
+                    int mediaType,
+                    String playDate,
+                    String stopDate,
+                    String clickLink,
+                    Object attData) {
         this.md5 = md5;
         this.url = url;
         this.mediaType = mediaType;
         this.playDate = playDate;
         this.stopDate = stopDate;
         this.clickLink = clickLink;
+        this.attData = attData;
     }
 
     public PlayItem(int mediaType, Object attData) {

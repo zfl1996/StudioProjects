@@ -155,7 +155,9 @@ public class MaterialManager {
 
         if (suffix.toLowerCase().equals("pdf")) {
             Logger.e(TAG, fileName);
-            List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey, bodyBean.playDate, bodyBean.stopDate  );
+            List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey,
+                    bodyBean.playDate, bodyBean.stopDate,
+                    bodyBean.onClickLink, bodyBean.QRCode  );
 
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PDF_CACHED, list, true));
         } else if (BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
@@ -163,7 +165,8 @@ public class MaterialManager {
             PlayItem playItem = new PlayItem(fileKey,
                     filePath,
                     BllDataExtractor.getIdentityType(suffix),
-                    bodyBean.playDate, bodyBean.stopDate, bodyBean.onClickLink);
+                    bodyBean.playDate, bodyBean.stopDate,
+                    bodyBean.onClickLink, bodyBean.QRCode);
 
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, playItem, true));
         } else if (suffix.toLowerCase().equals("txt")) {
@@ -318,13 +321,16 @@ public class MaterialManager {
 
 
                     if (suffix.equals("pdf")) {
-                        allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf", bodyBean.playDate, bodyBean.stopDate));
+                        allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf",
+                                bodyBean.playDate, bodyBean.stopDate,
+                                bodyBean.onClickLink, bodyBean.QRCode));
                     } else if(BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
                         || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
                         allPlayItems.add(new PlayItem(bodyBean.id,
                                 ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id),
                                 BllDataExtractor.getIdentityType(bodyBean),
-                                bodyBean.playDate, bodyBean.stopDate, bodyBean.onClickLink));
+                                bodyBean.playDate, bodyBean.stopDate,
+                                bodyBean.onClickLink, bodyBean.QRCode));
                     } else if (suffix.equals("txt")) {
                         String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                         if (!ResHelper.isNullOrEmpty(wmsg))

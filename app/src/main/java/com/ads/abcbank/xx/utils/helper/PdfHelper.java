@@ -17,26 +17,28 @@ import java.util.List;
 public class PdfHelper {
     static String TAG = "PdfHelper";
 
-    public static List<PlayItem> getCachedPdfImage(String fileName, String playDate, String stopDate) {
+    public static List<PlayItem> getCachedPdfImage(String fileName, String playDate, String stopDate,
+                                                   String clickLink,
+                                                   Object attData) {
         String metadata = ResHelper.readFile2String(ResHelper.getPdfMetadataPath(fileName));
 
         List<PlayItem> list = new ArrayList<>();
         int size = Integer.parseInt(metadata.trim());
 
         for (int i=0; i<size; i++) {
-            PlayItem item = new PlayItem();
-
-            item.setMd5(ResHelper.getFileExtInfo(fileName)[0]);
-            item.setUrl(ResHelper.getPdfCacheFilePath(fileName, i));
-            item.setMediaType(Constants.SLIDER_HOLDER_IMAGE);
-
-            list.add(item);
+            list.add(new PlayItem(ResHelper.getFileExtInfo(fileName)[0],
+                    ResHelper.getPdfCacheFilePath(fileName, i),
+                    Constants.SLIDER_HOLDER_IMAGE,
+                    playDate, stopDate,
+                    clickLink, attData));
         }
 
         return list;
     }
 
-    public static List<PlayItem> cachePdfToImage(String fileName, String fileKey, String playDate, String stopDate) {
+    public static List<PlayItem> cachePdfToImage(String fileName, String fileKey, String playDate, String stopDate,
+                                                 String clickLink,
+                                                 Object attData) {
         List<PlayItem> list = new ArrayList<>();
 
         if (ResHelper.isNullOrEmpty(fileName))
@@ -88,7 +90,8 @@ public class PdfHelper {
                             list.add(new PlayItem(fileKey + i,
                                     fileAbsPath,
                                     Constants.SLIDER_HOLDER_IMAGE,
-                                    playDate, stopDate,null));
+                                    playDate, stopDate,
+                                    clickLink, attData));
                         } catch (Exception ex) {
                             Logger.e(TAG, ex.getMessage());
 

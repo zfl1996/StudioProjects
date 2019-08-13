@@ -89,8 +89,7 @@ public class SliderPlayer extends LinearLayout {
         if (displayMode != 2) {
             Configuration conf = getResources().getConfiguration();
 
-            imgHolder.setImageResource(conf.orientation == ORIENTATION_LANDSCAPE ? R.mipmap.bg_land
-                    : R.mipmap.bg_port);
+            imgHolder.setImageResource(conf.orientation == ORIENTATION_LANDSCAPE ? R.mipmap.bg_land : R.mipmap.bg_port);
             imgHolder.setVisibility(View.VISIBLE);
         }
 

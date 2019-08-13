@@ -21,8 +21,13 @@ public class SliderImageHolder extends RecyclerView.ViewHolder {
         return imgContent;
     }
 
+    public View getIvGif() {
+        return ivGif;
+    }
+
     ImageView imgContent;
-    static View ivGif;
+
+    View ivGif;
 
     public SliderImageHolder(View itemView) {
         super(itemView);
@@ -31,26 +36,25 @@ public class SliderImageHolder extends RecyclerView.ViewHolder {
         ivGif = itemView.findViewById(R.id.iv_gif);
     }
 
-    public static void showImage(PlayItem item, ImageView imageView) {
+    public static void showImage(PlayItem item, SliderImageHolder holder/*ImageView imageView, View ivGif*/) {
         if (!ResHelper.isNullOrEmpty(item.getUrl()))
-            Glide.with(imageView.getContext())
+            Glide.with(holder.getImgContent().getContext())
                     .load(item.getUrl())
                     .placeholder(R.drawable.default_background)
                     .error(R.drawable.default_background)
                     .skipMemoryCache(true)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .dontAnimate()
-                    .into(imageView);
-        if (ivGif != null && !TextUtils.isEmpty(item.getClickLink())) {
-            ivGif.setVisibility(View.VISIBLE);
-            ivGif.setOnClickListener(e -> {
+                    .into(holder.getImgContent());
+
+
+        if (!TextUtils.isEmpty(item.getClickLink()) && holder.getIvGif() != null) {
+            holder.getIvGif().setVisibility(View.VISIBLE);
+            holder.getIvGif().setOnClickListener(e -> {
                 Intent intent = new Intent(ActivityManager.getInstance().getTopActivity(), WebViewActivity.class);
                 intent.putExtra(Utils.WEBURL, item.getClickLink());
                 ActivityManager.getInstance().getTopActivity().startActivity(intent);
             });
-        } else if (ivGif != null) {
-            ivGif.setVisibility(View.GONE);
-            ivGif.setOnClickListener(null);
         }
     }
 
