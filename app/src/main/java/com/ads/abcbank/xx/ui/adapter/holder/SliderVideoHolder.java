@@ -15,14 +15,8 @@ import java.util.List;
 
 public class SliderVideoHolder  extends RecyclerView.ViewHolder {
 
-    public PlayItem getPlayItem() {
-        return item;
-    }
-
     PlayItem item;
-//    String videoPath;
     PLVideoTextureView videoContent;
-
     ViewStub qrStub;
 
     public SliderVideoHolder(View itemView) {
@@ -40,12 +34,12 @@ public class SliderVideoHolder  extends RecyclerView.ViewHolder {
         return qrStub;
     }
 
-//    public void setVideoPath(String videoPath) {
-//        this.videoPath = videoPath;
-//    }
-
     public void setVideoData(PlayItem item) {
         this.item = item;
+    }
+
+    public PlayItem getPlayItem() {
+        return item;
     }
 
     public void showQrs(SliderVideoHolder holder) {
