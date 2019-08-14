@@ -288,19 +288,6 @@ public class MaterialManager {
                     String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 
-//                    // file err.(force delete etc.)
-//                    if ((materialStatus.containsKey(bodyBean.id) && materialStatus.get(bodyBean.id) == 1)
-//                            && !ResHelper.isExistsFile(savePath)) {
-//                        downloadModule.start(bodyBean.downloadLink, savePath);
-//                        materialStatus.remove(bodyBean.id);
-////                            String[] ids = materialStatus.keySet().toArray(new String[0]);
-////                            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
-//                        Logger.e(TAG, "download -> " + bodyBean.downloadLink);
-//
-//                        waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
-//                        continue;
-//                    }
-
                     // 构建待下载数据
                     if (!materialStatus.containsKey(bodyBean.id)
                             || materialStatus.get(bodyBean.id) != 1 || !ResHelper.isExistsFile(savePath)) {
