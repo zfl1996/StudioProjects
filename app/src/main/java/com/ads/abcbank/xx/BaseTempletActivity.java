@@ -81,7 +81,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             public void onProgress(int code) {
                 if (code == Constants.SLIDER_PROGRESS_CODE_PRESET_OK ||
                     code == Constants.SLIDER_PROGRESS_CODE_PRESET_PRE)
-                    onRateProgressed(code);
+                    onRateDataProgress(code);
                 else
                     mainSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
             }
@@ -147,7 +147,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         playlistManager.addMaterialInfo(items);
     }
 
-    protected void onRateProgressed(int code) {
+    protected void onRateDataProgress(int code) {
         mainSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
     }
 

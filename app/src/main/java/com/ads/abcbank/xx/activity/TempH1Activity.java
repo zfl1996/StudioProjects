@@ -59,7 +59,7 @@ public class TempH1Activity extends BaseTempletActivity {
     }
 
     @Override
-    protected void onRateProgressed(int code) {
+    protected void onRateDataProgress(int code) {
         presetSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
     }
 
