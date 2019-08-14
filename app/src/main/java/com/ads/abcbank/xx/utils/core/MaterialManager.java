@@ -367,7 +367,7 @@ public class MaterialManager {
             managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 0);
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME, welcomeItems, true));
         } else {
-            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 1);
+//            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 1);
             uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME_MSG, welcomeItems, true));
         }
 
@@ -412,7 +412,11 @@ public class MaterialManager {
                     List<String> welcomeMsg = (List<String>) msg.obj;
 
                     if (null != _materialStatusListener) {
-                        _materialStatusListener.onNewMsgAdded(welcomeMsg, isMaterialLoaded(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED));
+                        boolean isAppend = isMaterialLoaded(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED);
+                        _materialStatusListener.onNewMsgAdded(welcomeMsg, isAppend);
+
+                        if (!isAppend && welcomeMsg.size() > 0)
+                            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 1);
                     }
 
                     break;
