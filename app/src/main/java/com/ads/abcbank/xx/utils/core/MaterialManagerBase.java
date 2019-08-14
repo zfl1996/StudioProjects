@@ -36,7 +36,7 @@ public abstract class MaterialManagerBase {
     ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
     String filters;
-    int MAX_RATE = 64;
+    int MAX_RATE = 0;
 
     /**
      * 初始化资源管理器
