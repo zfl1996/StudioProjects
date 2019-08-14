@@ -145,7 +145,6 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                     videoStatusListener.onStartPlay();
             });
 
-//            _holder.showQrs(_holder);
             _holder.getVideoContent().setVideoPath(_holder.getVideoPath());
             _holder.getVideoContent().start();
         }

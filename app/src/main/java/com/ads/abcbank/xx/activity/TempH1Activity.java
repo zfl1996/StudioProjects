@@ -49,7 +49,7 @@ public class TempH1Activity extends BaseTempletActivity {
     }
 
     @Override
-    protected void onRateDataPrepare(List<PlayItem> items, List<String> titles){
+    protected void onRateDataPrepared(List<PlayItem> items, List<String> titles){
         presetSliderPlayer.addPlayItems(items, false);
 
         for (String title : titles)

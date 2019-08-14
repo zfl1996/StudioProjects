@@ -37,11 +37,6 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
             screenWidth = (int) Math.floor(sw * (48/192.00));
     }
 
-
-//    public RecyclerPagerView(Context context) {
-//        this(context,null);
-//    }
-
     public RecyclerPagerView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs,0);
     }

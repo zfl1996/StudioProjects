@@ -75,13 +75,12 @@ public abstract class MaterialManagerBase {
         return managerStatus.containsKey(actionCode) && managerStatus.get(actionCode) == 1;
     }
 
-    public boolean isIntegrationPresetData() {
-        return managerStatus.contains(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET)
-                && managerStatus.get(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET) == 1;
-    }
+//    public boolean isIntegrationPresetData() {
+//        return managerStatus.contains(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET)
+//                && managerStatus.get(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET) == 1;
+//    }
 
     public void reload(int resCode) {
-
         ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_UPDATE, resCode);
     }
 
@@ -213,21 +212,15 @@ public abstract class MaterialManagerBase {
 
             switch (msg.what) {
                 case Constants.SLIDER_STATUS_CODE_WELCOME_DEFAULT:
-//                    _materialStatusListener.onWelcomeReady((List<String>) msg.obj);
                     _materialStatusListener.onWelcomePrepared((List<String>) msg.obj, false, true);
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_WELCOME_LOADED:
-
-                    _materialStatusListener.onWelcomePrepared((List<String>) msg.obj, isActionExecuted(Constants.MM_STATUS_KEY_WELCOME_LOADED), false);
+                    _materialStatusListener.onWelcomePrepared((List<String>) msg.obj,
+                            isActionExecuted(Constants.MM_STATUS_KEY_WELCOME_LOADED), false);
 
                     break;
-
-//                case Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED:
-//                    _materialStatusListener.onCachedItemPrepared((List<PlayItem>)msg.obj);
-//
-//                    break;
 
                 case Constants.SLIDER_STATUS_CODE_RATE_LOADED:
                     Object[] objs = (Object[])msg.obj;
@@ -258,8 +251,6 @@ public abstract class MaterialManagerBase {
 
     public interface MaterialStatusListener {
         void onProgress(int code);
-//        void onCachedItemPrepared(List<PlayItem> items);
-//        void onWelcomeReady(List<String> items);
         void onRatePrepared(List<PlayItem> items, List<String> titles);
         void onPlayItemPrepared(List<PlayItem> items);
         void onWelcomePrepared(List<String> msg, boolean isAppend, boolean isDefault);

@@ -30,6 +30,6 @@ public class TempV23Activity extends BaseTempletActivity {
     }
 
     @Override
-    protected void onRateDataPrepare(List<PlayItem> items, List<String> titles){}
+    protected void onRateDataPrepared(List<PlayItem> items, List<String> titles){}
 
 }

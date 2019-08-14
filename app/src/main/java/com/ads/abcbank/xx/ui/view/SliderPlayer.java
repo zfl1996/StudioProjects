@@ -126,7 +126,7 @@ public class SliderPlayer extends LinearLayout {
         recyclerPagerView.setAdapter(sliderAdapter);
     }
 
-    public void addPlayItems(/*boolean isMaterialManagerInitSuccessed, */List<PlayItem> items, boolean isPortionRedraw) {
+    public void addPlayItems(List<PlayItem> items, boolean isPortionRedraw) {
         if (isPortionRedraw)
             sliderAdapter.addItemDataAndPortionRedraw(items);
         else
@@ -140,34 +140,7 @@ public class SliderPlayer extends LinearLayout {
                 }
             });
         recyclerPagerView.startPlay();
-
-//        if (isMaterialManagerInitSuccessed)
-//            llProgress.setVisibility(GONE);
     }
-
-//    public void onNewItemsAdded(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
-//        sliderAdapter.addItemDataAndPortionRedraw(items);
-//
-//        recyclerPagerView.startPlay();
-//
-//        if (isMaterialManagerInitSuccessed)
-//            llProgress.setVisibility(GONE);
-//    }
-
-//    public void onWelcome(List<String> items) {
-//        if (null != dataStatusListener)
-//            dataStatusListener.onWelcome(items, true, false);
-//    }
-//
-//    public void onNewMsgAdded(List<String> msg, boolean isAppend) {
-//        if (null != dataStatusListener)
-//            dataStatusListener.onWelcome(msg, false, isAppend);
-//    }
-
-//    public void addWelcomeItems(List<String> msg, boolean isAppend, boolean isDefault) {
-//        if (null != dataStatusListener)
-//            dataStatusListener.onWelcome(msg, isDefault, isAppend);
-//    }
 
     public void adjustWidgetStatus(boolean isPresetLoaded, boolean isPlaylistLoaded, int code) {
         switch (code) {
@@ -176,7 +149,6 @@ public class SliderPlayer extends LinearLayout {
                 txtHint.setText(code == Constants.SLIDER_PROGRESS_CODE_PLAYLIST_PRE ?
                         "处理播放列表数据" : "准备汇率数据");
 
-                //ToDo......
                 if (null != dataStatusListener)
                     dataStatusListener.onReady();
 
@@ -215,13 +187,6 @@ public class SliderPlayer extends LinearLayout {
                 imgHolder.setVisibility(GONE);
             }
         }
-
-//        if (isMaterialManagerInitSuccessed) {
-//            llProgress.setVisibility(GONE);
-//            imgHolder.setVisibility(GONE);
-//        } else {
-//            txtHint.setText("初次启动，初始化环境");
-//        }
     }
 
     public interface IPageChangeListener {
@@ -229,7 +194,6 @@ public class SliderPlayer extends LinearLayout {
     }
 
     public interface DataStatusListener {
-//        void onWelcome(List<String> items, boolean isDefault, boolean isAppend);
         void onReady();
     }
 
