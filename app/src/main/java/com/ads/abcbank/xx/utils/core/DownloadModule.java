@@ -123,15 +123,16 @@ public class DownloadModule {
             }
 
             try {
-                Aria.download(this)
+                DownloadGroupTarget target = Aria.download(this)
                         .loadGroup(urls)
                         .addHeader("Accept-Encoding", "gzip, deflate")
                         .setDirPath(path)
                         .setFileSize(114981416)
                         .setSubFileName(paths)
-                        .setGroupAlias("aa")
-                        .resetState()
-                        .start();
+                        .setGroupAlias(path)
+                        .resetState();
+                target.save();
+                target.start();
             } catch (Exception e) {
                 Logger.e(TAG, "download task err:" + e.getMessage());
             }
