@@ -29,7 +29,11 @@
             android:layout_height="wrap_content" />
         <TextView android:id="@+id/txtHint"
             android:textSize="16.0sp"
-            android:textColor="#ffffff"
+            android:textColor="#fff"
+            android:shadowColor="#2B363F"
+            android:shadowRadius="1"
+            android:shadowDx="10"
+            android:shadowDy="10"
             android:text="初始化播放列表"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

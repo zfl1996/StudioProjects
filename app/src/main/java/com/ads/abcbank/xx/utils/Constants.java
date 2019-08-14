@@ -41,6 +41,7 @@ public class Constants {
     public static final int SLIDER_PROGRESS_CODE_PRESET_PRE = 0x2;
     public static final int SLIDER_PROGRESS_CODE_PRESET_OK = 0x3;
     public static final int SLIDER_PROGRESS_CODE_PLAYLIST_OK = 0x4;
+    public static final int SLIDER_PROGRESS_CODE_PLAYLIST_EMPTY = 0x5;
 
     public static final int NET_MANAGER_INIT = 0x300;
     public static final int NET_MANAGER_DATA_CMDPOLL = 0x0;
@@ -54,7 +55,7 @@ public class Constants {
     public static final String MM_STATUS_KEY_PRESET_LOADED = "preset_status";
     public static final String MM_STATUS_KEY_WELCOME_LOADED = "welcome_status";
     public static final String MM_STATUS_KEY_IS_INTEGRATION_PRESET = "integrationPresetData";
-//    public static final String MM_STATUS_KEY_PLAYLIST_INIT = "init_status";
+    public static final String MM_STATUS_KEY_PLAYLIST_DOWNLOADED = "empty_playlist";
 
     public static final String DOWNLOADER_KEY_TASK = "DownloadItem";
 

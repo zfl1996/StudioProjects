@@ -154,6 +154,11 @@ public class SliderPlayer extends LinearLayout {
 
                 break;
 
+            case Constants.SLIDER_PROGRESS_CODE_PLAYLIST_EMPTY:
+                txtHint.setText("初次加载，初始化数据中");
+
+                break;
+
             case Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK:
             case Constants.SLIDER_PROGRESS_CODE_PRESET_OK:
                 showHintMsg(isPresetLoaded, isPlaylistLoaded, code);

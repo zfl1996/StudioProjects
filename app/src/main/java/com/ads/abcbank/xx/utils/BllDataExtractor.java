@@ -107,7 +107,7 @@ public class BllDataExtractor {
                 return false;
             }
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
             String currentDate = simpleDateFormat.format(new Date());
             if (currentDate.compareTo(playDate) >= 0 && currentDate.compareTo(stopDate) < 0) {
                 return true;

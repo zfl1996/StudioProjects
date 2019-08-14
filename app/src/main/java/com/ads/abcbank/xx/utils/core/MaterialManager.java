@@ -12,6 +12,7 @@ import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
+import com.ads.abcbank.xx.utils.helper.IOHelper;
 import com.ads.abcbank.xx.utils.helper.PdfHelper;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
@@ -83,6 +84,85 @@ public class MaterialManager extends MaterialManagerBase {
                 }
             }
         };
+    }
+
+
+    /*
+     * 处理资源下载完成通知
+     * */
+    private void finishDownload(String fileUrl, String filePath) {
+        if (Constants.SYS_CONFIG_IS_CHECKMD5) {
+            if (!waitForDownloadMaterial.containsKey(fileUrl)
+                    || !IOHelper.fileToMD5(filePath).equals(waitForDownloadMaterial.get(fileUrl))) {
+                IOHelper.deleteFile(filePath);
+                waitForDownloadMaterial.remove(fileUrl);
+                return;
+            }
+        }
+
+        PlaylistBodyBean bodyBean = waitForDownloadMaterial.get(fileUrl);
+
+        // 更新素材集状态
+        String _fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
+                filePath.lastIndexOf(".") );
+        if (materialStatus.containsKey(_fileKey) && materialStatus.get(_fileKey) == 1)
+            return;
+
+        String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
+
+        if (!IOHelper.copyOrMoveFile(filePath, correctionFilePath, true)) {
+            return;
+        }
+
+        filePath = correctionFilePath;
+        materialStatus.put(_fileKey, 1);
+
+        // 更新已下载素材状态
+        String[] ids = materialStatus.keySet().toArray(new String[0]);
+        Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
+        Logger.e(TAG, "MM_STATUS_FINISHED_TASKID-->" + ResHelper.join(ids, ","));
+
+        // 处理pdf缓存或者通知前端显示
+//                        Utils.getExecutorService().submit(() -> {
+        String fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
+                filePath.lastIndexOf(".") );
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        String suffix = filePath.substring(filePath.lastIndexOf(".") + 1);
+        boolean needNotify = false;
+
+        if (suffix.toLowerCase().equals("pdf")) {
+            Logger.e(TAG, fileName);
+            List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey,
+                    bodyBean.playDate, bodyBean.stopDate,
+                    bodyBean.onClickLink, bodyBean.QRCode  );
+
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PDF_CACHED, list);
+            needNotify = true;
+        } else if (BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
+                || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
+            PlayItem playItem = new PlayItem(fileKey,
+                    filePath,
+                    BllDataExtractor.getIdentityType(suffix),
+                    bodyBean.playDate, bodyBean.stopDate,
+                    bodyBean.onClickLink, bodyBean.QRCode);
+
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_DOWNSUCC, new ArrayList<PlayItem>(){
+                { add(playItem); }
+            });
+            needNotify = true;
+        } else if (suffix.toLowerCase().equals("txt")) {
+            String wmsg = ResHelper.readFile2String(filePath);
+            if (!ResHelper.isNullOrEmpty(wmsg)) {
+                List<String> list = new ArrayList<>();
+                list.add(wmsg);
+
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, list);
+            }
+        }
+
+        if (needNotify)
+            resendPlaylistOkMessage();
+//                        });
     }
 
     /*
@@ -219,10 +299,11 @@ public class MaterialManager extends MaterialManagerBase {
             if (welcomeItems.size() > 0)
                 showWelcome(welcomeItems);
 
-
             if (!isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_LOADED)) {
                 managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 1);
-                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK);
+                managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_DOWNLOADED, allPlayItems.size() > 0 ? 1 : 0);
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS,
+                        allPlayItems.size() > 0 ? Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK : Constants.SLIDER_PROGRESS_CODE_PLAYLIST_EMPTY);
             }
             Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadSavePath.toArray(), "@@\r\n"));
 
@@ -245,6 +326,13 @@ public class MaterialManager extends MaterialManagerBase {
                 managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 1);
         }
 
+    }
+
+    private void resendPlaylistOkMessage() {
+        if (!isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_DOWNLOADED)){
+            managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_DOWNLOADED, 1);
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK);
+        }
     }
 
 }
