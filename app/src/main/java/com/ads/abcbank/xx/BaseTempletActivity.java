@@ -62,7 +62,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
         materialStatusListener = new MaterialManager.MaterialStatusListener() {
             @Override
-            public void onReady(List<PlayItem> items) {
+            public void onPlayListReady(List<PlayItem> items) {
                 mainSliderPlayer.onReady(isMaterialManagerInitSuccessed(), items);
                 playlistManager.addMaterialInfo(items);
             }

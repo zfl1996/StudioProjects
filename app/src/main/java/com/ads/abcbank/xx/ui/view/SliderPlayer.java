@@ -154,17 +154,17 @@ public class SliderPlayer extends LinearLayout {
 
     public void onProgress(boolean isMaterialManagerInitSuccessed, int code) {
         switch (code) {
-            case Constants.SLIDER_PROGRESS_CODE_PRE:
+            case Constants.SLIDER_PROGRESS_CODE_PLAYLIST_PRE:
                 showHintMsg(isMaterialManagerInitSuccessed, "初始化播放列表");
 
                 break;
 
-            case Constants.SLIDER_PROGRESS_CODE_PRESET:
+            case Constants.SLIDER_PROGRESS_CODE_PRESET_PRE:
                 showHintMsg(isMaterialManagerInitSuccessed, "准备汇率数据");
 
                 break;
 
-            case Constants.SLIDER_PROGRESS_CODE_OK:
+            case Constants.SLIDER_PROGRESS_CODE_PRESET_OK:
                 Logger.e(TAG, isMaterialManagerInitSuccessed ? "materialManager.isMaterialManagerInitSuccessed" : "not succ");
                 showHintMsg(isMaterialManagerInitSuccessed, "初次启动，初始化环境");
 

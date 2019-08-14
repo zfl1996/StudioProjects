@@ -22,6 +22,7 @@ public class Constants {
     public static final int SLIDER_STATUS_CODE_DOWNSUCC = 0x206;
     public static final int SLIDER_STATUS_CODE_PDF_CACHED = 0x207;
     public static final int SLIDER_STATUS_CODE_WELCOME_MSG = 0x208;
+    public static final int SLIDER_STATUS_CODE_PLAYLIST = 0x209;
 
     public static final int SLIDER_HOLDER_IMAGE = 0;
     public static final int SLIDER_HOLDER_PDF = 1;
@@ -35,11 +36,11 @@ public class Constants {
     public static final int SLIDER_HOLDER_RATE_BUY_ITEM = 9;
 
 
-    public static final int SLIDER_PROGRESS_CODE_PRE = 0x0;
+    public static final int SLIDER_PROGRESS_CODE_PLAYLIST_PRE = 0x0;
     public static final int SLIDER_PROGRESS_CODE_FILE = 0x1;
-    public static final int SLIDER_PROGRESS_CODE_PRESET = 0x2;
-    public static final int SLIDER_PROGRESS_CODE_OK = 0x3;
-    public static final int SLIDER_PROGRESS_CODE_FAIL = 0x3;
+    public static final int SLIDER_PROGRESS_CODE_PRESET_PRE = 0x2;
+    public static final int SLIDER_PROGRESS_CODE_PRESET_OK = 0x3;
+    public static final int SLIDER_PROGRESS_CODE_PLAYLIST_OK = 0x3;
 
     public static final int NET_MANAGER_INIT = 0x300;
     public static final int NET_MANAGER_DATA_CMDPOLL = 0x0;
@@ -49,11 +50,11 @@ public class Constants {
     public static final String MM_STATUS_FINISHED_TASKID = "finished_taskid";
     public static final String MM_STATUS_KEY_PLAYLIST_INIT = "playlist_init";
     public static final String MM_STATUS_KEY_PRESET_INIT = "preset_init";
-//    public static final String MM_STATUS_KEY_PLAYLIST_INIT = "init_status";
     public static final String MM_STATUS_KEY_PLAYLIST_LOADED = "playlist_status";
-    public static final String MM_STATUS_KEY_STATUS_PRESET_LOADED = "preset_status";
-    public static final String MM_STATUS_KEY_STATUS_WELCOME_LOADED = "welcome_status";
-    public static final String MM_KEY_INTEGRATIONPRESET = "integrationPresetData";
+    public static final String MM_STATUS_KEY_PRESET_LOADED = "preset_status";
+    public static final String MM_STATUS_KEY_WELCOME_LOADED = "welcome_status";
+    public static final String MM_STATUS_KEY_IS_INTEGRATION_PRESET = "integrationPresetData";
+//    public static final String MM_STATUS_KEY_PLAYLIST_INIT = "init_status";
 
     public static final String DOWNLOADER_KEY_TASK = "DownloadItem";
 

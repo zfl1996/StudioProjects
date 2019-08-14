@@ -9,9 +9,11 @@ import android.os.Message;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
-import com.ads.abcbank.view.BaseActivity;
 import com.ads.abcbank.xx.model.PlayItem;
+import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
+import com.ads.abcbank.xx.utils.helper.IOHelper;
+import com.ads.abcbank.xx.utils.helper.PdfHelper;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 
 import java.lang.ref.WeakReference;
@@ -39,10 +41,14 @@ public abstract class MaterialManagerBase {
     String filters;
     int MAX_RATE = 0;
 
-
+    /**
+     * 初始化资源管理器
+     * @param integrationPresetData 全屏模式时播放器集成显示汇率数据
+     * @param filters 模板对应的资源过滤符
+     */
     public void initManager(boolean integrationPresetData, String filters) {
         this.filters = filters;
-        managerStatus.put(Constants.MM_KEY_INTEGRATIONPRESET, integrationPresetData ? 1 : 0);
+        managerStatus.put(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET, integrationPresetData ? 1 : 0);
 
         materialThread = new HandlerThread("materialThread");
         materialThread.start();
@@ -53,7 +59,7 @@ public abstract class MaterialManagerBase {
             managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 0);
             managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 0);
             managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 0);
-            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_PRESET_LOADED, 0);
+            managerStatus.put(Constants.MM_STATUS_KEY_PRESET_LOADED, 0);
 
             downloadModule = new DownloadModule(context, MAX_RATE, downloadStateLisntener);
             ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_INIT, null);
@@ -62,16 +68,16 @@ public abstract class MaterialManagerBase {
 
     public boolean isInitSuccessed() {
         return managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) == 1
-                && (!isIntegrationPresetData() || (isIntegrationPresetData() && managerStatus.get(Constants.MM_STATUS_KEY_STATUS_PRESET_LOADED) == 1));
+                && (!isIntegrationPresetData() || (isIntegrationPresetData() && managerStatus.get(Constants.MM_STATUS_KEY_PRESET_LOADED) == 1));
     }
 
-    public boolean isMaterialLoaded(String materialCode) {
-        return managerStatus.containsKey(materialCode) && managerStatus.get(materialCode) == 1;
+    public boolean isActionExecuted(String actionCode) {
+        return managerStatus.containsKey(actionCode) && managerStatus.get(actionCode) == 1;
     }
 
     public boolean isIntegrationPresetData() {
-        return managerStatus.contains(Constants.MM_KEY_INTEGRATIONPRESET)
-                && managerStatus.get(Constants.MM_KEY_INTEGRATIONPRESET) == 1;
+        return managerStatus.contains(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET)
+                && managerStatus.get(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET) == 1;
     }
 
     public void reload(int resCode) {
@@ -120,6 +126,80 @@ public abstract class MaterialManagerBase {
         };
     }
 
+
+
+    /*
+     * 处理资源下载完成通知
+     * */
+    protected void finishDownload(String fileUrl, String filePath) {
+        if (Constants.SYS_CONFIG_IS_CHECKMD5) {
+            if (!waitForDownloadMaterial.containsKey(fileUrl)
+                    || !IOHelper.fileToMD5(filePath).equals(waitForDownloadMaterial.get(fileUrl))) {
+                IOHelper.deleteFile(filePath);
+                waitForDownloadMaterial.remove(fileUrl);
+                return;
+            }
+        }
+
+        PlaylistBodyBean bodyBean = waitForDownloadMaterial.get(fileUrl);
+
+        // 更新素材集状态
+        String _fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
+                filePath.lastIndexOf(".") );
+        if (materialStatus.containsKey(_fileKey) && materialStatus.get(_fileKey) == 1)
+            return;
+
+        String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
+
+        if (!IOHelper.copyOrMoveFile(filePath, correctionFilePath, true)) {
+            return;
+        }
+
+        filePath = correctionFilePath;
+        materialStatus.put(_fileKey, 1);
+
+        // 更新已下载素材状态
+        String[] ids = materialStatus.keySet().toArray(new String[0]);
+        Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
+        Logger.e(TAG, "MM_STATUS_FINISHED_TASKID-->" + ResHelper.join(ids, ","));
+
+        // 处理pdf缓存或者通知前端显示
+//                        Utils.getExecutorService().submit(() -> {
+        String fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
+                filePath.lastIndexOf(".") );
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        String suffix = filePath.substring(filePath.lastIndexOf(".") + 1);
+
+        if (suffix.toLowerCase().equals("pdf")) {
+            Logger.e(TAG, fileName);
+            List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey,
+                    bodyBean.playDate, bodyBean.stopDate,
+                    bodyBean.onClickLink, bodyBean.QRCode  );
+
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PDF_CACHED, list);
+        } else if (BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
+                || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
+            PlayItem playItem = new PlayItem(fileKey,
+                    filePath,
+                    BllDataExtractor.getIdentityType(suffix),
+                    bodyBean.playDate, bodyBean.stopDate,
+                    bodyBean.onClickLink, bodyBean.QRCode);
+
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_DOWNSUCC, new ArrayList<PlayItem>(){
+                { add(playItem); }
+            });
+        } else if (suffix.toLowerCase().equals("txt")) {
+            String wmsg = ResHelper.readFile2String(filePath);
+            if (!ResHelper.isNullOrEmpty(wmsg)) {
+                List<String> list = new ArrayList<>();
+                list.add(wmsg);
+
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_MSG, list);
+            }
+        }
+//                        });
+    }
+
     Handler uiHandler = new Handler(Looper.getMainLooper()){
 
         @Override
@@ -140,16 +220,12 @@ public abstract class MaterialManagerBase {
                 case Constants.SLIDER_STATUS_CODE_WELCOME_MSG:
                     List<String> welcomeMsg = (List<String>) msg.obj;
 
-                    boolean isAppend = isMaterialLoaded(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED);
-                    _materialStatusListener.onNewMsgAdded(welcomeMsg, isAppend);
-
-                    if (!isAppend && welcomeMsg.size() > 0)
-                        managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 1);
+                    _materialStatusListener.onNewMsgAdded(welcomeMsg, isActionExecuted(Constants.MM_STATUS_KEY_WELCOME_LOADED));
 
                     break;
 
-                case Constants.SLIDER_STATUS_CODE_INIT:
-                    _materialStatusListener.onReady((List<PlayItem>)msg.obj);
+                case Constants.SLIDER_STATUS_CODE_PLAYLIST:
+                    _materialStatusListener.onPlayListReady((List<PlayItem>)msg.obj);
 
                     break;
 
@@ -160,19 +236,13 @@ public abstract class MaterialManagerBase {
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_PDF_CACHED:
-                    _materialStatusListener.onItemPrepared((List<PlayItem>)msg.obj);
+                case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
+                    _materialStatusListener.onItemPrepared( (List<PlayItem>)msg.obj );
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_PROGRESS:
                     _materialStatusListener.onProgress((int)msg.obj);
-
-                    break;
-
-                case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
-                    _materialStatusListener.onItemPrepared(new ArrayList<PlayItem>(){
-                        { add((PlayItem)msg.obj); }
-                    } );
 
                     break;
 
@@ -187,7 +257,7 @@ public abstract class MaterialManagerBase {
 
     public interface MaterialStatusListener {
         void onProgress(int code);
-        void onReady(List<PlayItem> items);
+        void onPlayListReady(List<PlayItem> items);
         void onItemPrepared(List<PlayItem> items);
         void onRate(List<PlayItem> items, List<String> titles);
         void onWelcome(List<String> items);
