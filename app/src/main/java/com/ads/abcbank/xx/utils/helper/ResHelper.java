@@ -2,6 +2,8 @@ package com.ads.abcbank.xx.utils.helper;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 
 import com.ads.abcbank.xx.utils.Constants;
@@ -326,6 +328,13 @@ public class ResHelper {
                 timeFormat.format(calendar.getTime()),
                 weekStr + "\n" + dateFormat.format(calendar.getTime())
         };
+    }
+
+    public static void sendMessage(Handler handler, int w, Object obj) {
+        Message msg = handler.obtainMessage(w);
+
+        msg.obj = obj;
+        handler.sendMessage(msg);
     }
 
 }

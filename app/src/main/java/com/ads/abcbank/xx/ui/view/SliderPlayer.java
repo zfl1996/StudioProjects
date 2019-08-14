@@ -191,30 +191,6 @@ public class SliderPlayer extends LinearLayout {
         }
     }
 
-
-//    public class PagerChangeListener extends RecyclerPagerView.OnPageChangeListener {
-//        private int size;
-//
-//        public void setSize(int size) {
-//            this.size += size;
-//        }
-//
-//        public PagerChangeListener(int size) {
-//            this.size = size;
-//        }
-//
-//        @Override
-//        public void onPageSelection(int position) {
-//
-////            int pos = size == 0 ? 0 : (position%size+1);
-////
-////            if (pos == size) {
-////                txtHint.setText(pos + " / " + size + " / " + position);
-////            }
-//        }
-//
-//    }
-
     public interface IPageChangeListener {
         void onPageSelection(int position);
     }

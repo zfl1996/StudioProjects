@@ -130,13 +130,13 @@ public class NetTaskManager {
     }
 
     private void reqAllData() {
+        retrievePreset();
         Utils.getAsyncThread()
                 .httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(new CmdpollBean())),
                         netHandler, Constants.NET_MANAGER_DATA_CMDPOLL);
         Utils.getAsyncThread()
                 .httpService(HTTPContants.CODE_PLAYLIST, JSONObject.parseObject(JSONObject.toJSONString(DownloadService.getPlaylistBean())),
                         netHandler, Constants.NET_MANAGER_DATA_PLAYLIST);
-        retrievePreset();
     }
 
     private void retrievePreset() {
