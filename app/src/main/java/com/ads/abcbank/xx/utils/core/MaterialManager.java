@@ -141,6 +141,13 @@ public class MaterialManager {
         if (materialStatus.containsKey(_fileKey) && materialStatus.get(_fileKey) == 1)
             return;
 
+        String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
+
+        if (!IOHelper.copyOrMoveFile(filePath, correctionFilePath, true)) {
+            return;
+        }
+
+        filePath = correctionFilePath;
         materialStatus.put(_fileKey, 1);
 
         // 更新已下载素材状态
@@ -265,6 +272,7 @@ public class MaterialManager {
                 List<String> welcomeItems = new ArrayList<>();
                 String contentTypeMiddle = Utils.getContentTypeMiddle(context);
                 String contentTypeEnd = Utils.getContentTypeEnd(context);
+                long taskFlag = System.currentTimeMillis();
 
                 for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {
                     // 过滤非下载时段和已下载项
@@ -280,22 +288,22 @@ public class MaterialManager {
                     String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 
-                    // file err.(force delete etc.)
-                    if ((materialStatus.containsKey(bodyBean.id) && materialStatus.get(bodyBean.id) == 1)
-                            && !ResHelper.isExistsFile(savePath)) {
-                        downloadModule.start(bodyBean.downloadLink, savePath);
-                        materialStatus.remove(bodyBean.id);
-//                            String[] ids = materialStatus.keySet().toArray(new String[0]);
-//                            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
-                        Logger.e(TAG, "download -> " + bodyBean.downloadLink);
-
-                        waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
-                        continue;
-                    }
+//                    // file err.(force delete etc.)
+//                    if ((materialStatus.containsKey(bodyBean.id) && materialStatus.get(bodyBean.id) == 1)
+//                            && !ResHelper.isExistsFile(savePath)) {
+//                        downloadModule.start(bodyBean.downloadLink, savePath);
+//                        materialStatus.remove(bodyBean.id);
+////                            String[] ids = materialStatus.keySet().toArray(new String[0]);
+////                            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
+//                        Logger.e(TAG, "download -> " + bodyBean.downloadLink);
+//
+//                        waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
+//                        continue;
+//                    }
 
                     // 构建待下载数据
                     if (!materialStatus.containsKey(bodyBean.id)
-                            || materialStatus.get(bodyBean.id) != 1 ) {
+                            || materialStatus.get(bodyBean.id) != 1 || !ResHelper.isExistsFile(savePath)) {
                         String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
                         if (pathSegments.length <= 0)
                             continue;
@@ -333,7 +341,7 @@ public class MaterialManager {
 
                 if (waitForDownloadUrls.size() > 0 && waitForDownloadUrls.size() == waitForDownloadSavePath.size()) {
                     Logger.e(TAG, "tid:(loadPlaylist)" + Thread.currentThread().getId());
-                    downloadModule.start(waitForDownloadUrls, ResHelper.getRootDir(), waitForDownloadSavePath);
+                    downloadModule.start(waitForDownloadUrls, ResHelper.getTempRootDir() + taskFlag, waitForDownloadSavePath);
                 }
 
                 if (allPlayItems.size() > 0)

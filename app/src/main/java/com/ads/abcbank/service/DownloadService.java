@@ -272,7 +272,7 @@ public class DownloadService extends Service {
                         } else {
                             //--------- cache pdf -------
                             String dfPath = downloadFile.getAbsolutePath();
-                            String[] extData = ResHelper.getFileExtInfo(dfPath);
+                            String[] extData = ResHelper.getPDFExtInfo(dfPath);
                             if (extData.length > 0 && !ResHelper.isNullOrEmpty(extData[1]) && extData[1].toLowerCase().equals("pdf") ){
                                 Intent serviceIntent = new Intent(mContext, CachePdfService.class);
 

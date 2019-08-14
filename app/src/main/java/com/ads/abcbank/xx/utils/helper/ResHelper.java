@@ -49,7 +49,7 @@ public class ResHelper {
     /*
     * 返回 [文件名，扩展名]
     * */
-    public static String[] getFileExtInfo(String fileName){
+    public static String[] getPDFExtInfo(String fileName){
         try{
 
             String extName = fileName.substring( fileName.lastIndexOf(".") );
@@ -65,7 +65,7 @@ public class ResHelper {
 
     public static String getPdfCacheFilePath(String fileName, int pageIndex) {
         String s = getPdfDir();
-        String[] fileExtInfo = getFileExtInfo(fileName);
+        String[] fileExtInfo = getPDFExtInfo(fileName);
 
         return s + fileExtInfo[0] + "/" + pageIndex +  Constants.COMPRESS_FORMAT; //".jpg";
     }
@@ -76,9 +76,25 @@ public class ResHelper {
 
     public static String getPdfCacheFileDir(String fileName) {
         String s = getPdfDir();
-        String[] fileExtInfo = getFileExtInfo(fileName);
+        String[] fileExtInfo = getPDFExtInfo(fileName);
 
         return s + fileExtInfo[0] + "/";
+    }
+
+    public static String getPdfDir() {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Constants.ROOT_FILE_NAME + "/");
+            if (!file.exists()) {
+                boolean r = file.mkdirs();
+                if (!r) {
+                    return null;
+                }
+                return file.getAbsolutePath() + "/files/";
+            }
+            return file.getAbsolutePath() + "/files/";
+        } else {
+            return null;
+        }
     }
 
     public static String getSavePath(String url, String fileKey) {
@@ -141,21 +157,13 @@ public class ResHelper {
             return null;
     }
 
-    public static String getPdfDir() {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Constants.ROOT_FILE_NAME + "/");
-            if (!file.exists()) {
-                boolean r = file.mkdirs();
-                if (!r) {
-                    return null;
-                }
-                return file.getAbsolutePath() + "/files/";
-            }
-            return file.getAbsolutePath() + "/files/";
-        } else {
+    public static String getTempRootDir() {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+            return Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Constants.ROOT_TEMPFILE_NAME + "/";
+        else
             return null;
-        }
     }
+
 
     public static Boolean isNullOrEmpty(@Nullable String str) {
         return (str == null || str.trim().length() == 0);

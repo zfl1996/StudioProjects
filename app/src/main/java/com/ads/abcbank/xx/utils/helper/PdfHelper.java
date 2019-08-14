@@ -26,7 +26,7 @@ public class PdfHelper {
         int size = Integer.parseInt(metadata.trim());
 
         for (int i=0; i<size; i++) {
-            list.add(new PlayItem(ResHelper.getFileExtInfo(fileName)[0],
+            list.add(new PlayItem(ResHelper.getPDFExtInfo(fileName)[0],
                     ResHelper.getPdfCacheFilePath(fileName, i),
                     Constants.SLIDER_HOLDER_IMAGE,
                     playDate, stopDate,

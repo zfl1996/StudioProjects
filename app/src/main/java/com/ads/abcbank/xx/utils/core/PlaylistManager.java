@@ -83,7 +83,7 @@ public class PlaylistManager {
                 Logger.e(TAG, "NotInPlayTime-->" + mi.getId() + " index:" + i + " time:"
                  + mi.getPlayDate() + "-" + mi.getStopDate() );
 
-                playlistStatusListener.onOutOfTime(mi.getId(), i);
+//                playlistStatusListener.onOutOfTime(mi.getId(), i);
                 it.remove();
 
                 try {

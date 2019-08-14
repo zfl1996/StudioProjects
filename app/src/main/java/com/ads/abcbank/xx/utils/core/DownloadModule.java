@@ -36,24 +36,6 @@ public class DownloadModule {
         Aria.download(this).register();
     }
 
-    @Download.onTaskStop void taskStop(DownloadTask task) {
-        if (null == downloadStateLisntener)
-            return;
-
-        Utils.getExecutorService().submit(() -> {
-            tryFeedbackTask(task.getEntity());
-        });
-    }
-
-    @Download.onTaskComplete void taskComplete(DownloadTask task) {
-        if (null == downloadStateLisntener)
-            return;
-
-        Utils.getExecutorService().submit(() -> {
-            tryFeedbackTask(task.getEntity());
-        });
-    }
-
     @DownloadGroup.onSubTaskStop void onSubTaskRunning(DownloadGroupTask groupTask, DownloadEntity subEntity) {
         if (null == downloadStateLisntener)
             return;
