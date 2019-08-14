@@ -116,7 +116,6 @@ public class MaterialManager {
             managerStatus.put(Constants.MM_STATUS_KEY_STATUS_PRESET_LOADED, 0);
 
             downloadModule = new DownloadModule(context, 0, downloadStateLisntener);
-//            playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, null, false));
             ResHelper.sendMessage(playerHandler, Constants.SLIDER_STATUS_CODE_INIT, null);
         });
     }
@@ -169,7 +168,6 @@ public class MaterialManager {
                     bodyBean.onClickLink, bodyBean.QRCode  );
 
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PDF_CACHED, list);
-//            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PDF_CACHED, list, true));
         } else if (BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
                 || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
             PlayItem playItem = new PlayItem(fileKey,
@@ -179,7 +177,6 @@ public class MaterialManager {
                     bodyBean.onClickLink, bodyBean.QRCode);
 
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_DOWNSUCC, playItem);
-//            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, playItem, true));
         } else if (suffix.toLowerCase().equals("txt")) {
             String wmsg = ResHelper.readFile2String(filePath);
             if (!ResHelper.isNullOrEmpty(wmsg)) {
@@ -187,7 +184,6 @@ public class MaterialManager {
                 list.add(wmsg);
 
                 ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_MSG, list);
-//                uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME_MSG, list, true));
             }
         }
 //                        });
@@ -210,7 +206,6 @@ public class MaterialManager {
     public void reload(int resCode) {
 
         ResHelper.sendMessage(playerHandler, Constants.SLIDER_STATUS_CODE_UPDATE, resCode);
-//        playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_UPDATE, resCode, false));
     }
 
     /*
@@ -218,7 +213,6 @@ public class MaterialManager {
     * */
     private void loadPreset() {
         ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRESET);
-//        uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRESET, true));
 
         String json = Utils.get(context, Utils.KEY_PRESET, "").toString();
 
@@ -241,7 +235,6 @@ public class MaterialManager {
             presetTitles.add(bean.data.buyInAndOutForeignExchange.title.substring(0, 4) + "\n" + bean.data.buyInAndOutForeignExchange.title.substring(4));
 
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_RATE, new Object[]{presetItems, presetTitles});
-//            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_RATE, new Object[]{presetItems, presetTitles}, true));
         } else {
 //            managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
         }
@@ -250,8 +243,6 @@ public class MaterialManager {
 //        managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
 
         ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_OK);
-//        uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS,
-//                 Constants.SLIDER_PROGRESS_CODE_OK, true));
     }
 
     /*
@@ -259,7 +250,6 @@ public class MaterialManager {
     * */
     private void loadPlaylist() {
         ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRE);
-//        uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRE, true));
 
         // 同步已下载完成数据项
         String jsonFinish = Utils.get(context, Constants.MM_STATUS_FINISHED_TASKID, "").toString();
@@ -345,14 +335,12 @@ public class MaterialManager {
 
                 if (allPlayItems.size() > 0)
                     ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_INIT, allPlayItems);
-//                    uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_INIT, allPlayItems, true));
 
                 if (welcomeItems.size() > 0)
                     showWelcome(welcomeItems);
 
                 if (!isIntegrationPresetData())
                     ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_OK);
-//                    uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_OK, true));
                 Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadSavePath.toArray(), "@@\r\n"));
 
             } catch (Exception e) {
@@ -380,22 +368,12 @@ public class MaterialManager {
 
             managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 0);
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME, welcomeItems);
-//            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME, welcomeItems, true));
         } else {
 //            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 1);
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_MSG, welcomeItems);
-//            uiHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_WELCOME_MSG, welcomeItems, true));
         }
 
     }
-
-//    Message buildMessage(int w, Object obj, boolean isMain) {
-//        Message msg = isMain ? uiHandler.obtainMessage() : playerHandler.obtainMessage();
-//        msg.what = w;
-//        msg.obj = obj;
-//
-//        return msg;
-//    }
 
 
     MaterialStatusListener getRefListener() {
@@ -486,8 +464,6 @@ public class MaterialManager {
         @Override
         public void onSucc(String url, String path) {
             ResHelper.sendMessage(playerHandler, Constants.SLIDER_STATUS_CODE_DOWNSUCC, new String[]{ url, path });
-//            playerHandler.sendMessage(buildMessage(Constants.SLIDER_STATUS_CODE_DOWNSUCC, new String[]{
-//                url, path }, false));
         }
 
         @Override
