@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.activity.ReInitActivity;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.view.AutoPollAdapter;
 import com.ads.abcbank.view.AutoPollRecyclerView;
 import com.ads.abcbank.view.BaseActivity;
@@ -207,5 +208,20 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        try {
+            if (null != netTaskManager)
+                netTaskManager.cancalTask();
+
+            if (null != materialManager)
+                materialManager.clear();
+        } catch (Exception e) {
+            Logger.e(TAG, "onDestroy:" + e.getMessage());
+        }
     }
 }

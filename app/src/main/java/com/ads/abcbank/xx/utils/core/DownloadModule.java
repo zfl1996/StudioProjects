@@ -28,8 +28,8 @@ public class DownloadModule {
         this.mContext = context;
 
         Aria.get(mContext).getDownloadConfig()
-                .setMaxTaskNum(1)
-                .setThreadNum(1)
+//                .setMaxTaskNum(1)
+//                .setThreadNum(1)
                 .setMaxSpeed(maxRate)
 //                .setConvertSpeed(true)
                 ;
@@ -143,6 +143,7 @@ public class DownloadModule {
 
     public void stop() {
         Aria.download(this).stopAllTask();
+        Aria.download(this).removeAllTask(false);
 //        else
 //            Aria.download(this).load(mUrl).stop();
     }

@@ -83,10 +83,7 @@ public class NetTaskManager {
     }
 
     public void initNetManager() {
-        Utils.getExecutorService().submit(() -> {
-            reqAllData();
-            timer.schedule(timerTask, 1*60*1000, 1*60*1000 );
-        });
+        timer.schedule(timerTask, 50, 1*60*1000 );
     }
 
     public void cancalTask() {
@@ -121,7 +118,7 @@ public class NetTaskManager {
     }
 
     private void parsePalyList(Object obj) {
-        FileUtil.writeJsonToFile(obj.toString());
+        FileUtil.writeJsonToFile(obj.toString(), false);
 
         if (Utils.getNewPlayList(context, obj.toString())) {
             if (null != netTaskListener)

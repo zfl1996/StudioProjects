@@ -14,7 +14,6 @@ import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
-import com.ads.abcbank.xx.utils.core.DownloadModule.DownloadStateLisntener;
 import com.ads.abcbank.xx.utils.helper.IOHelper;
 import com.ads.abcbank.xx.utils.helper.PdfHelper;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
@@ -25,40 +24,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class MaterialManager {
-    static String TAG = "MaterialManager";
-
-    Context context;
-    DownloadModule downloadModule;
-
-    // worker thread
-    HandlerThread playerThread;
-    Handler playerHandler;
-
-    // bll data
-    WeakReference<MaterialStatusListener> itemStatusListener = null;
-    String deviceModeData;
-    ConcurrentHashMap<String, PlaylistBodyBean> waitForDownloadMaterial = new ConcurrentHashMap<>();
-    ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
-    ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
-    String filters;
+public class MaterialManager extends MaterialManagerBase {
+    static String TAG = MaterialManagerBase.class.getSimpleName();;
 
     public MaterialManager(Context context, MaterialStatusListener materialStatusListener) {
         this.context = context;
         this.itemStatusListener = new WeakReference<>(materialStatusListener);
     }
 
-
-    public void initManager(boolean integrationPresetData, String filters) {
-        this.filters = filters;
-        managerStatus.put(Constants.MM_KEY_INTEGRATIONPRESET, integrationPresetData ? 1 : 0);
-
-        playerThread = new HandlerThread("playerThread");
-        playerThread.start();
-
-        playerHandler = new Handler(playerThread.getLooper()) {
+    @Override
+    protected Handler buildMaterialHandler() {
+        return new Handler(materialThread.getLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -67,9 +44,17 @@ public class MaterialManager {
 
                 switch (msg.what) {
 
+                    case Constants.SLIDER_STATUS_CODE_INIT:
+                        Logger.e(TAG, "tid:(SLIDER_STATUS_CODE_INIT)" + Thread.currentThread().getId());
+                        Utils.getExecutorService().submit(() -> loadPlaylist());
+                        Utils.getExecutorService().submit(() -> loadPreset());
+                        Utils.getExecutorService().submit(() -> showWelcome(null));
+
+                        break;
+
                     case Constants.SLIDER_STATUS_CODE_UPDATE:
-                        Logger.e(TAG, "tid:(SLIDER_STATUS_CODE_UPDATE)" + Thread.currentThread().getId());
                         int resCode = (int)msg.obj;
+                        Logger.e(TAG, "SLIDER_STATUS_CODE_UPDATE --> resCode:" + resCode + "(tid:" + Thread.currentThread().getId() + ")");
                         Utils.getExecutorService().submit(() -> {
                             if (resCode == Constants.NET_MANAGER_DATA_PLAYLIST) {
                                 if (managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_LOADED) != 1)
@@ -79,14 +64,6 @@ public class MaterialManager {
                                     loadPreset();
                             }
                         });
-
-                        break;
-
-                    case Constants.SLIDER_STATUS_CODE_INIT:
-                        Logger.e(TAG, "tid:(SLIDER_STATUS_CODE_INIT)" + Thread.currentThread().getId());
-                        Utils.getExecutorService().submit(() -> loadPlaylist());
-                        Utils.getExecutorService().submit(() -> loadPreset());
-                        Utils.getExecutorService().submit(() -> showWelcome(null));
 
                         break;
 
@@ -108,16 +85,6 @@ public class MaterialManager {
                 }
             }
         };
-
-        Utils.getExecutorService().submit(() -> {
-            managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_INIT, 0);
-            managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 0);
-            managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 0);
-            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_PRESET_LOADED, 0);
-
-            downloadModule = new DownloadModule(context, 0, downloadStateLisntener);
-            ResHelper.sendMessage(playerHandler, Constants.SLIDER_STATUS_CODE_INIT, null);
-        });
     }
 
     /*
@@ -187,25 +154,6 @@ public class MaterialManager {
             }
         }
 //                        });
-    }
-
-    public boolean isInitSuccessed() {
-        return managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) == 1
-                && (!isIntegrationPresetData() || (isIntegrationPresetData() && managerStatus.get(Constants.MM_STATUS_KEY_STATUS_PRESET_LOADED) == 1));
-    }
-
-    public boolean isMaterialLoaded(String materialCode) {
-        return managerStatus.containsKey(materialCode) && managerStatus.get(materialCode) == 1;
-    }
-
-    public boolean isIntegrationPresetData() {
-        return managerStatus.contains(Constants.MM_KEY_INTEGRATIONPRESET)
-                && managerStatus.get(Constants.MM_KEY_INTEGRATIONPRESET) == 1;
-    }
-
-    public void reload(int resCode) {
-
-        ResHelper.sendMessage(playerHandler, Constants.SLIDER_STATUS_CODE_UPDATE, resCode);
     }
 
     /*
@@ -355,16 +303,7 @@ public class MaterialManager {
 
     private void showWelcome(List<String> welcomeItems) {
         if (null == welcomeItems || welcomeItems.size() <= 0) {
-            welcomeItems = new ArrayList<String>() {
-                {
-                    add("中国农业银行欢迎您");
-                    add("中国农业银行欢迎您");
-                    add("中国农业银行欢迎您");
-                    add("中国农业银行欢迎您");
-                    add("中国农业银行欢迎您");
-                    add("中国农业银行欢迎您");
-                }
-            };
+            welcomeItems = buildWelcomeWords();
 
             managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 0);
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME, welcomeItems);
@@ -373,112 +312,6 @@ public class MaterialManager {
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_MSG, welcomeItems);
         }
 
-    }
-
-
-    MaterialStatusListener getRefListener() {
-        if (null != itemStatusListener) {
-            return itemStatusListener.get();
-        }
-
-        return null;
-    }
-
-    Handler uiHandler = new Handler(Looper.getMainLooper()){
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            MaterialStatusListener _materialStatusListener = getRefListener();
-
-            Logger.e(TAG, "tid:(uiHandler)" + Thread.currentThread().getId());
-
-            switch (msg.what) {
-                case Constants.SLIDER_STATUS_CODE_WELCOME:
-                    List<String> welcomeItems = (List<String>) msg.obj;
-
-                    if (null != _materialStatusListener) {
-                        _materialStatusListener.onWelcome(welcomeItems);
-                    }
-
-                    break;
-
-                case Constants.SLIDER_STATUS_CODE_WELCOME_MSG:
-                    List<String> welcomeMsg = (List<String>) msg.obj;
-
-                    if (null != _materialStatusListener) {
-                        boolean isAppend = isMaterialLoaded(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED);
-                        _materialStatusListener.onNewMsgAdded(welcomeMsg, isAppend);
-
-                        if (!isAppend && welcomeMsg.size() > 0)
-                            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 1);
-                    }
-
-                    break;
-
-                case Constants.SLIDER_STATUS_CODE_INIT:
-                    List<PlayItem> allPlayItems = (List<PlayItem>)msg.obj;
-
-                    if (null != _materialStatusListener) {
-                        _materialStatusListener.onReady(allPlayItems);
-                    }
-
-                    break;
-
-                case Constants.SLIDER_STATUS_CODE_RATE:
-                    if (null != _materialStatusListener){
-                        Object[] objs = (Object[])msg.obj;
-                        _materialStatusListener.onRate((List<PlayItem>)objs[0], (List<String>) objs[1]);
-                    }
-
-                    break;
-
-                case Constants.SLIDER_STATUS_CODE_PDF_CACHED:
-                    if (null != _materialStatusListener)
-                        _materialStatusListener.onItemPrepared((List<PlayItem>)msg.obj);
-
-                    break;
-
-                case Constants.SLIDER_STATUS_CODE_PROGRESS:
-                    if (null != _materialStatusListener)
-                        _materialStatusListener.onProgress((int)msg.obj);
-
-                    break;
-
-                case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
-                    if (null != _materialStatusListener)
-                        _materialStatusListener.onItemPrepared(new ArrayList<PlayItem>(){
-                            { add((PlayItem)msg.obj); }
-                        } );
-
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-    };
-
-    DownloadModule.DownloadStateLisntener downloadStateLisntener = new DownloadStateLisntener() {
-        @Override
-        public void onSucc(String url, String path) {
-            ResHelper.sendMessage(playerHandler, Constants.SLIDER_STATUS_CODE_DOWNSUCC, new String[]{ url, path });
-        }
-
-        @Override
-        public void onFail(String url, String code) {
-
-        }
-    };
-
-    public interface MaterialStatusListener {
-        void onProgress(int code);
-        void onReady(List<PlayItem> items);
-        void onItemPrepared(List<PlayItem> items);
-        void onRate(List<PlayItem> items, List<String> titles);
-        void onWelcome(List<String> items);
-        void onNewMsgAdded(List<String> msg, boolean isAppend);
     }
 
 }
