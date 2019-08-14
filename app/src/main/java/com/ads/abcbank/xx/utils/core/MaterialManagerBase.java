@@ -66,10 +66,10 @@ public abstract class MaterialManagerBase {
         });
     }
 
-    public boolean isInitSuccessed() {
-        return managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) == 1
-                && (!isIntegrationPresetData() || (isIntegrationPresetData() && managerStatus.get(Constants.MM_STATUS_KEY_PRESET_LOADED) == 1));
-    }
+//    public boolean isInitSuccessed() {
+//        return managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) == 1
+//                && (!isIntegrationPresetData() || (isIntegrationPresetData() && managerStatus.get(Constants.MM_STATUS_KEY_PRESET_LOADED) == 1));
+//    }
 
     public boolean isActionExecuted(String actionCode) {
         return managerStatus.containsKey(actionCode) && managerStatus.get(actionCode) == 1;
@@ -194,7 +194,7 @@ public abstract class MaterialManagerBase {
                 List<String> list = new ArrayList<>();
                 list.add(wmsg);
 
-                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_MSG, list);
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, list);
             }
         }
 //                        });
@@ -212,32 +212,33 @@ public abstract class MaterialManagerBase {
             Logger.e(TAG, "tid:(uiHandler)" + Thread.currentThread().getId());
 
             switch (msg.what) {
-                case Constants.SLIDER_STATUS_CODE_WELCOME:
-                    _materialStatusListener.onWelcome((List<String>) msg.obj);
+                case Constants.SLIDER_STATUS_CODE_WELCOME_DEFAULT:
+//                    _materialStatusListener.onWelcomeReady((List<String>) msg.obj);
+                    _materialStatusListener.onWelcomePrepared((List<String>) msg.obj, false, true);
 
                     break;
 
-                case Constants.SLIDER_STATUS_CODE_WELCOME_MSG:
-                    List<String> welcomeMsg = (List<String>) msg.obj;
+                case Constants.SLIDER_STATUS_CODE_WELCOME_LOADED:
 
-                    _materialStatusListener.onNewMsgAdded(welcomeMsg, isActionExecuted(Constants.MM_STATUS_KEY_WELCOME_LOADED));
-
-                    break;
-
-                case Constants.SLIDER_STATUS_CODE_PLAYLIST:
-                    _materialStatusListener.onPlayListReady((List<PlayItem>)msg.obj);
+                    _materialStatusListener.onWelcomePrepared((List<String>) msg.obj, isActionExecuted(Constants.MM_STATUS_KEY_WELCOME_LOADED), false);
 
                     break;
 
-                case Constants.SLIDER_STATUS_CODE_RATE:
+//                case Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED:
+//                    _materialStatusListener.onCachedItemPrepared((List<PlayItem>)msg.obj);
+//
+//                    break;
+
+                case Constants.SLIDER_STATUS_CODE_RATE_LOADED:
                     Object[] objs = (Object[])msg.obj;
-                    _materialStatusListener.onRate((List<PlayItem>)objs[0], (List<String>) objs[1]);
+                    _materialStatusListener.onRatePrepared((List<PlayItem>)objs[0], (List<String>) objs[1]);
 
                     break;
 
+                case Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED:
                 case Constants.SLIDER_STATUS_CODE_PDF_CACHED:
                 case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
-                    _materialStatusListener.onItemPrepared( (List<PlayItem>)msg.obj );
+                    _materialStatusListener.onPlayItemPrepared( (List<PlayItem>)msg.obj );
 
                     break;
 
@@ -257,10 +258,10 @@ public abstract class MaterialManagerBase {
 
     public interface MaterialStatusListener {
         void onProgress(int code);
-        void onPlayListReady(List<PlayItem> items);
-        void onItemPrepared(List<PlayItem> items);
-        void onRate(List<PlayItem> items, List<String> titles);
-        void onWelcome(List<String> items);
-        void onNewMsgAdded(List<String> msg, boolean isAppend);
+//        void onCachedItemPrepared(List<PlayItem> items);
+//        void onWelcomeReady(List<String> items);
+        void onRatePrepared(List<PlayItem> items, List<String> titles);
+        void onPlayItemPrepared(List<PlayItem> items);
+        void onWelcomePrepared(List<String> msg, boolean isAppend, boolean isDefault);
     }
 }

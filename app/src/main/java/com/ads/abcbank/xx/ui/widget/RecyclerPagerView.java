@@ -2,7 +2,6 @@ package com.ads.abcbank.xx.ui.widget;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -12,9 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-
-import com.ads.abcbank.R;
-import com.ads.abcbank.xx.utils.helper.DPIHelper;
 
 public class RecyclerPagerView extends RecyclerView implements Handler.Callback {
 
@@ -291,7 +287,7 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
         stopPlay();
     }
 
-    public static    abstract class OnPageChangeListener extends RecyclerView.OnScrollListener{
+    public static abstract class OnPageChangeListener extends RecyclerView.OnScrollListener{
         public abstract  void onPageSelection(int position);
     }
 

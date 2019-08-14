@@ -112,7 +112,7 @@ public class MaterialManager extends MaterialManagerBase {
             presetTitles.add(bean.data.loanRate.title.substring(0, 4) + "\n" + bean.data.loanRate.title.substring(4));
             presetTitles.add(bean.data.buyInAndOutForeignExchange.title.substring(0, 4) + "\n" + bean.data.buyInAndOutForeignExchange.title.substring(4));
 
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_RATE, new Object[]{presetItems, presetTitles});
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_RATE_LOADED, new Object[]{presetItems, presetTitles});
 
             if (!isActionExecuted(Constants.MM_STATUS_KEY_PRESET_LOADED)) {
                 managerStatus.put(Constants.MM_STATUS_KEY_PRESET_LOADED, 1);
@@ -213,7 +213,7 @@ public class MaterialManager extends MaterialManagerBase {
             }
 
             if (allPlayItems.size() > 0)
-                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST, allPlayItems);
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED, allPlayItems);
 
             if (welcomeItems.size() > 0)
                 showWelcome(welcomeItems);
@@ -237,10 +237,10 @@ public class MaterialManager extends MaterialManagerBase {
             welcomeItems = buildWelcomeWords();
 
             managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 0);
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME, welcomeItems);
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_DEFAULT, welcomeItems);
         } else {
 //            managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 1);
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_MSG, welcomeItems);
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, welcomeItems);
             if (!isActionExecuted(Constants.MM_STATUS_KEY_WELCOME_LOADED) && welcomeItems.size() > 0)
                 managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 1);
         }

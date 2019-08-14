@@ -39,6 +39,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void addItemDataAndRedraw(List<PlayItem> data){
+        dataList.clear();
         dataList.addAll(data);
         notifyDataSetChanged();
     }

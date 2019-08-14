@@ -50,7 +50,7 @@ public class TempH1Activity extends BaseTempletActivity {
 
     @Override
     protected void onRateDataPrepare(List<PlayItem> items, List<String> titles){
-        presetSliderPlayer.onReady(true, items);
+        presetSliderPlayer.addPlayItems(items, false);
 
         for (String title : titles)
             tabIndicator.addTab( tabIndicator.newTab().setText( title ) );

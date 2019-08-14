@@ -16,13 +16,13 @@ public class Constants {
     public static final int SLIDER_STATUS_CODE_OK = 0x200;
     public static final int SLIDER_STATUS_CODE_INIT = 0x201;
     public static final int SLIDER_STATUS_CODE_UPDATE = 0x202;
-    public static final int SLIDER_STATUS_CODE_WELCOME = 0x203;
-    public static final int SLIDER_STATUS_CODE_RATE = 0x204;
+    public static final int SLIDER_STATUS_CODE_WELCOME_DEFAULT = 0x203;
+    public static final int SLIDER_STATUS_CODE_RATE_LOADED = 0x204;
     public static final int SLIDER_STATUS_CODE_PROGRESS = 0x205;
     public static final int SLIDER_STATUS_CODE_DOWNSUCC = 0x206;
     public static final int SLIDER_STATUS_CODE_PDF_CACHED = 0x207;
-    public static final int SLIDER_STATUS_CODE_WELCOME_MSG = 0x208;
-    public static final int SLIDER_STATUS_CODE_PLAYLIST = 0x209;
+    public static final int SLIDER_STATUS_CODE_WELCOME_LOADED = 0x208;
+    public static final int SLIDER_STATUS_CODE_PLAYLIST_LOADED = 0x209;
 
     public static final int SLIDER_HOLDER_IMAGE = 0;
     public static final int SLIDER_HOLDER_PDF = 1;
@@ -40,7 +40,7 @@ public class Constants {
     public static final int SLIDER_PROGRESS_CODE_FILE = 0x1;
     public static final int SLIDER_PROGRESS_CODE_PRESET_PRE = 0x2;
     public static final int SLIDER_PROGRESS_CODE_PRESET_OK = 0x3;
-    public static final int SLIDER_PROGRESS_CODE_PLAYLIST_OK = 0x3;
+    public static final int SLIDER_PROGRESS_CODE_PLAYLIST_OK = 0x4;
 
     public static final int NET_MANAGER_INIT = 0x300;
     public static final int NET_MANAGER_DATA_CMDPOLL = 0x0;

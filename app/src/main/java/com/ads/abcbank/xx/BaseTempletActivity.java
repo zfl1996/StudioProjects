@@ -61,36 +61,37 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected void initCtrls(Bundle savedInstanceState){
 
         materialStatusListener = new MaterialManager.MaterialStatusListener() {
+//            @Override
+//            public void onCachedItemPrepared(List<PlayItem> items) {
+//                mainSliderPlayer.addPlayItems(isMaterialManagerInitSuccessed(), items);
+//                playlistManager.addMaterialInfo(items);
+//            }
+
             @Override
-            public void onPlayListReady(List<PlayItem> items) {
-                mainSliderPlayer.onReady(isMaterialManagerInitSuccessed(), items);
+            public void onPlayItemPrepared(List<PlayItem> items) {
+                mainSliderPlayer.addPlayItems(/*isMaterialManagerInitSuccessed(), */items, true);
                 playlistManager.addMaterialInfo(items);
             }
 
             @Override
-            public void onItemPrepared(List<PlayItem> items) {
-                mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
-                playlistManager.addMaterialInfo(items);
-            }
-
-            @Override
-            public void onRate(List<PlayItem> items, List<String> titles) {
+            public void onRatePrepared(List<PlayItem> items, List<String> titles) {
                 onRateDataPrepare(items, titles);
             }
 
-            @Override
-            public void onWelcome(List<String> items) {
-                mainSliderPlayer.onWelcome(items);
-            }
+//            @Override
+//            public void onWelcomeReady(List<String> items) {
+//                mainSliderPlayer.onWelcome(items);
+//            }
 
             @Override
-            public void onNewMsgAdded(List<String> msg, boolean isAppend) {
-                mainSliderPlayer.onNewMsgAdded(msg, isAppend);
+            public void onWelcomePrepared(List<String> msg, boolean isAppend, boolean isDefault) {
+//                mainSliderPlayer.addWelcomeItems(msg, isAppend, isDefault);
+                onWelcomeLoaded(msg, isAppend, isDefault);
             }
 
             @Override
             public void onProgress(int code) {
-                mainSliderPlayer.onProgress(isMaterialManagerInitSuccessed(), code);
+                mainSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
             }
         };
     }
@@ -108,19 +109,19 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             }
         });
 
-        if (null != mainSliderPlayer) {
+//        if (null != mainSliderPlayer) {
             mainSliderPlayer.setDataStatusListener(new SliderPlayer.DataStatusListener() {
-                @Override
-                public void onWelcome(List<String> items, boolean isDefault, boolean isAppend) {
-                    onWelcomeLoaded(items, isDefault, isAppend);
-                }
+//                @Override
+//                public void onWelcome(List<String> items, boolean isDefault, boolean isAppend) {
+//                    onWelcomeLoaded(items, isDefault, isAppend);
+//                }
 
                 @Override
                 public void onReady() {
                     netTaskManager.initNetManager();
                 }
             });
-        }
+//        }
 
         // start data process...
         materialManager = new MaterialManager(this, materialStatusListener);
@@ -131,8 +132,16 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         });
     }
 
-    protected boolean isMaterialManagerInitSuccessed() {
-        return materialManager.isInitSuccessed();
+//    protected boolean isMaterialManagerInitSuccessed() {
+//        return materialManager.isInitSuccessed();
+//    }
+
+    protected boolean isPlaylistLoaded() {
+        return materialManager.isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_LOADED);
+    }
+
+    protected boolean isPresetLoaded() {
+        return materialManager.isActionExecuted(Constants.MM_STATUS_KEY_PRESET_LOADED);
     }
 
     protected void onPlaylistLoaded(JSONObject jsonObject) {
@@ -143,7 +152,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         reload(Constants.NET_MANAGER_DATA_PRESET);
     }
 
-    protected void onWelcomeLoaded(List<String> items, boolean isDefault, boolean isAppend) {
+    protected void onWelcomeLoaded(List<String> items, boolean isAppend, boolean isDefault) {
         if (isDefault) {
             autoPollAdapter = new AutoPollAdapter(BaseTempletActivity.this, items);
             rvMarqueeView.setLayoutManager(new LinearLayoutManager(BaseTempletActivity.this,
@@ -158,7 +167,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     }
 
     protected void onRateDataPrepare(List<PlayItem> items, List<String> titles){
-        mainSliderPlayer.onNewItemsAdded(isMaterialManagerInitSuccessed(), items);
+        mainSliderPlayer.addPlayItems(/*isMaterialManagerInitSuccessed(), */items, true);
         playlistManager.addMaterialInfo(items);
     }
 

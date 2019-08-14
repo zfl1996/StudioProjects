@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
-import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.SliderMainAdapter;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
@@ -42,6 +41,17 @@ public class SliderPlayer extends LinearLayout {
     int displayMode = 0;
     public boolean isIntegrationMode(){
         return displayMode == 0;
+    }
+
+    public DisplayMode getDisplayMode() {
+        if (displayMode == 0)
+            return DisplayMode.Integration;
+        else if (displayMode == 1)
+            return DisplayMode.PlaylistOnly;
+        else if (displayMode == 2)
+            return DisplayMode.PresetOnly;
+
+        return DisplayMode.Unknown;
     }
 
     public void setDataStatusListener(DataStatusListener dataStatusListener) {
@@ -116,60 +126,65 @@ public class SliderPlayer extends LinearLayout {
         recyclerPagerView.setAdapter(sliderAdapter);
     }
 
-    public void onReady(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
-        sliderAdapter.addItemDataAndRedraw(items);
+    public void addPlayItems(/*boolean isMaterialManagerInitSuccessed, */List<PlayItem> items, boolean isPortionRedraw) {
+        if (isPortionRedraw)
+            sliderAdapter.addItemDataAndPortionRedraw(items);
+        else
+            sliderAdapter.addItemDataAndRedraw(items);
 
-        recyclerPagerView.setOnPageChangeListener(new RecyclerPagerView.OnPageChangeListener() {
-            @Override
-            public void onPageSelection(int position) {
-                if (null != pageChangeListener) {
-                    pageChangeListener.onPageSelection(position);
+        if (null != pageChangeListener)
+            recyclerPagerView.setOnPageChangeListener(new RecyclerPagerView.OnPageChangeListener() {
+                @Override
+                public void onPageSelection(int position) {
+                        pageChangeListener.onPageSelection(position);
                 }
-            }
-        });
+            });
         recyclerPagerView.startPlay();
 
-        if (isMaterialManagerInitSuccessed)
-            llProgress.setVisibility(GONE);
+//        if (isMaterialManagerInitSuccessed)
+//            llProgress.setVisibility(GONE);
     }
 
-    public void onNewItemsAdded(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
-        sliderAdapter.addItemDataAndPortionRedraw(items);
+//    public void onNewItemsAdded(boolean isMaterialManagerInitSuccessed, List<PlayItem> items) {
+//        sliderAdapter.addItemDataAndPortionRedraw(items);
+//
+//        recyclerPagerView.startPlay();
+//
+//        if (isMaterialManagerInitSuccessed)
+//            llProgress.setVisibility(GONE);
+//    }
 
-        recyclerPagerView.startPlay();
+//    public void onWelcome(List<String> items) {
+//        if (null != dataStatusListener)
+//            dataStatusListener.onWelcome(items, true, false);
+//    }
+//
+//    public void onNewMsgAdded(List<String> msg, boolean isAppend) {
+//        if (null != dataStatusListener)
+//            dataStatusListener.onWelcome(msg, false, isAppend);
+//    }
 
-        if (isMaterialManagerInitSuccessed)
-            llProgress.setVisibility(GONE);
-    }
+//    public void addWelcomeItems(List<String> msg, boolean isAppend, boolean isDefault) {
+//        if (null != dataStatusListener)
+//            dataStatusListener.onWelcome(msg, isDefault, isAppend);
+//    }
 
-    public void onWelcome(List<String> items) {
-        if (null != dataStatusListener)
-            dataStatusListener.onWelcome(items, true, false);
-    }
-
-    public void onNewMsgAdded(List<String> msg, boolean isAppend) {
-        if (null != dataStatusListener)
-            dataStatusListener.onWelcome(msg, false, isAppend);
-    }
-
-    public void onProgress(boolean isMaterialManagerInitSuccessed, int code) {
+    public void adjustWidgetStatus(boolean isPresetLoaded, boolean isPlaylistLoaded, int code) {
         switch (code) {
             case Constants.SLIDER_PROGRESS_CODE_PLAYLIST_PRE:
-                showHintMsg(isMaterialManagerInitSuccessed, "初始化播放列表");
-
-                break;
-
             case Constants.SLIDER_PROGRESS_CODE_PRESET_PRE:
-                showHintMsg(isMaterialManagerInitSuccessed, "准备汇率数据");
+                txtHint.setText(code == Constants.SLIDER_PROGRESS_CODE_PLAYLIST_PRE ?
+                        "处理播放列表数据" : "准备汇率数据");
 
-                break;
-
-            case Constants.SLIDER_PROGRESS_CODE_PRESET_OK:
-                Logger.e(TAG, isMaterialManagerInitSuccessed ? "materialManager.isMaterialManagerInitSuccessed" : "not succ");
-                showHintMsg(isMaterialManagerInitSuccessed, "初次启动，初始化环境");
-
+                //ToDo......
                 if (null != dataStatusListener)
                     dataStatusListener.onReady();
+
+                break;
+
+            case Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK:
+            case Constants.SLIDER_PROGRESS_CODE_PRESET_OK:
+                showHintMsg(isPresetLoaded, isPlaylistLoaded, code);
 
                 break;
 
@@ -182,13 +197,31 @@ public class SliderPlayer extends LinearLayout {
         sliderAdapter.removeOuttimeItem(id, index);
     }
 
-    private void showHintMsg(boolean isMaterialManagerInitSuccessed, String msg) {
-        if (isMaterialManagerInitSuccessed) {
-            llProgress.setVisibility(GONE);
-            imgHolder.setVisibility(GONE);
-        } else {
-            txtHint.setText("初次启动，初始化环境");
+    private void showHintMsg(boolean isPresetLoaded, boolean isPlaylistLoaded, int code) {
+        DisplayMode displayMode = getDisplayMode();
+        if (displayMode == DisplayMode.Integration) {
+            if (isPresetLoaded || isPlaylistLoaded) {
+                llProgress.setVisibility(GONE);
+                imgHolder.setVisibility(GONE);
+            }
+        } else if (displayMode == DisplayMode.PlaylistOnly) {
+            if (isPlaylistLoaded) {
+                llProgress.setVisibility(GONE);
+                imgHolder.setVisibility(GONE);
+            }
+        } else if (displayMode == DisplayMode.PresetOnly) {
+            if (isPresetLoaded) {
+                llProgress.setVisibility(GONE);
+                imgHolder.setVisibility(GONE);
+            }
         }
+
+//        if (isMaterialManagerInitSuccessed) {
+//            llProgress.setVisibility(GONE);
+//            imgHolder.setVisibility(GONE);
+//        } else {
+//            txtHint.setText("初次启动，初始化环境");
+//        }
     }
 
     public interface IPageChangeListener {
@@ -196,8 +229,15 @@ public class SliderPlayer extends LinearLayout {
     }
 
     public interface DataStatusListener {
-        void onWelcome(List<String> items, boolean isDefault, boolean isAppend);
+//        void onWelcome(List<String> items, boolean isDefault, boolean isAppend);
         void onReady();
+    }
+
+    public enum DisplayMode {
+        Integration,
+        PlaylistOnly,
+        PresetOnly,
+        Unknown
     }
 
 }
