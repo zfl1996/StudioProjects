@@ -126,66 +126,53 @@ public abstract class MaterialManagerBase {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             MaterialStatusListener _materialStatusListener = getRefListener();
+            if (null == _materialStatusListener)
+                return;
 
             Logger.e(TAG, "tid:(uiHandler)" + Thread.currentThread().getId());
 
             switch (msg.what) {
                 case Constants.SLIDER_STATUS_CODE_WELCOME:
-                    List<String> welcomeItems = (List<String>) msg.obj;
-
-                    if (null != _materialStatusListener) {
-                        _materialStatusListener.onWelcome(welcomeItems);
-                    }
+                    _materialStatusListener.onWelcome((List<String>) msg.obj);
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_WELCOME_MSG:
                     List<String> welcomeMsg = (List<String>) msg.obj;
 
-                    if (null != _materialStatusListener) {
-                        boolean isAppend = isMaterialLoaded(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED);
-                        _materialStatusListener.onNewMsgAdded(welcomeMsg, isAppend);
+                    boolean isAppend = isMaterialLoaded(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED);
+                    _materialStatusListener.onNewMsgAdded(welcomeMsg, isAppend);
 
-                        if (!isAppend && welcomeMsg.size() > 0)
-                            managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 1);
-                    }
+                    if (!isAppend && welcomeMsg.size() > 0)
+                        managerStatus.put(Constants.MM_STATUS_KEY_STATUS_WELCOME_LOADED, 1);
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_INIT:
-                    List<PlayItem> allPlayItems = (List<PlayItem>)msg.obj;
-
-                    if (null != _materialStatusListener) {
-                        _materialStatusListener.onReady(allPlayItems);
-                    }
+                    _materialStatusListener.onReady((List<PlayItem>)msg.obj);
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_RATE:
-                    if (null != _materialStatusListener){
-                        Object[] objs = (Object[])msg.obj;
-                        _materialStatusListener.onRate((List<PlayItem>)objs[0], (List<String>) objs[1]);
-                    }
+                    Object[] objs = (Object[])msg.obj;
+                    _materialStatusListener.onRate((List<PlayItem>)objs[0], (List<String>) objs[1]);
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_PDF_CACHED:
-                    if (null != _materialStatusListener)
-                        _materialStatusListener.onItemPrepared((List<PlayItem>)msg.obj);
+                    _materialStatusListener.onItemPrepared((List<PlayItem>)msg.obj);
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_PROGRESS:
-                    if (null != _materialStatusListener)
-                        _materialStatusListener.onProgress((int)msg.obj);
+                    _materialStatusListener.onProgress((int)msg.obj);
 
                     break;
 
                 case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
-                    if (null != _materialStatusListener)
-                        _materialStatusListener.onItemPrepared(new ArrayList<PlayItem>(){
-                            { add((PlayItem)msg.obj); }
-                        } );
+                    _materialStatusListener.onItemPrepared(new ArrayList<PlayItem>(){
+                        { add((PlayItem)msg.obj); }
+                    } );
 
                     break;
 

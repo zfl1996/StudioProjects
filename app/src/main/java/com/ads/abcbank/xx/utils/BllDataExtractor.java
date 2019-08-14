@@ -109,9 +109,11 @@ public class BllDataExtractor {
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm");
             String currentDate = simpleDateFormat.format(new Date());
-            if (!TextUtils.isEmpty(playDate) && !TextUtils.isEmpty(stopDate)
-                    && currentDate.compareTo(playDate) >= 0 && currentDate.compareTo(stopDate) < 0) {
+            if (currentDate.compareTo(playDate) >= 0 && currentDate.compareTo(stopDate) < 0) {
                 return true;
+            } else {
+                Logger.e("PlaylistManager", "isInPlayTime:" + currentDate + ".." + playDate + ".." + stopDate + "-->currentDate.compareTo(playDate)"
+                    + (currentDate.compareTo(playDate) >= 0) + "-->currentDate.compareTo(stopDate)" + (currentDate.compareTo(stopDate)));
             }
         } catch (Exception e) {
             Logger.e(e.toString());

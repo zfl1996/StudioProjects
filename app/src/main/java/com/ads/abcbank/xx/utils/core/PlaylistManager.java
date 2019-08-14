@@ -76,15 +76,17 @@ public class PlaylistManager {
 
         while (it.hasNext()) {
             MaterialInfo mi = it.next();
+
+
+            Logger.e(TAG, "NotInPlayTime-->" + mi.getId() + " index:" + i + " time:"
+                    + mi.getPlayDate() + "-" + mi.getStopDate() + "-->" + BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate()) );
+
             if (!ResHelper.isNullOrEmpty(mi.getPlayDate())
                 && !ResHelper.isNullOrEmpty(mi.getStopDate())
                 && !BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate())) {
 
                 playlistStatusListener.onOutOfTime(mi.getId(), i);
                 it.remove();
-
-                Logger.e(TAG, "NotInPlayTime-->" + mi.getId() + " index:" + i + " time:"
-                        + mi.getPlayDate() + "-" + mi.getStopDate() + "-->" + BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate()) );
 
                 try {
                     Thread.sleep(100);
