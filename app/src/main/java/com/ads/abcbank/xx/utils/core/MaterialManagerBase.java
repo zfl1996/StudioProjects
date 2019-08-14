@@ -63,19 +63,9 @@ public abstract class MaterialManagerBase {
         });
     }
 
-//    public boolean isInitSuccessed() {
-//        return managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_INIT) == 1
-//                && (!isIntegrationPresetData() || (isIntegrationPresetData() && managerStatus.get(Constants.MM_STATUS_KEY_PRESET_LOADED) == 1));
-//    }
-
     public boolean isActionExecuted(String actionCode) {
         return managerStatus.containsKey(actionCode) && managerStatus.get(actionCode) == 1;
     }
-
-//    public boolean isIntegrationPresetData() {
-//        return managerStatus.contains(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET)
-//                && managerStatus.get(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET) == 1;
-//    }
 
     public void reload(int resCode) {
         ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_UPDATE, resCode);
