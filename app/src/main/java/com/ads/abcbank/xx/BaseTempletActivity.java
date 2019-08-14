@@ -39,7 +39,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected SliderPlayer mainSliderPlayer;
     protected PlaylistManager playlistManager;
 
-    protected AppCompatActivity activity;
     protected Handler mainHandler = new Handler();
     protected Toast toast = null;
     protected ProgressDialog mProgressDialog;
@@ -80,7 +79,11 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
             @Override
             public void onProgress(int code) {
-                mainSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
+                if (code == Constants.SLIDER_PROGRESS_CODE_PRESET_OK ||
+                    code == Constants.SLIDER_PROGRESS_CODE_PRESET_PRE)
+                    onRateProgressed(code);
+                else
+                    mainSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
             }
         };
     }
@@ -142,6 +145,10 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected void onRateDataPrepared(List<PlayItem> items, List<String> titles){
         mainSliderPlayer.addPlayItems(items, true);
         playlistManager.addMaterialInfo(items);
+    }
+
+    protected void onRateProgressed(int code) {
+        mainSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
     }
 
     protected void reload(int resCode) {

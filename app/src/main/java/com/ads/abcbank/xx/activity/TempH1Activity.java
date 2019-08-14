@@ -59,6 +59,11 @@ public class TempH1Activity extends BaseTempletActivity {
     }
 
     @Override
+    protected void onRateProgressed(int code) {
+        presetSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         timeTransformer.stop();

@@ -65,15 +65,16 @@ public class MaterialManager extends MaterialManagerBase {
                         break;
 
                     case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
-                        String taskStr = "SLIDER_STATUS_CODE_DOWNSUCC-->";
                         if (msg.obj instanceof String[] ){
                             String[] downInfo = (String[]) msg.obj;
                             if (downInfo.length > 1) {
-                                taskStr += downInfo[1];
-                                finishDownload(downInfo[0], downInfo[1]);
+                                try {
+                                    finishDownload(downInfo[0], downInfo[1]);
+                                } catch (Exception e) {
+                                    Logger.e(TAG, e.getMessage());
+                                }
                             }
                         }
-                        Logger.e(TAG, taskStr);
 
                         break;
 
@@ -221,7 +222,6 @@ public class MaterialManager extends MaterialManagerBase {
 
             if (!isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_LOADED)) {
                 managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 1);
-//            if (!isIntegrationPresetData())
                 ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK);
             }
             Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadSavePath.toArray(), "@@\r\n"));
