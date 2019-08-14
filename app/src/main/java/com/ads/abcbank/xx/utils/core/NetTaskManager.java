@@ -16,6 +16,7 @@ import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.utils.Constants;
+import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -28,9 +29,10 @@ public class NetTaskManager {
     TimerTask timerTask;
 
     HandlerThread netThread;
-    Handler netHandler, uiHandler;
+    Handler netHandler;
     Context context;
     NetTaskListener netTaskListener;
+    boolean isInited = false;
 
     public NetTaskManager(Context context, NetTaskListener netTaskListener) {
         this.context = context;
@@ -54,10 +56,13 @@ public class NetTaskManager {
                 super.handleMessage(msg);
 
                 switch (msg.what) {
-//                    case Constants.NET_MANAGER_INIT:
-//                        Utils.getExecutorService().submit(() -> reqAllData());
-//
-//                        break;
+                    case Constants.NET_MANAGER_INIT:
+                        if (!isInited) {
+                            isInited = true;
+                            timer.schedule(timerTask, 50, 1*60*1000 );
+                        }
+
+                        break;
 
                     case Constants.NET_MANAGER_DATA_CMDPOLL:
                         parseCmdPoll(msg.obj);
@@ -83,7 +88,7 @@ public class NetTaskManager {
     }
 
     public void initNetManager() {
-        timer.schedule(timerTask, 50, 1*60*1000 );
+        ResHelper.sendMessage(netHandler, Constants.NET_MANAGER_INIT, null);
     }
 
     public void cancalTask() {
@@ -153,14 +158,6 @@ public class NetTaskManager {
         requestBean.timestamp = System.currentTimeMillis();
         requestBean.flowNum = 0;
         Utils.getAsyncThread().httpService(HTTPContants.CODE_PRESET, JSONObject.parseObject(JSONObject.toJSONString(requestBean)), netHandler, Constants.NET_MANAGER_DATA_PRESET);
-    }
-
-    Message buildMessage(int w, Object obj, boolean isMain) {
-        Message msg = isMain ? uiHandler.obtainMessage() : netHandler.obtainMessage();
-        msg.what = w;
-        msg.obj = obj;
-
-        return msg;
     }
 
     public interface NetTaskListener {
