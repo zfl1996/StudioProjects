@@ -86,8 +86,6 @@ public class PlaylistManager {
         while (it.hasNext()) {
             MaterialInfo mi = it.next();
 
-
-
             if (!ResHelper.isNullOrEmpty(mi.getPlayDate())
                 && !ResHelper.isNullOrEmpty(mi.getStopDate())
                 && !BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate())) {

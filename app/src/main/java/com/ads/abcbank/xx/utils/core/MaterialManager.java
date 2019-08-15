@@ -112,6 +112,7 @@ public class MaterialManager extends MaterialManagerBase {
 
 
         if (!IOHelper.copyOrMoveFile(filePath, correctionFilePath, true)) {
+            Logger.e(TAG, "copyOrMoveFile failed-->" + filePath + " to " + correctionFilePath);
             return;
         }
 
@@ -259,6 +260,8 @@ public class MaterialManager extends MaterialManagerBase {
                     // 构建待下载数据
                     if (!materialStatus.containsKey(bodyBean.id)
                             || materialStatus.get(bodyBean.id) != 1 || !ResHelper.isExistsFile(savePath)) {
+                        materialStatus.remove(bodyBean.id);
+
                         String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
                         if (pathSegments.length <= 0)
                             continue;

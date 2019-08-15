@@ -5,13 +5,11 @@ import android.content.Context;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
-import com.arialyy.annotations.Download;
 import com.arialyy.annotations.DownloadGroup;
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
 import com.arialyy.aria.core.download.DownloadGroupTarget;
 import com.arialyy.aria.core.download.DownloadGroupTask;
-import com.arialyy.aria.core.download.DownloadTask;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -69,6 +67,13 @@ public class DownloadModule {
             for (DownloadEntity subtask : subTasks) {
                 tryFeedbackTask(subtask);
             }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Aria.get(mContext).delRecord(2, task.getKey(), false);
         });
     }
 
@@ -84,6 +89,13 @@ public class DownloadModule {
             for (DownloadEntity subtask : subTasks) {
                 tryFeedbackTask(subtask);
             }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Aria.get(mContext).delRecord(2, task.getKey(), false);
         });
     }
 
