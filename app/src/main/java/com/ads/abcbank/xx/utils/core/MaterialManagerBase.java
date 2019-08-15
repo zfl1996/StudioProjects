@@ -129,9 +129,13 @@ public abstract class MaterialManagerBase {
 
                     break;
 
-                case Constants.SLIDER_STATUS_CODE_WELCOME_LOADED:
-                    _materialStatusListener.onWelcomePrepared((List<String>) msg.obj,
-                            isActionExecuted(Constants.MM_STATUS_KEY_WELCOME_LOADED), false);
+                case Constants.SLIDER_STATUS_CODE_WELCOME_LOADED: {
+                    boolean isLoaded = isActionExecuted(Constants.MM_STATUS_KEY_WELCOME_LOADED);
+                    if (!isLoaded)
+                        managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 1);
+
+                    _materialStatusListener.onWelcomePrepared((List<String>) msg.obj, isLoaded, false);
+                }
 
                     break;
 

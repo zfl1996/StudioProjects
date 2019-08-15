@@ -15,6 +15,7 @@ import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.Utils;
+import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
@@ -125,10 +126,16 @@ public class NetTaskManager {
     private void parsePalyList(Object obj) {
         FileUtil.writeJsonToFile(obj.toString(), false);
 
-        if (Utils.getNewPlayList(context, obj.toString())) {
+        if (BllDataExtractor.needDownload(context, obj.toString())) {
             if (null != netTaskListener)
                 netTaskListener.onPlaylistArrived(JSONObject.parseObject(obj.toString()));
         }
+
+
+//        if (Utils.getNewPlayList(context, obj.toString())) {
+//            if (null != netTaskListener)
+//                netTaskListener.onPlaylistArrived(JSONObject.parseObject(obj.toString()));
+//        }
     }
 
     private void reqAllData() {

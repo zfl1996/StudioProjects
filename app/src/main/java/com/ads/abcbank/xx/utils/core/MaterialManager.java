@@ -100,14 +100,16 @@ public class MaterialManager extends MaterialManagerBase {
         }
 
         PlaylistBodyBean bodyBean = waitForDownloadMaterial.get(fileUrl);
+        String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 
         // 更新素材集状态
-        String _fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
-                filePath.lastIndexOf(".") );
+//        String _fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
+//                filePath.lastIndexOf(".") );
+        String _fileKey = correctionFilePath.substring(correctionFilePath.lastIndexOf("/") + 1,
+                correctionFilePath.lastIndexOf(".") );
         if (materialStatus.containsKey(_fileKey) && materialStatus.get(_fileKey) == 1)
             return;
 
-        String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 
         if (!IOHelper.copyOrMoveFile(filePath, correctionFilePath, true)) {
             return;
@@ -251,7 +253,7 @@ public class MaterialManager extends MaterialManagerBase {
 //                materialStatus.put(bodyBean.id, 0);
                     waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
 
-                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                    String suffix = bodyBean.downloadLink.substring(bodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 
                     // 构建待下载数据
@@ -289,24 +291,23 @@ public class MaterialManager extends MaterialManagerBase {
                         String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                         if (!ResHelper.isNullOrEmpty(wmsg))
                             welcomeItems.add(wmsg);
-                    }
+                    } else
+                        Logger.e(TAG, "not in:" + savePath + ".." + suffix);
 
                 } catch (Exception e) {
                     Logger.e(TAG, e.getMessage());
                 }
-
             }
 
             if (waitForDownloadUrls.size() > 0 && waitForDownloadUrls.size() == waitForDownloadSavePath.size()) {
-//                Logger.e(TAG, "tid:(loadPlaylist)" + Thread.currentThread().getId());
+                Logger.e(TAG, "downloadModule.start-->tid:" + Thread.currentThread().getId()
+                        + ", items:" + ResHelper.join( waitForDownloadUrls.toArray(new String[0]), "#")
+                        + ", count" + waitForDownloadUrls.size());
                 downloadModule.start(waitForDownloadUrls, ResHelper.getTempRootDir() + taskFlag, waitForDownloadSavePath);
             }
 
             if (allPlayItems.size() > 0)
                 ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED, allPlayItems);
-
-            if (welcomeItems.size() > 0)
-                showWelcome(welcomeItems);
 
             if (!isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_LOADED)) {
                 managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 1);
@@ -314,6 +315,9 @@ public class MaterialManager extends MaterialManagerBase {
                 ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS,
                         allPlayItems.size() > 0 ? Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK : Constants.SLIDER_PROGRESS_CODE_PLAYLIST_EMPTY);
             }
+
+            if (welcomeItems.size() > 0)
+                showWelcome(welcomeItems);
             Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadSavePath.toArray(), "@@\r\n"));
 
         } catch (Exception e) {
@@ -328,12 +332,8 @@ public class MaterialManager extends MaterialManagerBase {
 
             managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 0);
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_DEFAULT, welcomeItems);
-        } else {
-//            managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 1);
+        } else
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, welcomeItems);
-            if (!isActionExecuted(Constants.MM_STATUS_KEY_WELCOME_LOADED) && welcomeItems.size() > 0)
-                managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 1);
-        }
 
     }
 

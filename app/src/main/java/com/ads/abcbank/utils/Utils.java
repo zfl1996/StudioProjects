@@ -1110,7 +1110,7 @@ public class Utils {
                 megerAllBean(context, JSONObject.toJSONString(bean));
                 //TODO 此处添加下载列表的相关处理并继续执行下载任务
                 megerDownloadBean(context, JSONObject.toJSONString(bean));
-                startDownload(context);
+//                startDownload(context);
                 put(context, KEY_PLAY_LIST, JSONObject.toJSONString(playLists));
                 return true;
             }

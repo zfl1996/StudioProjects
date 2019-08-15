@@ -1,10 +1,15 @@
 package com.ads.abcbank.xx.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.bean.PlaylistResultBean;
 import com.ads.abcbank.utils.Logger;
+import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -193,6 +198,24 @@ public class BllDataExtractor {
                 return false;
             }
         }
+        return false;
+    }
+
+    public static boolean needDownload(Context context, String jsonString) {
+        if (ResHelper.isNullOrEmpty(jsonString)) {
+            if (!ResHelper.isNullOrEmpty(Utils.get(context, Utils.KEY_PLAY_LIST, "").toString())) {
+                Utils.put(context, Utils.KEY_PLAY_LIST, "");
+                return true;
+            }
+            return false;
+        }
+
+        PlaylistResultBean bean = JSON.parseObject(jsonString, PlaylistResultBean.class);
+        if (bean != null && bean.data != null && bean.data.items != null) {
+            Utils.put(context, Utils.KEY_PLAY_LIST, JSONObject.toJSONString(bean.data.items));
+            return true;
+        }
+
         return false;
     }
 
