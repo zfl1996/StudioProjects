@@ -176,15 +176,15 @@ public class DownloadService extends Service {
                 TaskTagUtil.saveOffset(task, currentOffset);
                 TaskTagUtil.saveTotal(task, totalLength);
 
-                try{
+                try {
 
                     // limit speed to maxRate
                     long time = System.currentTimeMillis();
                     long diff = time - downloadBean.startTimestamp;
-                    if(time == downloadBean.startTimestamp) return;
+                    if (time == downloadBean.startTimestamp) return;
                     long rate = (currentOffset) / (time - downloadBean.startTimestamp);
 //                long rate2 = (1000*currentOffset) / (time - downloadBean.startTimestamp);
-                    String rs = humanReadableBytes(rate*1000, true);
+                    String rs = humanReadableBytes(rate * 1000, true);
 //                String rs2 = humanReadableBytes(rate2, true);
                     float percent = (float) currentOffset / totalLength * 100;
 
@@ -199,11 +199,11 @@ public class DownloadService extends Service {
 //                                    task.cancel();
 
                                     int sleep = (int) (currentOffset / (maxRate) - (time - downloadBean.startTimestamp));
-                                    try{
+                                    try {
 
                                         Logger.e(TAG, "--> pause --" + rate + "/" + rs + "-"
                                                 + percent + "%-" + currentOffset + "-" + sleep + "ms -"
-                                                + (time - downloadBean.startTimestamp)/1000 + "s");
+                                                + (time - downloadBean.startTimestamp) / 1000 + "s");
 
                                         if (sleep > 0)
                                             Thread.sleep(sleep + 300);
@@ -220,8 +220,7 @@ public class DownloadService extends Service {
                         });
                     }
 
-                }
-                catch (Exception ex){
+                } catch (Exception ex) {
                     Logger.e(TAG, ex.getMessage());
                 }
             }
@@ -273,7 +272,7 @@ public class DownloadService extends Service {
                             //--------- cache pdf -------
                             String dfPath = downloadFile.getAbsolutePath();
                             String[] extData = ResHelper.getPDFExtInfo(dfPath);
-                            if (extData.length > 0 && !ResHelper.isNullOrEmpty(extData[1]) && extData[1].toLowerCase().equals("pdf") ){
+                            if (extData.length > 0 && !ResHelper.isNullOrEmpty(extData[1]) && extData[1].toLowerCase().equals("pdf")) {
                                 Intent serviceIntent = new Intent(mContext, CachePdfService.class);
 
                                 serviceIntent.putExtra(Constants.PDF_CACHE_FILENAME, downloadBean.name);
@@ -282,6 +281,7 @@ public class DownloadService extends Service {
                             //----------------------
 
                             downloadBean.status = "finish";
+                            downloadBean.timestamp = System.currentTimeMillis();
                             Logger.e(task.getFilename() + "--下载完成，通知服务端下载完成");
                             Utils.getAsyncThread().httpService(HTTPContants.CODE_DOWNLOAD_FINISH, JSONObject.parseObject(JSONObject.toJSONString(downloadBean)), HandlerUtil.noCheckGet(), 1);
                             //通知更新UI
@@ -289,12 +289,12 @@ public class DownloadService extends Service {
                         }
 
 
-                            String json = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, "").toString();
-                            PlaylistResultBean allDownResultBean = null;
-                            if (!TextUtils.isEmpty(json)) {
-                                allDownResultBean = JSON.parseObject(json, PlaylistResultBean.class);
-                            }
-                            if (allDownResultBean != null && allDownResultBean.data != null && allDownResultBean.data.items != null) {
+                        String json = Utils.get(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, "").toString();
+                        PlaylistResultBean allDownResultBean = null;
+                        if (!TextUtils.isEmpty(json)) {
+                            allDownResultBean = JSON.parseObject(json, PlaylistResultBean.class);
+                        }
+                        if (allDownResultBean != null && allDownResultBean.data != null && allDownResultBean.data.items != null) {
                                 /*for (int i = 0; i < allDownResultBean.data.items.size(); i++) {
                                     if (allDownResultBean.data.items.get(i).id.equals(downloadBean.id) &&
                                             allDownResultBean.data.items.get(i).name.equals(task.getFilename())) {
@@ -304,8 +304,8 @@ public class DownloadService extends Service {
                                 }
                                 Utils.put(mContext, Utils.KEY_PLAY_LIST_DOWNLOAD, JSONObject.toJSONString(allDownResultBean));
                                */
-                                Utils.fileDownload(DownloadService.this, downloadBean);
-                            }
+                            Utils.fileDownload(DownloadService.this, downloadBean);
+                        }
 
                     } else if (cause.equals(EndCause.ERROR)) {
                         downloadBean.started = "";
@@ -448,13 +448,12 @@ public class DownloadService extends Service {
 //                });
 
 
-
             DownloadBean downloadBean = TaskTagUtil.getDownloadBean(task);
 
 
             Logger.e(TAG, "-->speed: " + task.getFilename()
                     + "---当前状态-(" + speed.substring(0, speed.indexOf(" ")) + ")--" + progressStatusWithSpeed
-                    + "- " + (System.currentTimeMillis() - downloadBean.startTimestamp)/1000 + "s -"
+                    + "- " + (System.currentTimeMillis() - downloadBean.startTimestamp) / 1000 + "s -"
             );
         }
 
