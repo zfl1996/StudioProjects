@@ -21,6 +21,7 @@ public class TempH1Activity extends BaseTempletActivity {
     TabLayout tabIndicator;
     TextView txtDate, txtTime;
     TimeTransformer timeTransformer;
+    boolean isTabInited = false;
 
     @Override
     protected void initCtrls(Bundle savedInstanceState) {
@@ -52,10 +53,13 @@ public class TempH1Activity extends BaseTempletActivity {
     protected void onRateDataPrepared(List<PlayItem> items, List<String> titles){
         presetSliderPlayer.addPlayItems(items, false);
 
-        for (String title : titles)
-            tabIndicator.addTab( tabIndicator.newTab().setText( title ) );
+        if (!isTabInited) {
+            isTabInited = true;
+            for (String title : titles)
+                tabIndicator.addTab(tabIndicator.newTab().setText(title));
 
-        GuiHelper.setTabWidth(tabIndicator);
+            GuiHelper.setTabWidth(tabIndicator);
+        }
     }
 
     @Override
