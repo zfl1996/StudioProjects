@@ -19,9 +19,7 @@ import com.alibaba.fastjson.JSON;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MaterialManager extends MaterialManagerBase {
     static String TAG = MaterialManagerBase.class.getSimpleName();;
@@ -43,7 +41,7 @@ public class MaterialManager extends MaterialManagerBase {
                 switch (msg.what) {
 
                     case Constants.SLIDER_STATUS_CODE_INIT:
-                        Logger.e(TAG, "tid:(SLIDER_STATUS_CODE_INIT)" + Thread.currentThread().getId());
+
                         Utils.getExecutorService().submit(() -> loadPlaylist());
                         Utils.getExecutorService().submit(() -> loadPreset());
                         Utils.getExecutorService().submit(() -> showWelcome(null));
@@ -52,7 +50,7 @@ public class MaterialManager extends MaterialManagerBase {
 
                     case Constants.SLIDER_STATUS_CODE_UPDATE:
                         int resCode = (int)msg.obj;
-                        Logger.e(TAG, "SLIDER_STATUS_CODE_UPDATE --> resCode:" + resCode + "(tid:" + Thread.currentThread().getId() + ")");
+
                         Utils.getExecutorService().submit(() -> {
                             if (resCode == Constants.NET_MANAGER_DATA_PLAYLIST) {
 //                                if (managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_LOADED) != 1)
@@ -93,7 +91,8 @@ public class MaterialManager extends MaterialManagerBase {
     private void finishDownload(String fileUrl, String filePath) {
         if (Constants.SYS_CONFIG_IS_CHECKMD5) {
             if (!waitForDownloadMaterial.containsKey(fileUrl)
-                    || !IOHelper.fileToMD5(filePath).equals(waitForDownloadMaterial.get(fileUrl))) {
+//                    || !IOHelper.fileToMD5(filePath).equals(waitForDownloadMaterial.get(fileUrl).md5)
+            ) {
                 IOHelper.deleteFile(filePath);
                 waitForDownloadMaterial.remove(fileUrl);
                 return;
@@ -120,7 +119,6 @@ public class MaterialManager extends MaterialManagerBase {
         // 更新已下载素材状态
         String[] ids = materialStatus.keySet().toArray(new String[0]);
         Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
-        Logger.e(TAG, "MM_STATUS_FINISHED_TASKID-->" + ResHelper.join(ids, ","));
 
         // 处理pdf缓存或者通知前端显示
 //                        Utils.getExecutorService().submit(() -> {
@@ -129,9 +127,9 @@ public class MaterialManager extends MaterialManagerBase {
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
         String suffix = filePath.substring(filePath.lastIndexOf(".") + 1);
         boolean needNotify = false;
+        Logger.e(TAG, "MM_STATUS_FINISHED_TASKID-->" + _fileKey + "." + suffix + " ,count:" + ids.length /*ResHelper.join(ids, ",")*/);
 
         if (suffix.toLowerCase().equals("pdf")) {
-            Logger.e(TAG, fileName);
             List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey,
                     bodyBean.playDate, bodyBean.stopDate,
                     bodyBean.onClickLink, bodyBean.QRCode  );
@@ -218,6 +216,8 @@ public class MaterialManager extends MaterialManagerBase {
                     if (!ResHelper.isNullOrEmpty(id))
                         materialStatus.put(id, 1);
                 }
+
+                Logger.e(TAG, "loadPlaylist-->" + jsonFinish + " ,count:" + ids.length);
             }
         }
 
@@ -230,66 +230,75 @@ public class MaterialManager extends MaterialManagerBase {
             List<PlayItem> allPlayItems = new ArrayList<>();
             List<String> waitForDownloadUrls = new ArrayList<>();
             List<String> waitForDownloadSavePath = new ArrayList<>();
-            Map<String, Integer> waitForFiles = new HashMap<>();
+//            Map<String, Integer> waitForFiles = new HashMap<>();
             List<String> welcomeItems = new ArrayList<>();
             String contentTypeMiddle = Utils.getContentTypeMiddle(context);
             String contentTypeEnd = Utils.getContentTypeEnd(context);
             long taskFlag = System.currentTimeMillis();
 
             for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {
-                // 过滤非下载时段和已下载项
-                if (!BllDataExtractor.isInDownloadTime(bodyBean)
-                        || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
+                try{
+                    // 过滤非下载时段和已下载项
+                    if (!BllDataExtractor.isInDownloadTime(bodyBean)
+                            || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
 //                        || materialStatus.containsKey(bodyBean.id)
-                        || waitForFiles.containsKey(bodyBean.downloadLink) )
-                    continue;
-
-                waitForFiles.put(bodyBean.downloadLink, 0);
-//                materialStatus.put(bodyBean.id, 0);
-
-                String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
-                String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
-
-                // 构建待下载数据
-                if (!materialStatus.containsKey(bodyBean.id)
-                        || materialStatus.get(bodyBean.id) != 1 || !ResHelper.isExistsFile(savePath)) {
-                    String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
-                    if (pathSegments.length <= 0)
+//                            || waitForFiles.containsKey(bodyBean.downloadLink)
+                            || waitForDownloadMaterial.containsKey(bodyBean.downloadLink)
+                    )
                         continue;
 
-                    if (!ResHelper.isNullOrEmpty(bodyBean.isUrg) && bodyBean.isUrg.equals("1")) {
-                        waitForDownloadUrls.add(0, bodyBean.downloadLink);
-                        waitForDownloadSavePath.add(0, pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
-                    } else {
-                        waitForDownloadUrls.add(bodyBean.downloadLink);
-                        waitForDownloadSavePath.add(pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
+//                    waitForFiles.put(bodyBean.downloadLink, 0);
+//                materialStatus.put(bodyBean.id, 0);
+                    waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
+
+                    String suffix = bodyBean.name.substring(bodyBean.name.lastIndexOf(".") + 1).toLowerCase();
+                    String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
+
+                    // 构建待下载数据
+                    if (!materialStatus.containsKey(bodyBean.id)
+                            || materialStatus.get(bodyBean.id) != 1 || !ResHelper.isExistsFile(savePath)) {
+                        String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
+                        if (pathSegments.length <= 0)
+                            continue;
+
+                        if (!ResHelper.isNullOrEmpty(bodyBean.isUrg) && bodyBean.isUrg.equals("1")) {
+                            waitForDownloadUrls.add(0, bodyBean.downloadLink);
+                            waitForDownloadSavePath.add(0, pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
+                        } else {
+                            waitForDownloadUrls.add(bodyBean.downloadLink);
+                            waitForDownloadSavePath.add(pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
+                        }
+
+//                        waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
+                        continue;
                     }
 
-                    waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
-                    continue;
+
+                    if (suffix.equals("pdf")) {
+                        allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf",
+                                bodyBean.playDate, bodyBean.stopDate,
+                                bodyBean.onClickLink, bodyBean.QRCode));
+                    } else if(BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
+                            || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
+                        allPlayItems.add(new PlayItem(bodyBean.id,
+                                ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id),
+                                BllDataExtractor.getIdentityType(bodyBean),
+                                bodyBean.playDate, bodyBean.stopDate,
+                                bodyBean.onClickLink, bodyBean.QRCode));
+                    } else if (suffix.equals("txt")) {
+                        String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
+                        if (!ResHelper.isNullOrEmpty(wmsg))
+                            welcomeItems.add(wmsg);
+                    }
+
+                } catch (Exception e) {
+                    Logger.e(TAG, e.getMessage());
                 }
 
-
-                if (suffix.equals("pdf")) {
-                    allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf",
-                            bodyBean.playDate, bodyBean.stopDate,
-                            bodyBean.onClickLink, bodyBean.QRCode));
-                } else if(BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
-                    || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
-                    allPlayItems.add(new PlayItem(bodyBean.id,
-                            ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id),
-                            BllDataExtractor.getIdentityType(bodyBean),
-                            bodyBean.playDate, bodyBean.stopDate,
-                            bodyBean.onClickLink, bodyBean.QRCode));
-                } else if (suffix.equals("txt")) {
-                    String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
-                    if (!ResHelper.isNullOrEmpty(wmsg))
-                        welcomeItems.add(wmsg);
-                }
             }
 
             if (waitForDownloadUrls.size() > 0 && waitForDownloadUrls.size() == waitForDownloadSavePath.size()) {
-                Logger.e(TAG, "tid:(loadPlaylist)" + Thread.currentThread().getId());
+//                Logger.e(TAG, "tid:(loadPlaylist)" + Thread.currentThread().getId());
                 downloadModule.start(waitForDownloadUrls, ResHelper.getTempRootDir() + taskFlag, waitForDownloadSavePath);
             }
 

@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.ads.abcbank.bean.PlaylistBodyBean;
-import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.Constants;
@@ -122,7 +121,7 @@ public abstract class MaterialManagerBase {
             if (null == _materialStatusListener)
                 return;
 
-            Logger.e(TAG, "tid:(uiHandler)" + Thread.currentThread().getId());
+//            Logger.e(TAG, "tid:(uiHandler)" + Thread.currentThread().getId());
 
             switch (msg.what) {
                 case Constants.SLIDER_STATUS_CODE_WELCOME_DEFAULT:
