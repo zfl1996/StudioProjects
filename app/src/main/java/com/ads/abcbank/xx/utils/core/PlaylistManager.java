@@ -20,11 +20,13 @@ public class PlaylistManager {
 
     private static final int MSG_OF_PLAYLIST = 0x001;
     private static final int MSG_OF_PLAYLIST_ADD = 0x002;
+    private static final int MSG_OF_WELCOME_ADD = 0x003;
 
     private Context context;
     private HandlerThread plThread;
     private Handler plHandler;
     private List<MaterialInfo> materialInfos = new ArrayList<>();
+    private List<MaterialInfo> welcomeItems = new ArrayList<>();
     private IPlaylistStatusListener playlistStatusListener;
 
     public PlaylistManager(Context context, IPlaylistStatusListener playlistStatusListener) {
@@ -57,6 +59,13 @@ public class PlaylistManager {
 
                       break;
 
+                  case MSG_OF_WELCOME_ADD:
+                      List<PlayItem> words = (List<PlayItem>)msg.obj;
+                      for (PlayItem word : words)
+                          welcomeItems.add(new MaterialInfo(word.getMd5(), word.getPlayDate(), word.getStopDate()));
+
+                      break;
+
                   default:
                       break;
               }
@@ -78,13 +87,13 @@ public class PlaylistManager {
             MaterialInfo mi = it.next();
 
 
-            Logger.e(TAG, "NotInPlayTime-->" + mi.getId() + " index:" + i + " time:"
-                    + mi.getPlayDate() + "-" + mi.getStopDate() + "-->" + BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate()) );
 
             if (!ResHelper.isNullOrEmpty(mi.getPlayDate())
                 && !ResHelper.isNullOrEmpty(mi.getStopDate())
                 && !BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate())) {
 
+                Logger.e(TAG, "NotInPlayTime-->" + mi.getId() + " index:" + i + " time:"
+                        + mi.getPlayDate() + "-" + mi.getStopDate() + "-->" + BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate()) );
                 playlistStatusListener.onOutOfTime(mi.getId(), i);
                 it.remove();
 
