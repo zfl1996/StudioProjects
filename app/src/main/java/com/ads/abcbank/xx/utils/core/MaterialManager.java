@@ -55,10 +55,10 @@ public class MaterialManager extends MaterialManagerBase {
                         Logger.e(TAG, "SLIDER_STATUS_CODE_UPDATE --> resCode:" + resCode + "(tid:" + Thread.currentThread().getId() + ")");
                         Utils.getExecutorService().submit(() -> {
                             if (resCode == Constants.NET_MANAGER_DATA_PLAYLIST) {
-                                if (managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_LOADED) != 1)
+//                                if (managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_LOADED) != 1)
                                     loadPlaylist();
                             } else if(resCode == Constants.NET_MANAGER_DATA_PRESET) {
-                                if (managerStatus.get(Constants.MM_STATUS_KEY_PRESET_LOADED) != 1)
+//                                if (managerStatus.get(Constants.MM_STATUS_KEY_PRESET_LOADED) != 1)
                                     loadPreset();
                             }
                         });
