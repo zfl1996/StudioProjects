@@ -1,10 +1,13 @@
 package com.ads.abcbank.xx.utils.helper;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.support.design.widget.TabLayout;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.ads.abcbank.R;
 import com.ads.abcbank.utils.Logger;
 
 import java.lang.reflect.Field;
@@ -22,6 +25,14 @@ public class GuiHelper {
 //            img.setBounds(0, 0, 0, 0);
 //            txtToolbarSubTitle.setCompoundDrawables(img, null, null, null);
 //        }
+    }
+
+    public static int getBackgroundResource(Context context) {
+        if (context.getResources().getConfiguration().orientation ==
+                Configuration.ORIENTATION_LANDSCAPE)
+            return R.mipmap.bg_land;
+        else
+            return R.mipmap.bg_port;
     }
 
     public static void setTabWidth(final TabLayout tabLayout) {

@@ -1,7 +1,6 @@
 package com.ads.abcbank.xx.ui.view;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,12 +17,11 @@ import com.ads.abcbank.xx.ui.adapter.SliderMainAdapter;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.ui.widget.RecyclerPagerView;
 import com.ads.abcbank.xx.utils.Constants;
+import com.ads.abcbank.xx.utils.helper.GuiHelper;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 public class SliderPlayer extends LinearLayout {
     static String TAG = "SliderPlayer";
@@ -97,9 +95,7 @@ public class SliderPlayer extends LinearLayout {
 
         // set imgholder if not narrow mode
         if (displayMode != 2) {
-            Configuration conf = getResources().getConfiguration();
-
-            imgHolder.setImageResource(conf.orientation == ORIENTATION_LANDSCAPE ? R.mipmap.bg_land : R.mipmap.bg_port);
+            imgHolder.setImageResource(GuiHelper.getBackgroundResource(context));
             imgHolder.setVisibility(View.VISIBLE);
         }
 
@@ -107,6 +103,8 @@ public class SliderPlayer extends LinearLayout {
 
         // init relative to slider data
         sliderAdapter = new SliderMainAdapter(context);
+
+//        sliderAdapter.setHasStableIds(true);
         sliderAdapter.setRateResourceMap(rateResourceMap);
         sliderAdapter.setIntegrationPresetData( isIntegrationMode() );
         sliderAdapter.setVideoStatusListener(new SliderVideoHolder.VideoStatusListener() {
