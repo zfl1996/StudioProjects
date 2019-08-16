@@ -11,6 +11,7 @@ import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
+import com.alibaba.fastjson.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public abstract class MaterialManagerBase {
 
     Context context;
     DownloadModule downloadModule;
+    NetTaskManager netTaskManager;
 
     // worker thread
     HandlerThread materialThread;
@@ -43,6 +45,7 @@ public abstract class MaterialManagerBase {
      * @param filters 模板对应的资源过滤符
      */
     public void initManager(boolean integrationPresetData, String filters) {
+        initNetTaskManager();
         this.filters = filters;
         managerStatus.put(Constants.MM_STATUS_KEY_IS_INTEGRATION_PRESET, integrationPresetData ? 1 : 0);
 
@@ -59,6 +62,27 @@ public abstract class MaterialManagerBase {
 
             downloadModule = new DownloadModule(context, MAX_RATE, downloadStateLisntener);
             ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_INIT, null);
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            netTaskManager.initNetManager();
+        });
+    }
+
+    private void initNetTaskManager() {
+        netTaskManager = new NetTaskManager(context, new NetTaskManager.NetTaskListener() {
+            @Override
+            public void onPlaylistArrived(JSONObject jsonObject) {
+                reload(Constants.NET_MANAGER_DATA_PLAYLIST);
+            }
+
+            @Override
+            public void onPresetArrived(JSONObject jsonObject) {
+                reload(Constants.NET_MANAGER_DATA_PRESET);
+            }
         });
     }
 
@@ -73,6 +97,9 @@ public abstract class MaterialManagerBase {
     public void clear() {
         if (null != downloadModule)
             downloadModule.stop();
+
+        if (null != netTaskManager)
+            netTaskManager.cancalTask();
 
         if (null != materialThread)
             materialThread.quitSafely();
@@ -152,11 +179,6 @@ public abstract class MaterialManagerBase {
 
                     break;
 
-                case Constants.SLIDER_STATUS_CODE_DOWNSUCC_NOTIFY:
-                    _materialStatusListener.onDownloadSucceed(msg.obj);
-
-                    break;
-
                 case Constants.SLIDER_STATUS_CODE_PROGRESS:
                     _materialStatusListener.onProgress((int)msg.obj);
 
@@ -176,6 +198,5 @@ public abstract class MaterialManagerBase {
         void onRatePrepared(List<PlayItem> items, List<String> titles);
         void onPlayItemPrepared(List<PlayItem> items);
         void onWelcomePrepared(List<String> msg, boolean isAppend, boolean isDefault);
-        void onDownloadSucceed(Object notifyData);
     }
 }

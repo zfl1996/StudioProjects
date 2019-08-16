@@ -113,7 +113,7 @@ public class NetTaskManager {
         ResHelper.sendMessage(netHandler, Constants.NET_MANAGER_INIT, null);
     }
 
-    public void sendDownloadFinishNotify(Object data) {
+    public void notifyownloadFinish(Object data) {
         ResHelper.sendMessage(netHandler, Constants.NET_MANAGER_DATA_FINISHNOTIFY, data);
     }
 

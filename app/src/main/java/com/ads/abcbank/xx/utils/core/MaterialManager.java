@@ -58,13 +58,10 @@ public class MaterialManager extends MaterialManagerBase {
                         int resCode = (int)msg.obj;
 
                         Utils.getExecutorService().submit(() -> {
-                            if (resCode == Constants.NET_MANAGER_DATA_PLAYLIST) {
-//                                if (managerStatus.get(Constants.MM_STATUS_KEY_PLAYLIST_LOADED) != 1)
+                            if (resCode == Constants.NET_MANAGER_DATA_PLAYLIST)
                                     loadPlaylist();
-                            } else if(resCode == Constants.NET_MANAGER_DATA_PRESET) {
-//                                if (managerStatus.get(Constants.MM_STATUS_KEY_PRESET_LOADED) != 1)
+                            else if(resCode == Constants.NET_MANAGER_DATA_PRESET)
                                     loadPreset();
-                            }
                         });
 
                         break;
@@ -107,9 +104,7 @@ public class MaterialManager extends MaterialManagerBase {
 
         PlaylistBodyBean bodyBean = waitForDownloadMaterial.get(fileUrl);
         bodyBean.secUsed = ResHelper.getTimeDiff(bodyBean.started);
-
-        ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_DOWNSUCC_NOTIFY,
-                new String[]{ bodyBean.id, bodyBean.started, bodyBean.secUsed });
+        netTaskManager.notifyownloadFinish(new String[]{ bodyBean.id, bodyBean.started, bodyBean.secUsed });
 
         // 更新素材集状态
         String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
@@ -283,7 +278,6 @@ public class MaterialManager extends MaterialManagerBase {
                             waitForDownloadSavePath.add(pathSegments[1] + bodyBean.id + "." + pathSegments[0]);
                         }
 
-//                        waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
                         continue;
                     }
 

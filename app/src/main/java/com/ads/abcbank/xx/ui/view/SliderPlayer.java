@@ -34,7 +34,6 @@ public class SliderPlayer extends LinearLayout {
 
     IPageChangeListener pageChangeListener;
     SliderMainAdapter sliderAdapter;
-    DataStatusListener dataStatusListener;
 
     int displayMode = 0;
     public boolean isIntegrationMode(){
@@ -50,10 +49,6 @@ public class SliderPlayer extends LinearLayout {
             return DisplayMode.PresetOnly;
 
         return DisplayMode.Unknown;
-    }
-
-    public void setDataStatusListener(DataStatusListener dataStatusListener) {
-        this.dataStatusListener = dataStatusListener;
     }
 
     public void setPageChangeListener(IPageChangeListener pageChangeListener) {
@@ -147,9 +142,6 @@ public class SliderPlayer extends LinearLayout {
                 txtHint.setText(code == Constants.SLIDER_PROGRESS_CODE_PLAYLIST_PRE ?
                         "处理播放列表数据" : "准备汇率数据");
 
-                if (null != dataStatusListener)
-                    dataStatusListener.onReady();
-
                 break;
 
             case Constants.SLIDER_PROGRESS_CODE_PLAYLIST_EMPTY:
@@ -194,10 +186,6 @@ public class SliderPlayer extends LinearLayout {
 
     public interface IPageChangeListener {
         void onPageSelection(int position);
-    }
-
-    public interface DataStatusListener {
-        void onReady();
     }
 
     public enum DisplayMode {

@@ -31,7 +31,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected final String TAG = BaseActivity.class.getSimpleName();
 
-    private NetTaskManager netTaskManager;
     private MaterialManager materialManager;
     protected MaterialManager.MaterialStatusListener materialStatusListener;
     protected AutoPollAdapter autoPollAdapter;
@@ -78,11 +77,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onDownloadSucceed(Object notifyData) {
-                netTaskManager.sendDownloadFinishNotify(notifyData);
-            }
-
-            @Override
             public void onProgress(int code) {
                 if (code == Constants.SLIDER_PROGRESS_CODE_PRESET_OK ||
                     code == Constants.SLIDER_PROGRESS_CODE_PRESET_PRE)
@@ -94,20 +88,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     }
 
     private void initPlayer() {
-        netTaskManager = new NetTaskManager(this, new NetTaskManager.NetTaskListener() {
-            @Override
-            public void onPlaylistArrived(JSONObject jsonObject) {
-                onPlaylistResponsed(jsonObject);
-            }
-
-            @Override
-            public void onPresetArrived(JSONObject jsonObject) {
-                onPresetResponsed(jsonObject);
-            }
-        });
-
-        mainSliderPlayer.setDataStatusListener(() -> netTaskManager.initNetManager());
-
         // start data process...
         materialManager = new MaterialManager(this, materialStatusListener);
         materialManager.initManager(mainSliderPlayer.isIntegrationMode(), type);
@@ -123,14 +103,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected boolean isPresetLoaded() {
         return materialManager.isActionExecuted(Constants.MM_STATUS_KEY_PRESET_LOADED);
-    }
-
-    protected void onPlaylistResponsed(JSONObject jsonObject) {
-        reload(Constants.NET_MANAGER_DATA_PLAYLIST);
-    }
-
-    protected void onPresetResponsed(JSONObject jsonObject) {
-        reload(Constants.NET_MANAGER_DATA_PRESET);
     }
 
     protected void onWelcomeLoaded(List<String> items, boolean isAppend, boolean isDefault) {
@@ -154,10 +126,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected void onRateDataProgress(int code) {
         mainSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
-    }
-
-    protected void reload(int resCode) {
-        materialManager.reload(resCode);
     }
 
     protected abstract int getLayoutResourceId();
@@ -209,9 +177,6 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         super.onDestroy();
 
         try {
-            if (null != netTaskManager)
-                netTaskManager.cancalTask();
-
             if (null != materialManager)
                 materialManager.clear();
         } catch (Exception e) {
