@@ -283,7 +283,7 @@ public class MaterialManager extends MaterialManagerBase {
                         continue;
                     }
 
-                    // 按资源类型分别通知前端显示
+                    // 按类型分别构建用于前端显示的资源
                     if (suffix.equals("pdf")) {
                         allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf",
                                 bodyBean.playDate, bodyBean.stopDate,
@@ -307,6 +307,7 @@ public class MaterialManager extends MaterialManagerBase {
                 }
             }
 
+            // 开始下载本地不存在的资源
             if (waitForDownloadUrls.size() > 0 && waitForDownloadUrls.size() == waitForDownloadSavePath.size()) {
                 Logger.e(TAG, "downloadModule.start-->" + ", count" + waitForDownloadUrls.size()
                         + ", items:" + ResHelper.join( waitForDownloadUrls.toArray(new String[0]), "#"));
@@ -314,9 +315,11 @@ public class MaterialManager extends MaterialManagerBase {
                 downloadModule.start(waitForDownloadUrls, ResHelper.getTempRootDir() + taskFlag, waitForDownloadSavePath);
             }
 
+            // 通知前端显示已下载的资源
             if (allPlayItems.size() > 0)
                 ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED, allPlayItems);
 
+            // 通知前端播放列表遍历完成
             if (!isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_LOADED)) {
                 managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 1);
                 managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_DOWNLOADED, allPlayItems.size() > 0 ? 1 : 0);
@@ -324,6 +327,7 @@ public class MaterialManager extends MaterialManagerBase {
                         allPlayItems.size() > 0 ? Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK : Constants.SLIDER_PROGRESS_CODE_PLAYLIST_EMPTY);
             }
 
+            // 通知前端显示跑马灯文字
             if (welcomeItems.size() > 0)
                 showWelcome(welcomeItems);
             Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadSavePath.toArray(), "@@\r\n"));
