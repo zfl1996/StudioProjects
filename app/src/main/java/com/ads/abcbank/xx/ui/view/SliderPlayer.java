@@ -2,6 +2,7 @@ package com.ads.abcbank.xx.ui.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.nfc.Tag;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.SliderMainAdapter;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
@@ -105,11 +107,13 @@ public class SliderPlayer extends LinearLayout {
         sliderAdapter.setVideoStatusListener(new SliderVideoHolder.VideoStatusListener() {
             @Override
             public void onStartPlay() {
+                Logger.e(TAG, "onStartPlay");
                 recyclerPagerView.pausePlay();
             }
 
             @Override
             public void onPlayFinish() {
+                Logger.e(TAG, "onPlayFinish");
                 recyclerPagerView.resumePlay();
             }
         });

@@ -47,7 +47,7 @@ public class PlaylistManager {
 
                       plHandler.postDelayed(() -> {
                           plHandler.sendMessage(buildMessage(MSG_OF_PLAYLIST, null, false));
-                      }, 1000 * 30);
+                      }, 1000 * 120);
 
                       break;
 

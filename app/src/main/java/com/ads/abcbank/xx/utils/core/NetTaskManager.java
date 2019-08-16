@@ -64,7 +64,7 @@ public class NetTaskManager {
                     case Constants.NET_MANAGER_INIT:
                         if (!isInited) {
                             isInited = true;
-                            timer.schedule(timerTask, 50, 1*60*1000 );
+                            timer.schedule(timerTask, 50, 2*60*1000 );
                         }
 
                         break;

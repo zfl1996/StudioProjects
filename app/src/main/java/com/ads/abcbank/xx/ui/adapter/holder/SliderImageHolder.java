@@ -71,32 +71,33 @@ public class SliderImageHolder extends RecyclerView.ViewHolder {
                     ;
 
 
-        if (!ResHelper.isNullOrEmpty(item.getClickLink()) && holder.getIvGif() != null) {
-            holder.getIvGif().setVisibility(View.VISIBLE);
-            holder.getIvGif().setOnClickListener(e -> {
-                Intent intent = new Intent(ActivityManager.getInstance().getTopActivity(), WebViewActivity.class);
-                intent.putExtra(Utils.WEBURL, item.getClickLink());
-                ActivityManager.getInstance().getTopActivity().startActivity(intent);
-            });
-        }
+//        if (!ResHelper.isNullOrEmpty(item.getClickLink()) && holder.getIvGif() != null) {
+//            holder.getIvGif().setVisibility(View.VISIBLE);
+//            holder.getIvGif().setOnClickListener(e -> {
+//                Intent intent = new Intent(ActivityManager.getInstance().getTopActivity(), WebViewActivity.class);
+//                intent.putExtra(Utils.WEBURL, item.getClickLink());
+//                ActivityManager.getInstance().getTopActivity().startActivity(intent);
+//            });
+//        }
 
-        if (null != item.getAttData()){
-            try {
-                List<PlaylistBodyBean.QR> qrs = (List<PlaylistBodyBean.QR>)item.getAttData();
 
-                if (holder.getQrView() == null) {
-                    View v = holder.getQrStub().inflate();
-//                QRView qrView = v.findViewById(R.id.qrContainer).findViewById(R.id.qrView);
-//                qrView.showQRs(qrs);
-                    holder.setQrView(v.findViewById(R.id.qrContainer).findViewById(R.id.qrView));
-                }
-
-                holder.getQrView().showQRs(qrs);
-
-            } catch (Exception e) {
-                Logger.e("SliderImageHolder", e.getMessage());
-            }
-        }
+//        if (null != item.getAttData()){
+//            try {
+//                List<PlaylistBodyBean.QR> qrs = (List<PlaylistBodyBean.QR>)item.getAttData();
+//
+//                if (holder.getQrView() == null) {
+//                    View v = holder.getQrStub().inflate();
+////                QRView qrView = v.findViewById(R.id.qrContainer).findViewById(R.id.qrView);
+////                qrView.showQRs(qrs);
+//                    holder.setQrView(v.findViewById(R.id.qrContainer).findViewById(R.id.qrView));
+//                }
+//
+//                holder.getQrView().showQRs(qrs);
+//
+//            } catch (Exception e) {
+//                Logger.e("SliderImageHolder", e.getMessage());
+//            }
+//        }
     }
 
 }
