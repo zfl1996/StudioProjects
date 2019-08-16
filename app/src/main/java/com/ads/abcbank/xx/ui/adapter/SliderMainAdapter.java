@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.ads.abcbank.R;
 import com.ads.abcbank.bean.PresetBean;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderImageHolder;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderRateBuyHolder;
@@ -28,6 +29,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private SliderVideoHolder.VideoStatusListener videoStatusListener;
     private boolean isIntegrationPresetData;
     private Map<Integer, Integer> rateResourceMap;
+//    private String videoPath = "";
 
     public void setRateResourceMap(Map<Integer, Integer> rateResourceMap) {
         this.rateResourceMap = rateResourceMap;
@@ -141,12 +143,15 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             } );
 
             _holder.getVideoContent().setOnPreparedListener((int v) -> {
+//                videoPath = "";
                 if (null != videoStatusListener)
                     videoStatusListener.onStartPlay();
             });
 
+//            videoPath =_holder.getVideoPath();
             _holder.getVideoContent().setVideoPath(_holder.getVideoPath());
             _holder.getVideoContent().start();
+            Logger.e("SliderPlayer", "onViewAttachedToWindow-->" + _holder.getVideoPath());
         }
     }
 
@@ -155,11 +160,12 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (holder instanceof SliderVideoHolder) {
             SliderVideoHolder _holder = (SliderVideoHolder) holder;
 
+            Logger.e("SliderPlayer", "onViewDetachedFromWindow-->" + _holder.getVideoPath() + ",status:" + _holder.getVideoContent().isPlaying());
+            if (null != videoStatusListener && _holder.getVideoContent().isPlaying()/*&& !videoPath.equals("") && _holder.getVideoPath().equals(videoPath)*/)
+                videoStatusListener.onPlayFinish();
+
             _holder.getVideoContent().pause();
             _holder.getVideoContent().stopPlayback();
-
-            if (null != videoStatusListener)
-                videoStatusListener.onPlayFinish();
         }
     }
 
