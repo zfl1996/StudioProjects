@@ -98,7 +98,7 @@ public class MaterialManager extends MaterialManagerBase {
 
         PlaylistBodyBean bodyBean = loadedMaterial.get(fileUrl);
         bodyBean.secUsed = ResHelper.getTimeDiff(bodyBean.started);
-        netTaskManager.notifyownloadFinish(new String[]{ bodyBean.id, bodyBean.started, bodyBean.secUsed });
+        netTaskMoudle.notifyDownloadFinish(new String[]{ bodyBean.id, bodyBean.started, bodyBean.secUsed });
 
         // 更新素材集状态
         String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);

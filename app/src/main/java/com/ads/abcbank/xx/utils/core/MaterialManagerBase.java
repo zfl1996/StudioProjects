@@ -24,7 +24,7 @@ public abstract class MaterialManagerBase {
 
     Context context;
     DownloadModule downloadModule;
-    NetTaskManager netTaskManager;
+    NetTaskMoudle netTaskMoudle;
 
     // worker thread
     HandlerThread materialThread;
@@ -68,12 +68,12 @@ public abstract class MaterialManagerBase {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            netTaskManager.initNetManager();
+            netTaskMoudle.init();
         });
     }
 
     private void initNetTaskManager() {
-        netTaskManager = new NetTaskManager(context, new NetTaskManager.NetTaskListener() {
+        netTaskMoudle = new NetTaskMoudle(context, new NetTaskMoudle.NetTaskListener() {
             @Override
             public void onPlaylistArrived(JSONObject jsonObject) {
                 reload(Constants.NET_MANAGER_DATA_PLAYLIST);
@@ -106,8 +106,8 @@ public abstract class MaterialManagerBase {
         if (null != downloadModule)
             downloadModule.stop();
 
-        if (null != netTaskManager)
-            netTaskManager.cancalTask();
+        if (null != netTaskMoudle)
+            netTaskMoudle.cancalTask();
 
         if (null != materialThread)
             materialThread.quitSafely();
@@ -155,8 +155,6 @@ public abstract class MaterialManagerBase {
             MaterialStatusListener _materialStatusListener = getRefListener();
             if (null == _materialStatusListener)
                 return;
-
-//            Logger.e(TAG, "tid:(uiHandler)" + Thread.currentThread().getId());
 
             switch (msg.what) {
                 case Constants.SLIDER_STATUS_CODE_WELCOME_DEFAULT:

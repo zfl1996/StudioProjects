@@ -391,7 +391,7 @@ public class BaseActivity extends AppCompatActivity {
 //            baseHandler.post(presetRunnable);
 //        } catch (Exception e) {
 //        }
-//        netTaskManager.initNetManager();
+//        netTaskManager.init();
 
     }
 

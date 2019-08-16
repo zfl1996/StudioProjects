@@ -27,8 +27,8 @@ import com.alibaba.fastjson.JSONObject;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class NetTaskManager {
-    static final String TAG = "NetTaskManager";
+public class NetTaskMoudle {
+    static final String TAG = "NetTaskMoudle";
 
     Timer timer;
     TimerTask timerTask;
@@ -39,7 +39,7 @@ public class NetTaskManager {
     NetTaskListener netTaskListener;
     boolean isInited = false;
 
-    public NetTaskManager(Context context, NetTaskListener netTaskListener) {
+    public NetTaskMoudle(Context context, NetTaskListener netTaskListener) {
         this.context = context;
         this.netTaskListener = netTaskListener;
 
@@ -111,11 +111,11 @@ public class NetTaskManager {
                 HandlerUtil.noCheckGet(), 1);
     }
 
-    public void initNetManager() {
+    public void init() {
         ResHelper.sendMessage(netHandler, Constants.NET_MANAGER_INIT, null);
     }
 
-    public void notifyownloadFinish(Object data) {
+    public void notifyDownloadFinish(Object data) {
         ResHelper.sendMessage(netHandler, Constants.NET_MANAGER_DATA_FINISHNOTIFY, data);
     }
 
