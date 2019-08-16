@@ -124,7 +124,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state)
     {
-        //We have nothing to show for an empty data set but clear any existing views
+        //We have nothing to show for an empty data set but quit any existing views
         if (getItemCount() == 0)
         {
             detachAndScrapAttachedViews(recycler);

@@ -33,7 +33,7 @@ public abstract class MaterialManagerBase {
     // bll data
     WeakReference<MaterialStatusListener> itemStatusListener = null;
     String deviceModeData;
-    ConcurrentHashMap<String, PlaylistBodyBean> waitForDownloadMaterial = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, PlaylistBodyBean> loadedMaterial = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
     String filters;
@@ -94,7 +94,11 @@ public abstract class MaterialManagerBase {
         ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_UPDATE, resCode);
     }
 
-    public void clear() {
+    public void clearResource() {
+        Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, "");
+    }
+
+    public void quit() {
         if (null != downloadModule)
             downloadModule.stop();
 

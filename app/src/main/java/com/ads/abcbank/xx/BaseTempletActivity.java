@@ -20,10 +20,8 @@ import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
-import com.ads.abcbank.xx.utils.core.NetTaskManager;
 import com.ads.abcbank.xx.utils.core.PlaylistManager;
 import com.ads.abcbank.xx.utils.helper.DPIHelper;
-import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
 
@@ -142,10 +140,17 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
                 clickTimes++;
             } else {
                 clickTimes = 0;
-                startActivity(new Intent(this, ReInitActivity.class));
-                finish();
+                reInit();
             }
         }
+    }
+
+    public void reInit() {
+        materialManager.quit();
+        materialManager.clearResource();
+
+        startActivity(new Intent(this, ReInitActivity.class));
+        finish();
     }
 
     private ExitWindow exitWindow;
@@ -178,7 +183,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
         try {
             if (null != materialManager)
-                materialManager.clear();
+                materialManager.quit();
         } catch (Exception e) {
             Logger.e(TAG, "onDestroy:" + e.getMessage());
         }

@@ -16,6 +16,7 @@ import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
 import com.ads.abcbank.utils.HandlerUtil;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
@@ -27,6 +28,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class NetTaskManager {
+    static final String TAG = "NetTaskManager";
 
     Timer timer;
     TimerTask timerTask;
@@ -152,6 +154,7 @@ public class NetTaskManager {
         FileUtil.writeJsonToFile(obj.toString(), false);
 
         if (BllDataExtractor.needDownload(context, obj.toString())) {
+            Logger.e(TAG, "netTaskListener.onPlaylistArrived-->" + (null != netTaskListener));
             if (null != netTaskListener)
                 netTaskListener.onPlaylistArrived(JSONObject.parseObject(obj.toString()));
         }

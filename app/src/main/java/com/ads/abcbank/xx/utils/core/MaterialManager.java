@@ -5,11 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PresetBean;
-import com.ads.abcbank.utils.HTTPContants;
-import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
@@ -19,13 +16,10 @@ import com.ads.abcbank.xx.utils.helper.IOHelper;
 import com.ads.abcbank.xx.utils.helper.PdfHelper;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 public class MaterialManager extends MaterialManagerBase {
     static String TAG = MaterialManagerBase.class.getSimpleName();;
@@ -93,16 +87,16 @@ public class MaterialManager extends MaterialManagerBase {
      * */
     private void finishDownload(String fileUrl, String filePath) {
         if (Constants.SYS_CONFIG_IS_CHECKMD5) {
-            if (!waitForDownloadMaterial.containsKey(fileUrl)
-                    || !IOHelper.fileToMD5(filePath).equals(waitForDownloadMaterial.get(fileUrl).md5)
+            if (!loadedMaterial.containsKey(fileUrl)
+                    || !IOHelper.fileToMD5(filePath).equals(loadedMaterial.get(fileUrl).md5)
             ) {
                 IOHelper.deleteFile(filePath);
-                waitForDownloadMaterial.remove(fileUrl);
+                loadedMaterial.remove(fileUrl);
                 return;
             }
         }
 
-        PlaylistBodyBean bodyBean = waitForDownloadMaterial.get(fileUrl);
+        PlaylistBodyBean bodyBean = loadedMaterial.get(fileUrl);
         bodyBean.secUsed = ResHelper.getTimeDiff(bodyBean.started);
         netTaskManager.notifyownloadFinish(new String[]{ bodyBean.id, bodyBean.started, bodyBean.secUsed });
 
@@ -164,6 +158,7 @@ public class MaterialManager extends MaterialManagerBase {
             }
         }
 
+//        loadedMaterial.remove(fileUrl);
         if (needNotify)
             resendPlaylistOkMessage();
 //                        });
@@ -236,7 +231,6 @@ public class MaterialManager extends MaterialManagerBase {
             List<PlayItem> allPlayItems = new ArrayList<>();
             List<String> waitForDownloadUrls = new ArrayList<>();
             List<String> waitForDownloadSavePath = new ArrayList<>();
-//            Map<String, Integer> waitForFiles = new HashMap<>();
             List<String> welcomeItems = new ArrayList<>();
             String contentTypeMiddle = Utils.getContentTypeMiddle(context);
             String contentTypeEnd = Utils.getContentTypeEnd(context);
@@ -247,23 +241,37 @@ public class MaterialManager extends MaterialManagerBase {
                     // 过滤非下载时段和已下载项
                     if (!BllDataExtractor.isInDownloadTime(bodyBean)
                             || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
-//                        || materialStatus.containsKey(bodyBean.id)
-//                            || waitForFiles.containsKey(bodyBean.downloadLink)
-                            || waitForDownloadMaterial.containsKey(bodyBean.downloadLink)
                     )
                         continue;
 
-//                    waitForFiles.put(bodyBean.downloadLink, 0);
-//                materialStatus.put(bodyBean.id, 0);
-                    bodyBean.started = ResHelper.getCurTime();
-                    waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
-
                     String suffix = bodyBean.downloadLink.substring(bodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
+                    boolean isNeedDownload = false;
+
+                    if (loadedMaterial.containsKey(bodyBean.downloadLink)) {
+                        if (ResHelper.isExistsFile(savePath))
+                            continue;
+
+                        isNeedDownload = true;
+                    }else {
+                        if (!materialStatus.containsKey(bodyBean.id)
+                                || materialStatus.get(bodyBean.id) != 1) {
+
+                            isNeedDownload = true;
+                        }
+                    }
+
+                    bodyBean.started = ResHelper.getCurTime();
+                    loadedMaterial.put(bodyBean.downloadLink, bodyBean);
 
                     // 构建待下载数据
-                    if (!materialStatus.containsKey(bodyBean.id)
-                            || materialStatus.get(bodyBean.id) != 1 || !ResHelper.isExistsFile(savePath)) {
+//                    if (!materialStatus.containsKey(bodyBean.id)
+//                            || materialStatus.get(bodyBean.id) != 1) {
+//
+//                        isNeedDownload = true;
+//                    }
+
+                    if (isNeedDownload) {
                         materialStatus.remove(bodyBean.id);
 
                         String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);
@@ -306,9 +314,9 @@ public class MaterialManager extends MaterialManagerBase {
             }
 
             if (waitForDownloadUrls.size() > 0 && waitForDownloadUrls.size() == waitForDownloadSavePath.size()) {
-                Logger.e(TAG, "downloadModule.start-->tid:" + Thread.currentThread().getId()
-                        + ", items:" + ResHelper.join( waitForDownloadUrls.toArray(new String[0]), "#")
-                        + ", count" + waitForDownloadUrls.size());
+                Logger.e(TAG, "downloadModule.start-->" + ", count" + waitForDownloadUrls.size()
+                        + ", items:" + ResHelper.join( waitForDownloadUrls.toArray(new String[0]), "#"));
+
                 downloadModule.start(waitForDownloadUrls, ResHelper.getTempRootDir() + taskFlag, waitForDownloadSavePath);
             }
 
