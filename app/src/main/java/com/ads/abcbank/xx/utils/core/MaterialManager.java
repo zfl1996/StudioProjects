@@ -19,7 +19,9 @@ import com.alibaba.fastjson.JSON;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class MaterialManager extends MaterialManagerBase {
     static String TAG = MaterialManagerBase.class.getSimpleName();;
@@ -91,7 +93,7 @@ public class MaterialManager extends MaterialManagerBase {
     private void finishDownload(String fileUrl, String filePath) {
         if (Constants.SYS_CONFIG_IS_CHECKMD5) {
             if (!waitForDownloadMaterial.containsKey(fileUrl)
-//                    || !IOHelper.fileToMD5(filePath).equals(waitForDownloadMaterial.get(fileUrl).md5)
+                    || !IOHelper.fileToMD5(filePath).equals(waitForDownloadMaterial.get(fileUrl).md5)
             ) {
                 IOHelper.deleteFile(filePath);
                 waitForDownloadMaterial.remove(fileUrl);
@@ -100,11 +102,11 @@ public class MaterialManager extends MaterialManagerBase {
         }
 
         PlaylistBodyBean bodyBean = waitForDownloadMaterial.get(fileUrl);
+        bodyBean.secUsed = ResHelper.getTimeDiff(bodyBean.started);
+
         String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 
         // 更新素材集状态
-//        String _fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
-//                filePath.lastIndexOf(".") );
         String _fileKey = correctionFilePath.substring(correctionFilePath.lastIndexOf("/") + 1,
                 correctionFilePath.lastIndexOf(".") );
         if (materialStatus.containsKey(_fileKey) && materialStatus.get(_fileKey) == 1)
@@ -252,6 +254,7 @@ public class MaterialManager extends MaterialManagerBase {
 
 //                    waitForFiles.put(bodyBean.downloadLink, 0);
 //                materialStatus.put(bodyBean.id, 0);
+                    bodyBean.started = ResHelper.getCurTime();
                     waitForDownloadMaterial.put(bodyBean.downloadLink, bodyBean);
 
                     String suffix = bodyBean.downloadLink.substring(bodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();

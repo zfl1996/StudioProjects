@@ -1,5 +1,6 @@
 package com.ads.abcbank.xx.utils.helper;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,9 +19,11 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class ResHelper {
@@ -328,6 +331,39 @@ public class ResHelper {
                 timeFormat.format(calendar.getTime()),
                 weekStr + "\n" + dateFormat.format(calendar.getTime())
         };
+    }
+
+    public static String getCurTime(){
+        Calendar calendar = Calendar.getInstance(Locale.CHINA);
+        return new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA).format(calendar.getTime());
+    }
+
+    public static String getTimeDiff(String timeStr) {
+        try {
+            long diff = getCalendar(timeStr).getTime().getTime() -
+                    Calendar.getInstance(Locale.CHINA).getTime().getTime();
+            return "" + diff/1000;
+        }catch (Exception e){
+            return "";
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static Calendar getCalendar(String timeStr) {
+        return getCalendar(timeStr, "yyyyMMddHHmmss");
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static Calendar getCalendar(String timeStr, String inTimeFormat) {
+        SimpleDateFormat bartDateFormat = new SimpleDateFormat(inTimeFormat);
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(bartDateFormat.parse(timeStr));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return calendar;
     }
 
     public static void sendMessage(Handler handler, int w, Object obj) {
