@@ -152,6 +152,11 @@ public abstract class MaterialManagerBase {
 
                     break;
 
+                case Constants.SLIDER_STATUS_CODE_DOWNSUCC_NOTIFY:
+                    _materialStatusListener.onDownloadSucceed(msg.obj);
+
+                    break;
+
                 case Constants.SLIDER_STATUS_CODE_PROGRESS:
                     _materialStatusListener.onProgress((int)msg.obj);
 
@@ -171,5 +176,6 @@ public abstract class MaterialManagerBase {
         void onRatePrepared(List<PlayItem> items, List<String> titles);
         void onPlayItemPrepared(List<PlayItem> items);
         void onWelcomePrepared(List<String> msg, boolean isAppend, boolean isDefault);
+        void onDownloadSucceed(Object notifyData);
     }
 }

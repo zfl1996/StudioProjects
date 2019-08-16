@@ -108,17 +108,11 @@ public class MaterialManager extends MaterialManagerBase {
         PlaylistBodyBean bodyBean = waitForDownloadMaterial.get(fileUrl);
         bodyBean.secUsed = ResHelper.getTimeDiff(bodyBean.started);
 
-        DownloadBean downloadBean = new DownloadBean();
-        downloadBean.id = bodyBean.id;
-        downloadBean.started = bodyBean.started;
-        downloadBean.secUsed = bodyBean.secUsed;
-        downloadBean.status = "finish";
-        Utils.getAsyncThread().httpService(HTTPContants.CODE_DOWNLOAD_FINISH, JSONObject.parseObject(JSONObject.toJSONString(downloadBean)), HandlerUtil.noCheckGet(), 1);
-
-
-        String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
+        ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_DOWNSUCC_NOTIFY,
+                new String[]{ bodyBean.id, bodyBean.started, bodyBean.secUsed });
 
         // 更新素材集状态
+        String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
         String _fileKey = correctionFilePath.substring(correctionFilePath.lastIndexOf("/") + 1,
                 correctionFilePath.lastIndexOf(".") );
         if (materialStatus.containsKey(_fileKey) && materialStatus.get(_fileKey) == 1)

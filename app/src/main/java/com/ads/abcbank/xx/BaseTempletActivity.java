@@ -78,6 +78,11 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onDownloadSucceed(Object notifyData) {
+                netTaskManager.sendDownloadFinishNotify(notifyData);
+            }
+
+            @Override
             public void onProgress(int code) {
                 if (code == Constants.SLIDER_PROGRESS_CODE_PRESET_OK ||
                     code == Constants.SLIDER_PROGRESS_CODE_PRESET_PRE)

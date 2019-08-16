@@ -23,6 +23,7 @@ public class Constants {
     public static final int SLIDER_STATUS_CODE_PDF_CACHED = 0x207;
     public static final int SLIDER_STATUS_CODE_WELCOME_LOADED = 0x208;
     public static final int SLIDER_STATUS_CODE_PLAYLIST_LOADED = 0x209;
+    public static final int SLIDER_STATUS_CODE_DOWNSUCC_NOTIFY = 0x210;
 
     public static final int SLIDER_HOLDER_IMAGE = 0;
     public static final int SLIDER_HOLDER_PDF = 1;
@@ -44,6 +45,7 @@ public class Constants {
     public static final int SLIDER_PROGRESS_CODE_PLAYLIST_EMPTY = 0x5;
 
     public static final int NET_MANAGER_INIT = 0x300;
+    public static final int NET_MANAGER_DATA_FINISHNOTIFY = 0x301;
     public static final int NET_MANAGER_DATA_CMDPOLL = 0x0;
     public static final int NET_MANAGER_DATA_PLAYLIST = 0x1;
     public static final int NET_MANAGER_DATA_PRESET = 0x2;

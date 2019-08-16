@@ -7,6 +7,7 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.ads.abcbank.bean.CmdpollBean;
+import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PresetBean;
 import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.bean.RequestBean;
@@ -14,6 +15,7 @@ import com.ads.abcbank.service.DownloadService;
 import com.ads.abcbank.utils.ActivityManager;
 import com.ads.abcbank.utils.FileUtil;
 import com.ads.abcbank.utils.HTTPContants;
+import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
@@ -80,16 +82,39 @@ public class NetTaskManager {
 
                         break;
 
+                    case Constants.NET_MANAGER_DATA_FINISHNOTIFY:
+                        doNotify((String[])msg.obj);
+
+                        break;
+
 
                     default:
                         break;
                 }
             }
+
         };
+    }
+
+    private void doNotify(String[] notifyData) {
+        DownloadBean downloadBean = new DownloadBean();
+
+        downloadBean.id = notifyData[0];
+        downloadBean.started = notifyData[1];
+        downloadBean.secUsed = notifyData[2];
+        downloadBean.status = "finish";
+
+        Utils.getAsyncThread().httpService(HTTPContants.CODE_DOWNLOAD_FINISH,
+                JSONObject.parseObject(JSONObject.toJSONString(downloadBean)),
+                HandlerUtil.noCheckGet(), 1);
     }
 
     public void initNetManager() {
         ResHelper.sendMessage(netHandler, Constants.NET_MANAGER_INIT, null);
+    }
+
+    public void sendDownloadFinishNotify(Object data) {
+        ResHelper.sendMessage(netHandler, Constants.NET_MANAGER_DATA_FINISHNOTIFY, data);
     }
 
     public void cancalTask() {
