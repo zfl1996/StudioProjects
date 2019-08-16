@@ -158,8 +158,8 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             _holder.getVideoContent().pause();
             _holder.getVideoContent().stopPlayback();
 
-//            if (null != videoStatusListener)
-//                videoStatusListener.onPlayFinish();
+            if (null != videoStatusListener)
+                videoStatusListener.onPlayFinish();
         }
     }
 
