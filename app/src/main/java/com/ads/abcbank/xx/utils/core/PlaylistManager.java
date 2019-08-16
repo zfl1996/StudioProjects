@@ -82,6 +82,7 @@ public class PlaylistManager {
         int i = 0;
 
         Iterator<MaterialInfo> it = materialInfos.iterator();
+        List<String> ids = new ArrayList<>();
 
         while (it.hasNext()) {
             MaterialInfo mi = it.next();
@@ -90,9 +91,10 @@ public class PlaylistManager {
                 && !ResHelper.isNullOrEmpty(mi.getStopDate())
                 && !BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate())) {
 
+                ids.add(mi.getId());
                 Logger.e(TAG, "NotInPlayTime-->" + mi.getId() + " index:" + i + " time:"
                         + mi.getPlayDate() + "-" + mi.getStopDate() + "-->" + BllDataExtractor.isInPlayTime(mi.getPlayDate(), mi.getStopDate()) );
-                playlistStatusListener.onOutOfTime(mi.getId(), i);
+//                playlistStatusListener.onOutOfTime(mi.getId(), i);
                 it.remove();
 
                 try {
@@ -104,6 +106,9 @@ public class PlaylistManager {
                 i++;
             }
         }
+
+        if (ids.size() > 0)
+            playlistStatusListener.onPlayItemRemoved(ids);
     }
 
     public void addMaterialInfo(List<PlayItem> items) {
@@ -119,6 +124,7 @@ public class PlaylistManager {
     }
 
     public interface IPlaylistStatusListener {
-        void onOutOfTime(String id, int index);
+//        void onOutOfTime(String id, int index);
+        void onPlayItemRemoved(List<String> ids);
     }
 }

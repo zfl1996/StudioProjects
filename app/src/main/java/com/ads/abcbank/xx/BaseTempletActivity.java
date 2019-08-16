@@ -75,6 +75,11 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onPlayItemRemoved(List<String> ids) {
+                mainSliderPlayer.removePlayItems(ids);
+            }
+
+            @Override
             public void onProgress(int code) {
                 if (code == Constants.SLIDER_PROGRESS_CODE_PRESET_OK ||
                     code == Constants.SLIDER_PROGRESS_CODE_PRESET_PRE)
@@ -90,8 +95,12 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         materialManager = new MaterialManager(this, materialStatusListener);
         materialManager.initManager(mainSliderPlayer.isIntegrationMode(), type);
 
-        playlistManager = new PlaylistManager(this, (id, index) -> {
-            mainHandler.post(() -> mainSliderPlayer.onItemOuttime(id, index));
+//        playlistManager = new PlaylistManager(this, (id, index) -> {
+//            mainHandler.post(() -> mainSliderPlayer.onItemOuttime(id, index));
+//        });
+        playlistManager = new PlaylistManager(this, ids -> {
+            materialManager.removeTimeoutItem(ids);
+            mainHandler.post( () -> mainSliderPlayer.removePlayItems(ids) );
         });
     }
 

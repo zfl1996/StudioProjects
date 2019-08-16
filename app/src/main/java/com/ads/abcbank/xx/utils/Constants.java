@@ -16,13 +16,16 @@ public class Constants {
     public static final int SLIDER_STATUS_CODE_OK = 0x200;
     public static final int SLIDER_STATUS_CODE_INIT = 0x201;
     public static final int SLIDER_STATUS_CODE_UPDATE = 0x202;
-    public static final int SLIDER_STATUS_CODE_WELCOME_DEFAULT = 0x203;
+    public static final int SLIDER_STATUS_CODE_WELCOME_CREATE = 0x203;
     public static final int SLIDER_STATUS_CODE_RATE_LOADED = 0x204;
     public static final int SLIDER_STATUS_CODE_PROGRESS = 0x205;
     public static final int SLIDER_STATUS_CODE_DOWNSUCC = 0x206;
     public static final int SLIDER_STATUS_CODE_PDF_CACHED = 0x207;
     public static final int SLIDER_STATUS_CODE_WELCOME_LOADED = 0x208;
     public static final int SLIDER_STATUS_CODE_PLAYLIST_LOADED = 0x209;
+    public static final int SLIDER_STATUS_CODE_PLAYLIST_REMOVED = 0x210;
+    public static final int SLIDER_STATUS_CODE_PLAYLIST_TIMEOUT = 0x211;
+    public static final int SLIDER_STATUS_CODE_WELCOME_REMOVED = 0x212;
 
     public static final int SLIDER_HOLDER_IMAGE = 0;
     public static final int SLIDER_HOLDER_PDF = 1;
@@ -50,6 +53,7 @@ public class Constants {
     public static final int NET_MANAGER_DATA_PRESET = 0x2;
 
     public static final String MM_STATUS_FINISHED_TASKID = "finished_taskid";
+    public static final String MM_STATUS_FINISHED_TASKATTR = "finished_task_attr";
     public static final String MM_STATUS_KEY_PLAYLIST_INIT = "playlist_init";
     public static final String MM_STATUS_KEY_PRESET_INIT = "preset_init";
     public static final String MM_STATUS_KEY_PLAYLIST_LOADED = "playlist_status";

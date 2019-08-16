@@ -17,6 +17,7 @@ import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +58,19 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             dataList.remove(index);
             notifyItemRangeChanged(index - 1, 1);
         }
+    }
+
+    public void removeItems(List<String> ids) {
+        Iterator<PlayItem> it = dataList.iterator();
+        while (it.hasNext()) {
+            PlayItem pi = it.next();
+
+            if (ids.contains(pi.getMd5())) {
+                it.remove();
+            }
+        }
+
+        notifyDataSetChanged();
     }
 
     public void setVideoStatusListener(SliderVideoHolder.VideoStatusListener videoStatusListener) {

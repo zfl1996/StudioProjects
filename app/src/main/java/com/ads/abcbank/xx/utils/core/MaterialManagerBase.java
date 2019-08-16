@@ -34,8 +34,9 @@ public abstract class MaterialManagerBase {
     WeakReference<MaterialStatusListener> itemStatusListener = null;
     String deviceModeData;
     ConcurrentHashMap<String, PlaylistBodyBean> loadedMaterial = new ConcurrentHashMap<>();
-    ConcurrentHashMap<String, Integer> materialStatus = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, String> materialStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, String> welcomeTxts = new ConcurrentHashMap<>();
     String filters;
     int MAX_RATE = 0;
 
@@ -91,11 +92,15 @@ public abstract class MaterialManagerBase {
     }
 
     public boolean isMaterialMarked(String key) {
-        return materialStatus.containsKey(key) && materialStatus.get(key) == 1;
+        return materialStatus.containsKey(key) && materialStatus.get(key).substring(0, 1).equals("1");
     }
 
     public void reload(int resCode) {
         ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_UPDATE, resCode);
+    }
+
+    public void removeTimeoutItem(List<String> ids) {
+        ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED, ids);
     }
 
     public void clearResource() {
@@ -157,7 +162,7 @@ public abstract class MaterialManagerBase {
                 return;
 
             switch (msg.what) {
-                case Constants.SLIDER_STATUS_CODE_WELCOME_DEFAULT:
+                case Constants.SLIDER_STATUS_CODE_WELCOME_CREATE:
                     _materialStatusListener.onWelcomePrepared((List<String>) msg.obj, false, true);
 
                     break;
@@ -190,6 +195,15 @@ public abstract class MaterialManagerBase {
 
                     break;
 
+                case Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED:
+                    _materialStatusListener.onPlayItemRemoved((List<String>)msg.obj);
+
+                    break;
+
+                case Constants.SLIDER_STATUS_CODE_WELCOME_REMOVED:
+
+                    break;
+
                 default:
                     break;
             }
@@ -204,5 +218,6 @@ public abstract class MaterialManagerBase {
         void onRatePrepared(List<PlayItem> items, List<String> titles);
         void onPlayItemPrepared(List<PlayItem> items);
         void onWelcomePrepared(List<String> msg, boolean isAppend, boolean isDefault);
+        void onPlayItemRemoved(List<String> ids);
     }
 }

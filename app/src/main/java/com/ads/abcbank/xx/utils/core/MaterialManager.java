@@ -19,7 +19,10 @@ import com.alibaba.fastjson.JSON;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MaterialManager extends MaterialManagerBase {
     static String TAG = MaterialManagerBase.class.getSimpleName();;
@@ -74,6 +77,21 @@ public class MaterialManager extends MaterialManagerBase {
 
                         break;
 
+                    case Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED:
+                        List<String> ids = (List<String>)msg.obj;
+                        Utils.getExecutorService().submit(() -> {
+                            for (String id : ids) {
+                                materialStatus.remove(id);
+                            }
+
+                            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID,
+                                    ResHelper.join(materialStatus.keySet().toArray(new String[0]), ","));
+                            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKATTR,
+                                    ResHelper.join(materialStatus.values().toArray(new String[0]), ","));
+                        });
+
+                        break;
+
                     default:
                         break;
                 }
@@ -104,7 +122,8 @@ public class MaterialManager extends MaterialManagerBase {
         String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
         String _fileKey = correctionFilePath.substring(correctionFilePath.lastIndexOf("/") + 1,
                 correctionFilePath.lastIndexOf(".") );
-        if (materialStatus.containsKey(_fileKey) && materialStatus.get(_fileKey) == 1)
+
+        if (isMaterialMarked(_fileKey))
             return;
 
 
@@ -114,18 +133,20 @@ public class MaterialManager extends MaterialManagerBase {
         }
 
         filePath = correctionFilePath;
-        materialStatus.put(_fileKey, 1);
-
-        // 更新已下载素材状态
-        String[] ids = materialStatus.keySet().toArray(new String[0]);
-        Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
-
-        // 处理pdf缓存或者通知前端显示
-//                        Utils.getExecutorService().submit(() -> {
         String fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
                 filePath.lastIndexOf(".") );
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
         String suffix = filePath.substring(filePath.lastIndexOf(".") + 1);
+        materialStatus.put(_fileKey, "1#" + suffix);
+
+        // 更新已下载素材状态
+        String[] ids = materialStatus.keySet().toArray(new String[0]);
+        String[] vals = materialStatus.values().toArray(new String[0]);
+        Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
+        Utils.put(context, Constants.MM_STATUS_FINISHED_TASKATTR, ResHelper.join(vals, ","));
+
+        // 处理pdf缓存或者通知前端显示
+//                        Utils.getExecutorService().submit(() -> {
         boolean needNotify = false;
         Logger.e(TAG, "MM_STATUS_FINISHED_TASKID-->" + _fileKey + "." + suffix + " ,count:" + ids.length /*ResHelper.join(ids, ",")*/);
 
@@ -153,8 +174,9 @@ public class MaterialManager extends MaterialManagerBase {
             if (!ResHelper.isNullOrEmpty(wmsg)) {
                 List<String> list = new ArrayList<>();
                 list.add(wmsg);
+                welcomeTxts.put(bodyBean.id, wmsg);
 
-                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, list);
+                showWelcome(list);
             }
         }
 
@@ -211,11 +233,16 @@ public class MaterialManager extends MaterialManagerBase {
 
             // 同步已下载完成数据项
             String jsonFinish = Utils.get(context, Constants.MM_STATUS_FINISHED_TASKID, "").toString();
+            String jsonFinishAttrs = Utils.get(context, Constants.MM_STATUS_FINISHED_TASKATTR, "").toString();
+
             if (!TextUtils.isEmpty(jsonFinish)) {
                 String[] ids = jsonFinish.split(",");
-                for (String id : ids) {
-                    if (!ResHelper.isNullOrEmpty(id))
-                        materialStatus.put(id, 1);
+                String[] vals = jsonFinishAttrs.split(",");
+                if (ids.length == vals.length) {
+                    for (int i=0;i<ids.length;i++) {
+                        if (!ResHelper.isNullOrEmpty(ids[i]))
+                            materialStatus.put(ids[i], vals[i]);
+                    }
                 }
 
                 Logger.e(TAG, "loadPlaylist-->" + jsonFinish + " ,count:" + ids.length);
@@ -236,11 +263,19 @@ public class MaterialManager extends MaterialManagerBase {
             String contentTypeEnd = Utils.getContentTypeEnd(context);
             long taskFlag = System.currentTimeMillis();
 
+            Map<String, Integer> curItems = new HashMap<>();
+
+//            for (String id : currentIds)
+//                curItems.put(id, 0);
+
             for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {
                 try{
+
                     String suffix = bodyBean.downloadLink.substring(bodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
                     boolean needDownload = false;
+
+                    curItems.put(bodyBean.id, suffix.equals("txt") ? 1 : 0);
 
                     // 去掉已下载并存在的资源
                     if (loadedMaterial.containsKey(bodyBean.downloadLink)) {
@@ -297,8 +332,10 @@ public class MaterialManager extends MaterialManagerBase {
                                 bodyBean.onClickLink, bodyBean.QRCode));
                     } else if (suffix.equals("txt")) {
                         String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
-                        if (!ResHelper.isNullOrEmpty(wmsg))
+                        if (!ResHelper.isNullOrEmpty(wmsg)) {
                             welcomeItems.add(wmsg);
+                            welcomeTxts.put(bodyBean.id, wmsg);
+                        }
                     } else
                         Logger.e(TAG, "not in:" + savePath + ".." + suffix);
 
@@ -330,6 +367,42 @@ public class MaterialManager extends MaterialManagerBase {
             // 通知前端显示跑马灯文字
             if (welcomeItems.size() > 0)
                 showWelcome(welcomeItems);
+
+            // 移除停播的项
+            int removeTxtCount = 0;
+            List<String> willRemovePlaylist = new ArrayList<>();
+            List<String> allRemoveItems = new ArrayList<>();
+
+            String[] currentIds = materialStatus.keySet().toArray(new String[0]);
+            for (String id : currentIds) {
+                try{
+                    if (!curItems.containsKey(id)) {
+                        if (!materialStatus.get(id).substring(2).equals("txt"))
+                            willRemovePlaylist.add(id);
+                        else {
+                            removeTxtCount++;
+                            welcomeTxts.remove(id);
+                        }
+
+                        allRemoveItems.add(id);
+                        materialStatus.remove(id);
+                    }
+                } catch (Exception e) {}
+            }
+
+            if (willRemovePlaylist.size() > 0)
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED, willRemovePlaylist);
+
+            if (removeTxtCount > 0)
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, Arrays.asList(welcomeTxts.values().toArray(new String[0])) );
+
+            if (allRemoveItems.size() > 0) {
+                Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID,
+                        ResHelper.join(materialStatus.keySet().toArray(new String[0]), ","));
+                Utils.put(context, Constants.MM_STATUS_FINISHED_TASKATTR,
+                        ResHelper.join(materialStatus.values().toArray(new String[0]), ","));
+            }
+
             Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadSavePath.toArray(), "@@\r\n"));
 
         } catch (Exception e) {
@@ -343,7 +416,7 @@ public class MaterialManager extends MaterialManagerBase {
             welcomeItems = buildWelcomeWords();
 
             managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 0);
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_DEFAULT, welcomeItems);
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, welcomeItems);
         } else
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, welcomeItems);
 

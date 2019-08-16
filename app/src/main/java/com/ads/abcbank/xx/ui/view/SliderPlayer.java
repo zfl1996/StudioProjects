@@ -2,7 +2,6 @@ package com.ads.abcbank.xx.ui.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.nfc.Tag;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
@@ -137,6 +136,10 @@ public class SliderPlayer extends LinearLayout {
                 }
             });
         recyclerPagerView.startPlay();
+    }
+
+    public void removePlayItems(List<String> ids) {
+        sliderAdapter.removeItems(ids);
     }
 
     public void adjustWidgetStatus(boolean isPresetLoaded, boolean isPlaylistLoaded, int code) {
