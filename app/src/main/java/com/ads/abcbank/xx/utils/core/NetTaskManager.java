@@ -152,18 +152,14 @@ public class NetTaskManager {
 
     private void parsePalyList(Object obj) {
         FileUtil.writeJsonToFile(obj.toString(), false);
+        boolean needDownload = BllDataExtractor.needDownload(context, obj.toString());
+        Logger.e(TAG, "netTaskListener.onPlaylistArrived-->needDownload:" + needDownload
+            + ", willNotify:" + (null != netTaskListener) );
 
-        if (BllDataExtractor.needDownload(context, obj.toString())) {
-            Logger.e(TAG, "netTaskListener.onPlaylistArrived-->" + (null != netTaskListener));
+        if (needDownload) {
             if (null != netTaskListener)
                 netTaskListener.onPlaylistArrived(JSONObject.parseObject(obj.toString()));
         }
-
-
-//        if (Utils.getNewPlayList(context, obj.toString())) {
-//            if (null != netTaskListener)
-//                netTaskListener.onPlaylistArrived(JSONObject.parseObject(obj.toString()));
-//        }
     }
 
     private void reqAllData() {

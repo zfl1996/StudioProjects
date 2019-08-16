@@ -202,18 +202,24 @@ public class BllDataExtractor {
     }
 
     public static boolean needDownload(Context context, String jsonString) {
+        String oldItemsData = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
         if (ResHelper.isNullOrEmpty(jsonString)) {
-            if (!ResHelper.isNullOrEmpty(Utils.get(context, Utils.KEY_PLAY_LIST, "").toString())) {
+            if (!ResHelper.isNullOrEmpty(oldItemsData)) {
                 Utils.put(context, Utils.KEY_PLAY_LIST, "");
                 return true;
             }
+
             return false;
         }
 
         PlaylistResultBean bean = JSON.parseObject(jsonString, PlaylistResultBean.class);
         if (bean != null && bean.data != null && bean.data.items != null) {
-            Utils.put(context, Utils.KEY_PLAY_LIST, JSONObject.toJSONString(bean.data.items));
-            return true;
+            String newItemsData = JSONObject.toJSONString(bean.data.items);
+
+            if (!oldItemsData.equals(newItemsData)) {
+                Utils.put(context, Utils.KEY_PLAY_LIST, newItemsData);
+                return true;
+            }
         }
 
         return false;
