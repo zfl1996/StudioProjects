@@ -246,32 +246,25 @@ public class MaterialManager extends MaterialManagerBase {
 
                     String suffix = bodyBean.downloadLink.substring(bodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
-                    boolean isNeedDownload = false;
+                    boolean needDownload = false;
 
                     if (loadedMaterial.containsKey(bodyBean.downloadLink)) {
-                        if (ResHelper.isExistsFile(savePath))
+                        if (!isMaterialMarked(bodyBean.id) || ResHelper.isExistsFile(savePath))
                             continue;
+                        else
+                            needDownload = true;
+                    }
 
-                        isNeedDownload = true;
-                    }else {
-                        if (!materialStatus.containsKey(bodyBean.id)
-                                || materialStatus.get(bodyBean.id) != 1) {
-
-                            isNeedDownload = true;
-                        }
+                    // 初次加载
+                    if (!isMaterialMarked(bodyBean.id)) {
+                        needDownload = true;
                     }
 
                     bodyBean.started = ResHelper.getCurTime();
                     loadedMaterial.put(bodyBean.downloadLink, bodyBean);
 
                     // 构建待下载数据
-//                    if (!materialStatus.containsKey(bodyBean.id)
-//                            || materialStatus.get(bodyBean.id) != 1) {
-//
-//                        isNeedDownload = true;
-//                    }
-
-                    if (isNeedDownload) {
+                    if (needDownload) {
                         materialStatus.remove(bodyBean.id);
 
                         String[] pathSegments = ResHelper.getSavePathDataByUrl(bodyBean.downloadLink);

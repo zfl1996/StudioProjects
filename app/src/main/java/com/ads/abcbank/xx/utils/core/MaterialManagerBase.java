@@ -90,6 +90,10 @@ public abstract class MaterialManagerBase {
         return managerStatus.containsKey(actionCode) && managerStatus.get(actionCode) == 1;
     }
 
+    public boolean isMaterialMarked(String key) {
+        return materialStatus.containsKey(key) && materialStatus.get(key) == 1;
+    }
+
     public void reload(int resCode) {
         ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_UPDATE, resCode);
     }
