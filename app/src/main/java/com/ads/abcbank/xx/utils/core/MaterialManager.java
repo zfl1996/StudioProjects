@@ -5,8 +5,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.ads.abcbank.bean.DownloadBean;
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PresetBean;
+import com.ads.abcbank.utils.HTTPContants;
+import com.ads.abcbank.utils.HandlerUtil;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
@@ -16,6 +19,7 @@ import com.ads.abcbank.xx.utils.helper.IOHelper;
 import com.ads.abcbank.xx.utils.helper.PdfHelper;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -103,6 +107,14 @@ public class MaterialManager extends MaterialManagerBase {
 
         PlaylistBodyBean bodyBean = waitForDownloadMaterial.get(fileUrl);
         bodyBean.secUsed = ResHelper.getTimeDiff(bodyBean.started);
+
+        DownloadBean downloadBean = new DownloadBean();
+        downloadBean.id = bodyBean.id;
+        downloadBean.started = bodyBean.started;
+        downloadBean.secUsed = bodyBean.secUsed;
+        downloadBean.status = "finish";
+        Utils.getAsyncThread().httpService(HTTPContants.CODE_DOWNLOAD_FINISH, JSONObject.parseObject(JSONObject.toJSONString(downloadBean)), HandlerUtil.noCheckGet(), 1);
+
 
         String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 
