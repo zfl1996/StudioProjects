@@ -83,7 +83,7 @@ public class NetTaskManager {
                         break;
 
                     case Constants.NET_MANAGER_DATA_FINISHNOTIFY:
-                        doNotify((String[])msg.obj);
+                        sendNotify((String[])msg.obj);
 
                         break;
 
@@ -96,7 +96,7 @@ public class NetTaskManager {
         };
     }
 
-    private void doNotify(String[] notifyData) {
+    private void sendNotify(String[] notifyData) {
         DownloadBean downloadBean = new DownloadBean();
 
         downloadBean.id = notifyData[0];
