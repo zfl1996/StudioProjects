@@ -19,7 +19,6 @@ import com.alibaba.fastjson.JSON;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,14 +79,21 @@ public class MaterialManager extends MaterialManagerBase {
                     case Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED:
                         List<String> ids = (List<String>)msg.obj;
                         Utils.getExecutorService().submit(() -> {
+                            List<String> paths = new ArrayList<>();
                             for (String id : ids) {
                                 materialStatus.remove(id);
+
+                                PlaylistBodyBean bodyBean = loadedMaterial.get(id);
+                                paths.add(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                             }
 
                             Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID,
                                     ResHelper.join(materialStatus.keySet().toArray(new String[0]), ","));
                             Utils.put(context, Constants.MM_STATUS_FINISHED_TASKATTR,
                                     ResHelper.join(materialStatus.values().toArray(new String[0]), ","));
+
+                            for (String path : paths)
+                                IOHelper.deleteFile(path);
                         });
 
                         break;
@@ -174,7 +180,7 @@ public class MaterialManager extends MaterialManagerBase {
             if (!ResHelper.isNullOrEmpty(wmsg)) {
                 List<String> list = new ArrayList<>();
                 list.add(wmsg);
-                welcomeTxts.put(bodyBean.id, wmsg);
+                welcomeTxts.put(bodyBean.id, filePath);
 
                 showWelcome(list);
             }
@@ -262,11 +268,7 @@ public class MaterialManager extends MaterialManagerBase {
             String contentTypeMiddle = Utils.getContentTypeMiddle(context);
             String contentTypeEnd = Utils.getContentTypeEnd(context);
             long taskFlag = System.currentTimeMillis();
-
             Map<String, Integer> curItems = new HashMap<>();
-
-//            for (String id : currentIds)
-//                curItems.put(id, 0);
 
             for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {
                 try{
@@ -334,7 +336,7 @@ public class MaterialManager extends MaterialManagerBase {
                         String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                         if (!ResHelper.isNullOrEmpty(wmsg)) {
                             welcomeItems.add(wmsg);
-                            welcomeTxts.put(bodyBean.id, wmsg);
+                            welcomeTxts.put(bodyBean.id, ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                         }
                     } else
                         Logger.e(TAG, "not in:" + savePath + ".." + suffix);
@@ -373,6 +375,7 @@ public class MaterialManager extends MaterialManagerBase {
             List<String> willRemovePlaylist = new ArrayList<>();
             List<String> allRemoveItems = new ArrayList<>();
 
+            List<String> paths = new ArrayList<>();
             String[] currentIds = materialStatus.keySet().toArray(new String[0]);
             for (String id : currentIds) {
                 try{
@@ -386,6 +389,9 @@ public class MaterialManager extends MaterialManagerBase {
 
                         allRemoveItems.add(id);
                         materialStatus.remove(id);
+
+                        PlaylistBodyBean bodyBean = loadedMaterial.get(id);
+                        paths.add(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                     }
                 } catch (Exception e) {}
             }
@@ -393,8 +399,14 @@ public class MaterialManager extends MaterialManagerBase {
             if (willRemovePlaylist.size() > 0)
                 ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED, willRemovePlaylist);
 
-            if (removeTxtCount > 0)
-                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, Arrays.asList(welcomeTxts.values().toArray(new String[0])) );
+            if (removeTxtCount > 0) {
+                List<String> welcomes = new ArrayList<>();
+                for (String p : welcomeTxts.keySet())
+                    welcomes.add(ResHelper.readFile2String(welcomeTxts.get(p)));
+
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, welcomes );
+
+            }
 
             if (allRemoveItems.size() > 0) {
                 Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID,
@@ -403,30 +415,16 @@ public class MaterialManager extends MaterialManagerBase {
                         ResHelper.join(materialStatus.values().toArray(new String[0]), ","));
             }
 
+
+            for (String path : paths)
+                IOHelper.deleteFile(path);
+
             Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadSavePath.toArray(), "@@\r\n"));
 
         } catch (Exception e) {
             Logger.e("解析播放列表出错" + json);
         }
 
-    }
-
-    private void showWelcome(List<String> welcomeItems) {
-        if (null == welcomeItems || welcomeItems.size() <= 0) {
-            welcomeItems = buildWelcomeWords();
-
-            managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 0);
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, welcomeItems);
-        } else
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, welcomeItems);
-
-    }
-
-    private void resendPlaylistOkMessage() {
-        if (!isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_DOWNLOADED)){
-            managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_DOWNLOADED, 1);
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK);
-        }
     }
 
 }

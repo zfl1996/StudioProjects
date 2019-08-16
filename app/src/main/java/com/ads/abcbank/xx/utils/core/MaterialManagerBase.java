@@ -211,6 +211,25 @@ public abstract class MaterialManagerBase {
 
     };
 
+
+    protected void showWelcome(List<String> welcomeItems) {
+        if (null == welcomeItems || welcomeItems.size() <= 0) {
+            welcomeItems = buildWelcomeWords();
+
+            managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 0);
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, welcomeItems);
+        } else
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, welcomeItems);
+
+    }
+
+    protected void resendPlaylistOkMessage() {
+        if (!isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_DOWNLOADED)){
+            managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_DOWNLOADED, 1);
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PLAYLIST_OK);
+        }
+    }
+
     protected abstract Handler buildMaterialHandler();
 
     public interface MaterialStatusListener {
