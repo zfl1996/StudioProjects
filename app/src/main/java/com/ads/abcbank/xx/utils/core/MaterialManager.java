@@ -238,22 +238,23 @@ public class MaterialManager extends MaterialManagerBase {
 
             for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {
                 try{
-                    // 过滤非下载时段和已下载项
-                    if (!BllDataExtractor.isInDownloadTime(bodyBean)
-                            || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
-                    )
-                        continue;
-
                     String suffix = bodyBean.downloadLink.substring(bodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
                     boolean needDownload = false;
 
+                    // 去掉已下载并存在的资源
                     if (loadedMaterial.containsKey(bodyBean.downloadLink)) {
                         if (!isMaterialMarked(bodyBean.id) || ResHelper.isExistsFile(savePath))
                             continue;
                         else
                             needDownload = true;
                     }
+
+                    // 过滤非下载时段和已下载项
+                    if (!BllDataExtractor.isInDownloadTime(bodyBean)
+                            || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
+                    )
+                        continue;
 
                     // 初次加载
                     if (!isMaterialMarked(bodyBean.id)) {
@@ -282,7 +283,7 @@ public class MaterialManager extends MaterialManagerBase {
                         continue;
                     }
 
-
+                    // 按资源类型分别通知前端显示
                     if (suffix.equals("pdf")) {
                         allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf",
                                 bodyBean.playDate, bodyBean.stopDate,
