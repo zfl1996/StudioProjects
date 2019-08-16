@@ -371,53 +371,7 @@ public class MaterialManager extends MaterialManagerBase {
                 showWelcome(welcomeItems);
 
             // 移除停播的项
-            int removeTxtCount = 0;
-            List<String> willRemovePlaylist = new ArrayList<>();
-            List<String> allRemoveItems = new ArrayList<>();
-
-            List<String> paths = new ArrayList<>();
-            String[] currentIds = materialStatus.keySet().toArray(new String[0]);
-            for (String id : currentIds) {
-                try{
-                    if (!curItems.containsKey(id)) {
-                        if (!materialStatus.get(id).substring(2).equals("txt"))
-                            willRemovePlaylist.add(id);
-                        else {
-                            removeTxtCount++;
-                            welcomeTxts.remove(id);
-                        }
-
-                        allRemoveItems.add(id);
-                        materialStatus.remove(id);
-
-                        PlaylistBodyBean bodyBean = loadedMaterial.get(id);
-                        paths.add(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
-                    }
-                } catch (Exception e) {}
-            }
-
-            if (willRemovePlaylist.size() > 0)
-                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED, willRemovePlaylist);
-
-            if (removeTxtCount > 0) {
-                List<String> welcomes = new ArrayList<>();
-                for (String p : welcomeTxts.keySet())
-                    welcomes.add(ResHelper.readFile2String(welcomeTxts.get(p)));
-
-                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, welcomes );
-
-            }
-
-            if (allRemoveItems.size() > 0) {
-                Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID,
-                        ResHelper.join(materialStatus.keySet().toArray(new String[0]), ","));
-                Utils.put(context, Constants.MM_STATUS_FINISHED_TASKATTR,
-                        ResHelper.join(materialStatus.values().toArray(new String[0]), ","));
-            }
-
-
-            for (String path : paths)
-                IOHelper.deleteFile(path);
+            removeItems(curItems);
 
             Logger.e(TAG, "loadPlaylist-->" + ResHelper.join((String[]) waitForDownloadSavePath.toArray(), "@@\r\n"));
 
@@ -425,6 +379,56 @@ public class MaterialManager extends MaterialManagerBase {
             Logger.e("解析播放列表出错" + json);
         }
 
+    }
+
+    private void removeItems(Map<String, Integer> curItems) {
+        int removeTxtCount = 0;
+        List<String> willRemovePlaylist = new ArrayList<>();
+        List<String> allRemoveItems = new ArrayList<>();
+
+        List<String> paths = new ArrayList<>();
+        String[] currentIds = materialStatus.keySet().toArray(new String[0]);
+        for (String id : currentIds) {
+            try{
+                if (!curItems.containsKey(id)) {
+                    if (!materialStatus.get(id).substring(2).equals("txt"))
+                        willRemovePlaylist.add(id);
+                    else {
+                        removeTxtCount++;
+                        welcomeTxts.remove(id);
+                    }
+
+                    allRemoveItems.add(id);
+                    materialStatus.remove(id);
+
+                    PlaylistBodyBean bodyBean = loadedMaterial.get(id);
+                    paths.add(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
+                }
+            } catch (Exception e) {}
+        }
+
+        if (willRemovePlaylist.size() > 0)
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED, willRemovePlaylist);
+
+        if (removeTxtCount > 0) {
+            List<String> welcomes = new ArrayList<>();
+            for (String p : welcomeTxts.keySet())
+                welcomes.add(ResHelper.readFile2String(welcomeTxts.get(p)));
+
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, welcomes );
+
+        }
+
+        if (allRemoveItems.size() > 0) {
+            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID,
+                    ResHelper.join(materialStatus.keySet().toArray(new String[0]), ","));
+            Utils.put(context, Constants.MM_STATUS_FINISHED_TASKATTR,
+                    ResHelper.join(materialStatus.values().toArray(new String[0]), ","));
+        }
+
+
+        for (String path : paths)
+            IOHelper.deleteFile(path);
     }
 
 }
