@@ -178,16 +178,19 @@ public class SliderPlayer extends LinearLayout {
             if (isPresetLoaded || isPlaylistLoaded) {
                 llProgress.setVisibility(GONE);
                 imgHolder.setVisibility(GONE);
+                recyclerPagerView.setVisibility(VISIBLE);
             }
         } else if (displayMode == DisplayMode.PlaylistOnly) {
             if (isPlaylistLoaded) {
                 llProgress.setVisibility(GONE);
                 imgHolder.setVisibility(GONE);
+                recyclerPagerView.setVisibility(VISIBLE);
             }
         } else if (displayMode == DisplayMode.PresetOnly) {
             if (isPresetLoaded) {
                 llProgress.setVisibility(GONE);
                 imgHolder.setVisibility(GONE);
+                recyclerPagerView.setVisibility(VISIBLE);
             }
         }
     }

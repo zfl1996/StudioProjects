@@ -6,6 +6,7 @@
         android:id="@+id/rpSlider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="invisible"
         android:background="#2B363F"
         android:foregroundGravity="center"
         android:contentDescription="@null" />
