@@ -473,8 +473,11 @@ public class MaterialManager extends MaterialManagerBase {
         if (importantItems.size() > 0)
             sendImpNotify();
 //            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
-        else if (willRemovePlaylist.size() > 0)
+        else if (willRemovePlaylist.size() > 0) {
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED, willRemovePlaylist);
+            if (isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_IMP_MODE) && importantItems.size() <= 0)
+                loadPlaylist();
+        }
 
         if (removeImpTextCount > 0 && importantTxts.size() > 0)
             showWelcome(null, true);
