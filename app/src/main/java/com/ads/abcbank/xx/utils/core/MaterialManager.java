@@ -230,21 +230,26 @@ public class MaterialManager extends MaterialManagerBase {
         if (!ResHelper.isNullOrEmpty(json)) {
 
             PresetBean bean = JSON.parseObject(json, PresetBean.class);
-            if (null == bean || !"0".equals(bean.resCode))
+            if (null == bean || null == bean.data || !"0".equals(bean.resCode))
+                return;
+
+            if (null == bean.data.saveRate
+                    || null == bean.data.loanRate
+                    || null == bean.data.buyInAndOutForeignExchange)
                 return;
 
             List<PlayItem> presetItems = new ArrayList<>();
             List<String> presetTitles = new ArrayList<>();
 
-            if (bean.data != null && bean.data.saveRate.enable) {
+            if (bean.data.saveRate.enable) {
                 presetTitles.add(bean.data.saveRate.title.substring(0, 4) + "\n" + bean.data.saveRate.title.substring(4));
                 presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_SAVE, bean.data.saveRate));
             }
-            if (bean.data != null && bean.data.loanRate.enable) {
+            if (bean.data.loanRate.enable) {
                 presetTitles.add(bean.data.loanRate.title.substring(0, 4) + "\n" + bean.data.loanRate.title.substring(4));
                 presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_LOAN, bean.data.loanRate));
             }
-            if (bean.data != null && bean.data.buyInAndOutForeignExchange.enable) {
+            if (bean.data.buyInAndOutForeignExchange.enable) {
                 presetTitles.add(bean.data.buyInAndOutForeignExchange.title.substring(0, 4) + "\n" + bean.data.buyInAndOutForeignExchange.title.substring(4));
                 presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange));
             }

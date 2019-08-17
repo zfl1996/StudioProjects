@@ -137,27 +137,13 @@ public class SliderPlayer extends LinearLayout {
                 }
             });
 
-        if (sliderAdapter.getRealItemCount() > 1)
-            recyclerPagerView.startPlay();
-        else
-            recyclerPagerView.pausePlay();
-
-        if (sliderAdapter.getItemCount() == 0) {
-            imgHolder.setImageResource(GuiHelper.getBackgroundResource(context));
-            imgHolder.setVisibility(View.VISIBLE);
-        } else {
-            imgHolder.setVisibility(GONE);
-        }
+        switchPlayerStatus();
     }
 
     public void removePlayItems(List<String> ids) {
         sliderAdapter.removeItems(ids);
-        if (sliderAdapter.getItemCount() == 0) {
-            imgHolder.setImageResource(GuiHelper.getBackgroundResource(context));
-            imgHolder.setVisibility(View.VISIBLE);
-        } else {
-            imgHolder.setVisibility(GONE);
-        }
+
+        switchPlayerStatus();
     }
 
     public void adjustWidgetStatus(boolean isPresetLoaded, boolean isPlaylistLoaded, int code) {
@@ -192,42 +178,33 @@ public class SliderPlayer extends LinearLayout {
     private void showHintMsg(boolean isPresetLoaded, boolean isPlaylistLoaded, int code) {
         DisplayMode displayMode = getDisplayMode();
         if (displayMode == DisplayMode.Integration) {
-            if (isPresetLoaded || isPlaylistLoaded) {
+            if ((isPresetLoaded || isPlaylistLoaded) && sliderAdapter.getRealItemCount() > 0) {
                 llProgress.setVisibility(GONE);
-//                imgHolder.setVisibility(GONE);
-                if (sliderAdapter.getItemCount() == 0) {
-                    imgHolder.setImageResource(GuiHelper.getBackgroundResource(context));
-                    imgHolder.setVisibility(View.VISIBLE);
-                } else {
-                    imgHolder.setVisibility(GONE);
-                }
+                imgHolder.setVisibility(GONE);
                 recyclerPagerView.setVisibility(VISIBLE);
             }
         } else if (displayMode == DisplayMode.PlaylistOnly) {
-            if (isPlaylistLoaded) {
+            if (isPlaylistLoaded && sliderAdapter.getRealItemCount() > 0) {
                 llProgress.setVisibility(GONE);
-//                imgHolder.setVisibility(GONE);
-                if (sliderAdapter.getItemCount() == 0) {
-                    imgHolder.setImageResource(GuiHelper.getBackgroundResource(context));
-                    imgHolder.setVisibility(View.VISIBLE);
-                } else {
-                    imgHolder.setVisibility(GONE);
-                }
+                imgHolder.setVisibility(GONE);
                 recyclerPagerView.setVisibility(VISIBLE);
             }
         } else if (displayMode == DisplayMode.PresetOnly) {
-            if (isPresetLoaded) {
+            if (isPresetLoaded && sliderAdapter.getRealItemCount() > 0) {
                 llProgress.setVisibility(GONE);
-//                imgHolder.setVisibility(GONE);
-                if (sliderAdapter.getItemCount() == 0) {
-                    imgHolder.setImageResource(GuiHelper.getBackgroundResource(context));
-                    imgHolder.setVisibility(View.VISIBLE);
-                } else {
-                    imgHolder.setVisibility(GONE);
-                }
+                imgHolder.setVisibility(GONE);
                 recyclerPagerView.setVisibility(VISIBLE);
             }
         }
+    }
+
+    private void switchPlayerStatus() {
+        imgHolder.setVisibility( sliderAdapter.getRealItemCount() > 0 ? GONE : VISIBLE );
+
+        if (sliderAdapter.getRealItemCount() > 1)
+            recyclerPagerView.startPlay();
+        else
+            recyclerPagerView.pausePlay();
     }
 
     public interface IPageChangeListener {
