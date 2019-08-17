@@ -124,7 +124,7 @@ public class MaterialManager extends MaterialManagerBase {
         bodyBean.secUsed = ResHelper.getTimeDiff(bodyBean.started);
         netTaskMoudle.notifyDownloadFinish(new String[]{ bodyBean.id, bodyBean.started, bodyBean.secUsed });
 
-        // 更新素材集状态
+        // 更新已下载素材状态
         String correctionFilePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
         String _fileKey = correctionFilePath.substring(correctionFilePath.lastIndexOf("/") + 1,
                 correctionFilePath.lastIndexOf(".") );
@@ -145,7 +145,7 @@ public class MaterialManager extends MaterialManagerBase {
         String suffix = filePath.substring(filePath.lastIndexOf(".") + 1);
         materialStatus.put(_fileKey, "1#" + suffix);
 
-        // 更新已下载素材状态
+        // 持久化已下载素材状态
         String[] ids = materialStatus.keySet().toArray(new String[0]);
         String[] vals = materialStatus.values().toArray(new String[0]);
         Utils.put(context, Constants.MM_STATUS_FINISHED_TASKID, ResHelper.join(ids, ","));
@@ -265,14 +265,13 @@ public class MaterialManager extends MaterialManagerBase {
             List<String> welcomeItems = new ArrayList<>();
             List<String> waitForDownloadUrls = new ArrayList<>();
             List<String> waitForDownloadSavePath = new ArrayList<>();
+
+            Map<String, Integer> curItems = new HashMap<>();
             String contentTypeMiddle = Utils.getContentTypeMiddle(context);
             String contentTypeEnd = Utils.getContentTypeEnd(context);
-            long taskFlag = System.currentTimeMillis();
-            Map<String, Integer> curItems = new HashMap<>();
 
             for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {
                 try{
-
                     String suffix = bodyBean.downloadLink.substring(bodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
                     boolean needDownload = false;
@@ -354,7 +353,7 @@ public class MaterialManager extends MaterialManagerBase {
                 Logger.e(TAG, "downloadModule.start-->" + ", count" + waitForDownloadUrls.size()
                         + ", items:" + ResHelper.join( waitForDownloadUrls.toArray(new String[0]), "#"));
 
-                downloadModule.start(waitForDownloadUrls, ResHelper.getTempRootDir() + taskFlag, waitForDownloadSavePath);
+                downloadModule.start(waitForDownloadUrls, ResHelper.getTempRootDir() + System.currentTimeMillis(), waitForDownloadSavePath);
             }
 
             // 通知前端显示已下载的资源

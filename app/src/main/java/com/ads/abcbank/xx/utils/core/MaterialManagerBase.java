@@ -32,11 +32,11 @@ public abstract class MaterialManagerBase {
 
     // bll data
     WeakReference<MaterialStatusListener> itemStatusListener = null;
-    String deviceModeData;
     ConcurrentHashMap<String, PlaylistBodyBean> loadedMaterial = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, String> materialStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, String> welcomeTxts = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Integer, List<Object>> importantItems = new ConcurrentHashMap<>();// 0 txts, 1 normal
     String filters;
     int MAX_RATE = 0;
 

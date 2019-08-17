@@ -16,6 +16,7 @@ import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.adapter.SliderMainAdapter;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
+import com.ads.abcbank.xx.ui.widget.CusLinearLayoutManager;
 import com.ads.abcbank.xx.ui.widget.RecyclerPagerView;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.helper.GuiHelper;
@@ -117,7 +118,7 @@ public class SliderPlayer extends LinearLayout {
             }
         });
 
-        LinearLayoutManager lm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager lm = new CusLinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         recyclerPagerView.setLayoutManager(lm);
         recyclerPagerView.setAdapter(sliderAdapter);
     }
