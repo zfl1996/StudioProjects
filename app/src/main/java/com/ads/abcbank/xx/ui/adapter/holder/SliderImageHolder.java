@@ -2,6 +2,7 @@ package com.ads.abcbank.xx.ui.adapter.holder;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.ImageView;
@@ -69,35 +70,39 @@ public class SliderImageHolder extends RecyclerView.ViewHolder {
                     .dontAnimate()
                     .into(holder.getImgContent())
                     ;
+        else if(TextUtils.isEmpty(item.getMd5()) && TextUtils.isEmpty(item.getUrl())){
+            Utils.loadImage(holder.getImgContent(),"");
+        }
+
+        if (!ResHelper.isNullOrEmpty(item.getClickLink()) && holder.getIvGif() != null) {
+            holder.getIvGif().setVisibility(View.VISIBLE);
+            holder.getIvGif().setOnClickListener(e -> {
+                Intent intent = new Intent(ActivityManager.getInstance().getTopActivity(), WebViewActivity.class);
+                intent.putExtra(Utils.WEBURL, item.getClickLink());
+                ActivityManager.getInstance().getTopActivity().startActivity(intent);
+            });
+        } else if (holder.getIvGif() != null) {
+            holder.getIvGif().setVisibility(View.GONE);
+        }
 
 
-//        if (!ResHelper.isNullOrEmpty(item.getClickLink()) && holder.getIvGif() != null) {
-//            holder.getIvGif().setVisibility(View.VISIBLE);
-//            holder.getIvGif().setOnClickListener(e -> {
-//                Intent intent = new Intent(ActivityManager.getInstance().getTopActivity(), WebViewActivity.class);
-//                intent.putExtra(Utils.WEBURL, item.getClickLink());
-//                ActivityManager.getInstance().getTopActivity().startActivity(intent);
-//            });
-//        }
+        if (null != item.getAttData()){
+            try {
+                List<PlaylistBodyBean.QR> qrs = (List<PlaylistBodyBean.QR>)item.getAttData();
 
+                if (holder.getQrView() == null) {
+                    View v = holder.getQrStub().inflate();
+//                QRView qrView = v.findViewById(R.id.qrContainer).findViewById(R.id.qrView);
+//                qrView.showQRs(qrs);
+                    holder.setQrView(v.findViewById(R.id.qrContainer).findViewById(R.id.qrView));
+                }
 
-//        if (null != item.getAttData()){
-//            try {
-//                List<PlaylistBodyBean.QR> qrs = (List<PlaylistBodyBean.QR>)item.getAttData();
-//
-//                if (holder.getQrView() == null) {
-//                    View v = holder.getQrStub().inflate();
-////                QRView qrView = v.findViewById(R.id.qrContainer).findViewById(R.id.qrView);
-////                qrView.showQRs(qrs);
-//                    holder.setQrView(v.findViewById(R.id.qrContainer).findViewById(R.id.qrView));
-//                }
-//
-//                holder.getQrView().showQRs(qrs);
-//
-//            } catch (Exception e) {
-//                Logger.e("SliderImageHolder", e.getMessage());
-//            }
-//        }
+                holder.getQrView().showQRs(qrs);
+
+            } catch (Exception e) {
+                Logger.e("SliderImageHolder", e.getMessage());
+            }
+        }
     }
 
 }

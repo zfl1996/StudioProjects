@@ -31,6 +31,13 @@ public class RateSave3Adapter  extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void setDataSource(List<PresetBean.LoanRate.LoanRateItem> data){
         dataList.clear();
         dataList = data;
+        int item = 20 - dataList.size();
+        for (int i = 0; i < item; i++) {
+            PresetBean.LoanRate.LoanRateItem item1 = new PresetBean.LoanRate.LoanRateItem();
+            item1.item = "";
+            item1.loanRate = "";
+            dataList.add(item1);
+        }
         notifyDataSetChanged();
     }
 

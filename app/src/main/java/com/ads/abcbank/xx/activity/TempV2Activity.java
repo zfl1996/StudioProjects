@@ -19,6 +19,7 @@ public class TempV2Activity extends BaseTempletActivity {
         rvMarqueeView = findViewById(R.id.rvMarqueeView);
         v_set = findViewById(R.id.v_set);
 
+        rvMarqueeView.getBackground().setAlpha(179);
         super.initCtrls(savedInstanceState);
     }
 

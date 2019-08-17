@@ -47,7 +47,13 @@ public class AutoPollAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        String data = mData.get(position % mData.size());
+        String data;
+        if (mData.size() == 0) {
+            for (int i = 0; i < 6; i++) {
+                mData.add("中国农业银行欢迎您");
+            }
+        }
+        data = mData.get(position % mData.size());
         holder.setText(R.id.tv, data);
     }
 

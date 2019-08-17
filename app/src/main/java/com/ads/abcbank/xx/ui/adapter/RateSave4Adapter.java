@@ -31,6 +31,15 @@ public class RateSave4Adapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void setDataSource(List<PresetBean.BIAOFE.BIAOFEItem> data){
         dataList.clear();
         dataList = data;
+        int item = 20 - dataList.size();
+        for (int i = 0; i < item; i++) {
+            PresetBean.BIAOFE.BIAOFEItem item1 = new PresetBean.BIAOFE.BIAOFEItem();
+            item1.currCName = "";
+            item1.buyPrice = "";
+            item1.sellPrice = "";
+            item1.cashPrice = "";
+            dataList.add(item1);
+        }
         notifyDataSetChanged();
     }
 

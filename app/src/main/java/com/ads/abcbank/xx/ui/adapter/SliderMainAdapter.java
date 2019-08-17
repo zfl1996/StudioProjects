@@ -2,6 +2,7 @@ package com.ads.abcbank.xx.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -49,7 +50,6 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void addItemDataAndPortionRedraw(List<PlayItem> dataItem) {
         dataList.addAll(dataItem);
-
         notifyItemRangeChanged(dataList.size() - dataItem.size(), dataItem.size());
     }
 
@@ -69,7 +69,6 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                 it.remove();
             }
         }
-
         notifyDataSetChanged();
     }
 
@@ -188,5 +187,4 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             _holder.getVideoContent().stopPlayback();
         }
     }
-
 }

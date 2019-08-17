@@ -36,7 +36,7 @@ public class SliderVideoHolder  extends RecyclerView.ViewHolder {
 
     public void setVideoData(PlayItem item, SliderVideoHolder holder) {
         this.item = item;
-//        showQrs(holder);
+        showQrs(holder);
     }
 
     public PlayItem getPlayItem() {

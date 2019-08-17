@@ -151,14 +151,16 @@ public class NetTaskMoudle {
     }
 
     private void parsePalyList(Object obj) {
-        FileUtil.writeJsonToFile(obj.toString(), false);
-        boolean needDownload = BllDataExtractor.needDownload(context, obj.toString());
-        Logger.e(TAG, "netTaskListener.onPlaylistArrived-->needDownload:" + needDownload
-            + ", willNotify:" + (null != netTaskListener) );
+        if(obj != null){
+            FileUtil.writeJsonToFile(obj.toString(), false);
+            boolean needDownload = BllDataExtractor.needDownload(context, obj.toString());
+            Logger.e(TAG, "netTaskListener.onPlaylistArrived-->needDownload:" + needDownload
+                    + ", willNotify:" + (null != netTaskListener) );
 
-        if (needDownload) {
-            if (null != netTaskListener)
-                netTaskListener.onPlaylistArrived(JSONObject.parseObject(obj.toString()));
+            if (needDownload) {
+                if (null != netTaskListener)
+                    netTaskListener.onPlaylistArrived(JSONObject.parseObject(obj.toString()));
+            }
         }
     }
 

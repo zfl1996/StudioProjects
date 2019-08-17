@@ -44,7 +44,7 @@ public class GuiHelper {
 
                 for (int i = 0; i < mTabStrip.getChildCount(); i++) {
                     View tabView = mTabStrip.getChildAt(i);
-
+                    tabView.setClickable(false);
                     //拿到tabView的mTextView属性  tab的字数不固定一定用反射取mTextView
                     Field mTextViewField = tabView.getClass().getDeclaredField("mTextView");
                     mTextViewField.setAccessible(true);

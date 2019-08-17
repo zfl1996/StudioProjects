@@ -34,7 +34,7 @@
         <TextView
             android:id="@+id/tv_key"
             android:layout_width="0px"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="19"
             android:background="#08ffffff"
             android:gravity="center"
@@ -42,7 +42,7 @@
             android:padding="10px"
             android:text="项目"
             android:textColor="#fff"
-            android:textSize="@dimen/tab_text_super" />
+            android:textSize="@dimen/tab_text_sub" />
 
         <View android:id="@+id/vSep1"
             android:layout_width="5px"
@@ -59,7 +59,7 @@
             android:padding="10px"
             android:text="年利率（%）"
             android:textColor="#fff"
-            android:textSize="@dimen/tab_text_super" />
+            android:textSize="@dimen/tab_text_sub" />
 
         <View android:id="@+id/vSep2"
             android:layout_width="5px"
@@ -76,7 +76,7 @@
             android:padding="10px"
             android:text="年利率（%）"
             android:textColor="#fff"
-            android:textSize="@dimen/tab_text_super" />
+            android:textSize="@dimen/tab_text_sub" />
 
         <View android:id="@+id/vSep3"
             android:layout_width="5px"
@@ -93,7 +93,7 @@
             android:padding="10px"
             android:text="年利率（%）"
             android:textColor="#fff"
-            android:textSize="@dimen/tab_text_super" />
+            android:textSize="@dimen/tab_text_sub" />
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvRate"
@@ -160,5 +160,5 @@
         android:gravity="center"
         android:padding="10px"
         android:textColor="#fff"
-        android:textSize="@dimen/tab_text_super" />
+        android:textSize="@dimen/tab_text_sub" />
 </RelativeLayout>

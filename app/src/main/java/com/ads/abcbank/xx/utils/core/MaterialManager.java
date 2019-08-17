@@ -236,13 +236,18 @@ public class MaterialManager extends MaterialManagerBase {
             List<PlayItem> presetItems = new ArrayList<>();
             List<String> presetTitles = new ArrayList<>();
 
-            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_SAVE, bean.data.saveRate) );
-            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_LOAN, bean.data.loanRate) );
-            presetItems.add( new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange) );
-
-            presetTitles.add(bean.data.saveRate.title.substring(0, 4) + "\n" + bean.data.saveRate.title.substring(4));
-            presetTitles.add(bean.data.loanRate.title.substring(0, 4) + "\n" + bean.data.loanRate.title.substring(4));
-            presetTitles.add(bean.data.buyInAndOutForeignExchange.title.substring(0, 4) + "\n" + bean.data.buyInAndOutForeignExchange.title.substring(4));
+            if (bean.data != null && bean.data.saveRate.enable) {
+                presetTitles.add(bean.data.saveRate.title.substring(0, 4) + "\n" + bean.data.saveRate.title.substring(4));
+                presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_SAVE, bean.data.saveRate));
+            }
+            if (bean.data != null && bean.data.loanRate.enable) {
+                presetTitles.add(bean.data.loanRate.title.substring(0, 4) + "\n" + bean.data.loanRate.title.substring(4));
+                presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_LOAN, bean.data.loanRate));
+            }
+            if (bean.data != null && bean.data.buyInAndOutForeignExchange.enable) {
+                presetTitles.add(bean.data.buyInAndOutForeignExchange.title.substring(0, 4) + "\n" + bean.data.buyInAndOutForeignExchange.title.substring(4));
+                presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange));
+            }
 
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_RATE_LOADED, new Object[]{presetItems, presetTitles});
 

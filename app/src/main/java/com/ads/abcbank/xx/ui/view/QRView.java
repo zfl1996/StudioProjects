@@ -128,6 +128,7 @@ public class QRView extends LinearLayout {
         for (int i = 0; i < qrs.size(); i++) {
             PlaylistBodyBean.QR qr = qrs.get(i);
             View view = LayoutInflater.from(context).inflate(R.layout.item_qr, null);
+
             ImageView iv = view.findViewById(R.id.iv);
             TextView tips = view.findViewById(R.id.tips);
 
@@ -151,10 +152,10 @@ public class QRView extends LinearLayout {
 //                iv.setImageResource(R.mipmap.abcqrcode1);
 //            }
             tips.setText(qr.QRTip);
-            LinearLayout layout = new LinearLayout(context);
-            layout.addView(view);
+//            LinearLayout layout = new LinearLayout(context);
+//            layout.addView(view);
 
-            qrLayout.addView(layout);
+            qrLayout.addView(view);
         }
     }
 }

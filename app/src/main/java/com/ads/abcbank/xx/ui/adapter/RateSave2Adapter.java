@@ -31,6 +31,13 @@ public class RateSave2Adapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void setDataSource(List<PresetBean.SaveRate.SaveRateItem> data){
         dataList.clear();
         dataList = data;
+        int item = 20 - dataList.size();
+        for (int i = 0; i < item; i++) {
+            PresetBean.SaveRate.SaveRateItem item1 = new PresetBean.SaveRate.SaveRateItem();
+            item1.item = "";
+            item1.saveRate = "";
+            dataList.add(item1);
+        }
         notifyDataSetChanged();
     }
 

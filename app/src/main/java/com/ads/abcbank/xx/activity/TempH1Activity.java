@@ -32,7 +32,11 @@ public class TempH1Activity extends BaseTempletActivity {
         presetSliderPlayer = findViewById(R.id.presetSliderPlayer);
 
         presetSliderPlayer.setPageChangeListener( position -> {
-            tabIndicator.setScrollPosition(position % 3, 0, true);
+            int tabs = tabIndicator.getTabCount();
+            if(tabs == 0){
+                tabs = 1;
+            }
+            tabIndicator.setScrollPosition(position % tabs, 0, true);
         } );
 
         timeTransformer = new TimeTransformer(timeData -> {
