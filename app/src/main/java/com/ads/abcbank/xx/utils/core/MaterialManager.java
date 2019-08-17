@@ -206,7 +206,8 @@ public class MaterialManager extends MaterialManagerBase {
         }
 
         if (importantItems.size() > 0) {
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
+            sendImpNotify();
+//            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
         }
 
 //        loadedMaterial.remove(fileUrl);
@@ -283,6 +284,11 @@ public class MaterialManager extends MaterialManagerBase {
             return;
 
         try {
+            if (isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_IMP_MODE) && importantItems.size() <= 0) {
+                managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_IMP_MODE, 0);
+                loadedMaterial.clear();
+            }
+
             List<PlaylistBodyBean> playlistBodyBeanLists = JSON.parseArray(json, PlaylistBodyBean.class);
             List<PlayItem> allPlayItems = new ArrayList<>();
             List<String> welcomeItems = new ArrayList<>();
@@ -402,7 +408,8 @@ public class MaterialManager extends MaterialManagerBase {
 
             // 通知前端显示已下载的资源
             if (importantItems.size() > 0) {
-                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
+                sendImpNotify();
+//                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
             } else if (allPlayItems.size() > 0)
                 ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED, allPlayItems);
 
@@ -464,7 +471,8 @@ public class MaterialManager extends MaterialManagerBase {
         }
 
         if (importantItems.size() > 0)
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
+            sendImpNotify();
+//            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
         else if (willRemovePlaylist.size() > 0)
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED, willRemovePlaylist);
 

@@ -62,6 +62,7 @@ public abstract class MaterialManagerBase {
             managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 0);
             managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 0);
             managerStatus.put(Constants.MM_STATUS_KEY_PRESET_LOADED, 0);
+            managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_IMP_MODE, 0);
 
             downloadModule = new DownloadModule(context, MAX_RATE, downloadStateLisntener);
             ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_INIT, null);
@@ -254,6 +255,11 @@ public abstract class MaterialManagerBase {
         }
 
         return list;
+    }
+
+    protected void sendImpNotify() {
+        managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_IMP_MODE, 1);
+        ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
     }
 
     protected abstract Handler buildMaterialHandler();
