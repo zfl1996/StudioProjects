@@ -20,7 +20,6 @@ import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.core.MaterialManager;
-import com.ads.abcbank.xx.utils.core.PlaylistManager;
 import com.ads.abcbank.xx.utils.helper.DPIHelper;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     protected AutoPollAdapter autoPollAdapter;
     protected AutoPollRecyclerView rvMarqueeView;
     protected SliderPlayer mainSliderPlayer;
-    protected PlaylistManager playlistManager;
+//    protected PlaylistManager playlistManager;
 
     protected Handler mainHandler = new Handler();
     protected Toast toast = null;
@@ -61,7 +60,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             @Override
             public void onPlayItemPrepared(List<PlayItem> items, boolean isImportant) {
                 mainSliderPlayer.addPlayItems(items, !isImportant);
-                playlistManager.addMaterialInfo(items);
+//                playlistManager.addMaterialInfo(items);
             }
 
             @Override
@@ -95,10 +94,10 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         materialManager = new MaterialManager(this, materialStatusListener);
         materialManager.initManager(mainSliderPlayer.isIntegrationMode(), type);
 
-        playlistManager = new PlaylistManager(this, ids -> {
+//        playlistManager = new PlaylistManager(this, ids -> {
 //            materialManager.removeTimeoutItem(ids);
 //            mainHandler.post( () -> mainSliderPlayer.removePlayItems(ids) );
-        });
+//        });
     }
 
     protected boolean isPlaylistLoaded() {
@@ -126,7 +125,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected void onRateDataPrepared(List<PlayItem> items, List<String> titles){
         mainSliderPlayer.addPlayItems(items, true);
-        playlistManager.addMaterialInfo(items);
+//        playlistManager.addMaterialInfo(items);
     }
 
     protected void onRateDataProgress(int code) {
