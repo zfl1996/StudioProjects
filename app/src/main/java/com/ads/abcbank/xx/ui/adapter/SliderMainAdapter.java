@@ -133,9 +133,11 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         int itemCount = dataList.size();
         int position = itemCount > 0 ? pos % itemCount : 0;
 
-        PlayItem item = dataList.get(position);
-        if (null != item)
-            return item.getMediaType();
+        if (itemCount > position) {
+            PlayItem item = dataList.get(position);
+            if (null != item)
+                return item.getMediaType();
+        }
 
         return super.getItemViewType(position);
     }
@@ -144,6 +146,10 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public int getItemCount() {
         return dataList.size() > 0 ? Integer.MAX_VALUE : 0;
+    }
+
+    public int getRealItemCount() {
+        return dataList.size();
     }
 
     @Override

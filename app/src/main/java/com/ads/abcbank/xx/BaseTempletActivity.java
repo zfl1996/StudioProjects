@@ -59,8 +59,8 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         materialStatusListener = new MaterialManager.MaterialStatusListener() {
 
             @Override
-            public void onPlayItemPrepared(List<PlayItem> items) {
-                mainSliderPlayer.addPlayItems(items, true);
+            public void onPlayItemPrepared(List<PlayItem> items, boolean isImportant) {
+                mainSliderPlayer.addPlayItems(items, !isImportant);
                 playlistManager.addMaterialInfo(items);
             }
 
@@ -95,12 +95,9 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
         materialManager = new MaterialManager(this, materialStatusListener);
         materialManager.initManager(mainSliderPlayer.isIntegrationMode(), type);
 
-//        playlistManager = new PlaylistManager(this, (id, index) -> {
-//            mainHandler.post(() -> mainSliderPlayer.onItemOuttime(id, index));
-//        });
         playlistManager = new PlaylistManager(this, ids -> {
-            materialManager.removeTimeoutItem(ids);
-            mainHandler.post( () -> mainSliderPlayer.removePlayItems(ids) );
+//            materialManager.removeTimeoutItem(ids);
+//            mainHandler.post( () -> mainSliderPlayer.removePlayItems(ids) );
         });
     }
 

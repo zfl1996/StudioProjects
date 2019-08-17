@@ -136,7 +136,11 @@ public class SliderPlayer extends LinearLayout {
                         pageChangeListener.onPageSelection(position);
                 }
             });
-        recyclerPagerView.startPlay();
+
+        if (sliderAdapter.getRealItemCount() > 1)
+            recyclerPagerView.startPlay();
+        else
+            recyclerPagerView.pausePlay();
     }
 
     public void removePlayItems(List<String> ids) {

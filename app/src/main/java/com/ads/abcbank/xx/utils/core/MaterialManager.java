@@ -46,7 +46,7 @@ public class MaterialManager extends MaterialManagerBase {
 
                         Utils.getExecutorService().submit(() -> loadPlaylist());
                         Utils.getExecutorService().submit(() -> loadPreset());
-                        Utils.getExecutorService().submit(() -> showWelcome(null));
+                        Utils.getExecutorService().submit(() -> showWelcome(null, false));
 
                         break;
 
@@ -133,7 +133,7 @@ public class MaterialManager extends MaterialManagerBase {
             return;
 
 
-        if (!IOHelper.copyOrMoveFile(filePath, correctionFilePath, true)) {
+        if (!ResHelper.isExistsFile(correctionFilePath) && !IOHelper.copyOrMoveFile(filePath, correctionFilePath, true)) {
             Logger.e(TAG, "copyOrMoveFile failed-->" + filePath + " to " + correctionFilePath);
             return;
         }
@@ -157,33 +157,56 @@ public class MaterialManager extends MaterialManagerBase {
         Logger.e(TAG, "MM_STATUS_FINISHED_TASKID-->" + _fileKey + "." + suffix + " ,count:" + ids.length /*ResHelper.join(ids, ",")*/);
 
         if (suffix.toLowerCase().equals("pdf")) {
-            List<PlayItem> list = PdfHelper.cachePdfToImage( fileName, fileKey,
-                    bodyBean.playDate, bodyBean.stopDate,
-                    bodyBean.onClickLink, bodyBean.QRCode  );
+            if (bodyBean.isUrg.equals("1")) {
+                importantItems.put(bodyBean.id, PdfHelper.cachePdfToImage(fileName, fileKey,
+                        bodyBean.playDate, bodyBean.stopDate,
+                        bodyBean.onClickLink, bodyBean.QRCode));
+            } else {
+                List<PlayItem> list = PdfHelper.cachePdfToImage(fileName, fileKey,
+                        bodyBean.playDate, bodyBean.stopDate,
+                        bodyBean.onClickLink, bodyBean.QRCode);
 
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PDF_CACHED, list);
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PDF_CACHED, list);
+            }
             needNotify = true;
         } else if (BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
                 || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
-            PlayItem playItem = new PlayItem(fileKey,
-                    filePath,
-                    BllDataExtractor.getIdentityType(suffix),
-                    bodyBean.playDate, bodyBean.stopDate,
-                    bodyBean.onClickLink, bodyBean.QRCode);
+            if (bodyBean.isUrg.equals("1")) {
+                final String ___filePath = filePath;
+                importantItems.put(bodyBean.id, new ArrayList<PlayItem>(){ {add(new PlayItem(fileKey,
+                        ___filePath,
+                        BllDataExtractor.getIdentityType(suffix),
+                        bodyBean.playDate, bodyBean.stopDate,
+                        bodyBean.onClickLink, bodyBean.QRCode));} } );
+            } else {
+                PlayItem playItem = new PlayItem(fileKey,
+                        filePath,
+                        BllDataExtractor.getIdentityType(suffix),
+                        bodyBean.playDate, bodyBean.stopDate,
+                        bodyBean.onClickLink, bodyBean.QRCode);
 
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_DOWNSUCC, new ArrayList<PlayItem>(){
-                { add(playItem); }
-            });
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_DOWNSUCC, new ArrayList<PlayItem>() {
+                    {
+                        add(playItem);
+                    }
+                });
+            }
             needNotify = true;
         } else if (suffix.toLowerCase().equals("txt")) {
             String wmsg = ResHelper.readFile2String(filePath);
             if (!ResHelper.isNullOrEmpty(wmsg)) {
-                List<String> list = new ArrayList<>();
-                list.add(wmsg);
                 welcomeTxts.put(bodyBean.id, filePath);
 
-                showWelcome(list);
+                if (bodyBean.isUrg.equals("1")) {
+                    importantTxts.put(bodyBean.id, wmsg);
+                    showWelcome(null, true);
+                } else
+                    showWelcome(new ArrayList<String>(){{add(wmsg);}}, false);
             }
+        }
+
+        if (importantItems.size() > 0) {
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
         }
 
 //        loadedMaterial.remove(fileUrl);
@@ -276,26 +299,30 @@ public class MaterialManager extends MaterialManagerBase {
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
                     boolean needDownload = false;
 
-                    if (!BllDataExtractor.isInPlayTime(bodyBean.playDate, bodyBean.stopDate))
+                    // 非播放时间和非该模板资源不加入，以将缓存项（如有）移除
+                    if (!BllDataExtractor.isInPlayTime(bodyBean.playDate, bodyBean.stopDate)
+                        || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
+                    )
                         continue;
 
                     curItems.put(bodyBean.id, 1);
 
                     // 去掉已下载并存在的资源
-                    if (loadedMaterial.containsKey(bodyBean.downloadLink)) {
+//                    if (loadedMaterial.containsKey(bodyBean.downloadLink)) {
+                    if (isMaterialLoaded(bodyBean)) {
                         if (!isMaterialMarked(bodyBean.id) || ResHelper.isExistsFile(savePath))
                             continue;
                         else
                             needDownload = true;
                     }
 
-                    // 过滤非下载时段和已下载项
+                    // 过滤非下载时段项
                     if (!BllDataExtractor.isInDownloadTime(bodyBean)
-                            || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
+//                            || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
                     )
                         continue;
 
-                    // 初次加载
+                    // 初次加载（loadedMaterial字典里不存在）加入待下载列表
                     if (!isMaterialMarked(bodyBean.id)) {
                         needDownload = true;
                     }
@@ -324,12 +351,25 @@ public class MaterialManager extends MaterialManagerBase {
 
                     // 按类型分别构建用于前端显示的资源
                     if (suffix.equals("pdf")) {
-                        allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf",
+                        if (bodyBean.isUrg.equals("1"))
+                            importantItems.put(bodyBean.id, PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf",
+                                bodyBean.playDate, bodyBean.stopDate,
+                                bodyBean.onClickLink, bodyBean.QRCode));
+                        else
+                            allPlayItems.addAll(PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf",
                                 bodyBean.playDate, bodyBean.stopDate,
                                 bodyBean.onClickLink, bodyBean.QRCode));
                     } else if(BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_IMAGE
                             || BllDataExtractor.getIdentityType(suffix) == Constants.SLIDER_HOLDER_VIDEO) {
-                        allPlayItems.add(new PlayItem(bodyBean.id,
+
+                        if (bodyBean.isUrg.equals("1"))
+                            importantItems.put(bodyBean.id, new ArrayList<PlayItem>(){ {add(new PlayItem(bodyBean.id,
+                                    ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id),
+                                    BllDataExtractor.getIdentityType(bodyBean),
+                                    bodyBean.playDate, bodyBean.stopDate,
+                                    bodyBean.onClickLink, bodyBean.QRCode));} } );
+                        else
+                            allPlayItems.add(new PlayItem(bodyBean.id,
                                 ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id),
                                 BllDataExtractor.getIdentityType(bodyBean),
                                 bodyBean.playDate, bodyBean.stopDate,
@@ -337,7 +377,11 @@ public class MaterialManager extends MaterialManagerBase {
                     } else if (suffix.equals("txt")) {
                         String wmsg = ResHelper.readFile2String(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                         if (!ResHelper.isNullOrEmpty(wmsg)) {
-                            welcomeItems.add(wmsg);
+                            if (bodyBean.isUrg.equals("1"))
+                                importantTxts.put(bodyBean.id, wmsg);
+                            else
+                                welcomeItems.add(wmsg);
+
                             welcomeTxts.put(bodyBean.id, ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
                         }
                     } else
@@ -357,7 +401,9 @@ public class MaterialManager extends MaterialManagerBase {
             }
 
             // 通知前端显示已下载的资源
-            if (allPlayItems.size() > 0)
+            if (importantItems.size() > 0) {
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
+            } else if (allPlayItems.size() > 0)
                 ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED, allPlayItems);
 
             // 通知前端播放列表遍历完成
@@ -369,8 +415,10 @@ public class MaterialManager extends MaterialManagerBase {
             }
 
             // 通知前端显示跑马灯文字
-            if (welcomeItems.size() > 0)
-                showWelcome(welcomeItems);
+            if (importantTxts.size() > 0) {
+                showWelcome(null, true);
+            } else if (welcomeItems.size() > 0)
+                showWelcome(welcomeItems, false);
 
             // 移除停播的项
             removeItems(curItems);
@@ -384,7 +432,7 @@ public class MaterialManager extends MaterialManagerBase {
     }
 
     private void removeItems(Map<String, Integer> curItems) {
-        int removeTxtCount = 0;
+        int removeTxtCount = 0, removeImpTextCount = 0;
         List<String> willRemovePlaylist = new ArrayList<>();
         List<String> allRemoveItems = new ArrayList<>();
 
@@ -398,10 +446,16 @@ public class MaterialManager extends MaterialManagerBase {
                     else {
                         removeTxtCount++;
                         welcomeTxts.remove(id);
+
+                        if (importantTxts.containsKey(id)) {
+                            removeImpTextCount++;
+                            importantTxts.remove(id);
+                        }
                     }
 
                     allRemoveItems.add(id);
                     materialStatus.remove(id);
+                    importantItems.remove(id);
 
                     PlaylistBodyBean bodyBean = loadedMaterial.get(id);
                     paths.add(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
@@ -409,16 +463,19 @@ public class MaterialManager extends MaterialManagerBase {
             } catch (Exception e) {}
         }
 
-        if (willRemovePlaylist.size() > 0)
+        if (importantItems.size() > 0)
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED, getImpItems());
+        else if (willRemovePlaylist.size() > 0)
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED, willRemovePlaylist);
 
-        if (removeTxtCount > 0) {
+        if (removeImpTextCount > 0 && importantTxts.size() > 0)
+            showWelcome(null, true);
+        else if (removeTxtCount > 0) {
             List<String> welcomes = new ArrayList<>();
             for (String p : welcomeTxts.keySet())
                 welcomes.add(ResHelper.readFile2String(welcomeTxts.get(p)));
 
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, welcomes );
-
         }
 
         if (allRemoveItems.size() > 0) {
@@ -427,7 +484,6 @@ public class MaterialManager extends MaterialManagerBase {
             Utils.put(context, Constants.MM_STATUS_FINISHED_TASKATTR,
                     ResHelper.join(materialStatus.values().toArray(new String[0]), ","));
         }
-
 
         for (String path : paths)
             IOHelper.deleteFile(path);

@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,7 +37,8 @@ public abstract class MaterialManagerBase {
     ConcurrentHashMap<String, String> materialStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, Integer> managerStatus = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, String> welcomeTxts = new ConcurrentHashMap<>();
-    ConcurrentHashMap<Integer, List<Object>> importantItems = new ConcurrentHashMap<>();// 0 txts, 1 normal
+    ConcurrentHashMap<String, List<PlayItem>> importantItems = new ConcurrentHashMap<>();// 0 txts, 1 normal
+    ConcurrentHashMap<String, String> importantTxts = new ConcurrentHashMap<>();// 0 txts, 1 normal
     String filters;
     int MAX_RATE = 0;
 
@@ -97,6 +99,11 @@ public abstract class MaterialManagerBase {
 
     public boolean isMaterialMarked(String key) {
         return materialStatus.containsKey(key) && materialStatus.get(key).substring(0, 1).equals("1");
+    }
+
+    public boolean isMaterialLoaded(PlaylistBodyBean bodyBean) {
+        PlaylistBodyBean _bodyBean = loadedMaterial.get(bodyBean.downloadLink);
+        return null != _bodyBean && _bodyBean.isUrg.equals(bodyBean.isUrg) && _bodyBean.id.equals(bodyBean.id);
     }
 
     public void reload(int resCode) {
@@ -190,7 +197,12 @@ public abstract class MaterialManagerBase {
                 case Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED:
                 case Constants.SLIDER_STATUS_CODE_PDF_CACHED:
                 case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
-                    _materialStatusListener.onPlayItemPrepared( (List<PlayItem>)msg.obj );
+                    _materialStatusListener.onPlayItemPrepared( (List<PlayItem>)msg.obj, false );
+
+                    break;
+
+                case Constants.SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED:
+                    _materialStatusListener.onPlayItemPrepared( (List<PlayItem>)msg.obj, true );
 
                     break;
 
@@ -212,16 +224,19 @@ public abstract class MaterialManagerBase {
 
     };
 
+    protected void showWelcome(List<String> welcomeItems, boolean isImportant) {
+        if (isImportant) {
+            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE,
+                    Arrays.asList( importantTxts.values().toArray(new String[0]) ));
+        } else {
+            if (null == welcomeItems || welcomeItems.size() <= 0) {
+                welcomeItems = buildWelcomeWords();
 
-    protected void showWelcome(List<String> welcomeItems) {
-        if (null == welcomeItems || welcomeItems.size() <= 0) {
-            welcomeItems = buildWelcomeWords();
-
-            managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 0);
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, welcomeItems);
-        } else
-            ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, welcomeItems);
-
+                managerStatus.put(Constants.MM_STATUS_KEY_WELCOME_LOADED, 0);
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_CREATE, welcomeItems);
+            } else
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_WELCOME_LOADED, welcomeItems);
+        }
     }
 
     protected void resendPlaylistOkMessage() {
@@ -231,12 +246,22 @@ public abstract class MaterialManagerBase {
         }
     }
 
+    protected List<PlayItem> getImpItems() {
+        List<PlayItem> list = new ArrayList<>();
+
+        for (String key : importantItems.keySet()) {
+            list.addAll(importantItems.get(key));
+        }
+
+        return list;
+    }
+
     protected abstract Handler buildMaterialHandler();
 
     public interface MaterialStatusListener {
         void onProgress(int code);
         void onRatePrepared(List<PlayItem> items, List<String> titles);
-        void onPlayItemPrepared(List<PlayItem> items);
+        void onPlayItemPrepared(List<PlayItem> items, boolean isImportant);
         void onWelcomePrepared(List<String> msg, boolean isAppend, boolean isDefault);
         void onPlayItemRemoved(List<String> ids);
     }

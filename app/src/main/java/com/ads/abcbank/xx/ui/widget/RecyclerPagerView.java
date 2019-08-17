@@ -88,6 +88,9 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
         int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
         View firstView = linearLayoutManager.findViewByPosition(firstVisibleItemPosition);
 
+        if (lastView == null || firstView == null)
+            return false;
+
         // distance we need to scroll
         int leftMargin = (screenWidth - lastView.getWidth()) / 2;
         int rightMargin = (screenWidth - firstView.getWidth()) / 2 + firstView.getWidth();
@@ -158,6 +161,9 @@ public class RecyclerPagerView extends RecyclerView implements Handler.Callback 
             View lastView = linearLayoutManager.findViewByPosition(lastVisibleItemPosition);
             int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
             View firstView = linearLayoutManager.findViewByPosition(firstVisibleItemPosition);
+
+            if (null == lastView || null == firstView)
+                return;
 
             // distance we need to scroll
             int leftMargin = (screenWidth - lastView.getWidth()) / 2;
