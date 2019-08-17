@@ -262,9 +262,9 @@ public class MaterialManager extends MaterialManagerBase {
         try {
             List<PlaylistBodyBean> playlistBodyBeanLists = JSON.parseArray(json, PlaylistBodyBean.class);
             List<PlayItem> allPlayItems = new ArrayList<>();
+            List<String> welcomeItems = new ArrayList<>();
             List<String> waitForDownloadUrls = new ArrayList<>();
             List<String> waitForDownloadSavePath = new ArrayList<>();
-            List<String> welcomeItems = new ArrayList<>();
             String contentTypeMiddle = Utils.getContentTypeMiddle(context);
             String contentTypeEnd = Utils.getContentTypeEnd(context);
             long taskFlag = System.currentTimeMillis();
@@ -277,7 +277,10 @@ public class MaterialManager extends MaterialManagerBase {
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
                     boolean needDownload = false;
 
-                    curItems.put(bodyBean.id, suffix.equals("txt") ? 1 : 0);
+                    if (!BllDataExtractor.isInPlayTime(bodyBean.playDate, bodyBean.stopDate))
+                        continue;
+
+                    curItems.put(bodyBean.id, 1);
 
                     // 去掉已下载并存在的资源
                     if (loadedMaterial.containsKey(bodyBean.downloadLink)) {

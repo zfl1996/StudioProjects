@@ -105,7 +105,8 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     }
 
     protected boolean isPlaylistLoaded() {
-        return materialManager.isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_LOADED);
+//        return materialManager.isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_LOADED);
+        return materialManager.hasMaterials();
     }
 
     protected boolean isPresetLoaded() {

@@ -87,6 +87,10 @@ public abstract class MaterialManagerBase {
         });
     }
 
+    public boolean hasMaterials() {
+        return materialStatus.size() > 0;
+    }
+
     public boolean isActionExecuted(String actionCode) {
         return managerStatus.containsKey(actionCode) && managerStatus.get(actionCode) == 1;
     }
@@ -190,19 +194,16 @@ public abstract class MaterialManagerBase {
 
                     break;
 
-                case Constants.SLIDER_STATUS_CODE_PROGRESS:
-                    _materialStatusListener.onProgress((int)msg.obj);
-
-                    break;
-
                 case Constants.SLIDER_STATUS_CODE_PLAYLIST_REMOVED:
                     _materialStatusListener.onPlayItemRemoved((List<String>)msg.obj);
 
                     break;
 
-                case Constants.SLIDER_STATUS_CODE_WELCOME_REMOVED:
+                case Constants.SLIDER_STATUS_CODE_PROGRESS:
+                    _materialStatusListener.onProgress((int)msg.obj);
 
                     break;
+
 
                 default:
                     break;
