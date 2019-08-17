@@ -177,24 +177,22 @@ public class SliderPlayer extends LinearLayout {
 
     private void showHintMsg(boolean isPresetLoaded, boolean isPlaylistLoaded, int code) {
         DisplayMode displayMode = getDisplayMode();
+        boolean showContent = false;
         if (displayMode == DisplayMode.Integration) {
-            if ((isPresetLoaded || isPlaylistLoaded) && sliderAdapter.getRealItemCount() > 0) {
-                llProgress.setVisibility(GONE);
-                imgHolder.setVisibility(GONE);
-                recyclerPagerView.setVisibility(VISIBLE);
-            }
+            if ((isPresetLoaded || isPlaylistLoaded) && sliderAdapter.getRealItemCount() > 0)
+                showContent = true;
         } else if (displayMode == DisplayMode.PlaylistOnly) {
-            if (isPlaylistLoaded && sliderAdapter.getRealItemCount() > 0) {
-                llProgress.setVisibility(GONE);
-                imgHolder.setVisibility(GONE);
-                recyclerPagerView.setVisibility(VISIBLE);
-            }
+            if (isPlaylistLoaded && sliderAdapter.getRealItemCount() > 0)
+                showContent = true;
         } else if (displayMode == DisplayMode.PresetOnly) {
-            if (isPresetLoaded && sliderAdapter.getRealItemCount() > 0) {
-                llProgress.setVisibility(GONE);
-                imgHolder.setVisibility(GONE);
-                recyclerPagerView.setVisibility(VISIBLE);
-            }
+            if (isPresetLoaded && sliderAdapter.getRealItemCount() > 0)
+                showContent = true;
+        }
+
+        if (showContent) {
+            llProgress.setVisibility(GONE);
+            imgHolder.setVisibility(GONE);
+            recyclerPagerView.setVisibility(VISIBLE);
         }
     }
 
