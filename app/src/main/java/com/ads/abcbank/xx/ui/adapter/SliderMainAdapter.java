@@ -2,7 +2,7 @@ package com.ads.abcbank.xx.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -32,6 +32,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private boolean isIntegrationPresetData;
     private Map<Integer, Integer> rateResourceMap;
 //    private String videoPath = "";
+    private Map<Integer, Object> rateData = new ArrayMap<>();
 
     public void setRateResourceMap(Map<Integer, Integer> rateResourceMap) {
         this.rateResourceMap = rateResourceMap;
@@ -51,6 +52,19 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void addItemDataAndPortionRedraw(List<PlayItem> dataItem) {
         dataList.addAll(dataItem);
         notifyItemRangeChanged(dataList.size() - dataItem.size(), dataItem.size());
+    }
+
+    public void addItemData(List<PlayItem> dataItem, boolean isPortionRedraw, boolean isCreate) {
+        for (PlayItem pi : dataItem) {
+            rateData.put(pi.getMediaType(), pi);
+        }
+
+        if (isCreate) {
+            if (isPortionRedraw)
+                addItemDataAndPortionRedraw(dataItem);
+            else
+                addItemDataAndRedraw(dataItem);
+        }
     }
 
     public void removeOuttimeItem(String id, int index) {
@@ -108,17 +122,17 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         else if (holder instanceof SliderVideoHolder)
             ((SliderVideoHolder) holder).setVideoData(item, (SliderVideoHolder) holder);
         else if (holder instanceof SliderRateSaveHolder) {
-            SliderRateSaveHolder.showRate((PresetBean.SaveRate)item.getAttData(),
+            SliderRateSaveHolder.showRate( (PresetBean.SaveRate)rateData.get(item.getMediaType()), //(PresetBean.SaveRate)item.getAttData(),
                     (SliderRateSaveHolder) holder,
                     isIntegrationPresetData,
                     rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_SAVE_ITEM));
         } else if (holder instanceof SliderRateLoanHolder) {
-            SliderRateLoanHolder.showRate((PresetBean.LoanRate)item.getAttData(),
+            SliderRateLoanHolder.showRate((PresetBean.LoanRate)rateData.get(item.getMediaType()), //(PresetBean.LoanRate)item.getAttData(),
                     (SliderRateLoanHolder)holder,
                     isIntegrationPresetData,
                     rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_LOAN_ITEM));
         } else if (holder instanceof SliderRateBuyHolder) {
-            SliderRateBuyHolder.showRate((PresetBean.BIAOFE)item.getAttData(),
+            SliderRateBuyHolder.showRate((PresetBean.BIAOFE)rateData.get(item.getMediaType()), //(PresetBean.BIAOFE)item.getAttData(),
                     (SliderRateBuyHolder)holder,
                     isIntegrationPresetData,
                     rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_BUY_ITEM));

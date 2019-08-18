@@ -55,7 +55,9 @@ public class TempH1Activity extends BaseTempletActivity {
 
     @Override
     protected void onRateDataPrepared(List<PlayItem> items, List<String> titles){
-        presetSliderPlayer.addPlayItems(items, false);
+//        presetSliderPlayer.addPlayItems(items, false);
+
+        mainSliderPlayer.addRateItem(items, false, isPlaylistLoaded());
 
         if (!isTabInited) {
             isTabInited = true;

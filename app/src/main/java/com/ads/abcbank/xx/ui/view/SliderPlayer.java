@@ -140,6 +140,10 @@ public class SliderPlayer extends LinearLayout {
         switchPlayerStatus();
     }
 
+    public void addRateItem(List<PlayItem> items, boolean isPortionRedraw, boolean isCreate) {
+        sliderAdapter.addItemData(items, isPortionRedraw, isCreate);
+    }
+
     public void removePlayItems(List<String> ids) {
         sliderAdapter.removeItems(ids);
 

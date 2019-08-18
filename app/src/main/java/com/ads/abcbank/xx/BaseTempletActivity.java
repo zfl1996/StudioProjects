@@ -124,7 +124,8 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
     }
 
     protected void onRateDataPrepared(List<PlayItem> items, List<String> titles){
-        mainSliderPlayer.addPlayItems(items, true);
+        mainSliderPlayer.addRateItem(items, true, isPlaylistLoaded());
+//        mainSliderPlayer.addPlayItems(items, true);
 //        playlistManager.addMaterialInfo(items);
     }
 
