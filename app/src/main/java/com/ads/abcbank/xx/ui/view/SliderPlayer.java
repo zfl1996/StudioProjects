@@ -141,7 +141,19 @@ public class SliderPlayer extends LinearLayout {
     }
 
     public void addRateItem(List<PlayItem> items, boolean isPortionRedraw, boolean isCreate) {
-        sliderAdapter.addItemData(items, isPortionRedraw, isCreate);
+        sliderAdapter.addRateData(items, isPortionRedraw, isCreate);
+
+        if (displayMode == DisplayMode.PresetOnly.ordinal()) {
+            if (null != pageChangeListener)
+                recyclerPagerView.setOnPageChangeListener(new RecyclerPagerView.OnPageChangeListener() {
+                    @Override
+                    public void onPageSelection(int position) {
+                        pageChangeListener.onPageSelection(position);
+                    }
+                });
+
+            switchPlayerStatus();
+        }
     }
 
     public void removePlayItems(List<String> ids) {

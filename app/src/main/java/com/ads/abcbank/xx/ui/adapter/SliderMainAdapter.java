@@ -54,9 +54,9 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemRangeChanged(dataList.size() - dataItem.size(), dataItem.size());
     }
 
-    public void addItemData(List<PlayItem> dataItem, boolean isPortionRedraw, boolean isCreate) {
+    public void addRateData(List<PlayItem> dataItem, boolean isPortionRedraw, boolean isCreate) {
         for (PlayItem pi : dataItem) {
-            rateData.put(pi.getMediaType(), pi);
+            rateData.put(pi.getMediaType(), pi.getAttData());
         }
 
         if (isCreate) {
