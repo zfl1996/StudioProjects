@@ -39,7 +39,7 @@ public class SliderPlayer extends LinearLayout {
 
     int displayMode = 0;
     public boolean isIntegrationMode(){
-        return displayMode == 0;
+        return displayMode != 2;
     }
 
     public DisplayMode getDisplayMode() {
