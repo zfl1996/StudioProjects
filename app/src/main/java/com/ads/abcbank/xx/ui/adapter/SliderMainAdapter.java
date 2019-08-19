@@ -55,6 +55,8 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void addRateData(List<PlayItem> dataItem, boolean isPortionRedraw, boolean isCreate) {
+        isCreate = rateData.size() <= 0;
+
         for (PlayItem pi : dataItem) {
             rateData.put(pi.getMediaType(), pi.getAttData());
         }
@@ -190,6 +192,10 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public int getRealItemCount() {
         return dataList.size();
+    }
+
+    public int getNoPresetCount(boolean isOnlyPlaylist) {
+        return isOnlyPlaylist ? (dataList.size() - rateData.size()) : dataList.size();
     }
 
     @Override

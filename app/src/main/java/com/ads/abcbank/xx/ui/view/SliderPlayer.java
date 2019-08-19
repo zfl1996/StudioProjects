@@ -141,6 +141,7 @@ public class SliderPlayer extends LinearLayout {
     }
 
     public void addRateItem(List<PlayItem> items, boolean isPortionRedraw, boolean isCreate) {
+        Logger.e(TAG, "addRateItem--> isPortionRedraw:" + isPortionRedraw + " isCreate: " + isCreate);
         sliderAdapter.addRateData(items, isPortionRedraw, isCreate);
 
         if (displayMode == DisplayMode.PresetOnly.ordinal()) {
@@ -214,12 +215,18 @@ public class SliderPlayer extends LinearLayout {
     }
 
     private void switchPlayerStatus() {
-        imgHolder.setVisibility( sliderAdapter.getRealItemCount() > 0 ? GONE : VISIBLE );
+        Logger.e(TAG, "switchPlayerStatus-->displayMode:" + displayMode + ", count:" + (sliderAdapter.getNoPresetCount(displayMode == DisplayMode.PlaylistOnly.ordinal())));
 
-        if (sliderAdapter.getRealItemCount() > 1)
+        imgHolder.setVisibility( sliderAdapter.getRealItemCount() > 0 ? GONE : VISIBLE );
+        if (hasData())
             recyclerPagerView.startPlay();
         else
             recyclerPagerView.pausePlay();
+    }
+
+    private boolean hasData() {
+//        return sliderAdapter.getNoPresetCount(displayMode == DisplayMode.Integration.ordinal()) > 1;
+        return sliderAdapter.getRealItemCount() > 1;
     }
 
     public interface IPageChangeListener {

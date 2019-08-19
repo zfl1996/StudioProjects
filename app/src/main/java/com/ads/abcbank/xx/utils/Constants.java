@@ -64,7 +64,7 @@ public class Constants {
     public static final String MM_STATUS_KEY_WELCOME_LOADED = "welcome_status";
     public static final String MM_STATUS_KEY_IS_INTEGRATION_PRESET = "integrationPresetData";
     public static final String MM_STATUS_KEY_PLAYLIST_DOWNLOADED = "empty_playlist";
-    public static final String MM_STATUS_KEY_PLAYLIST_IMP_MODE = "empty_playlist";
+    public static final String MM_STATUS_KEY_PLAYLIST_IMP_MODE = "empty_emp_playlist";
 
     public static final String DOWNLOADER_KEY_TASK = "DownloadItem";
 

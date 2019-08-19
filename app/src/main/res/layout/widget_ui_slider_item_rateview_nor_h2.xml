@@ -62,12 +62,23 @@
                     android:textSize="@dimen/tab_text_super" />
             </TableRow>
         </TableLayout>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvRate"
-            android:background="@color/tab_row1"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvRate"
+                android:background="@color/tab_row1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </android.support.v7.widget.RecyclerView>
+            <TextView
+                android:layout_width="0.1px"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/rvRate"
+                android:layout_alignTop="@id/rvRate"
+                android:layout_centerHorizontal="true"
+                android:background="#fff"/>
+        </RelativeLayout>
         <TextView
             android:id="@+id/txtDesc"
             android:layout_width="match_parent"

@@ -142,7 +142,7 @@ public class MaterialManager extends MaterialManagerBase {
         String fileKey = filePath.substring(filePath.lastIndexOf("/") + 1,
                 filePath.lastIndexOf(".") );
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-        String suffix = filePath.substring(filePath.lastIndexOf(".") + 1);
+        String suffix = filePath.substring(filePath.lastIndexOf(".") + 1).toLowerCase();
         materialStatus.put(_fileKey, "1#" + suffix);
 
         // 持久化已下载素材状态
@@ -290,8 +290,10 @@ public class MaterialManager extends MaterialManagerBase {
         }
 
         String json = Utils.get(context, Utils.KEY_PLAY_LIST, "").toString();
-        if (ResHelper.isNullOrEmpty(json))
+        if (ResHelper.isNullOrEmpty(json)) {
+            initNetTaskMoudle();
             return;
+        }
 
         try {
             if (isActionExecuted(Constants.MM_STATUS_KEY_PLAYLIST_IMP_MODE) && importantItems.size() <= 0) {

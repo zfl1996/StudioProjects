@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.Constants;
@@ -68,12 +69,16 @@ public abstract class MaterialManagerBase {
             ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_INIT, null);
 
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000*3);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             netTaskMoudle.init();
         });
+    }
+
+    protected void initNetTaskMoudle() {
+        netTaskMoudle.init();
     }
 
     private void initNetTaskManager() {
@@ -206,6 +211,7 @@ public abstract class MaterialManagerBase {
                 case Constants.SLIDER_STATUS_CODE_PLAYLIST_LOADED:
                 case Constants.SLIDER_STATUS_CODE_PDF_CACHED:
                 case Constants.SLIDER_STATUS_CODE_DOWNSUCC:
+                    Logger.e(TAG, "msg.what:" + msg.what);
                     _materialStatusListener.onPlayItemPrepared( (List<PlayItem>)msg.obj, false );
 
                     break;
