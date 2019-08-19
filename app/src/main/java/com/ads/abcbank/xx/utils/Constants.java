@@ -53,6 +53,7 @@ public class Constants {
     public static final int NET_MANAGER_DATA_CMDPOLL = 0x0;
     public static final int NET_MANAGER_DATA_PLAYLIST = 0x1;
     public static final int NET_MANAGER_DATA_PRESET = 0x2;
+    public static final int NET_MANAGER_DATA_ERROR = 0x3;
 
     public static final String MM_STATUS_FINISHED_TASKID = "finished_taskid";
     public static final String MM_STATUS_FINISHED_TASKATTR = "finished_task_attr";

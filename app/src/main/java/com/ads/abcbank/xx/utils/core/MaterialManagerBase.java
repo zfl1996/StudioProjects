@@ -87,6 +87,14 @@ public abstract class MaterialManagerBase {
             public void onPresetArrived(JSONObject jsonObject) {
                 reload(Constants.NET_MANAGER_DATA_PRESET);
             }
+
+            @Override
+            public void onNetError(int code) {
+                MaterialStatusListener _materialStatusListener = getRefListener();
+                if (null == _materialStatusListener)
+                    return;
+                _materialStatusListener.onNetError(code);
+            }
         });
     }
 
@@ -270,5 +278,6 @@ public abstract class MaterialManagerBase {
         void onPlayItemPrepared(List<PlayItem> items, boolean isImportant);
         void onWelcomePrepared(List<String> msg, boolean isAppend, boolean isDefault);
         void onPlayItemRemoved(List<String> ids);
+        void onNetError(int code);
     }
 }

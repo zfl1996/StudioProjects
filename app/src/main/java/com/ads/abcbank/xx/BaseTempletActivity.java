@@ -79,6 +79,11 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onNetError(int code) {
+
+            }
+
+            @Override
             public void onProgress(int code) {
                 if (code == Constants.SLIDER_PROGRESS_CODE_PRESET_OK ||
                     code == Constants.SLIDER_PROGRESS_CODE_PRESET_PRE)

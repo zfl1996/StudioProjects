@@ -67,6 +67,33 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
+    public void removeInvalidRateItem(int... mediaType) {
+        for (int type : mediaType) {
+            Iterator<PlayItem> it = dataList.iterator();
+            while (it.hasNext()) {
+                PlayItem pi = it.next();
+
+                if (pi.getMediaType() == type) {
+                    it.remove();
+
+                    break;
+                }
+            }
+        }
+
+        notifyDataSetChanged();
+    }
+
+    public void removeAllRateItems() {
+        int[] mts = new int[]{
+                Constants.SLIDER_HOLDER_RATE_SAVE,
+                Constants.SLIDER_HOLDER_RATE_LOAN,
+                Constants.SLIDER_HOLDER_RATE_BUY
+        };
+
+        removeInvalidRateItem(mts);
+    }
+
     public void removeOuttimeItem(String id, int index) {
         if (dataList.get(index).getMd5().equals(id)) {
             dataList.remove(index);

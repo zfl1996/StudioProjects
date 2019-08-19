@@ -20,6 +20,7 @@ import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.utils.BllDataExtractor;
 import com.ads.abcbank.xx.utils.Constants;
+import com.ads.abcbank.xx.utils.helper.NetworkHelper;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -166,6 +167,13 @@ public class NetTaskMoudle {
     }
 
     private void reqAllData() {
+        if (!NetworkHelper.isConnected()) {
+            if (null != netTaskListener)
+                netTaskListener.onNetError(Constants.NET_MANAGER_DATA_ERROR);
+
+            return;
+        }
+
         retrievePreset();
         Utils.getAsyncThread()
                 .httpService(HTTPContants.CODE_CMDPOLL, JSONObject.parseObject(JSONObject.toJSONString(new CmdpollBean())),
@@ -197,6 +205,7 @@ public class NetTaskMoudle {
     public interface NetTaskListener {
         void onPlaylistArrived(JSONObject jsonObject);
         void onPresetArrived(JSONObject jsonObject);
+        void onNetError(int code);
     }
 
 }
