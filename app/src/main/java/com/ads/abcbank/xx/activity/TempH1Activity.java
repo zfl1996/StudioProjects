@@ -55,8 +55,6 @@ public class TempH1Activity extends BaseTempletActivity {
 
     @Override
     protected void onRateDataPrepared(List<PlayItem> items, List<String> titles){
-//        presetSliderPlayer.addPlayItems(items, false);
-
         presetSliderPlayer.addRateItem(items, false, isPresetLoaded());
 
         if (!isTabInited) {
@@ -76,7 +74,9 @@ public class TempH1Activity extends BaseTempletActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        timeTransformer.stop();
+
+        if (null != timeTransformer)
+            timeTransformer.stop();
     }
 
 }

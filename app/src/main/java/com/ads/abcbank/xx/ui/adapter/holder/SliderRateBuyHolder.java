@@ -45,6 +45,7 @@ public class SliderRateBuyHolder  extends RecyclerView.ViewHolder {
         LinearLayoutManager layoutManager = new LinearLayoutManager(holder.getRvRate().getContext());
         holder.getRvRate().setLayoutManager(layoutManager);
         holder.getRvRate().setHasFixedSize(false);
+        holder.getRvRate().setNestedScrollingEnabled(false);//禁止滑动
 //        rvRate.addItemDecoration(new DividerItemDecoration(rvRate.getContext(), DividerItemDecoration.VERTICAL));
         holder.getRvRate().setAdapter(adapter);
     }

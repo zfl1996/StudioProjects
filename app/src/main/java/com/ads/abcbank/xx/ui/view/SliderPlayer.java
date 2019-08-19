@@ -152,8 +152,9 @@ public class SliderPlayer extends LinearLayout {
                     }
                 });
 
-            switchPlayerStatus();
         }
+
+        switchPlayerStatus();
     }
 
     public void removePlayItems(List<String> ids) {
