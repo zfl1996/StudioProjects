@@ -69,7 +69,7 @@ public abstract class MaterialManagerBase {
             ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_INIT, null);
 
             try {
-                Thread.sleep(1000*3);
+                Thread.sleep(1000*60);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -226,6 +226,11 @@ public abstract class MaterialManagerBase {
 
                     break;
 
+                case Constants.SLIDER_STATUS_CODE_RATE_REMOVED:
+                    _materialStatusListener.onRateItemRemoved((Integer[])msg.obj);
+
+                    break;
+
                 case Constants.SLIDER_STATUS_CODE_PROGRESS:
                     _materialStatusListener.onProgress((int)msg.obj);
 
@@ -284,6 +289,7 @@ public abstract class MaterialManagerBase {
         void onPlayItemPrepared(List<PlayItem> items, boolean isImportant);
         void onWelcomePrepared(List<String> msg, boolean isAppend, boolean isDefault);
         void onPlayItemRemoved(List<String> ids);
+        void onRateItemRemoved(Integer... mediaTypes);
         void onNetError(int code);
     }
 }

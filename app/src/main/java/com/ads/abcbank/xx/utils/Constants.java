@@ -27,6 +27,7 @@ public class Constants {
 //    public static final int SLIDER_STATUS_CODE_PLAYLIST_TIMEOUT = 0x211;
 //    public static final int SLIDER_STATUS_CODE_WELCOME_REMOVED = 0x212;
     public static final int SLIDER_STATUS_CODE_PLAYLIST_IMP_LOADED = 0x213;
+    public static final int SLIDER_STATUS_CODE_RATE_REMOVED = 0x214;
 
 
     public static final int SLIDER_HOLDER_IMAGE = 0;

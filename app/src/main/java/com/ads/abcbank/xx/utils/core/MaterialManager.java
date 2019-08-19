@@ -240,19 +240,26 @@ public class MaterialManager extends MaterialManagerBase {
 
             List<PlayItem> presetItems = new ArrayList<>();
             List<String> presetTitles = new ArrayList<>();
+            List<Integer> removeItems = new ArrayList<>();
 
             if (bean.data.saveRate.enable) {
                 presetTitles.add(bean.data.saveRate.title.substring(0, 4) + "\n" + bean.data.saveRate.title.substring(4));
                 presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_SAVE, bean.data.saveRate));
-            }
+            } else
+                removeItems.add(Constants.SLIDER_HOLDER_RATE_SAVE);
+
             if (bean.data.loanRate.enable) {
                 presetTitles.add(bean.data.loanRate.title.substring(0, 4) + "\n" + bean.data.loanRate.title.substring(4));
                 presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_LOAN, bean.data.loanRate));
-            }
+            } else
+                removeItems.add(Constants.SLIDER_HOLDER_RATE_LOAN);
+
             if (bean.data.buyInAndOutForeignExchange.enable) {
                 presetTitles.add(bean.data.buyInAndOutForeignExchange.title.substring(0, 4) + "\n" + bean.data.buyInAndOutForeignExchange.title.substring(4));
                 presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange));
-            }
+            } else
+                removeItems.add(Constants.SLIDER_HOLDER_RATE_BUY);
+
 
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_RATE_LOADED, new Object[]{presetItems, presetTitles});
 
@@ -260,6 +267,9 @@ public class MaterialManager extends MaterialManagerBase {
                 managerStatus.put(Constants.MM_STATUS_KEY_PRESET_LOADED, 1);
                 ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRESET_OK);
             }
+
+            if (removeItems.size() > 0)
+                ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_RATE_REMOVED, removeItems.toArray(new Integer[0]));
         }
     }
 
@@ -313,10 +323,6 @@ public class MaterialManager extends MaterialManagerBase {
 
             for (PlaylistBodyBean bodyBean:playlistBodyBeanLists) {
                 try{
-                    String suffix = bodyBean.downloadLink.substring(bodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();
-                    String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
-                    boolean needDownload = false;
-
                     // 非播放时间和非该模板资源不加入，以将缓存项（如有）移除
                     if (!BllDataExtractor.isInPlayTime(bodyBean.playDate, bodyBean.stopDate)
                         || !BllDataExtractor.isInFilter(filters, bodyBean, contentTypeMiddle, contentTypeEnd)
@@ -326,6 +332,8 @@ public class MaterialManager extends MaterialManagerBase {
                     curItems.put(bodyBean.id, 1);
 
                     // 去掉已下载并存在的资源
+                    boolean needDownload = false;
+                    String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 //                    if (loadedMaterial.containsKey(bodyBean.downloadLink)) {
                     if (isMaterialLoaded(bodyBean)) {
                         if (!isMaterialMarked(bodyBean.id) || ResHelper.isExistsFile(savePath))
@@ -368,6 +376,7 @@ public class MaterialManager extends MaterialManagerBase {
                     }
 
                     // 按类型分别构建用于前端显示的资源
+                    String suffix = bodyBean.downloadLink.substring(bodyBean.downloadLink.lastIndexOf(".") + 1).toLowerCase();
                     if (suffix.equals("pdf")) {
                         if (bodyBean.isUrg.equals("1"))
                             importantItems.put(bodyBean.id, PdfHelper.getCachedPdfImage(bodyBean.id + ".pdf",

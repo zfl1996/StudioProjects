@@ -69,7 +69,8 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public void removeInvalidRateItem(int... mediaType) {
+    public void removeInvalidRateItem(Integer... mediaType) {
+        boolean redraw = false;
         for (int type : mediaType) {
             Iterator<PlayItem> it = dataList.iterator();
             while (it.hasNext()) {
@@ -78,16 +79,18 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if (pi.getMediaType() == type) {
                     it.remove();
 
+                    redraw = true;
                     break;
                 }
             }
         }
 
-        notifyDataSetChanged();
+        if (redraw)
+            notifyDataSetChanged();
     }
 
     public void removeAllRateItems() {
-        int[] mts = new int[]{
+        Integer[] mts = new Integer[]{
                 Constants.SLIDER_HOLDER_RATE_SAVE,
                 Constants.SLIDER_HOLDER_RATE_LOAN,
                 Constants.SLIDER_HOLDER_RATE_BUY

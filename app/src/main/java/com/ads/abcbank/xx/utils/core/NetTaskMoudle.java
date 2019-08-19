@@ -65,7 +65,7 @@ public class NetTaskMoudle {
                     case Constants.NET_MANAGER_INIT:
                         if (!isInited) {
                             isInited = true;
-                            timer.schedule(timerTask, 50, 1*60*1000 );
+                            timer.schedule(timerTask, 50, 1*30*1000 );
                         }
 
                         break;

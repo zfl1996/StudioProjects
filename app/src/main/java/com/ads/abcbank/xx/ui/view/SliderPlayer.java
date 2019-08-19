@@ -164,6 +164,17 @@ public class SliderPlayer extends LinearLayout {
         switchPlayerStatus();
     }
 
+    public void removeAllRateItem() {
+        sliderAdapter.removeAllRateItems();
+
+        switchPlayerStatus();
+    }
+
+    public void removeRateItem(Integer... mediaType) {
+        sliderAdapter.removeInvalidRateItem(mediaType);
+        switchPlayerStatus();
+    }
+
     public void adjustWidgetStatus(boolean isPresetLoaded, boolean isPlaylistLoaded, int code) {
         switch (code) {
             case Constants.SLIDER_PROGRESS_CODE_PLAYLIST_PRE:

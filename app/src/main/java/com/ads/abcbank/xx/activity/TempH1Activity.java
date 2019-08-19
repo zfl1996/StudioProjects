@@ -12,7 +12,9 @@ import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.helper.GuiHelper;
 import com.ads.abcbank.xx.utils.interactive.TimeTransformer;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TempH1Activity extends BaseTempletActivity {
     private static final String TAG = "TempH1Activity";
@@ -22,6 +24,7 @@ public class TempH1Activity extends BaseTempletActivity {
     TextView txtDate, txtTime;
     TimeTransformer timeTransformer;
     boolean isTabInited = false;
+    Map<Integer, TabLayout.Tab> tabItems = new HashMap<>();
 
     @Override
     protected void initCtrls(Bundle savedInstanceState) {
@@ -59,8 +62,13 @@ public class TempH1Activity extends BaseTempletActivity {
 
         if (!isTabInited) {
             isTabInited = true;
-            for (String title : titles)
-                tabIndicator.addTab(tabIndicator.newTab().setText(title));
+
+            int i = 0;
+            for (String title : titles) {
+                TabLayout.Tab tab = tabIndicator.newTab().setText(title);
+                tabItems.put(items.get(i++).getMediaType(), tab);
+                tabIndicator.addTab(tab);
+            }
 
             GuiHelper.setTabWidth(tabIndicator);
         }
@@ -69,6 +77,26 @@ public class TempH1Activity extends BaseTempletActivity {
     @Override
     protected void onRateDataProgress(int code) {
         presetSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
+    }
+
+    @Override
+    protected void onNetworkError(int code) {
+        presetSliderPlayer.removeAllRateItem();
+        tabIndicator.removeAllTabs();
+
+        super.onNetworkError(code);
+    }
+
+    @Override
+    protected void onRateRemoved(Integer... mediaTypes) {
+        presetSliderPlayer.removeRateItem(mediaTypes);
+
+        for (Integer mediaType : mediaTypes) {
+            if (tabItems.containsKey(mediaType)) {
+                tabIndicator.removeTab(tabItems.get(mediaType));
+                tabItems.remove(mediaType);
+            }
+        }
     }
 
     @Override

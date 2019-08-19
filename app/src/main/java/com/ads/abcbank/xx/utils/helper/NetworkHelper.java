@@ -8,7 +8,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 
-import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.utils.Utility;
 
 import java.lang.reflect.Method;

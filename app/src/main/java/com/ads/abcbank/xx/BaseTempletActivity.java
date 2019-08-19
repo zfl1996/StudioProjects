@@ -79,8 +79,13 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNetError(int code) {
+            public void onRateItemRemoved(Integer... mediaTypes) {
+                onRateRemoved(mediaTypes);
+            }
 
+            @Override
+            public void onNetError(int code) {
+                onNetworkError(code);
             }
 
             @Override
@@ -136,6 +141,14 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected void onRateDataProgress(int code) {
         mainSliderPlayer.adjustWidgetStatus(isPresetLoaded(), isPlaylistLoaded(), code);
+    }
+
+    protected void onNetworkError(int code) {
+        Logger.e(TAG, "onNetworkError:" + code);
+    }
+
+    protected void onRateRemoved(Integer... mediaTypes) {
+        mainSliderPlayer.removeRateItem(mediaTypes);
     }
 
     protected abstract int getLayoutResourceId();
