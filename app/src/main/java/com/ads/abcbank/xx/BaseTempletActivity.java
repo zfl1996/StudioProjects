@@ -85,7 +85,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
             @Override
             public void onNetError(int code) {
-                onNetworkError(code);
+                mainHandler.post(() -> onNetworkError(code));
             }
 
             @Override

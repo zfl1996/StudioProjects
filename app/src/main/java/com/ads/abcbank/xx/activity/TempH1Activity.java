@@ -118,13 +118,11 @@ public class TempH1Activity extends BaseTempletActivity {
 
     @Override
     protected void onNetworkError(int code) {
-        mainHandler.post(() -> {
-            presetSliderPlayer.removeAllRateItem();
-            tabIndicator.removeAllTabs();
-            tabItemsMap.clear();
+        presetSliderPlayer.removeAllRateItem();
+        tabIndicator.removeAllTabs();
+        tabItemsMap.clear();
 
-            tabIndicator.invalidate();
-        });
+        tabIndicator.invalidate();
 
         super.onNetworkError(code);
     }
