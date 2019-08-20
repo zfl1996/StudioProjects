@@ -1,11 +1,11 @@
 package com.ads.abcbank.xx.activity;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.widget.TextView;
 
 import com.ads.abcbank.R;
+import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.BaseTempletActivity;
 import com.ads.abcbank.xx.model.PlayItem;
@@ -14,9 +14,8 @@ import com.ads.abcbank.xx.utils.helper.GuiHelper;
 import com.ads.abcbank.xx.utils.interactive.TimeTransformer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TempH1Activity extends BaseTempletActivity {
     private static final String TAG = "TempH1Activity";
@@ -26,7 +25,7 @@ public class TempH1Activity extends BaseTempletActivity {
     TextView txtDate, txtTime;
     TimeTransformer timeTransformer;
     boolean isTabInited = false;
-    Map<Integer, TabLayout.Tab> tabItemsMap = new HashMap<>();
+    ConcurrentHashMap<Integer, TabLayout.Tab> tabItemsMap = new ConcurrentHashMap<>();
     int curPos = -1;
 
     @Override
@@ -80,34 +79,40 @@ public class TempH1Activity extends BaseTempletActivity {
 
             GuiHelper.setTabWidth(tabIndicator);
         } else {
-            List<PlayItem> needToAdds = new ArrayList<>();
-            List<String> needToAddTitles = new ArrayList<>();
-            List<Integer> addOfPosition = new ArrayList<>();
+            Logger.e(TAG, "onRateDataPrepared");
+            Utils.getExecutorService().submit(() -> {
+                List<PlayItem> needToAdds = new ArrayList<>();
+                List<String> needToAddTitles = new ArrayList<>();
+                List<Integer> addOfPosition = new ArrayList<>();
 
-            int i = 0;
-            for (PlayItem pi : items) {
-                if (!tabItemsMap.containsKey(pi.getMediaType())) {
-                    needToAdds.add(pi);
-                    addOfPosition.add(i);
-                    needToAddTitles.add(titles.get(i));
+                int i = 0;
+                for (PlayItem pi : items) {
+                    if (!tabItemsMap.containsKey(pi.getMediaType())) {
+                        needToAdds.add(pi);
+                        addOfPosition.add(i);
+                        needToAddTitles.add(titles.get(i));
+                    }
+
+                    i++;
                 }
 
-                i++;
-            }
+                int _len = needToAdds.size();
+                if (_len > 0)
+                    mainHandler.post(() -> {
+                        for (int j = 0; j<_len; j++) {
+                            TabLayout.Tab tab = tabIndicator.newTab().setText(needToAddTitles.get(j));
+                            tabItemsMap.put(items.get(j).getMediaType(), tab);
+                            tabIndicator.addTab(tab, addOfPosition.get(j));
+                        }
 
-            for (i = 0; i<needToAdds.size(); i++) {
-                TabLayout.Tab tab = tabIndicator.newTab().setText(needToAddTitles.get(i));
-                tabItemsMap.put(items.get(i).getMediaType(), tab);
-                tabIndicator.addTab(tab, addOfPosition.get(i));
-            }
+                        GuiHelper.setTabWidth(tabIndicator);
+                        tabIndicator.invalidate();
 
-            if (needToAdds.size() > 0) {
-                GuiHelper.setTabWidth(tabIndicator);
-                tabIndicator.invalidate();
+                        if (curPos >= 0)
+                            showIndicator(curPos);
+                    });
+            });
 
-                if (curPos >= 0)
-                    showIndicator(curPos);
-            }
         }
     }
 
@@ -118,6 +123,7 @@ public class TempH1Activity extends BaseTempletActivity {
 
     @Override
     protected void onNetworkError(int code) {
+        Logger.e(TAG, "onNetworkError");
         presetSliderPlayer.removeAllRateItem();
         tabIndicator.removeAllTabs();
         tabItemsMap.clear();
@@ -129,6 +135,7 @@ public class TempH1Activity extends BaseTempletActivity {
 
     @Override
     protected void onRateRemoved(Integer... mediaTypes) {
+        Logger.e(TAG, "onRateRemoved");
         presetSliderPlayer.removeRateItem(mediaTypes);
 
         for (Integer mediaType : mediaTypes) {
