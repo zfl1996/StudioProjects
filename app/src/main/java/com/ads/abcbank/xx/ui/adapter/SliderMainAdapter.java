@@ -2,7 +2,6 @@ package com.ads.abcbank.xx.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -18,6 +17,7 @@ import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,8 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private boolean isIntegrationPresetData;
     private Map<Integer, Integer> rateResourceMap;
 //    private String videoPath = "";
-    private Map<Integer, Object> rateData = new ArrayMap<>();
+    private Map<Integer, Object> rateData = new HashMap<>();
+    private Map<Integer, Integer> ratePos = new HashMap<>();
 
     public void setRateResourceMap(Map<Integer, Integer> rateResourceMap) {
         this.rateResourceMap = rateResourceMap;
@@ -78,6 +79,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 if (pi.getMediaType() == type) {
                     it.remove();
+                    rateData.remove(pi.getMd5());
 
                     redraw = true;
                     break;
