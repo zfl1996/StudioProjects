@@ -167,7 +167,10 @@ public class SliderPlayer extends LinearLayout {
     public void removeAllRateItem() {
         sliderAdapter.removeAllRateItems();
 
-        switchPlayerStatus();
+        if (hasData())
+            recyclerPagerView.startPlay();
+        else
+            recyclerPagerView.pausePlay();
     }
 
     public void removeRateItem(Integer... mediaType) {
@@ -229,6 +232,7 @@ public class SliderPlayer extends LinearLayout {
         Logger.e(TAG, "switchPlayerStatus-->displayMode:" + displayMode + ", count:" + (sliderAdapter.getNoPresetCount(displayMode == DisplayMode.PlaylistOnly.ordinal())));
 
         imgHolder.setVisibility( sliderAdapter.getRealItemCount() > 0 ? GONE : VISIBLE );
+
         if (hasData())
             recyclerPagerView.startPlay();
         else

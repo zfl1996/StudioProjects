@@ -1,6 +1,7 @@
 package com.ads.abcbank.xx.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.widget.TextView;
 
@@ -117,11 +118,13 @@ public class TempH1Activity extends BaseTempletActivity {
 
     @Override
     protected void onNetworkError(int code) {
-        presetSliderPlayer.removeAllRateItem();
-        tabIndicator.removeAllTabs();
-        tabItemsMap.clear();
+        mainHandler.post(() -> {
+            presetSliderPlayer.removeAllRateItem();
+            tabIndicator.removeAllTabs();
+            tabItemsMap.clear();
 
-        tabIndicator.invalidate();
+            tabIndicator.invalidate();
+        });
 
         super.onNetworkError(code);
     }
