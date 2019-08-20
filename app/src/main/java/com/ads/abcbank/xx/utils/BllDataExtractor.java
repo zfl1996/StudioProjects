@@ -117,7 +117,7 @@ public class BllDataExtractor {
             if (currentDate.compareTo(playDate) >= 0 && currentDate.compareTo(stopDate) < 0) {
                 return true;
             } else {
-                Logger.e("PlaylistManager", "isInPlayTime:" + currentDate + ".." + playDate + ".." + stopDate + "-->currentDate.compareTo(playDate)"
+                Logger.e("BllDataExtractor", "isInPlayTime:" + currentDate + ".." + playDate + ".." + stopDate + "-->currentDate.compareTo(playDate)"
                     + (currentDate.compareTo(playDate) >= 0) + "-->currentDate.compareTo(stopDate)" + (currentDate.compareTo(stopDate)));
             }
         } catch (Exception e) {

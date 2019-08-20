@@ -17,6 +17,7 @@ import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,8 +33,13 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private boolean isIntegrationPresetData;
     private Map<Integer, Integer> rateResourceMap;
 //    private String videoPath = "";
-    private Map<Integer, Object> rateData = new HashMap<>();
+    private Map<Integer, Object> rateDataMap = new HashMap<>();
     private Map<Integer, Integer> ratePos = new HashMap<>();
+    private Integer[] mts = new Integer[]{
+            Constants.SLIDER_HOLDER_RATE_SAVE,
+            Constants.SLIDER_HOLDER_RATE_LOAN,
+            Constants.SLIDER_HOLDER_RATE_BUY
+    };
 
     public void setRateResourceMap(Map<Integer, Integer> rateResourceMap) {
         this.rateResourceMap = rateResourceMap;
@@ -55,19 +61,86 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemRangeChanged(dataList.size() - dataItem.size(), dataItem.size());
     }
 
-    public void addRateData(List<PlayItem> dataItem, boolean isPortionRedraw, boolean isCreate) {
-        isCreate = rateData.size() <= 0;
-
-        for (PlayItem pi : dataItem) {
-            rateData.put(pi.getMediaType(), pi.getAttData());
-        }
+    public void addRateData(List<PlayItem> dataItems, boolean isPortionRedraw, boolean isCreate) {
+        isCreate = rateDataMap.size() <= 0;
 
         if (isCreate) {
+            for (PlayItem pi : dataItems) {
+                rateDataMap.put(pi.getMediaType(), pi.getAttData());
+            }
+
             if (isPortionRedraw)
-                addItemDataAndPortionRedraw(dataItem);
+                addItemDataAndPortionRedraw(dataItems);
             else
-                addItemDataAndRedraw(dataItem);
+                addItemDataAndRedraw(dataItems);
+        } else {
+            Integer[] mmmmm = new Integer[dataItems.size()];
+            for (int j = 0; j<mmmmm.length; j++)
+                mmmmm[j] = dataItems.get(j).getMediaType();
+
+            List<PlayItem> needToAdds = new ArrayList<>();
+            List<Integer> addOfPosition = new ArrayList<>();
+            int alreadyActualPos = -1;
+            int alreadyRelativePos = -1;
+
+            int flag = 0;
+            for (PlayItem pi : dataItems) {
+                if (!rateDataMap.containsKey(pi.getMediaType())) {
+                    needToAdds.add(pi);
+                    addOfPosition.add(flag);
+                } else if (alreadyActualPos == -1) {
+                    int i = 0;
+                    for (PlayItem data : dataList) {
+                        if (data.getMediaType() == pi.getMediaType()) {
+                            alreadyActualPos = i++;
+                            alreadyRelativePos = getResIndex(mmmmm, pi.getMediaType());
+                            break;
+                        }
+                    }
+                }
+
+                rateDataMap.put(pi.getMediaType(), pi.getAttData());
+                flag++;
+            }
+
+            if (alreadyActualPos != -1 && alreadyRelativePos != -1) {
+                int startRefreshPos = alreadyActualPos;
+
+                for (int i=0; i< needToAdds.size(); i++) {
+                    PlayItem playItem = needToAdds.get(i);
+
+                    int curRelativePos = getResIndex(mmmmm, playItem.getMediaType());
+                    int abs = curRelativePos - alreadyRelativePos;
+                    int addToPos = alreadyActualPos + abs;
+                    addToPos = addToPos >= 0 ? addToPos : 0;
+
+                    dataList.add(addToPos, playItem);
+                    startRefreshPos = addToPos < startRefreshPos ? addToPos : startRefreshPos;
+                }
+
+                if (needToAdds.size() > 0)
+                    notifyItemRangeChanged(startRefreshPos, dataItems.size());
+
+            } else {
+                if (isPortionRedraw)
+                    addItemDataAndPortionRedraw(dataItems);
+                else
+                    addItemDataAndRedraw(dataItems);
+            }
+
         }
+    }
+
+    int getResIndex(Integer[] mtts, int mediaType) {
+        int i = 0;
+        for (int mt : mtts) {
+            if (mt == mediaType)
+                return i;
+
+            i++;
+        }
+
+        return -1;
     }
 
     public void removeInvalidRateItem(Integer... mediaType) {
@@ -79,7 +152,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 if (pi.getMediaType() == type) {
                     it.remove();
-                    rateData.remove(pi.getMd5());
+                    rateDataMap.remove(pi.getMediaType());
 
                     redraw = true;
                     break;
@@ -92,12 +165,6 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void removeAllRateItems() {
-        Integer[] mts = new Integer[]{
-                Constants.SLIDER_HOLDER_RATE_SAVE,
-                Constants.SLIDER_HOLDER_RATE_LOAN,
-                Constants.SLIDER_HOLDER_RATE_BUY
-        };
-
         removeInvalidRateItem(mts);
     }
 
@@ -156,17 +223,17 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         else if (holder instanceof SliderVideoHolder)
             ((SliderVideoHolder) holder).setVideoData(item, (SliderVideoHolder) holder);
         else if (holder instanceof SliderRateSaveHolder) {
-            SliderRateSaveHolder.showRate( (PresetBean.SaveRate)rateData.get(item.getMediaType()), //(PresetBean.SaveRate)item.getAttData(),
+            SliderRateSaveHolder.showRate( (PresetBean.SaveRate) rateDataMap.get(item.getMediaType()), //(PresetBean.SaveRate)item.getAttData(),
                     (SliderRateSaveHolder) holder,
                     isIntegrationPresetData,
                     rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_SAVE_ITEM));
         } else if (holder instanceof SliderRateLoanHolder) {
-            SliderRateLoanHolder.showRate((PresetBean.LoanRate)rateData.get(item.getMediaType()), //(PresetBean.LoanRate)item.getAttData(),
+            SliderRateLoanHolder.showRate((PresetBean.LoanRate) rateDataMap.get(item.getMediaType()), //(PresetBean.LoanRate)item.getAttData(),
                     (SliderRateLoanHolder)holder,
                     isIntegrationPresetData,
                     rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_LOAN_ITEM));
         } else if (holder instanceof SliderRateBuyHolder) {
-            SliderRateBuyHolder.showRate((PresetBean.BIAOFE)rateData.get(item.getMediaType()), //(PresetBean.BIAOFE)item.getAttData(),
+            SliderRateBuyHolder.showRate((PresetBean.BIAOFE) rateDataMap.get(item.getMediaType()), //(PresetBean.BIAOFE)item.getAttData(),
                     (SliderRateBuyHolder)holder,
                     isIntegrationPresetData,
                     rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_BUY_ITEM));
@@ -200,7 +267,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public int getNoPresetCount(boolean isOnlyPlaylist) {
-        return isOnlyPlaylist ? (dataList.size() - rateData.size()) : dataList.size();
+        return isOnlyPlaylist ? (dataList.size() - rateDataMap.size()) : dataList.size();
     }
 
     @Override

@@ -30,17 +30,18 @@
         android:layout_below="@+id/txtTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:background="#08ffffff"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/tv_key"
-            android:layout_width="0px"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="19"
+            android:layout_weight="13"
             android:background="#08ffffff"
             android:gravity="center"
-            android:lineSpacingExtra="2px"
             android:padding="10px"
+            android:lines="2"
             android:text="项目"
             android:textColor="#fff"
             android:textSize="@dimen/tab_text_big" />
@@ -52,13 +53,14 @@
 
         <TextView
             android:id="@+id/tv_value"
-            android:layout_width="0px"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="13"
             android:background="#08ffffff"
             android:gravity="center"
             android:padding="10px"
-            android:text="年利率（%）"
+            android:lines="2"
+            android:text="年利率\n（%）"
             android:textColor="#fff"
             android:textSize="@dimen/tab_text_big" />
 
@@ -69,13 +71,14 @@
 
         <TextView
             android:id="@+id/tv_value2"
-            android:layout_width="0px"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="13"
             android:background="#08ffffff"
             android:gravity="center"
             android:padding="10px"
-            android:text="年利率（%）"
+            android:lines="2"
+            android:text="年利率\n（%）"
             android:textColor="#fff"
             android:textSize="@dimen/tab_text_big" />
 
@@ -86,13 +89,14 @@
 
         <TextView
             android:id="@+id/tv_value3"
-            android:layout_width="0px"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="13"
             android:background="#08ffffff"
             android:gravity="center"
             android:padding="10px"
-            android:text="年利率（%）"
+            android:lines="2"
+            android:text="年利率\n（%）"
             android:textColor="#fff"
             android:textSize="@dimen/tab_text_big" />
     </LinearLayout>
@@ -114,18 +118,7 @@
         android:background="#00000000"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="0px"
-            android:layout_height="1px"
-            android:layout_weight="19"
-            android:background="#00000000" />
-
-        <View
-            android:layout_width="5px"
-            android:layout_height="match_parent"
-            android:background="#2B363F" />
-
-        <TextView
-            android:layout_width="0px"
+            android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_weight="13"
             android:background="#00000000" />
@@ -136,7 +129,7 @@
             android:background="#2B363F" />
 
         <TextView
-            android:layout_width="0px"
+            android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_weight="13"
             android:background="#00000000" />
@@ -147,7 +140,18 @@
             android:background="#2B363F" />
 
         <TextView
-            android:layout_width="0px"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_weight="13"
+            android:background="#00000000" />
+
+        <View
+            android:layout_width="5px"
+            android:layout_height="match_parent"
+            android:background="#2B363F" />
+
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_weight="13"
             android:background="#00000000" />
