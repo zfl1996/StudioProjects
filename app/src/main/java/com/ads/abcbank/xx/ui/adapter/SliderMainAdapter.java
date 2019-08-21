@@ -15,6 +15,7 @@ import com.ads.abcbank.xx.ui.adapter.holder.SliderRateLoanHolder;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderRateSaveHolder;
 import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.utils.Constants;
+import com.ads.abcbank.xx.utils.helper.ResHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,17 +63,22 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void addRateData(List<PlayItem> dataItems, boolean isPortionRedraw, boolean isCreate) {
         isCreate = rateDataMap.size() <= 0;
+        Logger.e(TAG, "addRateData--> isCreate:" + isCreate + ", dataSize:" + dataList.size() + ", keys:" + rateDataMap.size());
 
         if (isCreate) {
+            rateDataMap.clear();
             for (PlayItem pi : dataItems) {
                 rateDataMap.put(pi.getMediaType(), pi.getAttData());
             }
 
-            if (isPortionRedraw)
-                addItemDataAndPortionRedraw(dataItems);
-            else
-                addItemDataAndRedraw(dataItems);
+            addRateData(dataItems, isPortionRedraw);
         } else {
+            if (dataItems.size() <= 0) {
+                rateDataMap.clear();
+
+                addRateData(dataItems, isPortionRedraw);
+            }
+
             Integer[] mmmmm = new Integer[dataItems.size()];
             for (int j = 0; j<mmmmm.length; j++)
                 mmmmm[j] = dataItems.get(j).getMediaType();
@@ -115,22 +121,32 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                     dataList.add(addToPos, playItem);
                     startRefreshPos = addToPos < startRefreshPos ? addToPos : startRefreshPos;
+                    Logger.e(TAG, "addRateData--> type:" + playItem.getMediaType() + ", pos:" + addToPos + ", total:" + dataList.size());
                 }
 
-                if (dataList.size() > 0)
+                if (dataList.size() == 1)
+                    notifyDataSetChanged();
+                else if (dataList.size() > 0)
                     notifyItemRangeChanged(startRefreshPos, dataItems.size());
 
             } else {
-                if (isPortionRedraw)
-                    addItemDataAndPortionRedraw(dataItems);
-                else
-                    addItemDataAndRedraw(dataItems);
+                if (dataItems.size() <= 0)
+                    rateDataMap.clear();
+
+                addRateData(dataItems, isPortionRedraw);
             }
 
         }
     }
 
-    int getResIndex(Integer[] mtts, int mediaType) {
+    private void addRateData(List<PlayItem> dataItems, boolean isPortionRedraw) {
+        if (isPortionRedraw)
+            addItemDataAndPortionRedraw(dataItems);
+        else
+            addItemDataAndRedraw(dataItems);
+    }
+
+    private int getResIndex(Integer[] mtts, int mediaType) {
         int i = 0;
         for (int mt : mtts) {
             if (mt == mediaType)
@@ -143,6 +159,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void removeInvalidRateItem(Integer... mediaType) {
+        Logger.e(TAG, "removeInvalidRateItem--> count:" + mediaType.length + ", dataSize:" + dataList.size() + ", keys:" + rateDataMap.size());
         boolean redraw = false;
         for (int type : mediaType) {
             Iterator<PlayItem> it = dataList.iterator();
@@ -150,6 +167,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                 PlayItem pi = it.next();
 
                 if (pi.getMediaType() == type) {
+                    Logger.e(TAG, "removeInvalidRateItem--> remove:" + type + ", dataSize:" + dataList.size());
                     it.remove();
                     rateDataMap.remove(pi.getMediaType());
 
