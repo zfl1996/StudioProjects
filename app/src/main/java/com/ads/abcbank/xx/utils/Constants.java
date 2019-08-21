@@ -67,6 +67,8 @@ public class Constants {
     public static final String MM_STATUS_KEY_PLAYLIST_DOWNLOADED = "empty_playlist";
     public static final String MM_STATUS_KEY_PLAYLIST_IMP_MODE = "empty_emp_playlist";
 
+    public static final String MM_SETTING_KEY_DATACDN = "data_cdn";
+
     public static final String DOWNLOADER_KEY_TASK = "DownloadItem";
 
 }

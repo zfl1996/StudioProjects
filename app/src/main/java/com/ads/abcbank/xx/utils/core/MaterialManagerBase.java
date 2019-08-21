@@ -7,11 +7,13 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.ads.abcbank.bean.PlaylistBodyBean;
+import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import java.lang.ref.WeakReference;
@@ -40,6 +42,7 @@ public abstract class MaterialManagerBase {
     ConcurrentHashMap<String, String> welcomeTxts = new ConcurrentHashMap<>();
     ConcurrentHashMap<String, List<PlayItem>> importantItems = new ConcurrentHashMap<>();// 0 txts, 1 normal
     ConcurrentHashMap<String, String> importantTxts = new ConcurrentHashMap<>();// 0 txts, 1 normal
+    ConcurrentHashMap<String, String> envData = new ConcurrentHashMap<>();
     String filters;
     int MAX_RATE = 0;
 
@@ -64,6 +67,13 @@ public abstract class MaterialManagerBase {
             managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_LOADED, 0);
             managerStatus.put(Constants.MM_STATUS_KEY_PRESET_LOADED, 0);
             managerStatus.put(Constants.MM_STATUS_KEY_PLAYLIST_IMP_MODE, 0);
+
+            String beanStr = Utils.get(context, Utils.KEY_REGISTER_BEAN, "").toString();
+            if (!ResHelper.isNullOrEmpty(beanStr)) {
+                RegisterBean registerBean = JSON.parseObject(beanStr, RegisterBean.class);
+
+                envData.put(Constants.MM_SETTING_KEY_DATACDN, registerBean.data.cdn);
+            }
 
             downloadModule = new DownloadModule(context, MAX_RATE, downloadStateLisntener);
             ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_INIT, null);

@@ -3,7 +3,6 @@ package com.ads.abcbank.xx.utils.core;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 
 import com.ads.abcbank.bean.PlaylistBodyBean;
 import com.ads.abcbank.bean.PresetBean;
@@ -285,7 +284,7 @@ public class MaterialManager extends MaterialManagerBase {
             String jsonFinish = Utils.get(context, Constants.MM_STATUS_FINISHED_TASKID, "").toString();
             String jsonFinishAttrs = Utils.get(context, Constants.MM_STATUS_FINISHED_TASKATTR, "").toString();
 
-            if (!TextUtils.isEmpty(jsonFinish)) {
+            if (!ResHelper.isNullOrEmpty(jsonFinish)) {
                 String[] ids = jsonFinish.split(",");
                 String[] vals = jsonFinishAttrs.split(",");
                 if (ids.length == vals.length) {
@@ -333,6 +332,11 @@ public class MaterialManager extends MaterialManagerBase {
 
                     // 去掉已下载并存在的资源
                     boolean needDownload = false;
+                    String cdnUrl = envData.get(Constants.MM_SETTING_KEY_DATACDN);
+                    if (!ResHelper.isNullOrEmpty(cdnUrl)) {
+                        bodyBean.downloadLink = BllDataExtractor.replaceDomainAndPort(cdnUrl, null, bodyBean.downloadLink);
+                    }
+
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 //                    if (loadedMaterial.containsKey(bodyBean.downloadLink)) {
                     if (isMaterialLoaded(bodyBean)) {

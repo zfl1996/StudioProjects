@@ -101,12 +101,12 @@ public class TempH1Activity extends BaseTempletActivity {
                     mainHandler.post(() -> {
                         for (int j = 0; j<_len; j++) {
                             TabLayout.Tab tab = tabIndicator.newTab().setText(needToAddTitles.get(j));
-                            tabItemsMap.put(items.get(j).getMediaType(), tab);
+                            tabItemsMap.put(needToAdds.get(j).getMediaType(), tab);
                             tabIndicator.addTab(tab, addOfPosition.get(j));
                         }
 
-                        GuiHelper.setTabWidth(tabIndicator);
                         tabIndicator.invalidate();
+                        GuiHelper.setTabWidth(tabIndicator);
 
                         if (curPos >= 0)
                             showIndicator(curPos);
@@ -135,7 +135,7 @@ public class TempH1Activity extends BaseTempletActivity {
 
     @Override
     protected void onRateRemoved(Integer... mediaTypes) {
-        Logger.e(TAG, "onRateRemoved");
+        Logger.e(TAG, "onRateRemoved, tid:" + Thread.currentThread().getId());
         presetSliderPlayer.removeRateItem(mediaTypes);
 
         for (Integer mediaType : mediaTypes) {
@@ -146,6 +146,7 @@ public class TempH1Activity extends BaseTempletActivity {
         }
 
         tabIndicator.invalidate();
+//        GuiHelper.setTabWidth(tabIndicator);
 
         if (mediaTypes.length > 0 && curPos >= 0)
             showIndicator(curPos);

@@ -225,4 +225,30 @@ public class BllDataExtractor {
         return false;
     }
 
+    public static String replaceDomainAndPort(String domain, String port, String url) {
+        String urlBak = "";
+        if (url.indexOf("//") != -1) {
+            String[] splitTemp = url.split("//");
+            urlBak = splitTemp[0] + "//";
+            if (port != null) {
+                urlBak = urlBak + domain + ":" + port;
+            } else {
+                urlBak = urlBak + domain;
+            }
+
+            if (splitTemp.length >= 1 && splitTemp[1].indexOf("/") != -1) {
+                String[] urlTemp2 = splitTemp[1].split("/");
+                if (urlTemp2.length > 1) {
+                    for (int i = 1; i < urlTemp2.length; i++) {
+                        urlBak = urlBak + "/" + urlTemp2[i];
+                    }
+                }
+                System.out.println("url_bak:" + urlBak);
+            } else {
+                System.out.println("url_bak:" + urlBak);
+            }
+        }
+        return urlBak;
+    }
+
 }
