@@ -129,8 +129,6 @@ public class TempH1Activity extends BaseTempletActivity {
         tabItemsMap.clear();
 
         tabIndicator.invalidate();
-
-        super.onNetworkError(code);
     }
 
     @Override

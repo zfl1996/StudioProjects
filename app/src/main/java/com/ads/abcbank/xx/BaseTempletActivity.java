@@ -145,6 +145,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     protected void onNetworkError(int code) {
         Logger.e(TAG, "onNetworkError:" + code);
+        mainSliderPlayer.removeAllRateItem();
     }
 
     protected void onRateRemoved(Integer... mediaTypes) {
