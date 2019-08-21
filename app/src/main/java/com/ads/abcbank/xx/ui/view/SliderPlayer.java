@@ -102,7 +102,7 @@ public class SliderPlayer extends LinearLayout {
         sliderAdapter = new SliderMainAdapter(context);
 
 //        sliderAdapter.setHasStableIds(true);
-        sliderAdapter.setRateResourceMap(rateResourceMap);
+        sliderAdapter.setRateLayoutMap(rateResourceMap);
         sliderAdapter.setIntegrationPresetData( isIntegrationMode() );
         sliderAdapter.setVideoStatusListener(new SliderVideoHolder.VideoStatusListener() {
             @Override
@@ -167,15 +167,23 @@ public class SliderPlayer extends LinearLayout {
     public void removeAllRateItem() {
         sliderAdapter.removeAllRateItems();
 
-        if (hasData())
-            recyclerPagerView.startPlay();
-        else
-            recyclerPagerView.pausePlay();
+//        if (hasData())
+//            recyclerPagerView.startPlay();
+//        else
+//            recyclerPagerView.pausePlay();
+        switchPlayerStatus();
     }
 
     public void removeRateItem(Integer... mediaType) {
         sliderAdapter.removeInvalidRateItem(mediaType);
-        switchPlayerStatus();
+
+//        if (displayMode == DisplayMode.PresetOnly.ordinal()) {
+//            if (hasData())
+//                recyclerPagerView.startPlay();
+//            else
+//                recyclerPagerView.pausePlay();
+//        } else
+            switchPlayerStatus();
     }
 
     public void adjustWidgetStatus(boolean isPresetLoaded, boolean isPlaylistLoaded, int code) {
@@ -232,6 +240,7 @@ public class SliderPlayer extends LinearLayout {
         Logger.e(TAG, "switchPlayerStatus-->displayMode:" + displayMode + ", count:" + (sliderAdapter.getNoPresetCount(displayMode == DisplayMode.PlaylistOnly.ordinal())));
 
         imgHolder.setVisibility( sliderAdapter.getRealItemCount() > 0 ? GONE : VISIBLE );
+        recyclerPagerView.setVisibility(sliderAdapter.getRealItemCount() > 0 ? VISIBLE : GONE);
 
         if (hasData())
             recyclerPagerView.startPlay();

@@ -17,7 +17,6 @@ import com.ads.abcbank.xx.ui.adapter.holder.SliderVideoHolder;
 import com.ads.abcbank.xx.utils.Constants;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,18 +30,18 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
     private LayoutInflater inflater;
     private SliderVideoHolder.VideoStatusListener videoStatusListener;
     private boolean isIntegrationPresetData;
-    private Map<Integer, Integer> rateResourceMap;
+    private Map<Integer, Integer> rateLayoutMap;
 //    private String videoPath = "";
     private Map<Integer, Object> rateDataMap = new HashMap<>();
-    private Map<Integer, Integer> ratePos = new HashMap<>();
+//    private Map<Integer, Integer> ratePos = new HashMap<>();
     private Integer[] mts = new Integer[]{
             Constants.SLIDER_HOLDER_RATE_SAVE,
             Constants.SLIDER_HOLDER_RATE_LOAN,
             Constants.SLIDER_HOLDER_RATE_BUY
     };
 
-    public void setRateResourceMap(Map<Integer, Integer> rateResourceMap) {
-        this.rateResourceMap = rateResourceMap;
+    public void setRateLayoutMap(Map<Integer, Integer> rateLayoutMap) {
+        this.rateLayoutMap = rateLayoutMap;
     }
 
     public SliderMainAdapter(Context mContent) {
@@ -118,7 +117,7 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
                     startRefreshPos = addToPos < startRefreshPos ? addToPos : startRefreshPos;
                 }
 
-                if (needToAdds.size() > 0)
+                if (dataList.size() > 0)
                     notifyItemRangeChanged(startRefreshPos, dataItems.size());
 
             } else {
@@ -203,11 +202,11 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
         else if (Constants.SLIDER_HOLDER_VIDEO == viewType)
             return new SliderVideoHolder(inflater.inflate(R.layout.widget_ui_slider_item_video, parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_SAVE == viewType)
-            return new SliderRateSaveHolder(inflater.inflate(rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_SAVE), parent, false));
+            return new SliderRateSaveHolder(inflater.inflate(rateLayoutMap.get(Constants.SLIDER_HOLDER_RATE_SAVE), parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_LOAN == viewType)
-            return new SliderRateLoanHolder(inflater.inflate(rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_LOAN), parent, false));
+            return new SliderRateLoanHolder(inflater.inflate(rateLayoutMap.get(Constants.SLIDER_HOLDER_RATE_LOAN), parent, false));
         else if (Constants.SLIDER_HOLDER_RATE_BUY == viewType)
-            return new SliderRateBuyHolder(inflater.inflate(rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_BUY), parent, false));
+            return new SliderRateBuyHolder(inflater.inflate(rateLayoutMap.get(Constants.SLIDER_HOLDER_RATE_BUY), parent, false));
         else
             return new SliderImageHolder(inflater.inflate(R.layout.widget_ui_slider_item_img, parent, false));
     }
@@ -226,17 +225,17 @@ public class SliderMainAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHo
             SliderRateSaveHolder.showRate( (PresetBean.SaveRate) rateDataMap.get(item.getMediaType()), //(PresetBean.SaveRate)item.getAttData(),
                     (SliderRateSaveHolder) holder,
                     isIntegrationPresetData,
-                    rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_SAVE_ITEM));
+                    rateLayoutMap.get(Constants.SLIDER_HOLDER_RATE_SAVE_ITEM));
         } else if (holder instanceof SliderRateLoanHolder) {
             SliderRateLoanHolder.showRate((PresetBean.LoanRate) rateDataMap.get(item.getMediaType()), //(PresetBean.LoanRate)item.getAttData(),
                     (SliderRateLoanHolder)holder,
                     isIntegrationPresetData,
-                    rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_LOAN_ITEM));
+                    rateLayoutMap.get(Constants.SLIDER_HOLDER_RATE_LOAN_ITEM));
         } else if (holder instanceof SliderRateBuyHolder) {
             SliderRateBuyHolder.showRate((PresetBean.BIAOFE) rateDataMap.get(item.getMediaType()), //(PresetBean.BIAOFE)item.getAttData(),
                     (SliderRateBuyHolder)holder,
                     isIntegrationPresetData,
-                    rateResourceMap.get(Constants.SLIDER_HOLDER_RATE_BUY_ITEM));
+                    rateLayoutMap.get(Constants.SLIDER_HOLDER_RATE_BUY_ITEM));
         }
 
     }

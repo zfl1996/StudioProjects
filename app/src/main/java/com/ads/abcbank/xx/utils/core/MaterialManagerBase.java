@@ -75,11 +75,13 @@ public abstract class MaterialManagerBase {
                 envData.put(Constants.MM_SETTING_KEY_DATACDN, registerBean.data.cdn);
             }
 
+            Utils.put(context, Utils.KEY_PRESET, "");
+
             downloadModule = new DownloadModule(context, MAX_RATE, downloadStateLisntener);
             ResHelper.sendMessage(materialHandler, Constants.SLIDER_STATUS_CODE_INIT, null);
 
             try {
-                Thread.sleep(1000*60);
+                Thread.sleep(1000*2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -77,7 +77,7 @@ public class TempH1Activity extends BaseTempletActivity {
                 tabIndicator.addTab(tab);
             }
 
-            GuiHelper.setTabWidth(tabIndicator);
+//            GuiHelper.setTabWidth(tabIndicator);
         } else {
             Logger.e(TAG, "onRateDataPrepared");
             Utils.getExecutorService().submit(() -> {
@@ -105,8 +105,8 @@ public class TempH1Activity extends BaseTempletActivity {
                             tabIndicator.addTab(tab, addOfPosition.get(j));
                         }
 
-                        tabIndicator.invalidate();
-                        GuiHelper.setTabWidth(tabIndicator);
+//                        GuiHelper.setTabWidth(tabIndicator);
+//                        tabIndicator.invalidate();
 
                         if (curPos >= 0)
                             showIndicator(curPos);
