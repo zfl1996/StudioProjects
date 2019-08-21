@@ -20,14 +20,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class AsyncThread {
-    public static final int CONNECT_TIMEOUT = 10;
-    public static final int CONNECT_READ_TIMEOUT = 10;
+    public static final int CONNECT_TIMEOUT = 30;
+    public static final int CONNECT_READ_TIMEOUT = 30;
 
     public void httpService(final String url, final JSONObject jsonString, final Handler handler, final int wath) {
 
 
         try {
             String beanStr = Utils.get(ActivityManager.getInstance().getTopActivity(), Utils.KEY_REGISTER_BEAN, "").toString();
+            if (TextUtils.isEmpty(beanStr)) {
+                beanStr = jsonString.toString();
+            }
             String urlStr = url;
             if (!TextUtils.isEmpty(beanStr)) {
                 RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
@@ -56,6 +59,7 @@ public class AsyncThread {
                     handler.sendMessage(msg);
                     Logger.e("数据交互出错", e.toString());
                     Utils.hideProgressDialog();
+                    ToastUtil.showToastLong(ActivityManager.getInstance().getTopActivity(), "获取数据失败：" + e.getMessage());
                 }
 
                 @Override
@@ -69,6 +73,7 @@ public class AsyncThread {
                             msg.obj = null;
                             handler.sendMessage(msg);
                             Logger.e("数据交互出错", e.toString());
+                            ToastUtil.showToastLong(ActivityManager.getInstance().getTopActivity(), "获取数据出错：" + e.getMessage());
                         }
                     }
                     Utils.hideProgressDialog();
@@ -77,6 +82,7 @@ public class AsyncThread {
         } catch (Exception e) {
             Logger.e("数据交互出错", e.toString());
             Utils.hideProgressDialog();
+            ToastUtil.showToastLong(ActivityManager.getInstance().getTopActivity(), "获取数据出现错误：" + e.getMessage());
         }
     }
 }

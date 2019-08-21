@@ -402,7 +402,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
         bean.data.cdn = cdn.getText().toString();
 
         Utils.put(this, Utils.KEY_FRAME_SET_NO, bean.data.frameSetNo);
-        Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+//        Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
 
         Utils.showProgressDialog(this);
         mainPresenter.register(JSONObject.parseObject(JSONObject.toJSONString(bean)));
@@ -724,7 +724,7 @@ public class ReInitActivity extends BaseActivity implements IMainView, View.OnCl
                 }
             }, 2000);
         } else if (resultBean != null && !TextUtils.isEmpty(resultBean.resCode) && !TextUtils.isEmpty(resultBean.resMessage)) {
-            ToastUtil.showToastLong(this, resultBean.resMessage);
+            ToastUtil.showToastLong(this, resultBean.resCode + "-" + resultBean.resMessage);
         }
     }
 

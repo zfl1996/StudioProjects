@@ -344,8 +344,6 @@ public class MainActivity extends BaseActivity implements IMainView {
         bean.data.terminalType = getSelectTer();
 
 
-
-
 //        bean.data.screenDirection = getSelectScr();
 //        bean.data.frameSetNo = getSelectFra();
 //        getSelectCon();
@@ -371,7 +369,7 @@ public class MainActivity extends BaseActivity implements IMainView {
         bean.data.cdn = cdn.getText().toString();
 
         Utils.put(this, Utils.KEY_FRAME_SET_NO, bean.data.frameSetNo);
-        Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+//        Utils.put(this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
 
         Utils.showProgressDialog(this);
         mainPresenter.register(JSONObject.parseObject(JSONObject.toJSONString(bean)));
@@ -639,16 +637,16 @@ public class MainActivity extends BaseActivity implements IMainView {
 //            HandlerUtil.postDelayed(new Runnable() {
 //                @Override
 //                public void run() {
-                    if (bean != null && TextUtils.isEmpty(bean.data.frameSetNo)) {
-                        bean.data.frameSetNo = Utils.get(MainActivity.this, Utils.KEY_FRAME_SET_NO, "1").toString();
-                    }
-                    Utils.put(MainActivity.this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
+            if (bean != null && TextUtils.isEmpty(bean.data.frameSetNo)) {
+                bean.data.frameSetNo = Utils.get(MainActivity.this, Utils.KEY_FRAME_SET_NO, "1").toString();
+            }
+            Utils.put(MainActivity.this, Utils.KEY_REGISTER_BEAN, JSONObject.toJSONString(bean));
 
-                    mainPresenter.init(JSONObject.parseObject(JSONObject.toJSONString(bean)));
+            mainPresenter.init(JSONObject.parseObject(JSONObject.toJSONString(bean)));
 //                }
 //            }, 10);
         } else if (resultBean != null && !TextUtils.isEmpty(resultBean.resCode) && !TextUtils.isEmpty(resultBean.resMessage)) {
-            ToastUtil.showToastLong(this, resultBean.resMessage);
+            ToastUtil.showToastLong(this, resultBean.resCode + "-" + resultBean.resMessage);
         }
     }
 

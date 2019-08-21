@@ -19,7 +19,7 @@ public class DownloadBean extends RequestBean {
         if (!TextUtils.isEmpty(beanStr)) {
             RegisterBean bean = JSON.parseObject(beanStr, RegisterBean.class);
             appId = bean.appId;
-            trCode = bean.trCode;
+            trCode = "downloadfinish";
             trVersion = bean.trVersion;
             cityCode = bean.cityCode;
             brchCode = bean.brchCode;

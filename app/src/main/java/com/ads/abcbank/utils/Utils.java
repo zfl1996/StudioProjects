@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -519,24 +520,49 @@ public class Utils {
      * @return
      */
     public static String getMac(Context context) {
-//        String mac = "";
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-//            mac = getMacDefault(context);
-//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-//            mac = getMacAddress();
-//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            mac = getMacFromHardware();
-//        }
-//        return mac;
-
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream("/sys/class/net/eth0/address")))) {
-            String ethernetMacAddress = input.readLine();
-            Logger.d("getMac", "Ethernet MAC Address: " + ethernetMacAddress);
-            return ethernetMacAddress;
-        } catch (Exception ex) {
-            Logger.e("getMac", "ex: " + ex);
+        String mac = getWireMac();
+        if(!TextUtils.isEmpty(mac)){
+            return mac;
         }
-        return "";
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            mac = getMacDefault(context);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            mac = getMacAddress();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            mac = getMacFromHardware();
+        }
+        return mac;
+
+//        try (BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream("/sys/class/net/eth0/address")))) {
+//            String ethernetMacAddress = input.readLine();
+//            Logger.d("getMac", "Ethernet MAC Address: " + ethernetMacAddress);
+//            return ethernetMacAddress;
+//        } catch (Exception ex) {
+//            Logger.e("getMac", "ex: " + ex);
+//        }
+//        return "";
+    }
+
+    //获取有线网卡的mac地址
+    public static String getWireMac(){
+        String strMacAddress;
+        try {
+            byte[] b = NetworkInterface.getByName("eth0")
+                    .getHardwareAddress();
+            StringBuffer buffer = new StringBuffer();
+            for (int i = 0; i < b.length; i++) {
+                if (i != 0) {
+                    buffer.append(':');
+                }
+                System.out.println("b:"+(b[i]&0xFF));
+                String str = Integer.toHexString(b[i] & 0xFF);
+                buffer.append(str.length() == 1 ? 0 + str : str);
+            }
+            strMacAddress = buffer.toString().toUpperCase();
+        } catch (Exception e) {
+            strMacAddress = "";
+        }
+        return strMacAddress;
     }
 
     @SuppressLint("MissingPermission")
