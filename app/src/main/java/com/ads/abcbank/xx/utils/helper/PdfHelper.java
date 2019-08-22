@@ -99,6 +99,14 @@ public class PdfHelper {
                         }
 
                     }
+                } else {
+                    for (int i=0; i<maxCache; i++) {
+                        list.add(new PlayItem(fileKey/* + i*/,
+                                ResHelper.getPdfCacheFilePath(fileName, i),
+                                Constants.SLIDER_HOLDER_IMAGE,
+                                playDate, stopDate,
+                                clickLink, attData));
+                    }
                 }
 
 

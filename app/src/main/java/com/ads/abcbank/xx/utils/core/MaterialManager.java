@@ -340,7 +340,7 @@ public class MaterialManager extends MaterialManagerBase {
                     String savePath = ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id);
 //                    if (loadedMaterial.containsKey(bodyBean.downloadLink)) {
                     if (isMaterialLoaded(bodyBean)) {
-                        if (!isMaterialMarked(bodyBean.id) || ResHelper.isExistsFile(savePath))
+                        if (!isMaterialMarked(bodyBean.id) || (isMaterialMarked(bodyBean.id) && ResHelper.isExistsFile(savePath)))
                             continue;
                         else
                             needDownload = true;
@@ -489,10 +489,26 @@ public class MaterialManager extends MaterialManagerBase {
                     materialStatus.remove(id);
                     importantItems.remove(id);
 
-                    PlaylistBodyBean bodyBean = loadedMaterial.get(id);
-                    paths.add(ResHelper.getSavePath(bodyBean.downloadLink, bodyBean.id));
+                    String downloadLink = "";
+                    for (PlaylistBodyBean bodyBean : loadedMaterial.values()) {
+                        if (bodyBean.id.equals(id)) {
+                            downloadLink = bodyBean.downloadLink;
+
+                            break;
+                        }
+                    }
+
+                    if (!ResHelper.isNullOrEmpty(downloadLink)) {
+                        loadedMaterial.remove(downloadLink);
+                        paths.add(ResHelper.getSavePath(downloadLink, id));
+                    } else {
+                        Logger.e(TAG, "url status err, id:" + id);
+                    }
+
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                Logger.e(TAG, "remove failded, id:" + id + ", msg:" + e.getMessage());
+            }
         }
 
         if (importantItems.size() > 0)
@@ -523,8 +539,13 @@ public class MaterialManager extends MaterialManagerBase {
                     ResHelper.join(materialStatus.values().toArray(new String[0]), ","));
         }
 
-        for (String path : paths)
-            IOHelper.deleteFile(path);
+        for (String path : paths) {
+            try {
+                IOHelper.deleteFile(path);
+            } catch (Exception e) {
+                Logger.e(TAG, "delete file err:" + e.getMessage());
+            }
+        }
     }
 
 }
