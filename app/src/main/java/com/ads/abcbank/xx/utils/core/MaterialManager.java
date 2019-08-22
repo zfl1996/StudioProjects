@@ -120,7 +120,7 @@ public class MaterialManager extends MaterialManagerBase {
         }
 
         PlaylistBodyBean bodyBean = loadedMaterial.get(fileUrl);
-        bodyBean.secUsed = ResHelper.getTimeDiff(bodyBean.started);
+        bodyBean.secUsed = ResHelper.getTimeDiff(bodyBean.started, "yyyyMMdd HH:mm:ss");
         netTaskMoudle.notifyDownloadFinish(new String[]{ bodyBean.id, bodyBean.started, bodyBean.secUsed });
 
         // 更新已下载素材状态
@@ -357,7 +357,7 @@ public class MaterialManager extends MaterialManagerBase {
                         needDownload = true;
                     }
 
-                    bodyBean.started = ResHelper.getCurTime();
+                    bodyBean.started = ResHelper.getCurTime("yyyyMMdd HH:mm:ss");
                     loadedMaterial.put(bodyBean.downloadLink, bodyBean);
 
                     // 构建待下载数据

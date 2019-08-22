@@ -107,10 +107,10 @@ public class NetTaskMoudle {
         downloadBean.secUsed = notifyData[2];
         downloadBean.status = "finish";
 
-        //TODO 先简单去掉负数
-        if(downloadBean.secUsed != null){
-            downloadBean.secUsed = downloadBean.secUsed.replace("-","");
-        }
+//        //TODO 先简单去掉负数
+//        if(downloadBean.secUsed != null){
+//            downloadBean.secUsed = downloadBean.secUsed.replace("-","");
+//        }
 
         Utils.getAsyncThread().httpService(HTTPContants.CODE_DOWNLOAD_FINISH,
                 JSONObject.parseObject(JSONObject.toJSONString(downloadBean)),

@@ -334,14 +334,31 @@ public class ResHelper {
     }
 
     public static String getCurTime(){
+//        Calendar calendar = Calendar.getInstance(Locale.CHINA);
+//        return new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA).format(calendar.getTime());
+        return getCurTime("yyyyMMddHHmmss");
+    }
+
+    //yyyyMMdd HH:mm:ss
+    public static String getCurTime(String formatter) {
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
-        return new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA).format(calendar.getTime());
+        return new SimpleDateFormat(formatter, Locale.CHINA).format(calendar.getTime());
     }
 
     public static String getTimeDiff(String timeStr) {
         try {
             long diff = getCalendar(timeStr).getTime().getTime() -
                     Calendar.getInstance(Locale.CHINA).getTime().getTime();
+            return "" + diff/1000;
+        }catch (Exception e){
+            return "";
+        }
+    }
+
+    public static String getTimeDiff(String timeStr, String formatter) {
+        try {
+            long diff = Calendar.getInstance(Locale.CHINA).getTime().getTime() -
+                    getCalendar(timeStr, formatter).getTime().getTime();
             return "" + diff/1000;
         }catch (Exception e){
             return "";
