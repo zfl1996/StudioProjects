@@ -219,6 +219,9 @@ public class MaterialManager extends MaterialManagerBase {
     * 加载汇率数据
     * */
     private void loadPreset() {
+        if (importantItems.size() > 0)
+            return;
+
         if (!isActionExecuted(Constants.MM_STATUS_KEY_PRESET_INIT)) {
             managerStatus.put(Constants.MM_STATUS_KEY_PRESET_INIT, 1);
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_PROGRESS, Constants.SLIDER_PROGRESS_CODE_PRESET_PRE);
@@ -258,7 +261,6 @@ public class MaterialManager extends MaterialManagerBase {
                 presetItems.add(new PlayItem(Constants.SLIDER_HOLDER_RATE_BUY, bean.data.buyInAndOutForeignExchange));
             } else
                 removeItems.add(Constants.SLIDER_HOLDER_RATE_BUY);
-
 
             ResHelper.sendMessage(uiHandler, Constants.SLIDER_STATUS_CODE_RATE_LOADED, new Object[]{presetItems, presetTitles});
 
