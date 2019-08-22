@@ -87,7 +87,7 @@ public class PdfHelper {
                                 }
                             }
 
-                            list.add(new PlayItem(fileKey + i,
+                            list.add(new PlayItem(fileKey/* + i*/,
                                     fileAbsPath,
                                     Constants.SLIDER_HOLDER_IMAGE,
                                     playDate, stopDate,
