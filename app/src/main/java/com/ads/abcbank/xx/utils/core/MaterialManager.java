@@ -25,8 +25,9 @@ import java.util.Map;
 public class MaterialManager extends MaterialManagerBase {
     static String TAG = MaterialManagerBase.class.getSimpleName();;
 
-    public MaterialManager(Context context, MaterialStatusListener materialStatusListener) {
+    public MaterialManager(Context context, MaterialStatusListener materialStatusListener, int rateMode) {
         this.context = context;
+        this.rateMode = rateMode;
         this.itemStatusListener = new WeakReference<>(materialStatusListener);
     }
 
@@ -219,7 +220,7 @@ public class MaterialManager extends MaterialManagerBase {
     * 加载汇率数据
     * */
     private void loadPreset() {
-        if (importantItems.size() > 0)
+        if (rateMode == 0 && importantItems.size() > 0)
             return;
 
         if (!isActionExecuted(Constants.MM_STATUS_KEY_PRESET_INIT)) {

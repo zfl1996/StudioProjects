@@ -101,7 +101,7 @@ public abstract class BaseTempletActivity extends AppCompatActivity {
 
     private void initPlayer() {
         // start data process...
-        materialManager = new MaterialManager(this, materialStatusListener);
+        materialManager = new MaterialManager(this, materialStatusListener, mainSliderPlayer.getDisplayMode().ordinal());
         materialManager.initManager(mainSliderPlayer.isIntegrationMode(), type);
 
 //        playlistManager = new PlaylistManager(this, ids -> {

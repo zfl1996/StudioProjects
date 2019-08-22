@@ -11,6 +11,7 @@ import com.ads.abcbank.bean.RegisterBean;
 import com.ads.abcbank.utils.Logger;
 import com.ads.abcbank.utils.Utils;
 import com.ads.abcbank.xx.model.PlayItem;
+import com.ads.abcbank.xx.ui.view.SliderPlayer;
 import com.ads.abcbank.xx.utils.Constants;
 import com.ads.abcbank.xx.utils.helper.ResHelper;
 import com.alibaba.fastjson.JSON;
@@ -45,6 +46,7 @@ public abstract class MaterialManagerBase {
     ConcurrentHashMap<String, String> envData = new ConcurrentHashMap<>();
     String filters;
     int MAX_RATE = 0;
+    int rateMode;
 
     /**
      * 初始化资源管理器
